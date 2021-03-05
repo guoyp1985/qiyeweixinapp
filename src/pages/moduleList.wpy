@@ -1,0 +1,158 @@
+<style lang="less">
+.module-list-page.iphone{bottom:68rpx;}
+.module-list-page{
+  left:0;right:0;top:0;bottom:0;position:absolute;
+  .page-inner{width:100%;height:100%;}
+  .scroll_list{
+    .scroll_item{
+      background-color: #fff;
+      display:block;padding:20rpx;box-sizing: border-box;
+    }
+    .pic{
+      width:120rpx;
+      image{width:100rpx;height:100rpx;border-radius:50%;}
+    }
+    .btn_cell{
+      width:140rpx;
+      .btn{
+        border-radius: 20rpx;width:120rpx;height:50rpx;
+      }
+    }
+  }
+}
+</style>
+<template>
+  <view :class="{'iphone' : isIpx}" class="module-list-page havemenu">
+    <view class="page-inner columnarea">
+      <scroll-view scroll-y="true" class="column-content scroll-h" bindscrolltolower="scrollEvent">
+        <block wx:if="{{disList}}">
+          <view wx:if="{{!listData.length}}" class="flex_empty">暂无数据</view>
+          <view class='scroll_list' wx:else>
+            <repeat for="{{listData}}" item="item" index="index">
+              <form class="scroll_item" bindsubmit="toDetail" report-submit="true" data-data="{{item}}">
+                <button formType="submit" class="w_100 flex_left">
+                  <view class="pic flex_left">
+                    <image wx:if="{{item.avatar && item.avatar != ''}}" src="{{item.avatar}}" mode="aspectFill"></image>
+                    <image wx:else src="https://tossharingsales.boka.cn/images/user.jpg" mode="aspectFill"></image>
+                  </view>
+                  <view class="flex_cell" data-id="{{item.id}}">
+                    <view class="align_left">{{item.linkman}}</view>
+                    <view class="font12 color-gray align_left">{{item.dateline_str}}</view>
+                  </view>
+                </button>
+              </form>
+            </repeat>
+          </view>
+        </block>
+      </scroll-view>
+    </view>
+  </view>
+  <block wx:if="{{module && module != ''}}">
+    <bottomMenu
+      :current.sync="module"
+      :globalData.sync="globalData"
+      :isIpx.sync="isIpx"
+      :themeObject.sync="themeObject">
+    </bottomMenu>
+  </block>
+</template>
+<script>
+
+import wepy from 'wepy'
+import Config from '@/config'
+import Util from '@/libs/util'
+import Time from '@/libs/time'
+import BottomMenu from '@/components/bottomMenu'
+export default class ModuleList extends wepy.page {
+  components = {
+    bottomMenu: BottomMenu
+  }
+  data = {
+    options: {},
+    globalData: {},
+    moduleInfo: {},
+    Fid: Config.Fid,
+    userInfo: {},
+    systemInfo: {},
+    listData: [],
+    disList: false,
+    pageStart: 0,
+    limit: Config.Limit,
+    module: '',
+    isIpx: false,
+    themeObject: {}
+  }
+  onLoad (options) {
+    this.options = options
+    this.module = options.module
+    this.pageStart = 0
+    this.limit = Config.Limit
+    wepy.getSystemInfo().then(res => {
+      this.systemInfo = res
+      if (res.model.substring(0, res.model.indexOf('X')) + 'X' === 'iPhone X') {
+        this.isIpx = true
+      }
+      this.$apply()
+    })
+    if (this.$parent.globalData.flag.bokaAuth) {
+      this.handlePageData()
+    } else {
+      this.$parent.loadCallback = () => {
+        this.handlePageData()
+      }
+    }
+    this.$apply()
+  }
+  handlePageData () {
+    this.globalData = this.$parent.globalData
+    Util.appInit(this.globalData, this)
+    this.userInfo = this.globalData.userInfo
+    wepy.request({
+      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/codemaker/modulePara`,
+      data: {module: this.options.module, fid: this.Fid},
+      method: 'get'
+    }).then(res => {
+      const data = res.data
+      const retdata = data.data ? data.data : data
+      this.moduleInfo = retdata
+      this.getData()
+      this.$apply()
+    })
+    this.$apply()
+  }
+  getData () {
+    wepy.request({
+      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/codemaker/getlist`,
+      data: {module: this.options.module, type: 'user', fid: this.Fid, pagestart: this.pageStart, limit: this.limit},
+      method: 'get'
+    }).then(res => {
+      if (res) {
+        const data = res.data
+        let retdata = data.data ? data.data : data
+        for (let i = 0; i < retdata.length; i++) {
+          retdata[i].dateline_str = new Time(retdata[i].dateline * 1000).dateFormat('yyyy-MM-dd hh:mm')
+        }
+        this.listData = this.listData.concat(retdata)
+        this.disList = true
+        this.$apply()
+      }
+    })
+  }
+  methods = {
+    scrollEvent () {
+      if (this.listData.length === (this.pageStart + 1) * this.limit) {
+        this.pageStart++
+        this.getData()
+      }
+    },
+    toDetail (e) {
+      const data = e.currentTarget.dataset.data
+      if (this.options.module === 'baogao') {
+        wepy.navigateTo({url: `/packageC/pages/report?module=${this.options.module}&id=${data.id}`})
+      } else {
+        wepy.navigateTo({url: `/pages/moduleDetail?module=${this.options.module}&id=${data.id}`})
+      }
+    }
+  }
+}
+</script>

@@ -1,0 +1,388 @@
+<style lang="less">
+.app-tab.none-fixed-top{position:fixed;left:0;top:0rpx;right:0;z-index:10;}
+.addwelfare-page{
+  padding-top:100rpx;padding-bottom:160rpx;
+  .al-left:before{
+    content:'\e744'
+  }
+  .al-xing:before{
+    content:'\e6c3'
+  }
+  .al-share:before{
+    content:'\e61d'
+  }
+  .packet-item{height:116rpx;padding:0 20rpx;}
+  .btn-area{
+    .btn-item{
+      display:inline-block;
+      padding:0 25rpx;line-height:50rpx;border:2rpx solid;border-radius:50rpx;
+    }
+    .btn-item:not(:last-child){margin-right:20rpx;border:none}
+  }
+  .share-btn{
+    width:400rpx;
+    border-radius:32rpx;
+    margin:auto;
+  }
+  .record-area{
+    padding: 30rpx 0 20rpx;
+    .tab-item{
+      .number{
+        text-align:center;
+        line-height:100rpx;
+        color:#fff;
+      }
+    }
+  }
+  .record-item{
+    .user-img{
+       width:140rpx;
+    }
+    .volume-state{
+      padding:10rpx 20rpx;
+      border-radius:16rpx;
+      color: #fff;
+    }
+  }
+}
+.modalarea {
+  .money-input{
+    border:2rpx solid;
+    margin:0 10rpx;
+    border-radius: 8rpx;
+    padding: 0 5rpx;
+  }
+  .money-conut-area{
+    display:flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    .money-conut-btn{
+     border:2rpx solid;
+     height: 70rpx;
+     width: 120rpx;
+     line-height:70rpx;
+     text-align:center;
+     border-radius: 8rpx;
+   }
+  }
+}
+</style>
+<template>
+  <view class="app-tab none-fixed-top">
+    <view class="tab-item font14 {{selectedIndex == 0 ? 'active' : ''}}" data-current="0" bindtap="clickTab">
+      <text style="{{selectedIndex == 0 ? themeObject.colorStyle : ''}}">创建新人福利</text>
+      <view class="line" style="{{selectedIndex == 0 ? themeObject.bgStyle : ''}}"></view>
+    </view>
+    <view class="tab-item font14 {{selectedIndex == 1 ? 'active' : ''}}" data-current="1" bindtap="clickTab">
+      <text style="{{selectedIndex == 1 ? themeObject.colorStyle : ''}}">发放记录</text>
+      <view class="line" style="{{selectedIndex == 1 ? themeObject.bgStyle : ''}}"></view>
+    </view>
+  </view>
+  <view class="addwelfare-page">
+    <view wx:if="{{selectedIndex == 0}}" class="list-area">
+      <view class="db-flex bg-white padding10 mb12">
+        <view class="flex_cell flex_left bold">
+           置优惠券<text class="al al-xing font16 ml5 color-red1"></text>
+        </view>
+        <view class="flex_cell flex_right" style="{{themeObject.colorStyle}}">
+           去设置<text class="al al-left font25"></text>
+        </view>
+      </view>
+      <view class="bg-white mb5">
+        <view class="db-flex b_bottom packet-item">
+          <view class="flex_cell flex_left">开启红包</view>
+          <view class="flex_cell flex_right" bindtap="openPaper"><view class="app-switch" style="{{checked ? themeObject.bgStyle+themeObject.borderStyle:''}}"><view class="ico"  style="{{checked ? 'left: auto;right: 0.5px':''}}"></view></view></view>
+        </view>
+        <view wx:if="{{checked}}">
+          <view class="db-flex b_bottom packet-item">
+            <view class="flex_left bold">
+              每人最多领取金额
+              <text class="color-gray1">（最少领取0.3元）</text>
+            </view>
+            <view class="flex_cell flex_right" style="{{themeObject.colorStyle}}" @tap="maxMoney">
+              {{maxMoney}}元
+              <text class="al al-left font25"></text>
+            </view>
+          </view>
+          <view class="db-flex b_bottom packet-item">
+            <view class="flex_cell flex_left" style="{{themeObject.colorStyle}}">红包账户余额￥4.24</view>
+            <view class="flex_cell flex_right btn-area" style="{{themeObject.colorStyle}}">
+            <view class="btn-item" style="{{themeObject.bgStyle}}" @tap="Recharge">充值</view>
+            <view class="btn-item" style="{{themeObject.borderStyle}}" @tap="Withdrawal">提现</view>
+            </view>
+          </view>
+          <view class="flex_right padding10">
+            <text style="{{themeObject.colorStyle}}">*</text>优惠券和红包同时开启时，将会为客户随机发放</view>
+        </view>
+       </view>
+      <view class="share-btn flex_center mt25" style="{{themeObject.bgStyle}}"><text class="al al-share font25 mr10"></text>分享</view>
+    </view>
+    <view wx:if="{{selectedIndex == 1}}" class="list-area">
+      <view class="flex_center record-area bg-white mb12">
+        <view class="tab-item font14 flex_column flex_cell">
+          <view class="avatarimg2 bg-green2 number">10</view>
+          <view class="mt10 color-gray">优惠券</view>
+        </view>
+        <view class="tab-item font14 flex_column flex_cell">
+          <view class="avatarimg2 bg-orange number">2.00</view>
+          <view class="mt10 color-gray">红包发放总额</view>
+        </view>
+        <view class="tab-item font14 flex_column flex_cell">
+          <view class="avatarimg2 bg-green number">1</view>
+          <view class="mt10 color-gray">使用人数</view>
+        </view>
+      </view>
+      <block wx:if="{{disList}}">
+        <view wx:if="{{!tabData.length}}" class="w_100 flex_empty">暂无数据</view>
+        <repeat for="{{tabData}}" index="index" item="item">
+            <view class="record-item flex_center b_bottom padding10 bg-white">
+              <view class="user-img"><image class="avatarimg3" mode="aspectFill" src="" /></view>
+              <view  class="flex_cell">
+                <view class="font14 mb5" style="{{themeObject.colorStyle}}">优惠券 5元</view>
+                <view class="font15 bold mb5">领取人：Yuan</view>
+                <view class="color-gray3 font12 mb5">领取时间：2020-04-09 13：30</view>
+                <view class="color-gray3 font12 mb5">到期时间：2020-04-09 13：30</view>
+              </view>
+              <view class="volume-state" style="{{themeObject.bgStyle}}">未使用</view>
+            </view>
+            <view class="record-item flex_center b_bottom padding10 bg-white">
+              <view class="user-img"><image class="avatarimg3" mode="aspectFill" src="" /></view>
+              <view  class="flex_cell">
+                <view class="font14 mb5" style="{{themeObject.colorStyle}}">红包 5元</view>
+                <view class="font15 bold mb5">领取人：Yuan</view>
+              </view>
+            </view>
+            <view class="record-item flex_center b_bottom padding10 bg-white">
+              <view class="user-img"><image class="avatarimg3" mode="aspectFill" src="" /></view>
+              <view  class="flex_cell">
+                <view class="font14 mb5" style="{{themeObject.colorStyle}}">优惠券 5元</view>
+                <view class="font15 bold mb5">领取人：Yuan</view>
+                <view class="color-gray3 font12 mb5">领取时间：2020-04-09 13：30</view>
+                <view class="color-gray3 font12 mb5">到期时间：2020-04-09 13：30</view>
+              </view>
+              <view class="volume-state bg-gray02">已使用</view>
+            </view>
+        </repeat>
+        <view class="load-end-area loading" wx:if="{{isLoading}}"></view>
+        <view class="load-end-area done" wx:elif="{{isDone}}"></view>
+      </block>
+     </view>
+  </view>
+      <view class="modalarea flex_center" wx:if="{{isSetMaxMoney}}">
+      <form class="modal" bindsubmit="SetMaxMoney" bindreset="closeSetModal" report-submit="true">
+        <view class="pagetop flex_center b_bottom_after">
+          <view class="clamp1">设置金额</view>
+        </view>
+        <view class="pagemiddle padding10">
+            <view class="mb12 flex_center">
+              每人最多领取
+              <input fixed class="flex_cell money-input border-gray" name="title" value="{{maxMoney}}" bindinput="keyupContent"></input>
+              元
+            </view>
+            <view>微信规定每个红包不能小于0.3元,所发放的红包金额将在0.3元和设置的金额之间随机</view>
+        </view>
+        <view class="pagebottom flex_center b_top_after">
+          <view class="flex_cell flex_center">
+            <button class="btn bg-gray02 color-white flex_center" form-type="reset">取消</button>
+          </view>
+          <view class="flex_cell flex_center">
+            <button class="btn bg-theme color-white flex_center" style="{{themeObject.bgStyle}}" form-type="submit">设置</button>
+          </view>
+        </view>
+      </form>
+    </view>
+    <view class="modalarea flex_center" wx:if="{{isRecharge}}">
+      <form class="modal" bindsubmit="saveRecharge" bindreset="closeRechargeModal" report-submit="true">
+        <view class="pagetop flex_center b_bottom_after">
+          <view class="clamp1">充值金额</view>
+        </view>
+        <view class="pagemiddle padding10">
+            <view class="mb12 money-conut-area">
+              <view class="money-conut-btn mb10" data-flag="0" @tap="checkedRecharge" style="{{checkedIndex == 0 ? themeObject.bgStyle : themeObject.colorStyle+themeObject.borderStyle}}">5元</view>
+              <view class="money-conut-btn mb10" data-flag="1" @tap="checkedRecharge" style="{{checkedIndex == 1 ? themeObject.bgStyle : themeObject.colorStyle+themeObject.borderStyle}}">20元</view>
+              <view class="money-conut-btn mb10" data-flag="2" @tap="checkedRecharge" style="{{checkedIndex == 2 ? themeObject.bgStyle : themeObject.colorStyle+themeObject.borderStyle}}">50元</view>
+              <view class="money-conut-btn mb10" data-flag="3" @tap="checkedRecharge" style="{{checkedIndex == 3 ? themeObject.bgStyle : themeObject.colorStyle+themeObject.borderStyle}}">100元</view>
+              <view class="money-conut-btn mb10" data-flag="4" @tap="checkedRecharge" style="{{checkedIndex == 4 ? themeObject.bgStyle : themeObject.colorStyle+themeObject.borderStyle}}">300元</view>
+              <view class="money-conut-btn mb10" data-flag="5" @tap="checkedRecharge" style="{{checkedIndex == 5 ? themeObject.bgStyle : themeObject.colorStyle+themeObject.borderStyle}}">500元</view>
+            </view>
+            <view class="align_center" style="{{themeObject.colorStyle}}">微信收取手续费0.6%</view>
+        </view>
+        <view class="pagebottom flex_center b_top_after">
+          <view class="flex_cell flex_center">
+            <button class="btn bg-gray02 color-white flex_center" form-type="reset">取消</button>
+          </view>
+          <view class="flex_cell flex_center">
+            <button class="btn bg-theme color-white flex_center" style="{{themeObject.bgStyle}}" form-type="submit">充值</button>
+          </view>
+        </view>
+      </form>
+    </view>
+    <view wx:if="{{isWithdrawal}}" class="auto-modal flex_center">
+    <view class="modal-inner border-box" style="width:80%;">
+      <view class="align_center padding20">确定要提现吗？</view>
+      <form class="db b_top_after" style="height:50px;" bindsubmit="submitWithdrawal" bindreset="cancelWithdrawal" report-submit="true">
+        <view class="w_100 h_100 flex_center">
+          <button class="flex_cell flex_center h_100 b_right_after" form-type="reset">取消</button>
+          <button class="flex_cell flex_center h_100 color-orange" form-type="submit">确定</button>
+        </view>
+      </form>
+    </view>
+  </view>
+</template>
+<script>
+import wepy from 'wepy'
+import Time from '@/libs/time'
+import Config from '@/config'
+import Util from '@/libs/util'
+export default class extends wepy.page {
+  config = {
+    enablePullDownRefresh: true,
+    backgroundTextStyle: 'dark'
+  }
+  data = {
+    selectedIndex: 0,
+    flag: 0,
+    tabData: [],
+    isLoading: false,
+    isDone: false,
+    disList: false,
+    themeObject: {},
+    showServiceModal: false,
+    servicePhotoArr: [],
+    serviceContent: '',
+    maxnum: 4,
+    showOperate: false,
+    checked: false,
+    isSetMaxMoney: false,
+    checkedIndex: 1,
+    isWithdrawal: false,
+    isRecharge: false,
+    maxMoney: 0.3,
+    inputMaxMoney: 0.3
+  }
+  refreshPage () {
+    this.selectedIndex = 0
+    this.disList = false
+    this.pagestart = 0
+    this.tabData = []
+    this.$apply()
+    this.handlePageData()
+  }
+  onPullDownRefresh () {
+    this.refreshPage()
+    wepy.showNavigationBarLoading()
+    setTimeout(() => {
+      wepy.hideNavigationBarLoading()
+      wepy.stopPullDownRefresh()
+    }, 500)
+  }
+  onReachBottom (event) {
+    if (this.isLoading) return false
+    if (this.tabData.length === (this.pagestart + 1) * this.limit) {
+      this.pagestart++
+      this.isLoading = true
+      this.getData()
+    }
+  }
+  getData () {
+    wepy.showLoading()
+    wepy.request({
+      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/customer/ordersList`,
+      data: {pagestart: this.pageStart1, limit: this.limit, customeruid: '4903'},
+      method: 'post'
+    }).then(res => {
+      wepy.hideLoading()
+      this.isLoading = false
+      const data = res.data
+      let retdata = data.data ? data.data : data
+      for (let i = 0; i < retdata.length; i++) {
+        let curd = retdata[i]
+        curd.dateline_str = new Time(curd.dateline * 1000).dateFormat('yyyy-MM-dd hh:mm')
+      }
+      this.tabData = this.tabData.concat(retdata)
+      this.disList = true
+      if (retdata.length < this.limit && this.tabData.length) {
+        this.isDone = true
+      } else {
+        this.isDone = false
+      }
+      this.$apply()
+    })
+  }
+  handlePageData () {
+    this.globalData = this.$parent.globalData
+    Util.appInit(this.globalData, this)
+    this.userinfo = this.globalData.userInfo
+    this.$apply()
+  }
+  onLoad (options) {
+    this.options = options
+    this.pageStart = 0
+    this.limit = Config.Limit
+    this.$apply()
+  }
+  onShow () {
+    this.pagestart = 0
+    if (this.$parent.globalData.flag.bokaAuth) {
+      this.handlePageData()
+    } else {
+      this.$parent.loadCallback = () => {
+        this.handlePageData()
+      }
+    }
+  }
+  methods = {
+    clickTab (e) {
+      this.selectedIndex = parseInt(e.currentTarget.dataset.current)
+      if (!this.tabData.length && this.selectedIndex === 1) {
+        this.getData()
+      }
+    },
+    openPaper () {
+      this.checked = !this.checked
+    },
+    SetMaxMoney () {
+      if (this.inputMaxMoney < 0.3 || isNaN(this.inputMaxMoney)) {
+        wepy.showToast({
+          title: '请输入正确金额',
+          icon: 'none'
+        })
+      } else {
+        this.maxMoney = this.inputMaxMoney
+        this.isSetMaxMoney = false
+      }
+    },
+    closeSetModal () {
+      this.isSetMaxMoney = false
+    },
+    maxMoney () {
+      this.isSetMaxMoney = true
+    },
+    saveRecharge () {
+      this.isRecharge = false
+    },
+    closeRechargeModal () {
+      this.isRecharge = false
+    },
+    submitWithdrawal () {
+      this.isWithdrawal = false
+    },
+    cancelWithdrawal () {
+      this.isWithdrawal = false
+    },
+    Recharge () {
+      this.isRecharge = true
+    },
+    Withdrawal () {
+      this.isWithdrawal = true
+    },
+    checkedRecharge (e) {
+      const flag = e.currentTarget.dataset.flag
+      this.checkedIndex = flag
+    },
+    keyupContent (e) {
+      this.inputMaxMoney = e.detail.value
+    }
+  }
+}
+</script>

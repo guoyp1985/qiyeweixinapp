@@ -1,0 +1,505 @@
+<style lang="less">
+.vip-page{
+  background-color:#f2f2f2;
+  .border-right.b_right_after:after{top:20%;bottom:20%;}
+  .share .al{font-size:65rpx;color:#00C037;}
+  .rate .al{font-size:65rpx;color:#36A6DF;}
+  .box-area{width:100%;padding:30rpx 0;margin-top:20rpx;text-align:center;}
+  .box-area1{width:100%;padding:30rpx 20rpx;box-sizing:border-box;border-radius:10rpx;font-size:24rpx;}
+  .table{
+    width:90%;margin:0 auto;position:relative;border:#e3e3e3 2rpx solid;font-size:24rpx;
+    .tr:not(:last-child){border-bottom:1rpx solid #f2f2f2;}
+    .tr{
+      width:100%;height:90rpx;display:flex !important;align-items: left;justify-content:flex-start;flex-flow:row wrap; align-items: center;
+      .th{height:100%;font-size:32rpx;display:flex !important;justify-content: center; align-items: center;}
+      .th:nth-child(1){width:40%;border-right:1rpx solid #f2f2f2;}
+      .th:nth-child(2){flex:1;background-color:#e4e4e4;font-weight:bold;}
+      .th:nth-child(3){flex:1;background-color:#ECAC4D;font-weight:bold;}
+      .td:nth-child(1){width:40%;border-right:1rpx solid #f2f2f2;padding:0 10rpx;box-sizing: border-box;}
+      .td:nth-child(2){border-right:1rpx solid #f2f2f2;}
+      .td{
+        height:100%;display:flex !important;justify-content: center; align-items: center;
+        .small-td{height:90rpx;display:flex !important;justify-content: center; align-items: center;}
+        .small-td:not(:last-child){border-bottom:1rpx solid #f2f2f2;}
+        .al{font-size:40rpx;font-weight:bold;}
+      }
+    }
+    .tr:nth-child(odd) .td{background-color:#fff;}
+    .tr:nth-child(even) .td{background-color:#eee;}
+  }
+  .line-area{
+    width:100%;padding-top:20rpx;padding-bottom:20rpx;font-size:32rpx;position:relative;
+    display:flex !important;justify-content: center; align-items: center;
+    .line{width:80%;height:4rpx;background-color:#FF6B63;position:absolute;}
+    .line-txt{width:200rpx;background-color:#fff;color:#FF6B63;position:relative;z-index:1;text-align:center;}
+  }
+  .btn-cash{
+    width:200rpx;
+    .btn{width:160rpx;height:60rpx;border-radius:30rpx;}
+  }
+  .txt_cell{width:160rpx;}
+  .cell-item{
+    border-top:#F5CD91 2rpx solid;width:100%;padding-top:30rpx;padding-bottom:20rpx;margin-top:20rpx;
+    .txt_cell{width:145rpx;}
+    .btn_cell{
+      width:200rpx;
+      .btn{width:160rpx;height:60rpx;border-radius:40rpx;text-align: center;background-color:#F5CD91;color:#000;}
+    }
+  }
+  .page-inner{background: linear-gradient(#6f6e6e, #000);border-radius:20rpx;width:90%;color:#F5CD91;margin:40rpx auto;position:relative;}
+  .conarea{
+    width:100%;border-top-left-radius:20rpx;border-top-right-radius:20rpx;padding:36rpx 36rpx 20rpx;box-sizing: border-box;position:relative;
+    .right-txt{
+      position:absolute;right:20rpx;top:30rpx;
+      .al{font-size:40rpx;}
+    }
+    .txt{text-align:center;margin-top:10rpx;}
+  }
+  .no-conarea{padding:0rpx 36rpx 20rpx 36rpx;width:100%;border-top-left-radius:20rpx;border-top-right-radius:20rpx;box-sizing: border-box;position:relative;}
+  .avatar{margin:0 auto;width:130rpx;height:130rpx;border-radius:50%;border:#fff 6rpx solid;box-sizing: border-box;}
+  .avatar image{width:100%;height:100%;border-radius:50%;}
+  .btnarea{
+    width:100%;height:100rpx;font-weight:bold;
+    .btn{width:85%;margin:0 auto;height:80rpx;border-radius:10rpx;background-color:#F5CD91;color:#000;font-size:32rpx;}
+    .btn.dark{background-color:#ECAC4D;}
+  }
+  .code-area{position:absolute;right:20rpx;top:20rpx;}
+  .close-area{position:absolute;left:0;bottom:-120rpx;right:0;height:100rpx;}
+  .close-area .al{font-weight:bold;font-size:70rpx;color:#fff;}
+
+  .form-control{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 40rpx 0;
+    .txt{font-weight: 600;width:120rpx;text-align:left;}
+    .btn-code{
+      background-color:#ECAC4D;
+      color: #000;
+      margin-left: 20rpx;
+      border-radius: 10rpx;
+      padding: 25rpx 0;
+      width: 230rpx;
+      text-align:center;
+    }
+    .disabled{background-color: #ccc;color: #000;}
+    .xcode{background-color: #ccc;}
+    input {flex: 1;background-color: transparent;padding: 20rpx 10rpx 20rpx 20rpx;border:#F5CD91 1px solid;border-radius:10rpx;}
+  }
+  checkbox{transform: scale(0.8);}
+  checkbox .wx-checkbox-input.wx-checkbox-input-checked{border-color:#ECAC4D;color:#ECAC4D;}
+  checkbox .wx-checkbox-input.wx-checkbox-input-checked::before{border-color:#ECAC4D;color:#ECAC4D;}
+  .inner-banner{
+    width:100%;height:150rpx;
+    image{width:100%;height:100%;}
+  }
+  .viptitle{
+    position:relative;padding:40rpx;box-sizing:border-box;
+    .vip-line{width:100%;height:4rpx;background-color:#f8b765;}
+    .viptxt{
+      color:#f8b765;width:400rpx;height:40rpx;position:absolute;text-align:center;line-height:40rpx;
+      background-color:#f2f2f2;top:18rpx;left:22%;
+    }
+  }
+  .productlist{
+    padding-bottom:40rpx;
+    .title{height:72rpx;line-height:36rpx;text-align:left;}
+    .txt1{font-size:28rpx;}
+    .txt2{color:#999;font-size:24rpx;text-decoration:line-through;margin-left:10rpx;}
+  }
+  .fix_left_txt{
+    position:absolute;left:20rpx;top:20rpx;
+  }
+
+  .scroll_item{
+    padding:20rpx 20rpx;box-sizing: border-box;
+    .pic{
+      width:100rpx;
+      image{width:80rpx;height:80rpx;border-radius:50%;}
+    }
+    .r-cell{width:200rpx;}
+  }
+  .theme{
+    width:440rpx;position: absolute;left:50%;margin-left:-220rpx;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10rpx 40rpx;
+    box-sizing: border-box;
+    border-radius:10rpx;
+    background: linear-gradient(to bottom, #f8817a 0%,#f53232 100%);
+  }
+  .zqtx{top: 10rpx;}
+  .wdyq{top: -30rpx;}
+  .title{border-radius: 30rpx;width: 50%;background-color: #FF6B63;color: white;padding:10rpx 0 10rpx 20rpx;}
+  .circle{width: 10rpx;height: 10rpx;border-radius: 90rpx;background-color: #ffff00;}
+  .share-pannel{border-radius: 5px;background-color: white;}
+  .box-yy{box-shadow: 0rpx 4rpx 12rpx rgba(0,0,0,0.1);}
+  .result-area{
+    padding:40rpx 20rpx 20rpx;border-radius:10rpx;box-sizing:border-box;position:relative;
+  }
+}
+
+.canvas-layer{
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background-color: #222;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  canvas{
+    width: 300px;
+    height: 500px;
+    margin: 20rpx auto;
+  }
+  .btn{
+    width: 100vw;
+    margin-top: 30rpx;
+    text-align: center;
+    button{
+      display: inline-block;
+      height: 80rpx;
+      line-height: 80rpx;
+      border-radius: 10rpx !important;
+      padding: 0 60rpx !important;
+    }
+    .save{
+      margin-left: 20rpx;
+    }
+  }
+}
+</style>
+<template>
+  <view class="vip-page">
+    <view class="padding20 mb20" style="position:relative;">
+      <view class="flex_center share-pannel box-yy">
+        <view class="flex_cell flex_center">
+          <button class="share align_center" open-type="share">
+            <text class="al al-weixin"></text>
+            <view class="font12 pb10">分享邀请</view>
+          </button>
+        </view>
+        <view class="flex_cell flex_center" bindtap="createPic">
+          <view class="rate align_center">
+            <text class="al al-tupian2"></text>
+            <view class="font12 pb10">生成图片邀请</view>
+          </view>
+        </view>
+      </view>
+    </view>
+    <view class="padding20" style="background-color:#f2f2f2;box-sizing:border-box;" wx:if="{{disList}}">
+      <view class="scroll_list bg-white box-yy result-area">
+        <view class="theme wdyq" style="{{themeObject.linearBgStyle}}">
+          <view class="circle"></view><view class="bold color-white">我的邀请({{count}}人)</view><view class="circle"></view>
+        </view>
+        <view class="padding20 align_center" wx:if="{{!listData.length}}">暂无邀请记录</view>
+        <block wx:else>
+          <repeat for="{{listData}}" item="item" index="index">
+            <view class="scroll_item flex_left">
+              <view class="pic flex_left">
+                <image wx:if="{{item.avatar && item.avatar != ''}}" src="{{item.avatar}}"></image>
+                <image wx:else src="https://tossharingsales.boka.cn/images/user.jpg"></image>
+              </view>
+              <view class="flex_cell flex_left">
+                <view class="w_100">
+                  <view>{{item.linkman}}</view>
+                  <view class="font12 color-gray">{{item.join_str}}</view>
+                </view>
+              </view>
+            </view>
+          </repeat>
+        </block>
+      </view>
+    </view>
+  </view>
+  <view class="canvas-layer" wx:if="{{canvasShow}}" style="top:{{top}}px" catchtouchmove="onTouchmove">
+    <canvas canvas-id="myCanvas" style="width:{{myCanvasWidth}}px;height:{{myCanvasHeight}}px"></canvas>
+    <view class="btn">
+      <form  report-submit='true' bindsubmit="onCancelTap">
+        <button class="cancel bg-white" form-type="submit">取消</button>
+      </form>
+      <form  report-submit='true' bindsubmit="onSaveTap">
+        <button class="save bg-red2 color-white" style="{{themeObject.bgStyle}}" form-type="submit" wx:if="{{saveBtnShow}}" >保存到相册</button>
+      </form>
+    </view>
+  </view>
+</template>
+<script>
+  import wepy from 'wepy'
+  import Config from '@/config'
+  import Util from '@/libs/util'
+  import Time from '@/libs/time'
+  const BokaApi = Config.BokaApi
+  export default class Vip extends wepy.page {
+    data = {
+      options: {},
+      globalData: {},
+      userInfo: {},
+      retailerInfo: {},
+      Fid: Config.Fid,
+      listData: [],
+      pageStart: 0,
+      limit: 10,
+      disList: false,
+      popShow: false,
+      top: 0,
+      sharePhoto: 'https://tossharingsales.boka.cn/minigxk/factory/sharebg.png',
+      systemInfo: {},
+      myCanvasWidth: 0,
+      myCanvasHeight: 0,
+      context: null,
+      bgPhoto: '',
+      miniQrcode: '',
+      canvasShow: false,
+      avatarPhoto: '',
+      saveBtnShow: false,
+      count: 0,
+      userName: '',
+      themeObject: {}
+    }
+    initData () {
+      this.$apply()
+    }
+    onReachBottom () {
+      if (this.listData.length === (this.pageStart + 1) * this.limit) {
+        this.pageStart++
+        this.getList()
+      }
+    }
+    getList () {
+      wepy.request({
+        url: `${BokaApi}/${Config[Config.ApiVersion]}/factory/myRecommend`,
+        data: {pagestart: this.pageStart, limit: this.limit, wid: this.userInfo.regwid, fid: this.Fid},
+        method: 'post'
+      }).then(res => {
+        const data = res.data
+        const retdata = data.data ? data.data : data
+        this.count = data.countdata
+        for (let i = 0; i < retdata.length; i++) {
+          retdata[i].join_str = new Time(retdata[i].jointime * 1000).dateFormat('yyyy-MM-dd hh:mm')
+        }
+        this.listData = this.listData.concat(retdata)
+        this.disList = true
+        this.$apply()
+      })
+    }
+    handlePageData () {
+      this.globalData = this.$parent.globalData
+      Util.appInit(this.globalData, this)
+      this.userInfo = this.globalData.userInfo
+      if (this.globalData.SystemParams.RetailerPoster && this.globalData.SystemParams.RetailerPoster !== '') {
+        this.sharePhoto = this.globalData.SystemParams.RetailerPoster
+      }
+      let userName = this.userInfo.linkman
+      if (this.userInfo.subscribe === 0) {
+        if (this.userInfo.province === '') {
+          userName = '未知地区用户'
+        } else {
+          let txt = '地区用户'
+          userName = `${this.userInfo.province}${txt}`
+        }
+      }
+      this.userName = userName
+      this.getList()
+      this.$apply()
+    }
+    onLoad (options) {
+      this.initData()
+      this.options = options
+      wepy.getSystemInfo().then(res => {
+        this.systemInfo = res
+        this.setCanvas()
+      })
+      if (this.$parent.globalData.flag.bokaAuth) {
+        this.handlePageData()
+      } else {
+        this.$parent.loadCallback = () => {
+          this.handlePageData()
+        }
+      }
+      wepy.showShareMenu({
+        withShareTicket: true
+      })
+      wepy.hideShareMenu()
+    }
+    onUnload () {
+      this.initData()
+    }
+    handleShare () {
+      const lastshareuid = this.options.share_uid
+      let shareurl = `/pages/mark?fid=${this.Fid}&share_uid=${this.userInfo.uid}&share_wid=${this.globalData.Wid}&wid=${this.globalData.Wid}&comefrom=${Config.AppName}`
+      if (lastshareuid) {
+        shareurl = `${shareurl}&lastshareuid=${lastshareuid}`
+      }
+      let backUrl = encodeURIComponent(shareurl)
+      shareurl = `${shareurl}&currentUrl=${backUrl}`
+      let txt = '邀你一起躺赚钱！'
+      this.shareParams = {
+        title: `${this.userName}${txt}`,
+        path: shareurl,
+        imageUrl: 'https://tossharingsales.boka.cn/minigxk/factory/share.png'
+      }
+    }
+    onShareAppMessage (res) {
+      this.handleShare()
+      return this.shareParams
+    }
+    onShareTimeline () {
+      this.handleShare()
+      return this.shareParams
+    }
+    setCanvas () {
+      this.myCanvasWidth = (this.systemInfo.windowWidth * 0.8).toFixed(2)
+      this.myCanvasHeight = (this.systemInfo.windowHeight * 0.6).toFixed(2)
+      let newWidth = (640 / 1008 * this.myCanvasHeight).toFixed(2)
+      if (newWidth < this.myCanvasWidth) {
+        this.myCanvasWidth = newWidth
+      }
+      this.ratio = this.myCanvasWidth * 2 / this.myCanvasHeight
+    }
+    createImage () {
+      const context = this.context
+      const _canvasWidth = parseFloat(this.myCanvasWidth)
+      const _canvasHeight = parseFloat(this.myCanvasHeight)
+      const bgPhoto = this.bgPhoto
+      const avatarPhoto = this.avatarPhoto
+      const miniQrcode = this.miniQrcode
+      // 画图片
+      // 画背景图
+      context.fillRect(0, 0, _canvasWidth, _canvasHeight)
+      context.drawImage(bgPhoto, 0, 0, _canvasWidth, _canvasHeight)
+
+      let avatarWidth = Math.ceil(_canvasWidth * 0.21)
+      if (avatarWidth % 2 !== 0) {
+        avatarWidth = avatarWidth + 1
+      }
+      let avatarR = avatarWidth / 2
+      context.save()
+      context.beginPath()
+      context.arc(_canvasWidth / 2, _canvasHeight * 0.03 + avatarR, avatarR, 0, 2 * Math.PI, false)
+      context.clip()
+      context.drawImage(avatarPhoto, _canvasWidth / 2 - avatarR, _canvasHeight * 0.03, avatarWidth, avatarWidth)
+      context.restore()
+
+      context.setFontSize(12)
+      context.setFillStyle('#fff')
+      context.setTextAlign('center')
+      context.fillText(`${this.userName}`, _canvasWidth / 2, _canvasHeight * 0.23, _canvasWidth)
+
+      context.setFontSize(12)
+      context.setFillStyle('#fff')
+      context.setTextAlign('center')
+      let ltxt = '邀你一起赚钱'
+      context.fillText(ltxt, _canvasWidth / 2, _canvasHeight * 0.23 + 25, _canvasWidth)
+
+      let codeWidth = Math.ceil(_canvasWidth * 0.50)
+      if (codeWidth % 2 !== 0) {
+        codeWidth = codeWidth + 1
+      }
+      let codeR = codeWidth / 2
+      context.save()
+      context.beginPath()
+      context.arc(_canvasWidth / 2, _canvasHeight * 0.60 + codeR, codeR, 0, 2 * Math.PI, false)
+      context.clip()
+      context.drawImage(miniQrcode, _canvasWidth / 2 - codeR, _canvasHeight * 0.60, codeWidth, codeWidth)
+      context.restore()
+      context.save()
+      context.draw()
+      wepy.hideLoading()
+      this.saveBtnShow = true
+      this.$apply()
+    }
+    methods = {
+      createPic () {
+        this.setCanvas()
+        this.canvasShow = true
+        let photo = this.sharePhoto.replace(/http:/g, 'https:')
+        let avatar = this.userInfo.avatar.replace(/http:/g, 'https:')
+        wepy.showLoading({
+          title: '生成海报中'
+        }).then(res => {
+          return wepy.downloadFile({
+            url: avatar
+          })
+        }).then(res => {
+          if (!res.tempFilePath) {
+            return new Promise()
+          }
+          this.avatarPhoto = res.tempFilePath
+          return wepy.downloadFile({
+            url: photo
+          })
+        }).then(res => {
+          if (!res.tempFilePath) {
+            return new Promise()
+          }
+          this.bgPhoto = res.tempFilePath
+          return wepy.request({
+            url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/wxa/createPoster`,
+            method: 'POST',
+            data: {
+              appid: Config.AppId,
+              sourceurl: `/pages/mark?share_uid=${this.userInfo.uid}&fid=${this.Fid}&wid=${this.globalData.Wid}`,
+              page: 'pages/index'
+            }
+          })
+        }).then(res => {
+          let photoFile = res.data.data.replace(/http:/g, 'https:')
+          return wepy.downloadFile({
+            url: photoFile
+          })
+        }).then(res => {
+          if (!res.tempFilePath) {
+            return new Promise()
+          }
+          this.miniQrcode = res.tempFilePath
+          this.context = wepy.createCanvasContext('myCanvas')
+          this.context.save()
+          this.createImage()
+        })
+      },
+      popClose () {
+        this.saveBtnShow = false
+        this.popShow = false
+        this.$apply()
+      },
+      popSave () {
+        wepy.canvasToTempFilePath({
+          canvasId: 'myCanvas'
+        }).then(res => {
+          Util.savePhoto({
+            path: res.tempFilePath,
+            callback: () => {
+              this.popShow = false
+              this.saveBtnShow = false
+              this.$apply()
+            }
+          })
+        })
+      },
+      onSaveTap (e) {
+        wepy.canvasToTempFilePath({
+          canvasId: 'myCanvas'
+        }).then(res => {
+          Util.savePhoto({
+            path: res.tempFilePath,
+            callback: () => {
+              this.canvasShow = false
+              this.saveBtnShow = false
+              this.$apply()
+            }
+          })
+        })
+      },
+      onCancelTap (e) {
+        this.canvasShow = false
+        this.saveBtnShow = false
+        wepy.hideLoading()
+      }
+    }
+  }
+</script>

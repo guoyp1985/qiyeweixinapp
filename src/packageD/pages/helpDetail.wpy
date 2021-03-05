@@ -1,0 +1,169 @@
+<style lang="less">
+.help-detail-page.iphone{padding-bottom:330rpx;}
+.help-detail-page{
+  padding-bottom:260rpx;
+  .list-area{
+    padding:20rpx;
+    .list-item{display:flex;border-bottom:#eee 2rpx solid;font-size:32rpx;padding:20rpx 0 20rpx 10rpx;}
+  }
+  .btn-area{
+    padding:20rpx 20rpx 40rpx;
+    .btn{
+      width:100%;margin:0 auto;background-color:#f64635;color:#fff;
+      height:80rpx;line-height:80rpx;text-align:center;border-radius:70rpx;font-size:32rpx;
+    }
+  }
+}
+.fixed-share{
+  position:fixed;right:30rpx;bottom:140rpx;width:100rpx;height:100rpx;border-radius:50%;display:block;z-index: 999;
+  .inner{position:absolute;;left:0;right:0;bottom:0;top:0;border-radius:50%;}
+}
+.fixed-share.iphone{bottom:208rpx;}
+.fixed-back{
+  position:fixed;right:30rpx;bottom:20rpx;border-radius:50%;
+  width:100rpx;height:100rpx;line-height:100rpx;text-align:center;
+}
+.fixed-back.iphone{bottom:90rpx;}
+</style>
+<template>
+  <view :class="{'iphone' : isIpx}" class="fixed-back bg-theme color-white" style="{{themeObject.bgStyle}}" @tap="toCenter">返回</view>
+  <view :class="{'iphone' : isIpx}" class="fixed-share">
+    <button class="inner bg-theme color-white flex_center" style="{{themeObject.bgStyle}}" open-type="share">分享</button>
+  </view>
+  <view :class="{'iphone' : isIpx}" class="help-detail-page">
+    <block wx:if="{{disData}}">
+      <view wx:if="{{showSos}}" class="flex_empty">无此内容</view>
+      <block wx:else>
+        <video wx:if="{{video && video != ''}}" class="w_100" src="{{video}}"></video>
+        <view class="bg-theme color-white padding10 font16 bold" style="{{themeObject.bgStyle}}">问: {{viewData.title}}</view>
+        <repeat for="{{contentArr}}" index="index" item="item">
+          <view wx:if="{{item.content && item.content != ''}}" class="padding10 bg-white">
+            <text style="word-wrap:break-word;">{{item.content}}</text>
+          </view>
+          <repeat for="{{item.photo}}" index="index1" item="photo">
+            <view class="flex_center">
+              <image class="w_100" src="{{photo}}" mode="widthFix" data-url="{{photo}}" bindtap="previewImg"></image>
+            </view>
+          </repeat>
+        </repeat>
+      </block>
+    </block>
+  </view>
+</template>
+<script>
+  import wepy from 'wepy'
+  import Config from '@/config'
+  import Util from '@/libs/util'
+  export default class extends wepy.page {
+    data = {
+      viewData: {},
+      disData: false,
+      showSos: false,
+      contentArr: [],
+      video: null,
+      listData: [],
+      isIpx: false,
+      themeObject: {}
+    }
+    getList () {
+      let params = {module: 'newhelp', fid: Config.Fid, classid: this.viewData.classid, type: 'rand', nowid: this.options.id}
+      wepy.request({
+        url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/moduleList`,
+        data: params
+      }).then(res => {
+        const data = res.data
+        const retdata = data.data ? data.data : data
+        this.listData = retdata
+        this.$apply()
+      })
+    }
+    handlePageData () {
+      this.globalData = this.$parent.globalData
+      Util.appInit(this.globalData, this)
+      this.userInfo = this.globalData.userInfo
+      let shareParams = Util.getShareParams(this.options)
+      wepy.request({
+        url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/moduleInfo`,
+        data: {...shareParams, module: 'newhelp', id: this.options.id, wid: this.globalData.Wid}
+      }).then(res => {
+        const data = res.data
+        const retdata = data.data ? data.data : data
+        this.viewData = retdata
+        if (retdata.video && retdata.video !== '') {
+          this.video = retdata.video
+        }
+        if (retdata.content && retdata.content !== '') {
+          this.contentArr = JSON.parse(retdata.content)
+        }
+        if (data.flag) {
+          this.showSos = false
+        } else {
+          this.showSos = true
+        }
+        this.disData = true
+        this.$apply()
+      })
+    }
+    onLoad (options) {
+      this.options = options
+      if (this.$parent.globalData.flag.bokaAuth) {
+        this.handlePageData()
+      } else {
+        this.$parent.loadCallback = () => {
+          this.handlePageData()
+        }
+      }
+      wepy.showShareMenu({
+        withShareTicket: true
+      })
+      wepy.getSystemInfo().then(res => {
+        if (res.model.substring(0, res.model.indexOf('X')) + 'X' === 'iPhone X') {
+          this.isIpx = true
+        }
+        this.$apply()
+      })
+    }
+    handleShare () {
+      const lastshareuid = this.options.share_uid
+      let shareurl = `/packageD/pages/helpDetail?id=${this.options.id}&share_uid=${this.userInfo.uid}&share_wid=${this.globalData.Wid}&wid=${this.globalData.Wid}&comefrom=${Config.AppName}`
+      if (lastshareuid) {
+        shareurl = `${shareurl}&lastshareuid=${lastshareuid}`
+      }
+      let backUrl = encodeURIComponent(shareurl)
+      shareurl = `${shareurl}&currentUrl=${backUrl}`
+      this.shareParams = {
+        title: this.viewData.title,
+        path: shareurl
+      }
+      if (this.viewData.photo && this.viewData.photo !== '') {
+        this.shareParams.imageUrl = this.viewData.photo
+      }
+    }
+    onShareAppMessage (res) {
+      this.handleShare()
+      return this.shareParams
+    }
+    onShareTimeline () {
+      this.handleShare()
+      return this.shareParams
+    }
+    methods = {
+      toCenter (e) {
+        wepy.reLaunch({url: '/packageD/pages/helpCenter'})
+      },
+      toChat (e) {
+        wepy.navigateTo({url: '/packageD/pages/chat'})
+      },
+      toDetail (data) {
+        wepy.redirectTo({url: `/packageD/pages/helpDetail?id=${data.id}`})
+      },
+      previewImg (e) {
+        const url = e.currentTarget.dataset.url
+        wepy.previewImage({
+          current: 0,
+          urls: [url]
+        })
+      }
+    }
+  }
+</script>

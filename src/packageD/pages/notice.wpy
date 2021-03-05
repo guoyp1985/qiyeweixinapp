@@ -1,0 +1,69 @@
+<style lang="less">
+.notice-page{
+  image{width:100%;}
+  .text_wrap{word-break:break-all;word-wrap:break-word;}
+}
+</style>
+<template>
+  <view class="notice-page bg-white">
+    <view class="padding10 bold">{{viewData.title}}</view>
+    <repeat for="{{viewData.content}}" index="index" item="item">
+      <view wx:if="{{item.content && item.content != ''}}" class="padding10">
+        <text class="text_wrap">{{item.content}}</text>
+      </view>
+      <repeat for="{{item.photo}}" index="index1" item="photo">
+        <view class="flex_center">
+          <image src="{{photo}}" mode="widthFix" data-url="{{photo}}" bindtap="previewImg"></image>
+        </view>
+      </repeat>
+    </repeat>
+  </view>
+</template>
+<script>
+  import wepy from 'wepy'
+  import Config from '@/config'
+  import Util from '@/libs/util'
+  export default class extends wepy.page {
+    data = {
+      viewData: {},
+      themeObject: {}
+    }
+    handlePageData () {
+      this.globalData = this.$parent.globalData
+      Util.appInit(this.globalData, this)
+      this.userInfo = this.globalData.userInfo
+      let shareParams = Util.getShareParams(this.options)
+      let params = {...shareParams, id: this.options.id, module: 'notice', wid: this.globalData.Wid}
+      wepy.request({
+        url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/moduleInfo`,
+        data: params,
+        method: 'post'
+      }).then(res => {
+        wepy.hideLoading()
+        const data = res.data
+        const retdata = data.data ? data.data : data
+        this.viewData = retdata
+        this.$apply()
+      })
+    }
+    onLoad (options) {
+      this.options = options
+      if (this.$parent.globalData.flag.bokaAuth) {
+        this.handlePageData()
+      } else {
+        this.$parent.loadCallback = () => {
+          this.handlePageData()
+        }
+      }
+    }
+    methods = {
+      previewImg (e) {
+        const url = e.currentTarget.dataset.url
+        wepy.previewImage({
+          current: 0,
+          urls: [url]
+        })
+      }
+    }
+  }
+</script>

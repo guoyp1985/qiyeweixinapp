@@ -1,0 +1,232 @@
+<style lang="less">
+page{background-color:#f2f2f2;}
+.factory-cardlist-page{
+  .lists{padding:0px 40rpx 20rpx;}
+  .yhq_item{
+    width: 100%;position:relative;background-color:#fff;color:#716f76;
+    display: flex;justify-content: center;align-items: center;
+    margin-top:20rpx;
+  }
+  .list-item{box-shadow: 0rpx 4rpx 12rpx rgba(0,0,0,0.1);}
+  .b-bottom{border-bottom:4rpx dashed #f2f3f2}
+  .percentarea{width:100% !important;height:10rpx !important;background: #f6f6f6 !important;}
+  .inner{height:10rpx !important;background-color:#eb6b5e !important; }
+  .proInfo{box-sizing: border-box;padding:20rpx 40rpx;background-color:#fff;}
+  .hxj{text-decoration: line-through;}
+  .flex_between{display: flex;justify-content: space-between;padding:20rpx 40rpx 0 40rpx;}
+  .yhq_item .txt{color:#fff;}
+  .yhq_item .flex_column{display:flex;flex-direction: column;align-items: center;justify-content: center;}
+  .yhq_item .ball{
+    position: absolute;
+    width: 60rpx;
+    height:60rpx;
+    bottom: -30rpx;
+    background-color: #f2f3f2;
+    border-radius: 50%;
+  }
+  .yhq_item .ball-left{left: -30rpx;}
+  .yhq_item .ball-right{right: -30rpx;}
+  .yhq_item .ball-up{top: -30rpx;}
+  .yhq_item .ball-down{bottom: -30rpx;}
+  .pic{width:160rpx;}
+  .pic image{width:140rpx;height:140rpx;}
+  .rbtn{display:inline-block;padding:5rpx 10rpx;border-radius:100rpx;font-weight: bolder;width:100rpx;text-align: center;color:#fff;}
+  .rbtn.gray{background-color:#ccc;}
+}
+</style>
+<template>
+  <view class="factory-cardlist-page">
+    <block wx:if="{{disList2}}">
+      <view wx:if="{{!tabData2.length}}" class="flex_empty">暂无可领取优惠券</view>
+      <view wx:else class="scroll_list com-card-list">
+        <repeat for="{{tabData2}}" item="item" index="index">
+          <view class="lists">
+            <view class="list-item">
+              <view class="yhq_item">
+                <view class="flex_cell b-bottom" style="overflow:visible">
+                  <view class="flex_left pt10 pl20 pr20">
+                    <view class="flex_cell flex_left font18">
+                      <text style="font-weight:bold;{{themeObject.colorStyle}}">¥ {{item.facemoney}}</text><text class="color-gray3 font16 ml5"> (满{{item.ordermoney}}元可用)</text>
+                    </view>
+                    <view class="flex_right">
+                      <view wx:if="{{item.isreceive}}" class="rbtn gray">已领取</view>
+                      <view wx:elif="{{!item.leftcount || item.leftcount <= 0}}" class="rbtn gray">已抢光</view>
+                      <view wx:else class="rbtn" style="{{themeObject.bgStyle}}" @tap="receiveEvent({{item}},{{index}})">领取</view>
+                    </view>
+                  </view>
+                  <view style="padding:5px 20px;">{{item.starttime_str}} 至 {{item.endtime_str}}</view>
+                  <view class="flex_left">
+                    <view class="ball ball-left"></view>
+                    <view class="ball ball-right"></view>
+                  </view>
+                </view>
+              </view>
+              <view class="w_100 proInfo">
+                <view class="db-flex" @tap="toProduct({{item}})">
+                  <view class="pic">
+                    <image mode="aspectFill" src="{{item.photo}}" lazy-load></image>
+                  </view>
+                  <view class="flex_cell">
+                    <view class="clamp1 font16">{{item.producttitle}}</view>
+                    <view class="hxj">¥ {{item.productprice}}</view>
+                    <view class="font16" style="{{themeObject.colorStyle}}" wx:if="{{item.discountprice != 0 && item.discountprice != '0.00'}}">领券后 <text style="font-weight:bold">¥ {{item.discountprice}}</text> </view>
+                  </view>
+                </view>
+                <view class="w_100 pt10 flex_center">
+                  <view class="flex_cell flex_left">
+                    <view class="percentarea v_middle">
+                      <view class="inner" style="{{themeObject.bgStyle}}width:{{(item.totalcount - item.leftcount) / item.totalcount * 100}}%"></view>  <!-- 这里的width需要计算百分比 -->
+                    </view>
+                  </view>
+                  <view class="w100 flex_center">
+                    <view class="w_100 align_center clamp1 font12" style="{{themeObject.colorStyle}}" wx:if="{{!item.leftcount || item.leftcount <= 0}}">已抢光</view>
+                    <view class="w_100 align_center clamp1 font12" wx:else>仅剩<span style="{{themeObject.colorStyle}}">{{item.leftcount}}</span>张</view>
+                  </view>
+                </view>
+              </view>
+            </view>
+          </view>
+        </repeat>
+      </view>
+    </block>
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy'
+import Util from '@/libs/util'
+import Time from '@/libs/time'
+import Config from '@/config'
+export default class extends wepy.page {
+  config = {
+    enablePullDownRefresh: true,
+    backgroundTextStyle: 'dark'
+  }
+  data = {
+    options: {},
+    globalData: {},
+    userInfo: null,
+    lastIndex: 0,
+    disList2: false,
+    tabData2: [],
+    isIng: false,
+    themeObject: {}
+  }
+  onPullDownRefresh () {
+    wepy.showNavigationBarLoading()
+    setTimeout(function () {
+      wepy.hideNavigationBarLoading()
+      wepy.stopPullDownRefresh()
+    }, 500)
+    this.refreshPage()
+  }
+  onReachBottom (event) {
+    if (this.tabData2.length === (this.pageStart2 + 1) * this.limit) {
+      this.pageStart2++
+      this.getData2()
+    }
+  }
+  getData2 = function () {
+    wepy.request({
+      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/card/factoryCardList`,
+      data: {fid: Config.Fid, pagestart: this.pageStart2, limit: this.limit},
+      method: 'post'
+    }).then(res => {
+      const data = res.data
+      let retdata = data.data ? data.data : data
+      for (let i = 0; i < retdata.length; i++) {
+        retdata[i].starttime_str = new Time(retdata[i].starttime * 1000).dateFormat('yyyy-MM-dd hh:mm')
+        retdata[i].endtime_str = new Time(retdata[i].endtime * 1000).dateFormat('yyyy-MM-dd hh:mm')
+        retdata[i].leftcount = parseInt(retdata[i].leftcount)
+      }
+      this.tabData2 = this.tabData2.concat(retdata)
+      this.disList2 = true
+      wepy.stopPullDownRefresh()
+      this.$apply()
+    })
+  }
+  refreshPage () {
+    this.globalData = this.$parent.globalData
+    Util.appInit(this.globalData, this)
+    this.userInfo = wepy.getStorageSync('user')
+    this.disList2 = false
+    this.tabData2 = []
+    this.pageStart2 = 0
+    this.$apply()
+    this.getData2()
+  }
+  onLoad (options) {
+    this.options = options
+    this.pageStart2 = 0
+    this.limit = Config.Limit
+    this.$apply()
+    wepy.showShareMenu({
+      withShareTicket: true
+    })
+    if (this.$parent.globalData.flag.bokaAuth) {
+      this.refreshPage()
+    } else {
+      this.$parent.loadCallback = () => {
+        this.refreshPage()
+      }
+    }
+  }
+  handleShare () {
+    const lastshareuid = this.options.share_uid
+    let shareurl = `/packageC/pages/factoryCardList?fid=${Config.Fid}&share_uid=${this.userInfo.uid}&share_wid=${this.globalData.Wid}&wid=${this.globalData.Wid}&comefrom=${Config.AppName}`
+    if (lastshareuid) {
+      shareurl = `${shareurl}&lastshareuid=${lastshareuid}`
+    }
+    let backUrl = encodeURIComponent(shareurl)
+    shareurl = `${shareurl}&currentUrl=${backUrl}`
+    this.shareParams = {
+      title: '福利大放送',
+      path: shareurl
+    }
+  }
+  onShareAppMessage (res) {
+    this.handleShare()
+    return this.shareParams
+  }
+  onShareTimeline () {
+    this.handleShare()
+    return this.shareParams
+  }
+  methods = {
+    toProduct (item) {
+      wepy.navigateTo({url: `/${Config.Router.factoryproduct}?id=${item.fpid}&type=card`})
+    },
+    receiveEvent (item, index) {
+      if (this.isIng) return false
+      this.isIng = true
+      wepy.showLoading()
+      wepy.request({
+        url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/card/getCard`,
+        data: {id: item.id},
+        method: 'post'
+      }).then(res => {
+        wepy.hideLoading()
+        this.isIng = false
+        const data = res.data
+        wepy.showToast({
+          title: data.error,
+          icon: 'none',
+          duration: Util.delay(data.error)
+        })
+        if (data.flag) {
+          // 礼品领取成功通知
+          Util.checkTmpMsg({
+            systeminfo: this.globalData.systemInfo,
+            tmplIds: [this.globalData.Templates.card_receive],
+            callback: () => {
+              this.tabData2[index].leftcount = this.tabData2[index].leftcount - 1
+              this.tabData2[index].isreceive = 1
+              this.$apply()
+            }
+          })
+        }
+      })
+    }
+  }
+}
+</script>

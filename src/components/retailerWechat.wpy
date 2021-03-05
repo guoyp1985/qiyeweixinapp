@@ -1,0 +1,141 @@
+<style lang="less">
+.wechat-modal{
+  .wechat-pic{
+    position:relative;width:80%;margin:0 auto;
+    image{width:100%;}
+    .txt1{position:absolute;top:26%;left:67%;}
+    .txt2{position:absolute;bottom:8.6%;left:6%;}
+  }
+  .modal-bottom{
+    width:100%;height:90rpx;
+    button{border-radius: 10rpx;}
+  }
+  .empty_txt{height:200rpx;}
+}
+</style>
+<template>
+  <view class="auto-modal flex_center wechat-modal" wx:if="{{showRetailerWechat}}">
+    <view class="modal-inner padding20 border-box" style="width:80%;">
+      <block wx:if="{{!retailerInfo.qrcode || retailerInfo.qrcode == ''}}">
+        <block wx:if="{{retailerInfo.uid == userInfo.uid}}">
+          <view class="align_center font18 bold pb10">卖家微信</view>
+          <form class="modal-bottom db mt20" report-submit="true" bindsubmit="uploadQrcode">
+            <button class="w_100 h_100 bg-theme color-white font16 flex_center" style="{{themeObject.bgStyle}}" form-type="submit">上传二维码</button>
+          </form>
+        </block>
+        <block wx:else>
+          <view class="align_center font18 bold pb10">卖家微信</view>
+          <view class="empty_txt color-gray flex_center font16">卖家很懒，还未上传个人二维码</view>
+        </block>
+      </block>
+      <block wx:else>
+        <block wx:if="{{title && title !== ''}}">
+          <view class="align_center font18 bold pb10">{{title}}</view>
+        </block>
+        <block wx:else>
+          <view wx:if="{{module == 'product'}}" class="align_center font18 bold pb10">加卖家微信进群领优惠</view>
+          <view wx:elif="{{module == 'kouling'}}" class="align_center font18 bold pb10">加 {{retailerInfo.linkman}} 的微信获取口令吧</view>
+          <view wx:else class="align_center font18 bold pb10">提示</view>
+          <view wx:if="{{module == 'kouling'}}" class="align_center font16">在客服会话回复【<text class="bold color-theme" style="{{themeObject.colorStyle}}">{{retailerInfo.uid}}</text>】扫码加微信</view>
+          <view wx:else class="align_center font16">在客服会话回复【<text class="bold color-theme" style="{{themeObject.colorStyle}}">{{retailerInfo.uid}}</text>】扫码加卖家微信</view>
+        </block>
+        <view class="align_center pt20 pb20 wechat-pic">
+          <image mode="widthFix" src="{{retailerWechat}}"></image>
+          <text class="txt1">{{retailerInfo.uid}}</text>
+          <text class="txt2">{{retailerInfo.uid}}</text>
+        </view>
+        <view class="modal-bottom">
+          <button wx:if="{{module == 'kouling'}}" class="w_100 h_100 bg-theme color-white font16 flex_center" style="{{themeObject.bgStyle}}" open-type="contact" type="default-light">点击回复 扫码加微信</button>
+          <button wx:else class="w_100 h_100 bg-theme color-white font16 flex_center" style="{{themeObject.bgStyle}}" open-type="contact" type="default-light">点击回复 {{retailerInfo.uid}} 扫码加卖家微信</button>
+        </view>
+      </block>
+      <form class="close-area flex_center" bindsubmit="closeWechatModal" report-submit="true">
+        <button formType="submit" class="al al-close1"></button>
+      </form>
+    </view>
+  </view>
+</template>
+
+<script>
+  import Config from '@/config'
+  import Util from '@/libs/util'
+  import wepy from 'wepy'
+  export default class extends wepy.component {
+    props = {
+      retailerInfo: {
+        type: Object,
+        default: {}
+      },
+      userInfo: {
+        type: Object,
+        default: {}
+      },
+      module: {
+        type: String,
+        default: ''
+      },
+      title: {
+        type: String,
+        default: ''
+      },
+      themeObject: {
+        type: Object,
+        default: {}
+      }
+    }
+    data = {
+      showRetailerWechat: false,
+      retailerWechat: Config.RetailerWechat
+    }
+    onLoad () {
+    }
+    methods = {
+      showModal () {
+        this.showRetailerWechat = true
+      },
+      closeWechatModal (e) {
+        this.showRetailerWechat = false
+      },
+      uploadQrcode (e) {
+        const self = this
+        wepy.chooseImage({
+          count: 1
+        }).then((res) => {
+          const filepath = res.tempFilePaths[0]
+          return wepy.uploadFile({
+            url: `${Config.GxkApi}/api/upload/photo?token=${self.$root.$parent.globalData.miniData.token}`,
+            filePath: filepath,
+            name: 'photo',
+            method: 'post'
+          })
+        }).then((res) => {
+          const resdata = JSON.parse(res.data)
+          if (!resdata.flag) {
+            wepy.showToast({
+              title: resdata.error,
+              icon: 'none',
+              duration: Util.delay(resdata.error)
+            })
+          } else {
+            return wepy.request({
+              url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/retailer/changeInfo`,
+              data: {
+                qrcode: resdata.data
+              },
+              method: 'post'
+            })
+          }
+        }).then(res => {
+          if (res) {
+            return wepy.request({url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/retailer/info`, data: {uid: self.retailerInfo.uid, appid: Config.AppId}})
+          }
+        }).then(res => {
+          if (res) {
+            self.retailerInfo = res.data.data
+            self.$apply()
+          }
+        })
+      }
+    }
+  };
+</script>

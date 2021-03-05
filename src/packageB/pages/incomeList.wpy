@@ -1,0 +1,1106 @@
+<style lang="less">
+.income-app-tab{
+  position:fixed;left:0;right:0;top:0;z-index:10;
+}
+.income-list-page{
+  padding-top:100rpx;
+  .pic-cell{
+    width:120rpx;
+    image{width:100rpx;height:100rpx;border-radius:50%;}
+  }
+  .scroll_item{
+    .btn{padding:10rpx 20rpx;border-radius:30rpx;}
+  }
+}
+.fixed-ico{
+  position:fixed;right:30rpx;bottom:130rpx;width:100rpx;height:100rpx;border-radius:50%;display:block;z-index: 999;
+  .inner{position:absolute;;left:0;right:0;bottom:0;top:0;border-radius:50%;}
+}
+.fixed-ico.iphone{bottom:198rpx;}
+.cash-modal{
+  .edit-item{padding:20rpx;box-sizing:border-box;posotion:relative;}
+  .edit-list .edit-item:not(:last-child){border-bottom:#d9d9d9 2rpx solid;}
+  .title-cell{display: flex !important;align-items: right;justify-content:flex-start;flex-flow:row wrap; align-items: center;}
+  .big-cell{padding-left:20rpx;box-sizing: border-box;flex:1;}
+  .textarea{position:relative;width:100%;height:200rpx;box-sizing:border-box;border:#d9d9d9 1rpx solid;padding:10rpx;box-sizing: border-box;}
+  .photo-list:after{content:'';display:block;clear:both;}
+  .photo-item{
+    width: 25%;padding:10rpx;float: left;box-sizing: border-box;color:#999;
+    .move-ico{
+      position:absolute;bottom:0;background-color:rgba(0,0,0,0.5);color:#fff;
+      .al{font-weight:bold;}
+    }
+    .move-ico.prev{left:0;}
+    .move-ico.next{right:0;}
+  }
+  .photo-item.add .image-outer{border:rgba(0,0,0,0.2) 2rpx solid;box-sizing: border-box; }
+  .photo-item .al{font-size:40rpx;}
+  .photo-item .close{
+    position:absolute;width:40rpx;height:40rpx;line-height:40rpx;text-align:center;border-radius:50%;
+    right:0;top:-12rpx;right:-12rpx;font-weight:bold;background-color:rgba(0,0,0,0.8);color:#fff;
+  }
+  .sub-area{
+    width:300rpx;height:80rpx;position:relative;margin:0 auto;
+    button{position:absolute;left:0;top:0;right:0;bottom:0;border-radius:80rpx;}
+  }
+}
+.tui-picker-content{padding: 10px 10px 5px;display: flex;justify-content: center;}
+.tui-picker-name{padding: 5px 0;margin-right: 10px;}
+.time-out{color:#d7b677;z-index:99;padding: 0px 10px;border:1px solid #d7b677;border-radius: 15px;display: flex;flex-direction: column;justify-content: center;}
+</style>
+<template>
+  <view class="app-tab income-app-tab">
+    <view class="tab-item {{selectedIndex==0 ? 'active' : ''}}" data-current="0" bindtap="clickTab">
+      <text style="{{selectedIndex == 0 ? themeObject.colorStyle : ''}}">全部</text>
+      <view class="line" style="{{selectedIndex == 0 ? themeObject.bgStyle : ''}}"></view>
+    </view>
+    <view class="tab-item {{selectedIndex==1 ? 'active' : ''}}" data-current="1" bindtap="clickTab">
+      <text style="{{selectedIndex == 1 ? themeObject.colorStyle : ''}}">待结算</text>
+      <view class="line" style="{{selectedIndex == 1 ? themeObject.bgStyle : ''}}"></view>
+    </view>
+    <view class="tab-item {{selectedIndex==2 ? 'active' : ''}}" data-current="2" bindtap="clickTab">
+      <text style="{{selectedIndex == 2 ? themeObject.colorStyle : ''}}">已结算</text>
+      <view class="line" style="{{selectedIndex == 2 ? themeObject.bgStyle : ''}}"></view>
+    </view>
+    <view wx:if="{{from == 'factory'}}" class="tab-item {{selectedIndex == 3 ? 'active' : ''}}" data-current="3" bindtap="clickTab">
+      <text style="{{selectedIndex == 3 ? themeObject.colorStyle : ''}}">手工分账</text>
+      <view class="line" style="{{selectedIndex == 3 ? themeObject.bgStyle : ''}}"></view>
+    </view>
+    <view wx:else class="tab-item {{selectedIndex == 3 ? 'active' : ''}}" data-current="3" bindtap="clickTab">
+      <text style="{{selectedIndex == 3 ? themeObject.colorStyle : ''}}">已提现</text>
+      <view class="line" style="{{selectedIndex == 3 ? themeObject.bgStyle : ''}}"></view>
+    </view>
+    <view class="tab-item {{selectedIndex == 4 ? 'active' : ''}}" data-current="4" bindtap="clickTab">
+      <text style="{{selectedIndex == 4 ? themeObject.colorStyle : ''}}">已退款</text>
+      <view class="line" style="{{selectedIndex == 4 ? themeObject.bgStyle : ''}}"></view>
+    </view>
+  </view>
+  <view class="income-list-page">
+    <block wx:if="{{selectedIndex == 0}}">
+      <block wx:if="{{disList1}}">
+        <view wx:if="{{!tabData1.length}}" class="flex_empty">暂无相关数据</view>
+        <scroll-view wx:else scroll-y="true" class="scroll-h" bindscrolltolower="scrollEvent1" scroll-into-view="{{toView1}}">
+          <incomeItem1 :listData.sync="listData1" :from.sync="from" :themeObject.sync="themeObject"></incomeItem1>
+          <view class="load-end-area loading" wx:if="{{isLoading1}}"></view>
+          <view class="load-end-area done" wx:elif="{{isDone1}}"></view>
+        </scroll-view>
+      </block>
+    </block>
+    <block wx:if="{{selectedIndex == 1}}">
+      <block wx:if="{{disList2}}">
+        <view wx:if="{{!tabData2.length}}" class="flex_empty">暂无相关数据</view>
+        <scroll-view wx:else scroll-y="true" class="scroll-h" bindscrolltolower="scrollEvent2" scroll-into-view="{{toView2}}">
+          <incomeItem2 :listData.sync="listData2" :from.sync="from" :themeObject.sync="themeObject"></incomeItem2>
+          <view class="load-end-area loading" wx:if="{{isLoading2}}"></view>
+          <view class="load-end-area done" wx:elif="{{isDone2}}"></view>
+        </scroll-view>
+      </block>
+    </block>
+    <block wx:if="{{selectedIndex == 2}}">
+      <block wx:if="{{disList3}}">
+        <view wx:if="{{!tabData3.length}}" class="flex_empty">暂无相关数据</view>
+        <scroll-view wx:else scroll-y="true" class="scroll-h" bindscrolltolower="scrollEvent3" scroll-into-view="{{toView3}}">
+          <incomeItem3 :listData.sync="listData3" :from.sync="from" :themeObject.sync="themeObject"></incomeItem3>
+          <view class="load-end-area loading" wx:if="{{isLoading3}}"></view>
+          <view class="load-end-area done" wx:elif="{{isDone3}}"></view>
+        </scroll-view>
+      </block>
+    </block>
+    <block wx:if="{{selectedIndex == 3}}">
+      <block wx:if="{{disList4}}">
+        <scroll-view scroll-y="true" class="scroll-h" bindscrolltolower="scrollEvent4" scroll-into-view="{{toView4}}">
+          <view wx:if="{{from == 'factory'}}" class="v-search-area flex_center bg-white">
+            <view class="search-outer flex_left">
+              <view class="flex_cell">
+                <input class="input" bindinput="keyupKeyword" type="text" value="{{searchword}}"/>
+              </view>
+              <view wx:if="{{searchword != ''}}" class="icon-cell flex_center color-gray font12" bindtap="cancelSearch">取消</view>
+              <view class="icon-cell flex_right" bindtap="searchEvent"><text class="al al-sousuo"></text></view>
+            </view>
+          </view>
+          <view wx:if="{{!tabData4.length && !applyData.length}}" class="flex_empty"><block wx:if="{{isSearch}}">暂无搜索结果</block><block wx:else>暂无相关数据</block></view>
+          <block wx:else>
+            <repeat for="{{applyData}}" item="item" index="index">
+              <view wx:if="{{from != 'factory'}}" class="scroll_item padding10 bg-white mt10 list-shadow">
+                <view class="db-flex">
+                  <view class="pic-cell" wx:if="{{item.photo && item.photo != ''}}">
+                    <image mode="aspectFill" src="{{item.photo}}" data-url="{{item.photo}}" bindtap="viewBigImg" />
+                  </view>
+                  <view class="flex_cell flex_left">
+                    <view class="w_100">
+                      <view><text>{{item.cashtypetext}}</text><text wx:if="{{item.status == 1}}" class="color-green2">【{{item.statustext}}】</text><text wx:else class="color-theme" style="{{themeObject.colorStyle}}">【{{item.statustext}}】</text></view>
+                      <view class="mt5 color-gray" wx:if="{{item.cmms && item.cmms > 0}}">手续费: ￥{{item.cmms}}</view>
+                      <view class="color-theme mt5" style="{{themeObject.colorStyle}}" wx:if="{{item.reason && item.reason != ''}}">{{item.reason}}</view>
+                      <view class="mt5 font12 clamp1 color-gray">{{item.dateline_str}}</view>
+                    </view>
+                  </view>
+                  <view class="w100 flex_right">
+                    <view class="clamp1">￥{{item.money}}</view>
+                  </view>
+                </view>
+              </view>
+            </repeat>
+            <repeat for="{{listData4}}" item="item" index="index">
+              <view wx:if="{{from == 'factory'}}" class="scroll_item padding10 bg-white mt10 list-shadow">
+                <view class="db-flex">
+                  <view class="pic-cell flex_left">
+                    <image src="{{item.avatar}}"></image>
+                  </view>
+                  <view class="flex_cell flex_left">
+                    <view class="w_100">
+                      <view>{{item.linkman}}</view>
+                      <view class="mt5 color-gray"><text>可提现:</text><text class="color-theme ml5" style="{{themeObject.colorStyle}}">￥{{item.waitcashmoney}}</text></view>
+                      <view class="mt5 font12 clamp1 color-gray">卖家等级 {{item.identity}}</view>
+                    </view>
+                  </view>
+                  <view class="w100 flex_right">
+                    <view class="bg-theme color-white btn" style="{{themeObject.bgStyle}}" data-data="{{item}}" data-index="{{index}}" bindtap="clickCash">手工分账</view>
+                  </view>
+                </view>
+              </view>
+              <view wx:else class="scroll_item padding10 bg-white mt10 list-shadow">
+                <view class="db-flex">
+                  <view class="pic-cell" wx:if="{{item.photo && item.photo != ''}}">
+                    <image mode="aspectFill" src="{{item.photo}}" data-url="{{item.photo}}" bindtap="viewBigImg" />
+                  </view>
+                  <view class="flex_cell flex_left">
+                    <view class="w_100">
+                      <view><text>{{item.cashtypetext}}</text><text wx:if="{{item.status == 1}}" class="color-green2">【{{item.statustext}}】</text><text wx:else class="color-theme" style="{{themeObject.colorStyle}}">【{{item.statustext}}】</text></view>
+                      <view class="mt5 color-gray" wx:if="{{item.cmms && item.cmms > 0}}">手续费: ￥{{item.cmms}}</view>
+                      <view class="color-theme mt5" style="{{themeObject.colorStyle}}" wx:if="{{item.reason && item.reason != ''}}">{{item.reason}}</view>
+                      <view class="mt5 font12 clamp1 color-gray">{{item.dateline_str}}</view>
+                    </view>
+                  </view>
+                  <view class="w100 flex_right">
+                    <view class="clamp1">￥{{item.money}}</view>
+                  </view>
+                </view>
+              </view>
+            </repeat>
+            <view class="load-end-area loading" wx:if="{{isLoading4}}"></view>
+            <view class="load-end-area done" wx:elif="{{isDone4}}"></view>
+          </block>
+        </scroll-view>
+      </block>
+    </block>
+    <block wx:if="{{selectedIndex == 4}}">
+      <block wx:if="{{disList5}}">
+        <view wx:if="{{!tabData5.length}}" class="flex_empty">暂无相关数据</view>
+        <scroll-view wx:else scroll-y="true" class="scroll-h" bindscrolltolower="scrollEvent5" scroll-into-view="{{toView5}}">
+          <incomeItem5 :listData.sync="listData5" :from.sync="from" :themeObject.sync="themeObject"></incomeItem5>
+          <view class="load-end-area loading" wx:if="{{isLoading5}}"></view>
+          <view class="load-end-area done" wx:elif="{{isDone5}}"></view>
+        </scroll-view>
+      </block>
+    </block>
+  </view>
+  <view class="auto-modal flex_center cash-modal" wx:if="{{showCash}}">
+    <view class="modal-inner border-box" style="width:85%;">
+      <view class="bold flex_center b_bottom_after pt10 pb10 font16">
+        <text>{{clickData.linkman}}可提现</text>
+        <text class="color-theme" style="{{themeObject.colorStyle}}">￥{{clickData.waitcashmoney}}</text>
+      </view>
+      <view class="edit-list">
+        <view class="edit-item flex_left">
+          <view class="title-cell">提现金额</view>
+          <input class="big-cell" bindinput="keyupFormCash" type="text" name="title" placeholder="提现金额" value="{{cashMoney}}"></input>
+          <view class="small-cell color-theme" style="{{themeObject.colorStyle}}" bindtap="clickAll">全部提现</view>
+        </view>
+        <view class="edit-item flex_left">
+          <view class="title-cell">提现说明</view>
+          <view class="big-cell">
+            <textarea fixed class="textarea" placeholder="提现说明" name="content" bindinput="keyTextarea" maxlength="-1"></textarea>
+          </view>
+        </view>
+        <view class="edit-item flex_left">
+          <view class="title-cell">上传凭证</view>
+          <view class="big-cell">
+            <view class="photo-list">
+              <view class="photo-item" wx:if="{{cashPhoto != ''}}">
+                <view class="image-outer">
+                  <view class="imgarea">
+                    <view class="inner">
+                      <image mode="aspectFill" src="{{cashPhoto}}" bindtap="uploadPhoto"></image>
+                      <view class="close" data-type="content" data-index="{{index}}" bindtap="deletePhoto">×</view>
+                    </view>
+                  </view>
+                </view>
+              </view>
+              <view class="photo-item add flex_center" wx:if="{{cashPhoto == ''}}" bindtap="uploadPhoto">
+                <view class="image-outer">
+                  <view class="imgarea">
+                    <view class="inner">
+                      <view>
+                        <view class="al al-shangchuantupian"></view>
+                      </view>
+                    </view>
+                  </view>
+                </view>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+      <view class="pb10 pt10">
+        <form class="sub-area flex_center" bindsubmit="submitCash" report-submit="true">
+          <button formType="submit" class="bg-theme color-white flex_center" style="{{themeObject.bgStyle}}">确认分账</button>
+        </form>
+      </view>
+      <form class="close-area flex_center" bindsubmit="closeCash" report-submit="true">
+        <button formType="submit" class="al al-close1"></button>
+      </form>
+    </view>
+  </view>
+  <view class="auto-modal flex_center cash-modal" wx:if="{{showTimeSearch}}">
+    <view class="modal-inner border-box" style="width:85%;">
+      <view class="bold flex_center b_bottom_after pt10 pb10 font16">请选择下单时间范围</view>
+      <view class="tui-picker-content">
+        <view class="tui-picker-name">开始时间</view>
+        <view class="time-out">
+          <view class="time-inner">
+            <picker mode="multiSelector" value="{{dateTime1}}" bindchange="changeDateTime1" bindcolumnchange="changeDateTimeColumn1" range="{{dateTimeArray1}}">
+              <view class="align_center">{{dateTimeArray1[0][dateTime1[0]]}}-{{dateTimeArray1[1][dateTime1[1]]}}-{{dateTimeArray1[2][dateTime1[2]]}} {{dateTimeArray1[3][dateTime1[3]]}}:{{dateTimeArray1[4][dateTime1[4]]}}<text class="al al-sanjiaoxing font14"></text></view>
+            </picker>
+          </view>
+        </view>
+      </view>
+      <view class="tui-picker-content">
+        <view class="tui-picker-name">结束时间</view>
+        <view class="time-out">
+          <view class="time-inner">
+            <picker mode="multiSelector" value="{{dateTime2}}" bindchange="changeDateTime2" bindcolumnchange="changeDateTimeColumn2" range="{{dateTimeArray2}}">
+              <view class="align_center">{{dateTimeArray2[0][dateTime2[0]]}}-{{dateTimeArray2[1][dateTime2[1]]}}-{{dateTimeArray2[2][dateTime2[2]]}} {{dateTimeArray2[3][dateTime2[3]]}}:{{dateTimeArray2[4][dateTime2[4]]}}<text class="al al-sanjiaoxing font14"></text></view>
+            </picker>
+          </view>
+        </view>
+      </view>
+      <view class="pb10 pt10">
+        <form class="sub-area flex_center" bindsubmit="submitTimeSearch" report-submit="true">
+          <button formType="submit" class="bg-theme color-white flex_center" style="{{themeObject.bgStyle}}">确认搜索</button>
+        </form>
+      </view>
+      <form class="close-area flex_center" bindsubmit="closeSearch" report-submit="true">
+        <button formType="submit" class="al al-close1"></button>
+      </form>
+    </view>
+  </view>
+  <form wx:if="{{selectedIndex < 3}}" :class="{'iphone' : isIpx}" class="fixed-ico" bindsubmit="showTime" report-submit="true">
+    <button class="inner bg-theme color-white flex_center" style="{{themeObject.bgStyle}}" form-type="submit"><text class="al al-sousuo font20"></text></button>
+  </form>
+</template>
+
+<script>
+import wepy from 'wepy'
+import Util from '@/libs/util'
+import Time from '@/libs/time'
+import dateTimePicker from '@/libs/dateTimePicker'
+import Config from '@/config'
+import IncomeItem from '@/components/incomeItem'
+export default class extends wepy.page {
+  config = {
+    enablePullDownRefresh: true,
+    backgroundTextStyle: 'dark'
+  }
+  components = {
+    incomeItem1: IncomeItem,
+    incomeItem2: IncomeItem,
+    incomeItem3: IncomeItem,
+    incomeItem5: IncomeItem
+  }
+  data = {
+    options: {},
+    globalData: {},
+    userInfo: null,
+    lastIndex: 0,
+    selectedIndex: 0,
+    disList1: false,
+    disList2: false,
+    disList3: false,
+    disList4: false,
+    disList5: false,
+    tabData1: [],
+    tabData2: [],
+    tabData3: [],
+    tabData4: [],
+    tabData5: [],
+    pageStart1: 0,
+    pageStart2: 0,
+    pageStart3: 0,
+    pageStart4: 0,
+    pageStart5: 0,
+    limit: Config.Limit,
+    userView: {},
+    toView1: '',
+    toView2: '',
+    toView3: '',
+    toView5: '',
+    QjlgtYKndrUEqwogzffVIKhdpxjEDNN0rWPrF1bs37kcd28jm4: '',
+    from: '',
+    Fid: Config.Fid,
+    showCash: false,
+    clickData: {},
+    clickIndex: 0,
+    cashMoney: '',
+    cashReason: '',
+    cashPhoto: '',
+    searchword: '',
+    isSearch: false,
+    afterSearch: false,
+    isLoading1: false,
+    isDone1: false,
+    isLoading2: false,
+    isDone2: false,
+    isLoading3: false,
+    isDone3: false,
+    isLoading4: false,
+    isDone4: false,
+    isLoading5: false,
+    isDone5: false,
+    applyData: [],
+    listData1: [],
+    listData2: [],
+    listData3: [],
+    listData4: [],
+    listData5: [],
+    showTimeSearch: false,
+    date: '2018-10-01',
+    time: '12:00',
+    dateTimeArray: null,
+    dateTime: null,
+    dateTimeArray1: null,
+    dateTime1: null,
+    dateTimeArray2: null,
+    dateTime2: null,
+    startYear: 2000,
+    endYear: 2050,
+    starttime: '',
+    endtime: '',
+    dataParams: {0: {}, 1: {}, 2: {}, 3: {}, 4: {}},
+    themeObject: {}
+  }
+  showTime () {
+    this.showTimeSearch = true
+  }
+  closeSearch () {
+    this.showTimeSearch = false
+  }
+  onPullDownRefresh () {
+    wepy.showNavigationBarLoading()
+    setTimeout(function () {
+      wepy.hideNavigationBarLoading()
+      wepy.stopPullDownRefresh()
+    }, 500)
+    this.refreshPage()
+  }
+  onReachBottom () {
+    switch (this.selectedIndex) {
+      case 0:
+        if (this.isLoading1) return false
+        if (this.dataParams[0].history && !this.isDone1) {
+          this.pageStart1++
+          this.isLoading1 = true
+          this.getData1()
+        } else {
+          if (this.tabData1.length === (this.pageStart1 + 1) * this.limit) {
+            this.pageStart1++
+            this.isLoading1 = true
+            this.getData1()
+          }
+        }
+        break
+      case 1:
+        if (this.isLoading2) return false
+        if (this.tabData2.length === (this.pageStart2 + 1) * this.limit) {
+          this.isLoading2 = true
+          this.pageStart2++
+          this.getData2()
+        }
+        break
+      case 2:
+        if (this.isLoading3) return false
+        if (this.dataParams[2].history && !this.isDone3) {
+          this.pageStart3++
+          this.isLoading3 = true
+          this.getData3()
+        } else {
+          if (this.tabData3.length === (this.pageStart3 + 1) * this.limit) {
+            this.pageStart3++
+            this.isLoading3 = true
+            this.getData3()
+          }
+        }
+        break
+      case 3:
+        if (this.isLoading4) return false
+        if (this.tabData4.length === (this.pageStart4 + 1) * this.limit) {
+          this.isLoading4 = true
+          this.pageStart4++
+          this.getData4()
+        }
+        break
+      case 4:
+        if (this.isLoading5) return false
+        if (this.dataParams[4].history && !this.isDone5) {
+          this.pageStart5++
+          this.isLoading5 = true
+          this.getData5()
+        } else {
+          if (this.tabData5.length === (this.pageStart5 + 1) * this.limit) {
+            this.pageStart5++
+            this.isLoading5 = true
+            this.getData5()
+          }
+        }
+        break
+    }
+  }
+  getData1 = function () {
+    let params = {pagestart: this.pageStart1, limit: this.limit, from: this.from, cashed: 100, appid: Config.AppId, starttime: this.starttime, endtime: this.endtime}
+    if (this.from === 'factory') {
+      params.fid = this.Fid
+    }
+    if (this.dataParams[0].history) {
+      params.history = 1
+    }
+    wepy.request({
+      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/accounting/list`,
+      data: params
+    }).then(res => {
+      const data = res.data
+      let retdata = data.data ? data.data : data
+      for (let i = 0; i < retdata.length; i++) {
+        retdata[i].dateline_str = new Time(retdata[i].dateline * 1000).dateFormat('yyyy-MM-dd hh:mm')
+        retdata[i].viewId = `member-view-1-${retdata[i].id}`
+        if (retdata[i].incomedetail) {
+          if (retdata[i].incomedetail.xiaoshou) {
+            let xslinkman = retdata[i].incomedetail.xiaoshou.linkman
+            if (xslinkman.length > 6) {
+              xslinkman = xslinkman.substr(0, 6)
+              xslinkman = `${xslinkman}...`
+            }
+            retdata[i].xslinkman = xslinkman
+          }
+          if (retdata[i].incomedetail.tuijian) {
+            let tjlinkman = retdata[i].incomedetail.tuijian.linkman
+            if (tjlinkman.length > 6) {
+              tjlinkman = tjlinkman.substr(0, 6)
+              tjlinkman = `${tjlinkman}...`
+            }
+            retdata[i].tjlinkman = tjlinkman
+          }
+        }
+      }
+      this.tabData1 = this.tabData1.concat(retdata)
+      let copyretdata = Util.uniqArray(this.listData1, retdata, 'id')
+      this.listData1 = this.listData1.concat(copyretdata)
+      this.isLoading1 = false
+      if (!retdata.length && !this.tabData1.length && !this.dataParams[0].history) {
+        this.dataParams[0].history = true
+        this.pageStart1 = 0
+        this.getData1()
+      } else {
+        if (retdata.length < this.limit && this.tabData1.length) {
+          if (this.dataParams[0].history) {
+            this.isDone1 = true
+          } else {
+            this.dataParams[0].history = true
+            this.pageStart1 = -1
+          }
+        } else {
+          this.isDone1 = false
+        }
+        this.disList1 = true
+      }
+      wepy.stopPullDownRefresh()
+      this.$apply()
+    })
+  }
+  getData2 = function () {
+    let params = {pagestart: this.pageStart2, limit: this.limit, from: this.from, cashed: 2, appid: Config.AppId, starttime: this.starttime, endtime: this.endtime}
+    if (this.from === 'factory') {
+      params.fid = this.Fid
+    }
+    wepy.request({
+      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/accounting/list`,
+      data: params
+    }).then(res => {
+      const data = res.data
+      let retdata = data.data ? data.data : data
+      for (let i = 0; i < retdata.length; i++) {
+        retdata[i].dateline_str = new Time(retdata[i].dateline * 1000).dateFormat('yyyy-MM-dd hh:mm')
+        retdata[i].viewId = `member-view-2-${retdata[i].id}`
+        if (retdata[i].incomedetail) {
+          if (retdata[i].incomedetail.xiaoshou) {
+            let xslinkman = retdata[i].incomedetail.xiaoshou.linkman
+            if (xslinkman.length > 6) {
+              xslinkman = xslinkman.substr(0, 6)
+              xslinkman = `${xslinkman}...`
+            }
+            retdata[i].xslinkman = xslinkman
+          }
+          if (retdata[i].incomedetail.tuijian) {
+            let tjlinkman = retdata[i].incomedetail.tuijian.linkman
+            if (tjlinkman.length > 6) {
+              tjlinkman = tjlinkman.substr(0, 6)
+              tjlinkman = `${tjlinkman}...`
+            }
+            retdata[i].tjlinkman = tjlinkman
+          }
+        }
+      }
+      this.tabData2 = this.tabData2.concat(retdata)
+      let copyretdata = Util.uniqArray(this.listData2, retdata, 'id')
+      this.listData2 = this.listData2.concat(copyretdata)
+      this.disList2 = true
+      this.isLoading2 = false
+      if (retdata.length < this.limit && this.tabData2.length) {
+        this.isDone2 = true
+      } else {
+        this.isDone2 = false
+      }
+      wepy.stopPullDownRefresh()
+      this.$apply()
+    })
+  }
+  getData3 = function () {
+    let params = {pagestart: this.pageStart3, limit: this.limit, from: this.from, cashed: 0, appid: Config.AppId, starttime: this.starttime, endtime: this.endtime}
+    if (this.from === 'factory') {
+      params.fid = this.Fid
+    }
+    if (this.dataParams[2].history) {
+      params.history = 1
+    }
+    wepy.request({
+      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/accounting/list`,
+      data: params
+    }).then(res => {
+      const data = res.data
+      let retdata = data.data ? data.data : data
+      for (let i = 0; i < retdata.length; i++) {
+        retdata[i].dateline_str = new Time(retdata[i].dateline * 1000).dateFormat('yyyy-MM-dd hh:mm')
+        retdata[i].viewId = `member-view-3-${retdata[i].id}`
+        if (retdata[i].incomedetail) {
+          if (retdata[i].incomedetail.xiaoshou) {
+            let xslinkman = retdata[i].incomedetail.xiaoshou.linkman
+            if (xslinkman.length > 6) {
+              xslinkman = xslinkman.substr(0, 6)
+              xslinkman = `${xslinkman}...`
+            }
+            retdata[i].xslinkman = xslinkman
+          }
+          if (retdata[i].incomedetail.tuijian) {
+            let tjlinkman = retdata[i].incomedetail.tuijian.linkman
+            if (tjlinkman.length > 6) {
+              tjlinkman = tjlinkman.substr(0, 6)
+              tjlinkman = `${tjlinkman}...`
+            }
+            retdata[i].tjlinkman = tjlinkman
+          }
+        }
+      }
+      this.tabData3 = this.tabData3.concat(retdata)
+      let copyretdata = Util.uniqArray(this.listData3, retdata, 'id')
+      this.listData3 = this.listData3.concat(copyretdata)
+      this.isLoading3 = false
+      if (!retdata.length && !this.tabData3.length && !this.dataParams[2].history) {
+        this.dataParams[2].history = true
+        this.pageStart3 = 0
+        this.getData3()
+      } else {
+        if (retdata.length < this.limit && this.tabData3.length) {
+          if (this.dataParams[2].history) {
+            this.isDone3 = true
+          } else {
+            this.dataParams[2].history = true
+            this.pageStart3 = -1
+          }
+        } else {
+          this.isDone3 = false
+        }
+        this.disList3 = true
+      }
+      wepy.stopPullDownRefresh()
+      this.$apply()
+    })
+  }
+  getData4 = function () {
+    if (this.from === 'factory') {
+      let params = {pagestart: this.pageStart4, limit: this.limit, fid: this.Fid, fulltime: 2, starttime: this.starttime, endtime: this.endtime}
+      if (Util.trim(this.searchword) === '') {
+        this.isSearch = false
+        this.afterSearch = false
+      } else {
+        this.isSearch = true
+        params.keyword = this.searchword
+        this.afterSearch = true
+      }
+      wepy.request({
+        url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/factory/retailerList`,
+        data: params
+      }).then(res => {
+        const data = res.data
+        let retdata = data.data ? data.data : data
+        for (let i = 0; i < retdata.length; i++) {
+          retdata[i].dateline_str = new Time(retdata[i].dateline * 1000).dateFormat('yyyy-MM-dd hh:mm')
+          retdata[i].viewId = `member-view-4-${retdata[i].id}`
+        }
+        this.tabData4 = this.tabData4.concat(retdata)
+        this.listData4 = this.tabData4
+        this.isLoading4 = false
+        if (retdata.length < this.limit && this.tabData4.length) {
+          this.isDone4 = true
+        } else {
+          this.isDone4 = false
+        }
+        this.disList4 = true
+        this.$apply()
+      })
+    } else {
+      let params = {pagestart: this.pageStart4, limit: this.limit, appid: Config.AppId}
+      wepy.request({
+        url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/accounting/cashList`,
+        data: params,
+        method: 'post'
+      }).then(res => {
+        const data = res.data
+        let retdata = data.data ? data.data : data
+        for (let i = 0; i < retdata.length; i++) {
+          retdata[i].dateline_str = new Time(retdata[i].dateline * 1000).dateFormat('yyyy-MM-dd hh:mm')
+          retdata[i].viewId = `member-view-4-${retdata[i].id}`
+        }
+        this.tabData4 = this.tabData4.concat(retdata)
+        let copyretdata = Util.uniqArray(this.listData4, retdata, 'id')
+        this.listData4 = this.listData4.concat(copyretdata)
+        if (this.pageStart4 === 0) {
+          let applyData = data.applydata
+          for (let i = 0; i < applyData.length; i++) {
+            applyData[i].dateline_str = new Time(applyData[i].dateline * 1000).dateFormat('yyyy-MM-dd hh:mm')
+          }
+          this.applyData = applyData
+        }
+        this.disList4 = true
+        this.isLoading4 = false
+        if (retdata.length < this.limit && this.tabData4.length) {
+          this.isDone4 = true
+        } else {
+          this.isDone4 = false
+        }
+        this.$apply()
+      })
+    }
+  }
+  getData5 () {
+    let params = {pagestart: this.pageStart5, limit: this.limit, from: this.from, isrefund: 1, appid: Config.AppId, starttime: this.starttime, endtime: this.endtime}
+    if (this.from === 'factory') {
+      params.fid = this.Fid
+    }
+    if (this.dataParams[4].history) {
+      params.history = 1
+    }
+    wepy.request({
+      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/accounting/list`,
+      data: params
+    }).then(res => {
+      const data = res.data
+      let retdata = data.data ? data.data : data
+      for (let i = 0; i < retdata.length; i++) {
+        retdata[i].dateline_str = new Time(retdata[i].dateline * 1000).dateFormat('yyyy-MM-dd hh:mm')
+        retdata[i].viewId = `member-view-5-${retdata[i].id}`
+        if (retdata[i].incomedetail) {
+          if (retdata[i].incomedetail.xiaoshou) {
+            let xslinkman = retdata[i].incomedetail.xiaoshou.linkman
+            if (xslinkman.length > 6) {
+              xslinkman = xslinkman.substr(0, 6)
+              xslinkman = `${xslinkman}...`
+            }
+            retdata[i].xslinkman = xslinkman
+          }
+          if (retdata[i].incomedetail.tuijian) {
+            let tjlinkman = retdata[i].incomedetail.tuijian.linkman
+            if (tjlinkman.length > 6) {
+              tjlinkman = tjlinkman.substr(0, 6)
+              tjlinkman = `${tjlinkman}...`
+            }
+            retdata[i].tjlinkman = tjlinkman
+          }
+        }
+      }
+      this.tabData5 = this.tabData5.concat(retdata)
+      let copyretdata = Util.uniqArray(this.listData5, retdata, 'id')
+      this.listData5 = this.listData5.concat(copyretdata)
+      this.isLoading5 = false
+      if (!retdata.length && !this.tabData5.length && !this.dataParams[4].history) {
+        this.dataParams[4].history = true
+        this.pageStart5 = 0
+        this.getData5()
+      } else {
+        if (retdata.length < this.limit && this.tabData5.length) {
+          if (this.dataParams[4].history) {
+            this.isDone5 = true
+          } else {
+            this.dataParams[4].history = true
+            this.pageStart5 = -1
+          }
+        } else {
+          this.isDone5 = false
+        }
+        this.disList5 = true
+      }
+      wepy.stopPullDownRefresh()
+      this.$apply()
+    })
+  }
+  refreshPage () {
+    this.globalData = this.$parent.globalData
+    Util.appInit(this.globalData, this)
+    this.userInfo = this.globalData.userInfo
+    this.disList1 = false
+    this.disList2 = false
+    this.disList3 = false
+    this.disList4 = false
+    this.disList5 = false
+    this.tabData1 = []
+    this.tabData2 = []
+    this.tabData3 = []
+    this.tabData4 = []
+    this.tabData5 = []
+    this.pageStart1 = 0
+    this.pageStart2 = 0
+    this.pageStart3 = 0
+    this.pageStart4 = 0
+    this.pageStart5 = 0
+    this.isLoading1 = false
+    this.isDone1 = false
+    this.isLoading2 = false
+    this.isDone2 = false
+    this.isLoading3 = false
+    this.isDone3 = false
+    this.isLoading4 = false
+    this.isDone4 = false
+    this.isLoading5 = false
+    this.isDone5 = false
+    if (this.options.flag) {
+      this.selectedIndex = parseInt(this.options.flag)
+    } else {
+      this.selectedIndex = 0
+    }
+    this.$apply()
+    // if (this.lastIndex === this.selectedIndex) {
+    this.switchData()
+    // }
+  }
+  switchData () {
+    switch (this.selectedIndex) {
+      case 0:
+        if (!this.tabData1.length) {
+          this.pageStart1 = 0
+          this.getData1()
+        }
+        break
+      case 1:
+        if (!this.tabData2.length) {
+          this.pageStart2 = 0
+          this.getData2()
+        }
+        break
+      case 2:
+        if (!this.tabData3.length) {
+          this.pageStart3 = 0
+          this.getData3()
+        }
+        break
+      case 3:
+        if (!this.tabData4.length) {
+          this.pageStart4 = 0
+          this.getData4()
+        }
+        break
+      case 4:
+        if (!this.tabData5.length) {
+          this.pageStart5 = 0
+          this.getData5()
+        }
+        break
+    }
+  }
+  onLoad = function (options) {
+    this.options = options
+    // 获取完整的年月日 时分秒，以及默认显示的数组
+    // var obj = dateTimePicker.dateTimePicker(this.data.startYear, this.data.endYear)
+    var obj1 = dateTimePicker.dateTimePicker(this.data.startYear, this.data.endYear)
+    var obj2 = dateTimePicker.dateTimePicker(this.data.startYear, this.data.endYear)
+    // 精确到分的处理，将数组的秒去掉
+    obj1.dateTimeArray.pop()
+    obj1.dateTime.pop()
+    obj2.dateTimeArray.pop()
+    obj2.dateTime.pop()
+    // this.dateTime = obj.dateTime
+    // this.dateTimeArray = obj.dateTimeArray
+    this.dateTimeArray1 = obj1.dateTimeArray
+    this.dateTime1 = obj1.dateTime
+    this.dateTime2 = obj2.dateTime
+    this.dateTimeArray2 = obj2.dateTimeArray
+    if (options.from) {
+      this.from = options.from
+    } else {
+      this.from = 'retailerrevenue'
+    }
+    this.$apply()
+    wepy.showShareMenu({
+      withShareTicket: true
+    })
+    wepy.hideShareMenu()
+    if (this.$parent.globalData.flag.bokaAuth) {
+      this.refreshPage()
+    } else {
+      this.$parent.loadCallback = () => {
+        this.refreshPage()
+      }
+    }
+  }
+  clearCash () {
+    this.showCash = false
+    this.cashMoney = '0.00'
+    this.cashReason = ''
+    this.cashPhoto = ''
+    this.clickData = {}
+    this.$apply()
+  }
+  methods = {
+    // changeDate (e) {
+    //   this.date = e.detail.value
+    // },
+    // changeTime (e) {
+    //   this.time = e.detail.value
+    // },
+    // changeDateTime (e) {
+    //   this.dateTime = e.detail.value
+    // },
+    changeDateTime1 (e) {
+      this.dateTime1 = e.detail.value
+      // {{dateTimeArray1[0][dateTime1[0]]}}-{{dateTimeArray1[1][dateTime1[1]]}}-{{dateTimeArray1[2][dateTime1[2]]}} {{dateTimeArray1[3][dateTime1[3]]}}:{{dateTimeArray1[4][dateTime1[4]]}}
+      console.log('=== this.dateTimeArray1 ===')
+      let year = this.dateTimeArray1[0][this.dateTime1[0]]
+      let month = this.dateTimeArray1[1][this.dateTime1[1]]
+      let day = this.dateTimeArray1[2][this.dateTime1[2]]
+      let hours = this.dateTimeArray1[3][this.dateTime1[3]]
+      let minite = this.dateTimeArray1[4][this.dateTime1[4]]
+      this.starttime = year + '-' + month + '-' + day + ' ' + hours + ':' + minite
+      console.log('==== this.dateTime1 ====')
+      console.log(this.dateTime1)
+      console.log('===  当时间改变时  ===')
+      console.log(this.starttime)
+    },
+    changeDateTime2 (e) {
+      this.dateTime2 = e.detail.value
+      console.log('=== this.dateTimeArray2 ===')
+      let year = this.dateTimeArray2[0][this.dateTime2[0]]
+      let month = this.dateTimeArray2[1][this.dateTime2[1]]
+      let day = this.dateTimeArray2[2][this.dateTime2[2]]
+      let hours = this.dateTimeArray2[3][this.dateTime2[3]]
+      let minite = this.dateTimeArray2[4][this.dateTime2[4]]
+      this.endtime = year + '-' + month + '-' + day + ' ' + hours + ':' + minite
+      console.log('==== this.dateTime2 ====')
+      console.log(this.dateTime2)
+      console.log('===  当时间改变时  ===')
+      console.log(this.endtime)
+    },
+    // changeDateTimeColumn (e) {
+    //   var arr = this.data.dateTime
+    //   var dateArr = this.data.dateTimeArray
+    //   arr[e.detail.column] = e.detail.value
+    //   dateArr[2] = dateTimePicker.getMonthDay(dateArr[0][arr[0]], dateArr[1][arr[1]])
+    //   this.dateTimeArray = dateArr
+    //   this.dateTime = arr
+    // },
+    changeDateTimeColumn1 (e) {
+      var arr = this.data.dateTime1
+      var dateArr = this.data.dateTimeArray1
+      arr[e.detail.column] = e.detail.value
+      dateArr[2] = dateTimePicker.getMonthDay(dateArr[0][arr[0]], dateArr[1][arr[1]])
+      this.dateTimeArray1 = dateArr
+      this.dateTime1 = arr
+    },
+    clickTab (e) {
+      this.selectedIndex = parseInt(e.currentTarget.dataset.current)
+      this.switchData()
+      this.$apply()
+    },
+    switchTab (e) {
+      this.selectedIndex = e.detail.current
+      this.lastIndex = this.selectedIndex
+      this.switchData()
+      this.$apply()
+    },
+    clickCash (e) {
+      const dataset = e.currentTarget.dataset
+      this.clickData = dataset.data
+      this.clickIndex = dataset.index
+      this.showCash = true
+      this.$apply()
+    },
+    closeCash (e) {
+      this.clearCash()
+    },
+    uploadPhoto (e) {
+      wepy.chooseImage({
+        count: 1, // 默认9
+        sizeType: ['original', 'compressed'], // 可以指定是原图还是压缩图，默认二者都有
+        sourceType: ['album', 'camera'] // 可以指定来源是相册还是相机，默认二者都有
+      }).then(res => {
+        if (res.tempFiles) {
+          Util.taskData({
+            data: res.tempFiles,
+            handleFunction: (d) => {
+              return (done) => {
+                wepy.showLoading()
+                wepy.uploadFile({
+                  url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/upload/photo?token=${this.globalData.miniData.token}`,
+                  method: 'POST',
+                  name: 'photo',
+                  filePath: d.path
+                }).then(res => {
+                  wepy.hideLoading()
+                  let jsonData = JSON.parse(res.data)
+                  this.cashPhoto = jsonData.data
+                  this.$apply()
+                  done()
+                })
+              }
+            }
+          })
+        }
+      })
+    },
+    deletePhoto (e) {
+      this.cashPhoto = ''
+      this.$apply()
+    },
+    keyupFormCash (e) {
+      this.cashMoney = e.detail.value
+    },
+    keyTextarea (e) {
+      this.cashReason = e.detail.value
+    },
+    clickAll (e) {
+      this.cashMoney = this.clickData.waitcashmoney
+      this.$apply()
+    },
+    submitCash (e) {
+      let money = this.cashMoney.replace(/,/g, '')
+      let waitMoney = parseFloat(this.clickData.waitcashmoney.replace(/,/g, ''))
+      if (Util.trim(money) === '' || isNaN(money) || parseFloat(money) <= 0) {
+        wepy.showToast({
+          title: '请输入正确的分账金额',
+          icon: 'none'
+        })
+        return false
+      }
+      if (parseFloat(money) > waitMoney) {
+        wepy.showToast({
+          title: '当前用户可提现金额不足，请重新输入',
+          icon: 'none',
+          duration: 2000
+        })
+        return false
+      }
+      wepy.request({
+        url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/accounting/cashOffline`,
+        data: {cashuid: this.clickData.uid, money: money, reason: this.cashReason, photo: this.cashPhoto, fid: this.Fid},
+        method: 'post'
+      }).then(res => {
+        const data = res.data
+        wepy.showToast({
+          title: data.error,
+          icon: 'none',
+          duration: Util.delay(data.error)
+        })
+        if (data.flag) {
+          this.tabData4[this.clickIndex].waitcashmoney = (waitMoney - parseFloat(money)).toFixed(2)
+          this.$apply()
+          this.clearCash()
+        }
+      })
+    },
+    submitTimeSearch (e) {
+      switch (this.selectedIndex) {
+        case 0:
+          this.tabData1 = []
+          this.listData1 = []
+          this.disList1 = false
+          this.pageStart1 = 0
+          this.dataParams[0].history = false
+          this.getData1()
+          this.showTimeSearch = false
+          break
+        case 1:
+          this.tabData2 = []
+          this.listData2 = []
+          this.disList2 = false
+          this.pageStart2 = 0
+          this.dataParams[1].history = false
+          this.getData2()
+          this.showTimeSearch = false
+          break
+        case 2:
+          this.tabData3 = []
+          this.listData3 = []
+          this.disList3 = false
+          this.pageStart3 = 0
+          this.dataParams[2].history = false
+          this.getData3()
+          this.showTimeSearch = false
+          break
+        // case 3:
+        //   this.tabData4 = []
+        //   this.listData4 = []
+        //   this.disList4 = false
+        //   this.pageStart4 = 0
+        // this.dataParams[3].history = false
+        //   this.getData4()
+        //   this.showTimeSearch = false
+        //   break
+        case 4:
+          this.tabData5 = []
+          this.listData5 = []
+          this.disList5 = false
+          this.pageStart5 = 0
+          this.dataParams[4].history = false
+          this.getData5()
+          this.showTimeSearch = false
+          break
+      }
+    },
+    keyupKeyword (e) {
+      this.searchword = e.detail.value
+    },
+    searchEvent (e) {
+      this.disList4 = false
+      this.applyData = []
+      this.tabData4 = []
+      this.pageStart4 = 0
+      this.$apply()
+      this.getData4()
+    },
+    cancelSearch (e) {
+      this.searchword = ''
+      this.$apply()
+      if (this.afterSearch) {
+        this.disList4 = false
+        this.$apply()
+        this.tabData4 = []
+        this.pageStart4 = 0
+        this.$apply()
+        this.getData4()
+      }
+    },
+    viewBigImg (e) {
+      let url = e.currentTarget.dataset.url
+      wepy.previewImage({
+        urls: [url],
+        current: url
+      })
+    }
+  }
+}
+</script>

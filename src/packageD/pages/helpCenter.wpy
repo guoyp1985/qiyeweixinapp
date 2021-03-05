@@ -1,0 +1,210 @@
+<style lang="less">
+.help-center-page{
+  .search-outter{
+    width: 100%;height: 100rpx;padding:20rpx;box-sizing:border-box;
+    background-color: white;display: flex;flex-direction: column;align-items: center;justify-content: center;
+    .search-inner{width: 100%;display:flex; align-items: center;background-color: #f2f3f2;border-radius: 45px;height:100%;}
+    .search-input{width: 85%;box-sizing: border-box;font-size:24rpx;padding: 0 20rpx;flex:1;}
+  }
+  .class-area{
+    display:flex;flex-wrap:wrap;justify-content: flex-start;align-items: center;
+    .class-item{padding:20rpx;}
+    .class-inner{
+      height:60rpx;padding:0 30rpx;border-radius:60rpx;
+      display:flex;justify-content: center;align-items: center;
+      font-size:30rpx;font-weight:bold;border-width:4rpx;border-style:solid;
+    }
+    .class-inner.active{background-color:#f64635;color:#fff;}
+  }
+  .list-area{
+    padding:20rpx;
+    .list-item:not(:last-child){border-bottom:#eee 2rpx solid;}
+    .list-item{display:flex;font-size:32rpx;padding:20rpx 0 20rpx 10rpx;}
+  }
+  .btn-area{
+    padding:20rpx 20rpx 40rpx;
+    .btn{
+      width:100%;margin:0 auto;background-color:#f64635;color:#fff;
+      height:80rpx;line-height:80rpx;text-align:center;border-radius:70rpx;font-size:32rpx;
+    }
+  }
+}
+</style>
+<template>
+  <view class="help-center-page">
+    <view class="w_100">
+      <image class="w_100" mode="widthFix" src="https://tossharingsales.boka.cn/minigxk/help1.png"></image>
+    </view>
+    <view class="search-outter">
+      <view class="search-inner">
+        <input class="search-input" type="text" placeholder="请输入搜索内容" bindinput="setKeyword" value="{{keyword}}" bindconfirm="searchKeyword" confirm-type="search" />
+        <view wx:if="{{keyword}}" class="flex_center color-gray font12 pl10 pr10" bindtap="cancelSearch">取消</view>
+        <view wx:else class="flex_center color-gray font12 pl10 pr10"><text class="al al-sousuo font20"></text></view>
+      </view>
+    </view>
+    <view class="mt12 bg-white" wx:if="{{classArr.length || listData.length}}">
+      <view class="class-area">
+        <repeat for="{{classArr}}" item="item" index="index">
+          <view class="class-item">
+            <view :class="{active: clickClass == item.id}" class="class-inner" style="{{(clickClass == item.id ? themeObject.bgStyle : '')}}border-color:{{themeObject.themeColor}};" @tap="clickClass({{item}})">{{item.title}}</view>
+          </view>
+        </repeat>
+      </view>
+      <view class="list-area" wx:if="{{disObject[clickClass]}}">
+        <view class="flex_empty" wx:if="{{!tabDataObject[clickClass].length}}">暂无数据</view>
+        <block wx:else>
+          <repeat for="{{tabDataObject[clickClass]}}" item="item" index="index">
+            <view class="list-item" @tap="toDetail({{item}})">
+              <view class="flex_cell flex_left">{{item.title}}</view>
+              <view class="pl10 pr10">
+                <text class="al al-mjiantou-copy2 font20 bold"></text>
+              </view>
+            </view>
+          </repeat>
+        </block>
+      </view>
+      <view class="load-end-area loading" wx:if="{{loadObject[clickClass]}}"></view>
+      <view class="load-end-area done" wx:elif="{{doneObject[clickClass]}}"></view>
+    </view>
+  </view>
+</template>
+<script>
+  import wepy from 'wepy'
+  import Config from '@/config'
+  import Util from '@/libs/util'
+  export default class extends wepy.page {
+    data = {
+      keyword: '',
+      classArr: [],
+      clickClass: 0,
+      listData: [],
+      loadObject: {},
+      doneObject: {},
+      tabDataObject: {},
+      disObject: {},
+      themeObject: {}
+    }
+    onReachBottom () {
+      if (!this.clickClass || this.loadObject[this.clickClass]) return false
+      if (this.tabDataObject[this.clickClass].length === (this.pageObject[this.clickClass].pagestart + 1) * this.limit) {
+        this.pageObject[this.clickClass].pagestart++
+        this.loadObject[this.clickClass] = true
+        this.getList()
+      }
+    }
+    getList () {
+      let params = {module: 'newhelp', fid: Config.Fid}
+      if (!this.clickClass) {
+        params.type = 'common'
+        this.loadObject[this.clickClass] = false
+        this.doneObject[this.clickClass] = false
+      } else {
+        params.classid = this.clickClass
+        params.pagestart = this.pageObject[this.clickClass].pagestart
+        params.limit = Config.Limit
+      }
+      if (this.keyword !== '') {
+        params.keyword = this.keyword
+      }
+      wepy.request({
+        url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/moduleList`,
+        data: params
+      }).then(res => {
+        const data = res.data
+        const retdata = data.data ? data.data : data
+        if (!this.clickClass) {
+          this.tabDataObject[this.clickClass] = retdata
+        } else {
+          let nowData = this.tabDataObject[this.clickClass]
+          if (!nowData) {
+            nowData = []
+          }
+          this.tabDataObject[this.clickClass] = nowData.concat(retdata)
+          this.loadObject[this.clickClass] = false
+        }
+        if (retdata.length < this.limit && this.tabDataObject[this.clickClass].length && params.pagestart > 0) {
+          this.doneObject[this.clickClass] = true
+        } else {
+          this.doneObject[this.clickClass] = false
+        }
+        this.disObject[this.clickClass] = true
+        this.$apply()
+      })
+    }
+    getClass () {
+      wepy.request({
+        url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/moduleList`,
+        data: {module: 'newhelpclass', fid: Config.Fid}
+      }).then(res => {
+        const data = res.data
+        let retdata = data.data ? data.data : data
+        for (let i = 0; i < retdata.length; i++) {
+          let curClassid = retdata[i].id
+          this.pageObject[curClassid] = {pagestart: 0}
+        }
+        let arr = [{id: 0, title: '常见问题'}]
+        this.classArr = arr.concat(retdata)
+        this.$apply()
+        this.getList()
+      })
+    }
+    handlePageData () {
+      this.globalData = this.$parent.globalData
+      Util.appInit(this.globalData, this)
+      this.userInfo = this.globalData.userInfo
+      this.factoryInfo = this.globalData.FactoryInfo
+      this.getClass()
+    }
+    onLoad (options) {
+      this.options = options
+      this.limit = Config.Limit
+      this.pageObject = {}
+      if (this.options.classid) {
+        this.clickClass = this.options.classid
+      }
+      if (this.$parent.globalData.flag.bokaAuth) {
+        this.handlePageData()
+      } else {
+        this.$parent.loadCallback = () => {
+          this.handlePageData()
+        }
+      }
+    }
+    methods = {
+      setKeyword (e) {
+        this.keyword = e.detail.value
+      },
+      searchKeyword (e) {
+        if (e.detail.value !== '') this.keyword = e.detail.value
+        this.disObject[this.clickClass] = false
+        this.tabDataObject[this.clickClass] = []
+        this.getList()
+      },
+      cancelSearch () {
+        this.keyword = ''
+        this.disObject[this.clickClass] = false
+        this.tabDataObject[this.classid] = []
+        this.getList()
+      },
+      toChat (e) {
+        wepy.navigateTo({url: '/packageD/pages/chat'})
+      },
+      clickClass (data) {
+        let oldClassId = this.clickClass
+        if (this.clickClass !== data.id) {
+          if (this.keyword !== '') {
+            this.disObject[oldClassId] = false
+            this.tabDataObject[oldClassId] = []
+          }
+          this.clickClass = data.id
+          if (!this.tabDataObject[this.clickClass] || !this.tabDataObject[this.clickClass].length) {
+            this.getList()
+          }
+        }
+      },
+      toDetail (data) {
+        wepy.navigateTo({url: `/packageD/pages/helpDetail?id=${data.id}`})
+      }
+    }
+  }
+</script>

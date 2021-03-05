@@ -1,0 +1,84 @@
+<style lang="less">
+.tip-buttonlayer-modal{
+  .modal-inner{min-height:400rpx;border-radius:20rpx;background-color:#fff;padding:40rpx 20rpx;}
+  .btn-area{margin-top:100rpx;}
+  .btn-bg{
+    width:67%;margin:0 auto;height:84rpx;color:#fff;
+    box-shadow:4rpx 4rpx 8rpx 0 rgba(0,0,0,0.2);border-radius:60rpx;
+    display:flex;justify-content: center; align-items: center;
+  }
+}
+</style>
+<template>
+  <view class="auto-modal flex_center tip-buttonlayer-modal">
+    <view class="modal-inner border-box flex_center">
+      <view class="w_100">
+        <block wx:if="{{tipTxt && tipTxt != ''}}">
+          <view class="w_100 flex_center">
+            <text class="al al-chenggong color-red4"></text>
+          </view>
+          <view class="flex_center font18 color-red4 mt10">{{tipTxt}}</view>
+        </block>
+        <block wx:if="{{buttonTxt && buttonTxt != ''}}">
+          <view wx:if="{{buttonType == 'share'}}" class="flex_center btn-area">
+            <button class="btn-bg btn-area" style="{{themeObject.linearBgStyle}}" open-type="share">{{buttonTxt}}</button>
+          </view>
+          <block wx:else>
+            <form class="flex_center btn-area" wx:if="{{buttonTxt && buttonTxt != ''}}" bindsubmit="clickButton" report-submit="true">
+               <button class="btn-bg" style="{{themeObject.linearBgStyle}}" formType="submit">{{buttonTxt}}</button>
+            </form>
+          </block>
+        </block>
+        <block wx:if="{{buttonTxt && buttonTxt != ''}}">
+          <view class="flex_center color-red4 mt10 font12" wx:if="{{content && content != ''}}">{{content}}</view>
+        </block>
+        <block wx:else>
+          <view class="flex_center color-red4 mt20 font14" wx:if="{{content && content != ''}}">{{content}}</view>
+        </block>
+      </view>
+      <form class="close-area flex_center" bindsubmit="closeModal" report-submit="true">
+        <button formType="submit" class="al al-close1"></button>
+      </form>
+    </view>
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy'
+export default class TipButtonLayer extends wepy.component {
+  props = {
+    title: {
+      type: String,
+      default: ''
+    },
+    content: {
+      type: String,
+      default: ''
+    },
+    buttonTxt: {
+      type: String,
+      default: ''
+    },
+    buttonType: {
+      type: String,
+      default: ''
+    },
+    tipTxt: {
+      type: String,
+      default: ''
+    },
+    themeObject: {
+      type: Object,
+      default: {}
+    }
+  }
+  methods = {
+    closeModal () {
+      this.$emit('closeTipButton')
+    },
+    clickButton () {
+      this.$emit('clickTipButton')
+    }
+  }
+}
+</script>

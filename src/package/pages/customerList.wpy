@@ -1,0 +1,297 @@
+<style lang="less">
+.customer-list-page{
+}
+</style>
+<template>
+  <view class="customer-list-page">
+    <block wx:if="{{disList1}}">
+      <view wx:if="{{!tabData1.length}}" class="flex_empty">暂无相关数据</view>
+      <block wx:else>
+        <customerItem1 :listData.sync="tabData1" :themeObject.sync="themeObject"></customerItem1>
+      </block>
+      <view class="load-end-area loading" wx:if="{{isLoading1}}"></view>
+      <view class="load-end-area done" wx:elif="{{isDone1}}"></view>
+    </block>
+  </view>
+  <view class="auto-modal flex_center percent-modal" wx:if="{{showPercent}}">
+    <view class="modal-inner border-box flex_center">
+      <view class="padding20">
+        <view class="bold color-theme" style="{{themeObject.colorStyle}}">什么是成交概率</view>
+        <view class="mt10">成交概率是系统自动根据客户查看商品或文章，自动计算出该客户的真正成为购买客户的可能性。数字越大,可能性越大,成交概率就越高。</view>
+        <view class="bold mt20" style="{{themeObject.colorStyle}}">如何提升成交概率</view>
+        <view class="mt10">1、推送客户感兴趣的文章;</view>
+        <view class="">2、积极向客户分享商品或文章。</view>
+      </view>
+      <form class="close-area flex_center" bindsubmit="closePercent" report-submit="true">
+        <button formType="submit" class="al al-close1"></button>
+      </form>
+    </view>
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy'
+import Util from '@/libs/util'
+import Time from '@/libs/time'
+import Config from '@/config'
+import CustomerItem from '@/components/customerItem'
+const BokaApi = Config.BokaApi
+export default class CustomerList extends wepy.page {
+  config = {
+    enablePullDownRefresh: true,
+    backgroundTextStyle: 'dark'
+  }
+  components = {
+    customerItem1: CustomerItem,
+    customerItem2: CustomerItem,
+    customerItem3: CustomerItem
+  }
+  data = {
+    options: {},
+    globalData: {},
+    userInfo: null,
+    lastIndex: 0,
+    selectedIndex: 0,
+    disList1: false,
+    disList3: false,
+    disList2: false,
+    tabData1: [],
+    tabData3: [],
+    tabData2: [],
+    pageStart1: 0,
+    pageStart3: 0,
+    pageStart2: 0,
+    limit: Config.Limit,
+    isLoading1: false,
+    isDone1: false,
+    userView: {},
+    toView1: '',
+    toView2: '',
+    toView3: '',
+    showPercent: false,
+    themeObject: {}
+  }
+  onPullDownRefresh () {
+    wepy.showNavigationBarLoading()
+    setTimeout(function () {
+      wepy.hideNavigationBarLoading()
+      wepy.stopPullDownRefresh()
+    }, 500)
+    this.refreshPage()
+  }
+  onReachBottom () {
+    if (this.tabData1.length === (this.pageStart1 + 1) * this.limit) {
+      this.pageStart1++
+      this.isLoading1 = true
+      this.getData1()
+    }
+  }
+  scrollEvent1 () {
+    if (this.tabData1.length === (this.pageStart1 + 1) * this.limit) {
+      this.pageStart1++
+      this.getData1()
+    }
+  }
+  scrollEvent2 () {
+    if (this.tabData2.length === (this.pageStart2 + 1) * this.limit) {
+      this.pageStart2++
+      this.getData2()
+    }
+  }
+  scrollEvent3 () {
+    if (this.tabData3.length === (this.pageStart3 + 1) * this.limit) {
+      this.pageStart3++
+      this.getData3()
+    }
+  }
+  getData1 = function () {
+    wepy.request({
+      url: `${BokaApi}/${Config[Config.ApiVersion]}/retailer/customerList`,
+      // data: {pagestart: this.pageStart1, limit: this.limit, tolevel: -1, orderby: 'dateline', appid: Config.AppId}
+      data: {pagestart: this.pageStart1, limit: this.limit, orderby: 'dateline', appid: Config.AppId}
+    }).then(res => {
+      const data = res.data
+      this.isLoading1 = false
+      let retdata = data.data ? data.data : data
+      for (let i = 0; i < retdata.length; i++) {
+        retdata[i].dateline_str = new Time(retdata[i].dateline * 1000).dateFormat('yyyy-MM-dd hh:mm')
+        retdata[i].viewId = `member-view-1-${retdata[i].id}`
+      }
+      this.tabData1 = this.tabData1.concat(retdata)
+      if (retdata.length < this.limit && this.tabData1.length) {
+        this.isDone1 = true
+      } else {
+        this.isDone1 = false
+      }
+      this.disList1 = true
+      wepy.stopPullDownRefresh()
+      this.$apply()
+    })
+  }
+  getData2 = function () {
+    wepy.request({
+      url: `${BokaApi}/${Config[Config.ApiVersion]}/retailer/customerList`,
+      data: {pagestart: this.pageStart2, limit: this.limit, tolevel: 100, appid: Config.AppId}
+    }).then(res => {
+      const data = res.data
+      let retdata = data.data ? data.data : data
+      for (let i = 0; i < retdata.length; i++) {
+        retdata[i].dateline_str = new Time(retdata[i].dateline * 1000).dateFormat('yyyy-MM-dd hh:mm')
+        retdata[i].viewId = `member-view-2-${retdata[i].id}`
+      }
+      this.tabData2 = this.tabData2.concat(retdata)
+      this.disList2 = true
+      wepy.stopPullDownRefresh()
+      this.$apply()
+    })
+  }
+  getData3 = function () {
+    wepy.request({
+      url: `${BokaApi}/${Config[Config.ApiVersion]}/retailer/customerList`,
+      data: {pagestart: this.pageStart2, limit: this.limit, tolevel: 5, appid: Config.AppId}
+    }).then(res => {
+      const data = res.data
+      let retdata = data.data ? data.data : data
+      for (let i = 0; i < retdata.length; i++) {
+        retdata[i].dateline_str = new Time(retdata[i].dateline * 1000).dateFormat('yyyy-MM-dd hh:mm')
+        retdata[i].viewId = `member-view-3-${retdata[i].id}`
+      }
+      this.tabData3 = this.tabData3.concat(retdata)
+      this.disList3 = true
+      this.$apply()
+    })
+  }
+  refreshPage () {
+    this.globalData = this.$parent.globalData
+    Util.appInit(this.globalData, this)
+    this.userInfo = this.globalData.userInfo
+    this.selectedIndex = 0
+    this.disList1 = false
+    this.disList2 = false
+    this.disList3 = false
+    this.tabData1 = []
+    this.tabData2 = []
+    this.tabData3 = []
+    this.pageStart1 = 0
+    this.pageStart2 = 0
+    this.pageStart3 = 0
+    this.$apply()
+    // if (this.lastIndex === this.selectedIndex) {
+    //   this.switchData()
+    // }
+    this.switchData()
+  }
+  switchData () {
+    switch (this.selectedIndex) {
+      case 0:
+        if (!this.tabData1.length) {
+          this.pageStart1 = 0
+          this.getData1()
+        }
+        break
+      case 1:
+        if (!this.tabData2.length) {
+          this.pageStart2 = 0
+          this.getData2()
+        }
+        break
+      case 2:
+        if (!this.tabData3.length) {
+          this.pageStart3 = 0
+          this.getData3()
+        }
+        break
+    }
+  }
+  onLoad (options) {
+    this.options = options
+    wepy.showShareMenu({
+      withShareTicket: true
+    })
+    wepy.hideShareMenu()
+    if (this.$parent.globalData.flag.bokaAuth) {
+      this.refreshPage()
+    } else {
+      this.$parent.loadCallback = () => {
+        this.refreshPage()
+      }
+    }
+  }
+  methods = {
+    clickTab (e) {
+      this.selectedIndex = e.currentTarget.dataset.current
+      this.$apply()
+    },
+    switchTab (e) {
+      this.selectedIndex = e.detail.current
+      this.lastIndex = this.selectedIndex
+      this.switchData()
+      this.$apply()
+    },
+    closePercent (e) {
+      this.showPercent = false
+      this.$apply()
+    }
+  }
+  events = {
+    expandEvent (e) {
+      const dataset = e.currentTarget.dataset
+      const itemData = dataset.data
+      const index = dataset.index
+      let curList = []
+      if (this.selectedIndex === 0) {
+        curList = this.tabData1
+      } else if (this.selectedIndex === 1) {
+        curList = this.tabData2
+      } else if (this.selectedIndex === 2) {
+        curList = this.tabData3
+      }
+      for (let i = 0; i < curList.length; i++) {
+        if (curList[i].checked && i !== index) {
+          if (this.selectedIndex === 0) {
+            this.tabData1[i].checked = false
+          } else if (this.selectedIndex === 1) {
+            this.tabData2[i].checked = false
+          } else if (this.selectedIndex === 2) {
+            this.tabData3[i].checked = false
+          }
+          break
+        }
+      }
+      if (itemData.checked) {
+        switch (this.selectedIndex) {
+          case 0:
+            this.tabData1[index].checked = false
+            break
+          case 1:
+            this.tabData2[index].checked = false
+            break
+          case 2:
+            this.tabData3[index].checked = false
+            break
+        }
+      } else {
+        switch (this.selectedIndex) {
+          case 0:
+            this.toView1 = this.tabData1[index].viewId
+            this.tabData1[index].checked = true
+            break
+          case 1:
+            this.toView2 = this.tabData2[index].viewId
+            this.tabData2[index].checked = true
+            break
+          case 2:
+            this.toView3 = this.tabData3[index].viewId
+            this.tabData3[index].checked = true
+            break
+        }
+      }
+      this.$apply()
+    },
+    clickPercent () {
+      this.showPercent = true
+      this.$apply()
+    }
+  }
+}
+</script>

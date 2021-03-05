@@ -1,0 +1,350 @@
+<style lang="less">
+.apply-d-page{
+  .color-red{color:#ee5357 !important;}
+  .color-gray{color:#c3c3c3 !important;}
+  .box-area{
+    width:100%;position:relative;z-index:1;
+    padding:0 20rpx;box-sizing: border-box;
+    .box-inner{
+      width:100%;background-color:#fff;border-radius:10rpx;
+      .title{padding:20rpx;font-size:32rpx;box-sizing: border-box;}
+      .avatar{
+        width:100rpx;
+        image{width:90rpx;height:90rpx;border-radius:50%;}
+      }
+      .title-row{
+        padding:20rpx;font-size:32rpx;box-sizing: border-box;
+        display:flex;justify-content: flex-start;align-items: center;
+      }
+    }
+  }
+  .list-area{
+    .box-area{margin-bottom:20rpx;}
+    .text-list{
+      font-size:32rpx;
+      .text-item:not(:first-child){margin-top:6rpx;}
+      .text-item{
+        display:flex;justify-content: flex-start;align-items: center;
+        .txt1{color:#999}
+        .txt2{margin-left:10rpx;}
+      }
+    }
+    .btn{
+      width:80%;height:90rpx;margin:20rpx auto;font-size:36rpx;
+      display:flex;justify-content:center; align-items:center;
+      background: linear-gradient(#F25D5D, #DB293E);color:#fff;
+      border-radius:10rpx;
+    }
+    .pic{width:120rpx;height:120rpx;}
+  }
+}
+</style>
+<template>
+  <view class="apply-d-page">
+    <view class="box-area mt20">
+      <view class="box-inner">
+        <view class="padding10 flex_left">
+          <view class="avatar flex_left">
+            <image wx:if="{{managerInfo.avatar}}" src="{{managerInfo.avatar}}" />
+            <image wx:else src="https://tossharingsales.boka.cn/images/user.jpg" />
+          </view>
+          <view class="flex_left flex_cell font16">{{managerInfo.linkman}}</view>
+          <view class="flex_right pl10" @tap="clickQrcode" wx:if="{{managerInfo.shoukuanma && managerInfo.shoukuanma != ''}}">
+            <view class="align_center">
+              <text class="al al-erweima font30 color-red"></text>
+              <view class="color-gray align_center">收款码</view>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+    <view class="mt20 flex_center color-red font16">(提示：汇款或转账时请务必备注ID及微信昵称)</view>
+    <block wx:if="{{disList}}">
+      <view wx:if="{{!listData.length}}" class="flex_empty">暂无报单数据</view>
+      <view wx:else class="list-area mt20">
+        <repeat for="{{listData}}" item="item" index="index">
+          <view class="box-area">
+            <view class="box-inner">
+              <view class="title-row color-red b_bottom_after">
+                <view>
+                  <text class="al al-rili font20"></text>
+                </view>
+                <view class="pl5">{{item.dateline_str}}</view>
+                <view class="flex_cell flex_right">
+                  <view>
+                    <text class="font14">货款: ￥</text>
+                    <text class="font16">{{item.reportmoney}}</text>
+                  </view>
+                </view>
+              </view>
+              <view class="flex_left padding10">
+                <view class="text-list flex_cell">
+                  <view class="text-item">
+                    <text class="txt1">本次报单订单数量: </text>
+                    <text class="txt2">{{item.ordercount}}单</text>
+                  </view>
+                  <view class="text-item">
+                    <text class="txt1">本次报单销售金额: </text>
+                    <text class="ml5">￥{{item.sales}}</text>
+                  </view>
+                  <view class="text-item">
+                    <text class="txt1">本次报单代理收入: </text>
+                    <text class="txt2">￥{{item.income}}</text>
+                  </view>
+                  <view class="text-item">
+                    <text class="txt1">货款状态: </text>
+                    <text class="txt2 color-red">{{item.status}}</text>
+                  </view>
+                </view>
+                <view class="flex_right pl10" wx:if="{{item.photo && item.photo != ''}}">
+                  <image class="pic" mode="aspectFill" src="{{item.photo}}" data-photo="{{item.photo}}" data-index="{{index}}" @tap="viewBigImg" />
+                </view>
+              </view>
+              <view wx:if="{{!item.dealed}}" class="mt10 pb10">
+                <view class="btn" @tap="baodanEvent({{item}},{{index}})">一键报单</view>
+              </view>
+            </view>
+          </view>
+        </repeat>
+      </view>
+      <view class="load-end-area loading" wx:if="{{isLoading}}"></view>
+      <view class="load-end-area done" wx:elif="{{isDone}}"></view>
+    </block>
+  </view>
+  <view wx:if="{{showModal}}" class="auto-modal flex_center">
+    <view class="modal-inner border-box" style="width:80%;">
+      <view class="align_center font18 bold pb10 b_bottom_after color-theme pt20" style="{{themeObject.colorStyle}}">报单</view>
+      <view class="app-photo-list align_left bg-white">
+        <repeat for="{{photoArr}}" item="photo" index="index">
+          <view class="photoitem">
+            <view class="inner photo imgcover">
+              <image mode="aspectFill" src="{{photo}}" class="pic" data-type="update" data-index="{{index}}" @tap="uploadPhoto" />
+              <view class="close" @tap="deletePhoto(index)">×</view>
+            </view>
+          </view>
+        </repeat>
+        <view wx:if="{{photoArr.length < 1}}" class="photoitem add" @tap="uploadPhoto">
+          <view class="inner">
+            <view class="innerlist">
+              <view class="flex_center h_100">
+                <view>
+                  <text class="al al-zhaopian"></text>
+                  <view><text>{{ photoArr.length }}</text><text class="ml5 mr5">/</text><text>1</text></view>
+                </view>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+      <form class="db b_top_after" style="height:50px;" bindsubmit="submitBaodan" bindreset="cancelBaodan" report-submit="true">
+        <view class="w_100 h_100 flex_center">
+          <button class="flex_cell flex_center h_100 b_right_after" form-type="reset">取消</button>
+          <button class="flex_cell flex_center h_100 color-orange" form-type="submit">提交</button>
+        </view>
+      </form>
+    </view>
+  </view>
+</template>
+<script>
+import wepy from 'wepy'
+import Config from '@/config'
+import Time from '@/libs/time'
+import Util from '@/libs/util'
+export default class extends wepy.page {
+  config = {
+    enablePullDownRefresh: true,
+    backgroundTextStyle: 'dark'
+  }
+  data = {
+    listData: [],
+    disList: false,
+    isLoading: false,
+    isDone: false,
+    managerInfo: {},
+    showModal: false,
+    photoArr: [],
+    postPhoto: '',
+    clickData: null,
+    clickIndex: 0,
+    themeObject: {}
+  }
+  refreshPage () {
+    this.disList = false
+    this.listData = []
+    this.pageStart = 0
+    this.isLoading = false
+    this.isDone = false
+    this.$apply()
+    this.getData()
+  }
+  onPullDownRefresh () {
+    this.refreshPage()
+    wepy.showNavigationBarLoading()
+    setTimeout(function () {
+      wepy.hideNavigationBarLoading()
+      wepy.stopPullDownRefresh()
+    }, 500)
+  }
+  onReachBottom () {
+    if (this.listData.length === (this.pageStart + 1) * this.limit) {
+      this.pageStart++
+      this.isLoading = true
+      this.getData()
+    }
+  }
+  getData () {
+    wepy.request({
+      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/order/getBaodanData`,
+      data: {
+        pagestart: this.pageStart,
+        limit: this.limit
+      },
+      method: 'post'
+    }).then(res => {
+      wepy.hideLoading()
+      const data = res.data
+      const retdata = data.data ? data.data : data
+      if (!this.pageStart) {
+        this.managerInfo = data.manager
+      }
+      for (let i = 0; i < retdata.length; i++) {
+        retdata[i].dateline_str = new Time(retdata[i].dateline * 1000).dateFormat('yyyy-MM-dd')
+      }
+      this.isLoading = false
+      this.disList = true
+      this.listData = this.listData.concat(retdata)
+      if (retdata.length < this.limit && this.listData.length && this.listData.length > this.limit) {
+        this.isDone = true
+      } else {
+        this.isDone = false
+      }
+      this.$apply()
+    })
+  }
+  handlePageData () {
+    this.globalData = this.$root.$parent.globalData
+    Util.appInit(this.globalData, this)
+    this.userInfo = this.globalData.userInfo
+    this.Wid = this.globalData.Wid
+    if (!this.listData.length) {
+      this.getData()
+    }
+    this.$apply()
+  }
+  onLoad (options) {
+    this.options = options
+    this.pageStart = 0
+    this.limit = Config.Limit
+    if (this.$parent.globalData.flag.bokaAuth) {
+      this.handlePageData()
+    } else {
+      this.$parent.loadCallback = () => {
+        this.handlePageData()
+      }
+    }
+  }
+  clearModal () {
+    this.photoArr = []
+    this.postPhoto = ''
+    this.clickData = null
+    this.clickIndex = 0
+  }
+  methods = {
+    clickQrcode () {
+      wepy.previewImage({
+        current: 0,
+        urls: [this.managerInfo.shoukuanma]
+      })
+    },
+    baodanEvent (item, index) {
+      this.clearModal()
+      this.clickData = item
+      this.clickIndex = parseInt(index)
+      this.showModal = true
+      console.log(this.clickData)
+      this.$apply()
+    },
+    uploadPhoto (e) {
+      wepy.chooseImage({
+        count: 1, // 默认9
+        sizeType: ['original', 'compressed'], // 可以指定是原图还是压缩图，默认二者都有
+        sourceType: ['album', 'camera'] // 可以指定来源是相册还是相机，默认二者都有
+      }).then(res => {
+        if (res.tempFiles) {
+          Util.taskData({
+            data: res.tempFiles,
+            handleFunction: (d) => {
+              return (done) => {
+                wepy.showLoading()
+                wepy.uploadFile({
+                  url: `${Config.GxkApi}/api/upload/photo`,
+                  method: 'POST',
+                  name: 'photo',
+                  filePath: d.path
+                }).then(res => {
+                  wepy.hideLoading()
+                  const resdata = JSON.parse(res.data)
+                  if (!resdata.flag) {
+                    wepy.showToast({
+                      title: resdata.error,
+                      icon: 'none',
+                      duration: Util.delay(resdata.error)
+                    })
+                  } else {
+                    let jsonData = JSON.parse(res.data)
+                    this.photoArr.push(jsonData.data)
+                    this.postPhoto = this.photoArr.join(',')
+                    this.$apply()
+                  }
+                  done()
+                })
+              }
+            }
+          })
+        }
+      })
+    },
+    deletePhoto (index) {
+      this.photoArr.splice(index, 1)
+      this.postPhoto = this.photoArr.join(',')
+      this.$apply()
+    },
+    viewBigImg (e) {
+      const dataset = e.currentTarget.dataset
+      wepy.previewImage({
+        current: dataset.photo,
+        urls: this.listData[dataset.index].photo.split(',')
+      })
+    },
+    submitBaodan () {
+      wepy.showLoading()
+      wepy.request({
+        url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/order/baoDan`,
+        data: {id: this.clickData.id, photo: this.postPhoto},
+        method: 'post'
+      }).then(res => {
+        wepy.hideLoading()
+        const data = res.data
+        wepy.showToast({
+          title: data.error,
+          icon: 'none',
+          duration: Util.delay(data.error)
+        })
+        if (data.flag) {
+          this.listData[this.clickIndex].dealed = 1
+          this.listData[this.clickIndex].status = '待确认'
+          this.listData[this.clickIndex].photo = this.postPhoto
+          this.clearModal()
+          this.showModal = false
+          this.$apply()
+        }
+      })
+    },
+    cancelBaodan () {
+      this.clearModal()
+      this.showModal = false
+      this.$apply()
+    }
+  }
+}
+</script>

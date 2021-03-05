@@ -1,0 +1,463 @@
+<style lang="less">
+.salestatc-page{
+  background-color: #f5f9fa;
+  width: 100vw;
+  overflow-x: hidden;
+  .headbg{width: 100vw;}
+    .headbg-out{
+      border-radius: 0 0 10% 10%;
+      background: url('https://tossharingsales.boka.cn/minigxk/myIncomebg.png') no-repeat;background-size: cover;
+    }
+    // .headbg-out:after {
+    //   width: 140%;height: 200px;position: absolute;left: -20%;top:0;content: '';border-radius: 0 0 50% 50%;
+    //   background: url('https://tossharingsales.boka.cn/minigxk/myIncomebg.png') no-repeat;background-size: cover;
+    //   overflow-x: hidden;
+    // }
+  .avatar{
+    margin:0 auto;width:130rpx;height:130rpx;border-radius:50%;border:#fff 6rpx solid;box-sizing: border-box;
+    image{width:100%;height:100%;border-radius:50%;}
+  }
+  .time-out{color:#d7b677;z-index:99;padding: 0px 10px;border:1px solid #d7b677;border-radius: 15px;}
+  .jiange:after{
+    content: "";
+    position: absolute;
+    display: block;
+    background-color: #999999;
+    width: 100%;
+    right: 50%;
+    height: 60%;
+    width: 1px;
+    transform: scaleX(0.2);
+    top: 15px;
+  }
+  .bottom_jiange:after{
+    content: "";
+    position: absolute;
+    display: block;
+    background-color: #999999;
+    transform: scaleX(0.2);
+    bottom: 0;
+    height: 1px;
+    right: 20px;
+    left: 20px;
+    transform: scaleY(0.2);
+  }
+  .avatar2{
+    width:100rpx;height:100rpx;border-radius:50%;border:#fff 6rpx solid;box-sizing: border-box;
+    image{width:100%;height:100%;border-radius:50%;}
+  }
+  .myIncome{
+    background: linear-gradient(to right, #efd3a2, #dab27e)
+  }
+  .mySale{
+    background: linear-gradient(to right, #555555, #101010);
+    border-top-left-radius: 15px;
+    border-bottom-right-radius: 15px;
+    color:white;
+    padding:10rpx;
+    position: absolute;
+    top: -15px;
+  }
+  .box-sizing{box-sizing: border-box;}
+  .w_50{width: 50%}
+  .color1{color: #976f2e}
+  .color2{color: #999999}
+  .color3{color: #5a4629}
+  .mb40{margin-bottom: 40px;}
+  .bradius{border-radius: 15px;box-shadow: 0rpx 6rpx 0rpx rgba(96,96,96,0.1);}
+  .backToTop{
+    width:100rpx;
+    height: 100rpx;
+    border-radius: 50%;
+    background-color: #efd3a2;
+    position: fixed;
+    right: 10px;
+    opacity: 0.5;
+    bottom:20rpx;
+  }
+  .flex_column{display: flex;flex-direction: column;justify-content: center;align-items: center;}
+  .search-outter{width: 100%;height: 100rpx;background-color: white;display: flex;flex-direction: column;align-items: center;justify-content: center;}
+  .search-inner{width: 100%;display:flex; align-items: center;background-color: #f2f3f2;border-radius: 45px;height:70%;}
+  .search-input{
+    width: 85%;
+    box-sizing: border-box;
+    font-size: 30rpx;
+    margin: 0 20rpx;
+  }
+  .ph-out{width: 35px;height: 35px;border-radius:50%;}
+  .ph-inner{width: 25px;height: 25px;border-radius: 50%;text-align: center;line-height: 25px;}
+  .out-color1{background-color: #ffd04f}
+  .out-color2{background-color: #d7daec}
+  .out-color3{background-color: #da9c7a}
+  .inner-color1{background-color: #febd0b}
+  .inner-color2{background-color: #bfc2d1}
+  .inner-color3{background-color: #bb866a}
+}
+.pop-modal{
+  position: fixed;left: 0;top:100%;right:0;bottom:0;overflow:hidden;
+  width:100%;background-color: #fff;z-index: 10000;
+  .pop-top{width:100%;height:90rpx;font-size:32rpx;font-weight:bold;}
+  .pop-bottom{width:100%;height:90rpx;font-size:32rpx;display:block;}
+}
+</style>
+<template>
+  <view class="salestatc-page">
+    <view class="headbg-out">
+      <view class="headbg">
+        <view class="w_100 flex_right box-sizing pr10" style="height: 60px;color:#999;">
+          <view class="time-out mr5">
+            <view class="time-inner align_center" @tap="clickRule">数据计算规则</view>
+          </view>
+          <view class="time-out">
+            <view class="time-inner">
+              <picker mode="date" start="{{minDate}}" end="{{nowdate}}" fields="month" bindchange="dateChange">
+                <view class="align_center">{{month}}月<text class="al al-sanjiaoxing font14"></text></view>
+              </picker>
+            </view>
+          </view>
+        </view>
+        <view class="w_100 flex_column pt10">
+            <view class="avatar mb5">
+              <image mode="aspectFill" src="{{userInfo.avatar}}"/>
+            </view>
+            <view class="flex_center bold" style="color:#d7b677">{{userInfo.linkman}}</view>
+        </view>
+        <view style="height:50px;"></view>
+      </view>
+    </view>
+    <view class="box-sizing" style="width: 90%;margin:-40px auto 20px;">
+      <view class="myIncome box-sizing pt10 bradius">
+        <view class="db-flex" style="padding: 0 15px;">
+          <view class="flex_left">
+            <view class="bold align_center">我的销售</view>
+          </view>
+        </view>
+        <view class="db-flex bottom_jiange" style="position:relative">
+          <view class="w_50 padding10 jiange">
+            <view class="align_center bold font18 color1 mb5"><span class="font12"></span>￥{{sumToday}}</view>
+            <view class="align_center color3">今日销售额</view>
+          </view>
+          <view class="w_50 padding10">
+            <view class="align_center bold font18 color1 mb5"><span class="font12"></span>￥{{sumMonth}}</view>
+            <view class="align_center color3">本月销售额</view>
+          </view>
+        </view>
+        <view class="db-flex" style="position:relative">
+          <view class="w_50 padding10 jiange">
+            <view class="align_center bold font18 color1 mb5"><span class="font12"></span>{{orderToday}}</view>
+            <view class="align_center color3">今日订单数</view>
+          </view>
+          <view class="w_50 padding10">
+            <view class="align_center bold font18 color1 mb5"><span class="font12"></span>{{orderMonth}}</view>
+            <view class="align_center color3">本月订单数</view>
+          </view>
+        </view>
+      </view>
+    </view>
+    <block wx:if="{{userInfo.retaileridentity === 'C'}}">
+      <view class="box-sizing bg-white bradius" style="width: 90%;margin: 30px auto 20px;position:relative">
+        <view class="bold align_center mySale">团队销售</view>
+        <view class="db-flex bottom_jiange" style="position:relative">
+          <view class="w_50 padding10 jiange">
+            <view class="align_center bold font18 color1 mb10"><span class="font12"></span>￥{{teamSumToday}}</view>
+            <view class="align_center color2">今日销售额</view>
+          </view>
+          <view class="w_50 padding10">
+            <view class="align_center bold font18 color1 mb10"><span class="font12"></span>￥{{teamSumMonth}}</view>
+            <view class="align_center color2">本月销售额</view>
+          </view>
+        </view>
+        <view class="db-flex" style="position:relative">
+          <view class="w_50 padding10 jiange">
+            <view class="align_center bold font18 color1 mb10"><span class="font12"></span>{{teamOrderToday}}</view>
+            <view class="align_center color2">今日订单数</view>
+          </view>
+          <view class="w_50 padding10">
+            <view class="align_center bold font18 color1 mb10"><span class="font12"></span>{{teamOrderMonth}}</view>
+            <view class="align_center color2">本月订单数</view>
+          </view>
+        </view>
+      </view>
+    </block>
+    <view class="box-sizing bg-white bradius" style="width: 90%;margin: 30px auto 20px;position:relative">
+      <view class="bold align_center mySale">代理团队排行榜</view>
+      <view style="padding: 15px 10px 10px;">
+        <view class="search-outter">
+          <view class="search-inner">
+            <input class="search-input" type="text" placeholder="  请输入代理昵称或ID" bindinput="setKeyword" value="{{keyword}}" bindconfirm="searchKeyword" confirm-type="search" />
+            <view wx:if="{{keyword}}" class="flex_center color-gray font12" bindtap="cancelSearch">取消</view>
+            <view wx:else class="flex_center color-gray font12"><text class="al al-sousuo font20"></text></view>
+          </view>
+        </view>
+        <block wx:if="{{disList1}}">
+          <view wx:if="{{!tabData1.length}}" class="w_100 flex_empty">代理团队暂无销售额</view>
+          <repeat for="{{tabData1}}" index="index" item="item">
+            <view class="db-flex pt10 pb10" style="background:#fff;border-bottom: 1px solid #e5e5e5;">
+              <view class="flex_column mr10">
+                <block wx:if="{{index === 0}}">
+                  <view class="ph-out flex_center out-color1 color-white bold">
+                    <view class="ph-inner inner-color1">{{index+1}}</view>
+                  </view>
+                </block>
+                <block wx:elif="{{index === 1}}">
+                  <view class="ph-out flex_center out-color2 color-white bold">
+                    <view class="ph-inner inner-color2">{{index+1}}</view>
+                  </view>
+                </block>
+                <block wx:elif="{{index === 2}}">
+                  <view class="ph-out flex_center out-color3 color-white bold">
+                    <view class="ph-inner inner-color3">{{index+1}}</view>
+                  </view>
+                </block>
+                <block wx:else>
+                  <view class="ph-out flex_center">
+                    <view class="ph-inner">{{index+1}}</view>
+                  </view>
+                </block>
+              </view>
+              <view class="flex_left avatar2 mr5">
+                <image mode="aspectFill" src="{{item.avatar}}"/>
+              </view>
+              <view class="flex_cell" style="line-height:100rpx;">
+                <view class="bold clamp1">{{item.linkman}}</view>
+              </view>
+              <view class="align_right" style="line-height:50px;">￥{{item.salesmoney}}</view>
+            </view>
+          </repeat>
+          <view class="load-end-area loading" wx:if="{{isLoading1}}"></view>
+          <view class="load-end-area done" wx:elif="{{isDone1}}"></view>
+        </block>
+      </view>
+    </view>
+    <view wx:if="{{pageStart}}" class="backToTop font12 flex_center" bindtap="topPageTop">
+      <text class="al al-huidaodingbu font20"></text>
+    </view>
+  </view>
+  <view class="auto-modal flex_center" wx:if="{{showRule}}">
+    <view class="modal-inner padding20 border-box" style="width:80%;height:65%">
+      <scroll-view scroll-y style="height:100%;">
+        <view class="align_center font18 bold pb10">计算规则</view>
+        <view class="flex_left">
+          <view class="bold font16">我的销售</view>
+          <view>· 今日销售额为经理个人今日的销售总额，数据实时统计。</view>
+          <view>· 本月销售额为经理个人本月1日到昨日23:59分的销售总额。</view>
+          <view>· 今日订单数为经理个人今日的订单总数，数据实时统计。</view>
+          <view>· 本月订单数为经理个人本月1日到昨日23:59分的订单总数。</view>
+          <view class="mt12 bold font16">团队销售</view>
+          <view>· 今日销售额为团队（含经理）今日的销售总额，数据实时统计。</view>
+          <view>· 本月销售额为团队（含经理）本月1日到昨日23:59分的销售总额。</view>
+          <view>· 今日订单数为团队（含经理）今日的订单总数，数据实时统计。</view>
+          <view>· 本月订单数为团队（含经理）本月1日到昨日23:59分的订单总数。</view>
+          <view class="mt12 bold font16">代理团队排行榜</view>
+          <view>· 代理团队（含代理本人）本月1日到昨日23:59分的销售总额。</view>
+          <view class="mt12 bold font16">注意：</view>
+          <view>1. 销售额减少有可能是订单已进行退款，请自行核实。</view>
+          <view>2. 请勿将代理团队的销售额累加后与团队销售作比较，排行榜中代理与代理间存在上下级关系，1个人所属多个团队，销售额是重复计算的。</view>
+        </view>
+      </scroll-view>
+      <form class="close-area flex_center" bindsubmit="closeRule" report-submit="true">
+        <button formType="submit" class="al al-close1"></button>
+      </form>
+    </view>
+  </view>
+</template>
+<script>
+import wepy from 'wepy'
+import Time from '@/libs/time'
+import Config from '@/config'
+import Util from '@/libs/util'
+export default class extends wepy.page {
+  config = {
+    enablePullDownRefresh: true,
+    backgroundTextStyle: 'dark'
+  }
+  components = {}
+  data = {
+    globalData: {},
+    userInfo: {},
+    disList1: false,
+    tabData1: [],
+    nowdate: '',
+    startMonth: '',
+    year: '',
+    month: '',
+    monthParam: '',
+    pageStart: 0,
+    isLoading1: false,
+    isDone1: false,
+    keyword: '',
+    sumToday: '',
+    sumMonth: '',
+    orderToday: '',
+    orderMonth: '',
+    submiting: false,
+    teamSumToday: '',
+    teamSumMonth: '',
+    teamOrderToday: '',
+    teamOrderMonth: '',
+    showRule: false,
+    showMonth: false,
+    minDate: '',
+    themeObject: {}
+  }
+  initData () {
+    this.disList = false
+    this.pageStart = 0
+    this.tabData1 = []
+  }
+  refreshPage () {
+    this.tabData1 = []
+    this.pageStart = 0
+    this.disList1 = false
+    this.keyword = ''
+    this.getData1()
+  }
+  onPullDownRefresh () {
+    this.refreshPage()
+    wepy.showNavigationBarLoading()
+    setTimeout(() => {
+      wepy.hideNavigationBarLoading()
+      wepy.stopPullDownRefresh()
+    }, 500)
+  }
+  onReachBottom (event) {
+    console.log('进来了')
+    if (this.tabData1.length === (this.pageStart + 1) * this.limit) {
+      this.pageStart++
+      this.isLoading1 = true
+      this.getData1()
+    }
+  }
+  getData1 () {
+    if (this.submiting) return false
+    this.submiting = true
+    let params = {pagestart: this.pageStart, limit: this.limit, month: this.monthParam}
+    if (this.keyword !== '') {
+      params.keyword = this.keyword
+    }
+    wepy.request({
+      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/haitun/cStatData`,
+      data: params,
+      method: 'post'
+    }).then(res => {
+      const data = res.data
+      let retdata = data.data ? data.data : data
+      this.submiting = false
+      if (this.pageStart === 0) {
+        this.sumMonth = data.personal_sum_month
+        this.sumToday = data.personal_sum_today
+        this.orderToday = data.personal_orders_today
+        this.orderMonth = data.personal_orders_month
+        this.teamSumMonth = data.team_sum_month
+        this.teamSumToday = data.team_sum_today
+        this.teamOrderToday = data.team_orders_today
+        this.teamOrderMonth = data.team_orders_month
+      }
+      this.tabData1 = this.tabData1.concat(retdata)
+      this.isLoading1 = false
+      if (retdata.length < this.limit && this.tabData1.length) {
+        this.isDone1 = true
+      } else {
+        this.isDone1 = false
+      }
+      this.disList1 = true
+      this.$apply()
+    })
+  }
+  topPageTop () {
+    wepy.pageScrollTo({
+      scrollTop: 0
+    })
+  }
+  methods = {
+    setKeyword (e) {
+      this.keyword = e.detail.value
+    },
+    dateChange (e) {
+      // this.month = e.detail
+      console.log(e.detail)
+      let value = e.detail.value
+      this.year = value.substring(0, 4)
+      this.month = value.substring(value.indexOf('-') + 1)
+      let monthStr = this.month
+      let monthInt = parseInt(this.month)
+      if (monthInt < 10) {
+        monthStr = `0${monthInt}`
+      }
+      this.monthParam = this.year + '' + monthStr
+      this.tabData1 = []
+      this.disList1 = false
+      this.getData1()
+    },
+    searchKeyword (e) {
+      if (e.detail.value !== '') this.keyword = e.detail.value
+      this.pageStart = 0
+      this.tabData1 = []
+      this.isDone1 = false
+      this.disList1 = false
+      this.getData1()
+    },
+    cancelSearch () {
+      this.keyword = ''
+      this.pageStart = 0
+      this.tabData1 = []
+      this.isDone1 = false
+      this.disList1 = false
+      this.getData1()
+    },
+    clickRule (e) {
+      this.showRule = true
+    },
+    closeRule (e) {
+      this.showRule = false
+    }
+  }
+  handlePageData () {
+    this.globalData = this.$parent.globalData
+    Util.appInit(this.globalData, this)
+    this.userInfo = this.globalData.userInfo
+    for (let i = 0; i < Config.TestWids.length; i++) {
+      if (Config.TestWids[i] === this.userInfo.regwid) {
+        this.showMonth = true
+        break
+      }
+    }
+    let now = new Time()
+    this.year = now.year()
+    this.month = now.month()
+    let minYear = this.year
+    let minMonth = this.month - 2
+    if (this.month === 2) {
+      minYear = minYear - 1
+      minMonth = 12
+    } else if (this.month === 1) {
+      minYear = minYear - 1
+      minMonth = 11
+    }
+    if (minMonth < 10) {
+      minMonth = `0${minMonth}`
+    }
+    this.minDate = minYear + '-' + minMonth
+    this.nowdate = this.year + '-' + this.month
+    let monthStr = this.month
+    let monthInt = parseInt(this.month)
+    if (monthInt < 10) {
+      monthStr = `0${monthInt}`
+    }
+    this.monthParam = this.year + '' + monthStr
+    this.$apply()
+    this.getData1()
+  }
+  onLoad (options) {
+    this.options = options
+    this.limit = Config.Limit
+    if (this.$parent.globalData.flag.bokaAuth) {
+      this.handlePageData()
+    } else {
+      this.$parent.loadCallback = () => {
+        this.handlePageData()
+      }
+    }
+  }
+}
+</script>

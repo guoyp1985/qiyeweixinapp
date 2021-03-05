@@ -1,0 +1,270 @@
+<style lang="less">
+.nodata{
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    display:flex !important;justify-content: center; align-items: center;
+    color:#666666;
+    padding:20rpx;
+    font-size:28rpx;
+}
+.nodata .add_groups{
+    width: 30%;
+    height: 74rpx;
+    background: #3366ff;
+    color: #fff;
+    line-height: 74rpx;
+    border-radius: 40rpx;
+}
+.havedata{width: 100%;height:100%;font-size: 28rpx;}
+.havedata .data_item{
+  width: 100%;
+  background: #ffffff;
+  padding: 30rpx 20rpx;
+  box-sizing: border-box;
+  display:block;
+}
+.havedata .data_item .pic{
+  width:100rpx;
+  height:100rpx;
+}
+.havedata .data_item image{
+  width:80rpx;
+  height:80rpx;
+  border-radius:15rpx;
+}
+.havedata .data_item .al{font-size:70rpx;color:#387ee9;}
+.havedata .data_item .data_txt .txt_name{
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: 28rpx;
+  margin-bottom:10rpx;
+}
+.havedata .data_item .data_btn{
+    height: 44rpx;
+    border-radius: 20rpx;
+    background: #099ded;
+    color: #ffffff;
+    font-size: 24rpx;
+    text-align: center;
+    line-height: 44rpx;
+    padding:0 20rpx;
+}
+.havedata .data_item{
+  position:relative;
+}
+.havedata .data_item:after{
+    content:"";
+    position:absolute;
+    left:0;
+    bottom:0;
+    right:0;
+    height:1px;
+    border-bottom:1px solid #D9D9D9;
+    color:#D9D9D9;
+    -webkit-transform-origin:0 100%;
+    transform-origin:0 100%;
+    -webkit-transform:scaleY(0.5);
+    transform:scaleY(0.5);
+}
+</style>
+<template>
+  <view class="container columnarea">
+    <view wx:if="{{disList1}}" class="w_100">
+      <view wx:if="{{!tabData1.length}}" class='nodata'>暂无浏览内容</view>
+      <view class='groups1' wx:else>
+        <view class='havedata'>
+          <repeat for="{{tabData1}}" item="item" index="index">
+            <form class="data_item" data-data="{{item}}" bindsubmit="formSubmit" report-submit="true">
+              <button formType="submit" class="flex_left">
+                <view class="pic flex_left" wx:if="{{item.photo && item.photo != ''}}">
+                  <image src="{{item.photo}}" mode="aspectFill" lazy-load></image>
+                </view>
+                <view class="data_txt flex_cell" data-id="{{item.id}}">
+                  <view class="align_left" wx:if="{{item.module == 'lottery'}}">幸运大抽奖</view>
+                  <view class="align_left" wx:else>{{item.title}}</view>
+                  <view class="font12 color-gray align_left">{{item.dateStr}}</view>
+                </view>
+              </button>
+            </form>
+          </repeat>
+        </view>
+      </view>
+      <block wx:if="{{tabData1.length}}">
+        <view class="load-end-area loading" wx:if="{{isLoading}}"></view>
+        <view class="load-end-area done" wx:elif="{{isDone}}"></view>
+      </block>
+    </view>
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy'
+import Config from '@/config'
+import Time from '@/libs/time'
+import Util from '@/libs/util'
+import Cached from '@/libs/cached'
+export default class UserView extends wepy.page {
+  config = {
+    enablePullDownRefresh: true,
+    backgroundTextStyle: 'dark'
+  }
+  data = {
+    userInfo: null,
+    disList1: false,
+    tabData1: [],
+    iconObject: {
+      'sharehongbao': 'al-hongbao color-red1',
+      'answer': 'al-wenda color-orange',
+      'grabcard': 'al-youhuiquan1 color-red1',
+      'kouling': 'al-hongbao color-red1',
+      'facehongbao': 'al-liwu color-red1',
+      'default': 'al-pic'
+    },
+    typeArray: ['sharehongbao', 'answer', 'grabcard', 'kouling', 'facehongbao'],
+    onAjaxEnd: false,
+    isLoading: false,
+    isDone: false,
+    themeObject: {}
+  }
+  refreshPage () {
+    this.onAjaxEnd = false
+    this.disList1 = false
+    this.tabData1 = []
+    this.pageStart1 = 0
+    this.isLoading = false
+    this.isDone = false
+    this.$apply()
+    this.getData1()
+  }
+  onPullDownRefresh () {
+    this.refreshPage()
+    wepy.showNavigationBarLoading()
+    setTimeout(function () {
+      wepy.hideNavigationBarLoading()
+      wepy.stopPullDownRefresh()
+    }, 500)
+  }
+  onReachBottom () {
+    if (this.tabData1.length === (this.pageStart1 + 1) * this.limit) {
+      this.pageStart1++
+      this.isLoading = true
+      this.getData1()
+    }
+  }
+  getData1 = function () {
+    Cached.pagingRequest({
+      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/user/viewList?pagestart=${this.pageStart1}&limit=${this.limit}`
+    }, 'userView.list', Config.URT.H,
+    cacheData => {
+      const isCachePaging = cacheData.prevPage >= this.pageStart1
+      console.log(cacheData)
+      if (!isCachePaging) {
+        cacheData.prevPage = this.pageStart1
+      }
+      return isCachePaging
+    },
+    cacheData => {
+      let listarr = cacheData.data.slice(this.pageStart1 * this.limit, (this.pageStart1 + 1) * this.limit)
+      const list = this.processData1(listarr)
+      this.tabData1 = this.tabData1.concat(list)
+      if (list.length < this.limit && this.tabData1.length) {
+        this.isDone = true
+      } else {
+        this.isDone = false
+      }
+      this.isLoading = false
+      this.disList1 = true
+    },
+    res => {
+      this.onAjaxEnd = true
+      let data = res.data
+      let retdata = data.data ? data.data : data
+      const list = this.processData1(retdata)
+      this.tabData1 = this.tabData1.concat(list)
+      if (list.length < this.limit && this.tabData1.length) {
+        this.isDone = true
+      } else {
+        this.isDone = false
+      }
+      this.isLoading = false
+      this.disList1 = true
+      this.$apply()
+      return { data: this.tabData1, prevPage: this.pageStart1 }
+    })
+  }
+  processData1 (list) {
+    for (let i = 0; i < list.length; i++) {
+      let data = list[i]
+      list[i].dateStr = new Time(list[i].dateline * 1000).dateFormat('yyyy-MM-dd hh:mm')
+      if (!data.photo || data.photo === '') {
+        list[i].iconModule = this.iconObject.default
+        if (data.module === 'miniactivity') {
+          for (let j = 0; j < this.typeArray.length; j++) {
+            if (data.type === this.typeArray[j]) {
+              list[i].iconModule = this.iconObject[this.typeArray[j]]
+              break
+            }
+          }
+        }
+      }
+    }
+    return list
+  }
+  handlePageData () {
+    this.globalData = this.$parent.globalData
+    Util.appInit(this.globalData, this)
+    this.userInfo = this.globalData.userInfo
+    if (!this.tabData1.length) {
+      this.pageStart1 = 0
+      this.getData1()
+    }
+    this.$apply()
+  }
+  onLoad () {
+    this.pageStart1 = 0
+    this.limit = Config.Limit
+    if (this.$parent.globalData.flag.bokaAuth) {
+      this.handlePageData()
+    } else {
+      this.$parent.loadCallback = () => {
+        this.handlePageData()
+      }
+    }
+  }
+  methods = {
+    scrollEvent (e) {
+      if (this.tabData1.length === (this.pageStart1 + 1) * this.limit) {
+        this.pageStart1++
+        this.getData1()
+      }
+    },
+    formSubmit (e) {
+      const data = e.target.dataset.data
+      if (data.module === 'miniactivity') {
+        if (data.type === 'grabcard') {
+          wepy.navigateTo({url: `/packageC/pages/voucher?id=${data.moduleid}`})
+        } else {
+          wepy.navigateTo({url: `/packageC/pages/${data.type}?id=${data.moduleid}`})
+        }
+      } else if (data.module === 'lottery') {
+        wepy.navigateTo({url: `/packageA/pages/luckdraw?wid=${data.wid}`})
+      } else if (data.module === 'courseclass') {
+        wepy.navigateTo({url: `/package/pages/classroom?cid=${data.moduleid}&creater=${data.wid}`})
+      } else if (data.module === 'store') {
+        wepy.navigateTo({url: `/${Config.Router.store}?wid=${data.wid}`})
+      } else if (data.module === 'product' || data.module === 'factoryproduct') {
+        wepy.setStorageSync('selectedProduct', data)
+        wepy.navigateTo({url: `/pages/product?id=${data.moduleid}&module=${data.module}select=history`})
+      } else if (data.module === 'news' || data.module === 'factorynews') {
+        wepy.navigateTo({url: `/packageB/pages/news?id=${data.moduleid}`})
+      } else if (data.module === 'knowledge') {
+        const url = encodeURIComponent(`train?id=${data.moduleid}`)
+        wepy.navigateTo({url: `/pages/webview?url=${url}&module=knowledge&id=${data.moduleid}`})
+      }
+    }
+  }
+}
+</script>

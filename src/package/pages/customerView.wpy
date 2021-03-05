@@ -1,0 +1,491 @@
+<style lang="less">
+.curstomer-view-page{
+  width:100%;padding-top:20rpx;box-sizing: border-box;
+  .top-area{
+    padding:40rpx 20rpx;box-sizing: border-box;
+    .pic{
+      width:150rpx;
+      image{width:120rpx;height:120rpx;border-radius:50%;}
+    }
+  }
+  .tag-list{
+    display:flex;flex-wrap:wrap;margin-top:20rpx;
+    .tag-item{
+      display:flex;justify-content: center;align-items: center;
+      padding-right:10rpx;margin-bottom:10rpx;
+      .inner{padding:10rpx;}
+    }
+    .tag-item:nth-child(3n) .inner{background-color:#7ca9ed;color:#fff;}
+    .tag-item:nth-child(3n+1) .inner{background-color:#cba564;color:#fff;}
+    .tag-item:nth-child(3n+2) .inner{background-color:#f2a93b;color:#fff;}
+  }
+  .radius-title{
+    display:inline-block;border-top-right-radius:60rpx;border-bottom-right-radius:60rpx;
+    padding:10rpx 20rpx;
+  }
+  .block-list{
+    .txt1{margin-top:10rpx;height:60rpx;display:flex;justify-content: center;align-items: center;}
+  }
+  .app-tab .tab-item.active .line {height: 10rpx;}
+  .product-area{
+    width:100%;padding:20rpx;box-sizing: border-box;
+    .pic{
+      width:140rpx;
+      image{width:130rpx;height:130rpx;}
+    }
+  }
+  .list-area1{
+    width:100%;box-sizing: border-box;
+  }
+  .list-area2{
+    width:100%;box-sizing: border-box;
+  }
+  .list-area3{
+    width:100%;box-sizing: border-box;
+    .avatar{
+      width:110rpx;
+      image{width:90rpx;height:90rpx;border-radius:50%;}
+    }
+  }
+}
+</style>
+<template>
+  <view class="curstomer-view-page">
+    <view class="app-box-area">
+      <view class="box-inner top-area">
+        <view class="flex_left">
+          <view class="pic flex_left">
+            <image src="{{viewData.avatar}}"></image>
+          </view>
+          <view class="flex_cell flex_left">
+            <view class="w_100">
+              <view>{{viewData.linkman}}</view>
+              <view>{{viewData.country}} {{viewData.province}} {{viewData.city}}</view>
+              <view wx:if="{{viewData.recommend}}">推荐人: {{viewData.recommendname}}</view>
+            </view>
+          </view>
+        </view>
+        <view class="tag-list" wx:if="{{viewData && viewData.tags && viewData.tags.length}}">
+          <repeat for="{{viewData.tags}}" item="item" index="index">
+            <view class="tag-item">
+              <view class="inner">{{item}}</view>
+            </view>
+          </repeat>
+        </view>
+      </view>
+    </view>
+    <view class="mt12 bg-white pt20">
+      <view class="radius-title" style="{{themeObject.bgStyle}}">本店购买数据</view>
+      <view class="block-list">
+        <view class="block-item">
+          <view class="block-inner">
+            <view class="txt2">购买次数</view>
+            <view class="txt1">{{buyInfo.ordercount}}次</view>
+          </view>
+        </view>
+        <view class="block-item">
+          <view class="block-inner">
+            <view class="txt2">最近购买</view>
+            <view class="txt1" wx:if="{{buyInfo.lasttime == '无'}}">{{buyInfo.lasttime}}</view>
+            <view class="txt1 font12" wx:else>
+              <view class="w_100">
+                <view>{{buyInfo.lasttime1}}</view>
+                <view>{{buyInfo.lasttime2}}</view>
+              </view>
+            </view>
+          </view>
+        </view>
+        <view class="block-item">
+          <view class="block-inner">
+            <view class="txt2">累计消费</view>
+            <view class="txt1">￥{{buyInfo.ordersmoney}}</view>
+          </view>
+        </view>
+      </view>
+      <view class="radius-title mt20" style="{{themeObject.bgStyle}}">本店客户价值</view>
+      <view class="block-list pb20">
+        <view class="block-item">
+          <view class="block-inner">
+            <view class="txt2">复购率</view>
+            <view class="txt1">{{customerValue.nextbuy}}%</view>
+          </view>
+        </view>
+        <view class="block-item">
+          <view class="block-inner">
+            <view class="txt2">客户类型</view>
+            <view class="txt1">{{customerValue.type}}</view>
+          </view>
+        </view>
+        <view class="block-item">
+          <view class="block-inner">
+            <view class="txt2">成为代理可能性</view>
+            <view class="txt1">{{customerValue.sellerspercent}}%</view>
+          </view>
+        </view>
+      </view>
+      <view class="b_top_after flex_left padding10">
+        <view class="pr10">浏览最多的商品</view>
+        <view class="flex_cell flex_right">
+          <view class="w_100 clamp1 align_right" @tap="toViewProduct">{{viewData.maxview_fp}}</view>
+        </view>
+      </view>
+      <view class="b_top_after flex_left padding10">
+        <view class="pr10">分享最多的商品</view>
+        <view class="flex_cell flex_right">
+          <view class="w_100 clamp1 align_right" @tap="toShareProduct">{{viewData.maxshare_fp}}</view>
+        </view>
+      </view>
+      <view class="b_top_after flex_left padding10">
+        <view class="pr10">最后访问时间</view>
+        <view class="flex_cell flex_right">
+          <view class="w_100 clamp1 align_right">{{viewData.lastviewtime}}</view>
+        </view>
+      </view>
+      <view class="b_top_after flex_left padding10">
+        <view class="pr10">最后分享时间</view>
+        <view class="flex_cell flex_right">
+          <view class="w_100 clamp1 align_right">{{viewData.lastsharetime}}</view>
+        </view>
+      </view>
+    </view>
+    <view class="mt20 bg-white">
+      <view class="app-tab">
+        <view class="tab-item font14 {{selectedIndex == 0 ? 'active' : ''}}" bindtap="clickTab(0)">
+          <text style="{{selectedIndex == 0 ? themeObject.colorStyle : ''}}">订单记录</text>
+          <view class="line" style="{{selectedIndex == 0 ? themeObject.bgStyle : ''}}"></view>
+        </view>
+        <view class="tab-item font14 {{selectedIndex==1 ? 'active' : ''}}" bindtap="clickTab(1)">
+          <text style="{{selectedIndex == 1 ? themeObject.colorStyle : ''}}">分享动态</text>
+          <view class="line" style="{{selectedIndex == 1 ? themeObject.bgStyle : ''}}"></view>
+        </view>
+        <view class="tab-item font14 {{selectedIndex==2 ? 'active' : ''}}" bindtap="clickTab(2)">
+          <text style="{{selectedIndex == 2 ? themeObject.colorStyle : ''}}">带来客户</text>
+          <view class="line" style="{{selectedIndex == 2 ? themeObject.bgStyle : ''}}"></view>
+        </view>
+      </view>
+      <block wx:if="{{selectedIndex == 0 && disList1}}">
+        <view wx:if="{{!listData1.length}}" class="flex_empty">暂无数据</view>
+        <view wx:else class="list-area1">
+          <repeat for="{{listData1}}" item="item" index="index">
+            <view class="b_top_after flex_left padding10 border-box">
+              <view class="pr10">{{item.dateline}}</view>
+              <view class="flex_cell flex_right">
+                <view class="w_100 clamp1 align_right color-orange">{{item.flag}}</view>
+              </view>
+            </view>
+            <view class="b_top_after flex_left product-area">
+              <view class="pic flex_left">
+                <image src="{{item.photo}}"></image>
+              </view>
+              <view class="flex_left flex_cell">
+                <view class="w_100">
+                  <view class="clamp1">{{item.name}}</view>
+                  <view class="color-red">￥{{item.special}}</view>
+                </view>
+              </view>
+            </view>
+            <view class="bg-page pt10"></view>
+          </repeat>
+        </view>
+        <view class="load-end-area loading" wx:if="{{isLoading1}}"></view>
+        <view class="load-end-area done" wx:elif="{{isDone1}}"></view>
+      </block>
+      <block wx:if="{{selectedIndex == 1 && disList2}}">
+        <view wx:if="{{!listData2.length}}" class="flex_empty">暂无数据</view>
+        <view wx:else class="list-area2">
+          <repeat for="{{listData2}}" item="item" index="index">
+            <view class="b_bottom_after flex_left padding10 border-box">{{item.desc}}</view>
+          </repeat>
+        </view>
+        <view class="load-end-area loading" wx:if="{{isLoading2}}"></view>
+        <view class="load-end-area done" wx:elif="{{isDone2}}"></view>
+      </block>
+      <block wx:if="{{selectedIndex == 2 && disList3}}">
+        <view wx:if="{{!listData3.length}}" class="flex_empty">暂无数据</view>
+        <view wx:else class="list-area3">
+          <repeat for="{{listData3}}" item="item" index="index">
+            <view class="b_bottom_after flex_left padding10 border-box">
+              <view class="avatar">
+                <image src="{{item.avatar}}"></image>
+              </view>
+              <view class="flex_cell flex_left">
+                <view class="w_100">
+                  <view class="w_100 clamp1">{{item.linkman}}</view>
+                  <view class="color-gray font12">{{item.dateline}}</view>
+                </view>
+              </view>
+            </view>
+          </repeat>
+        </view>
+        <view class="load-end-area loading" wx:if="{{isLoading3}}"></view>
+        <view class="load-end-area done" wx:elif="{{isDone3}}"></view>
+      </block>
+    </view>
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy'
+import Config from '@/config'
+import Util from '@/libs/util'
+import Time from '@/libs/time'
+export default class CustomerView extends wepy.page {
+  data = {
+    query: {},
+    options: {},
+    globalData: {},
+    userInfo: {},
+    viewData: {avatar: 'https://tossharingsales.boka.cn/images/user.jpg', ordercount: 0, lasttime: '无', ordersmoney: '0.00', nextbuy: 0, sellerspercent: 0},
+    buyInfo: {lasttime: '', lasttime1: '', lasttime2: '', ordercount: 0, ordersmoney: '0.00'},
+    customerValue: {nextbuy: 0, sellerspercent: 0, type: ''},
+    themeObject: {},
+    selectedIndex: 0,
+    disList1: false,
+    disList2: false,
+    disList3: false,
+    listData1: [],
+    listData2: [],
+    listData3: [],
+    isLoading1: false,
+    isLoading2: false,
+    isLoading3: false,
+    isDone1: false,
+    isDone2: false,
+    isDone3: false
+  }
+  refreshPage () {
+    this.disList1 = false
+    this.disList2 = false
+    this.disList3 = false
+    this.listData1 = []
+    this.listData2 = []
+    this.listData3 = []
+    this.pageStart1 = 0
+    this.pageStart2 = 0
+    this.pageStart3 = 0
+    this.$apply()
+    switch (this.selectedIndex) {
+      case 0:
+        this.getData1()
+        break
+      case 1:
+        this.getData2()
+        break
+      case 2:
+        this.getData3()
+        break
+    }
+  }
+  onPullDownRefresh () {
+    if (!this.afterLoad1 || !this.afterLoad2 || !this.afterLoad3) return false
+    this.refreshPage()
+    wepy.showNavigationBarLoading()
+    setTimeout(() => {
+      wepy.hideNavigationBarLoading()
+      wepy.stopPullDownRefresh()
+    }, 500)
+  }
+  onReachBottom () {
+    switch (this.selectedIndex) {
+      case 0:
+        if (!this.afterLoad1) return false
+        if (this.listData1.length === (this.pageStart1 + 1) * this.limit) {
+          this.pageStart1++
+          this.isLoading1 = true
+          this.getData1()
+        }
+        break
+      case 1:
+        if (!this.afterLoad2) return false
+        if (this.listData2.length === (this.pageStart2 + 1) * this.limit) {
+          this.pageStart2++
+          this.isLoading2 = true
+          this.getData2()
+        }
+        break
+      case 2:
+        if (!this.afterLoad3) return false
+        if (this.listData3.length === (this.pageStart3 + 1) * this.limit) {
+          this.pageStart3++
+          this.isLoading3 = true
+          this.getData3()
+        }
+        break
+    }
+  }
+  getData1 () {
+    if (!this.afterLoad1) return false
+    this.afterLoad1 = false
+    wepy.request({
+      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/customer/ordersList`,
+      data: {pagestart: this.pageStart1, limit: this.limit, customeruid: this.options.uid},
+      method: 'post'
+    }).then(res => {
+      wepy.hideLoading()
+      this.afterLoad1 = true
+      this.isLoading1 = false
+      const data = res.data
+      let retdata = data.data ? data.data : data
+      for (let i = 0; i < retdata.length; i++) {
+        let curd = retdata[i]
+        curd.dateline_str = new Time(curd.dateline * 1000).dateFormat('yyyy-MM-dd hh:mm')
+      }
+      this.listData1 = this.listData1.concat(retdata)
+      this.disList1 = true
+      if (retdata.length < this.limit && this.listData1.length) {
+        this.isDone1 = true
+      } else {
+        this.isDone1 = false
+      }
+      this.$apply()
+    })
+  }
+  getData2 () {
+    if (!this.afterLoad2) return false
+    this.afterLoad2 = false
+    wepy.request({
+      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/customer/shareList`,
+      data: {pagestart: this.pageStart2, limit: this.limit, customeruid: this.options.uid}
+    }).then(res => {
+      wepy.hideLoading()
+      this.afterLoad2 = true
+      this.isLoading2 = false
+      const data = res.data
+      let retdata = data.data ? data.data : data
+      for (let i = 0; i < retdata.length; i++) {
+        let curd = retdata[i]
+        curd.dateline_str = new Time(curd.dateline * 1000).dateFormat('yyyy-MM-dd hh:mm')
+      }
+      this.listData2 = this.listData2.concat(retdata)
+      this.disList2 = true
+      if (retdata.length < this.limit && this.listData2.length) {
+        this.isDone2 = true
+      } else {
+        this.isDone2 = false
+      }
+      this.$apply()
+    })
+  }
+  getData3 () {
+    if (!this.afterLoad3) return false
+    this.afterLoad3 = false
+    wepy.request({
+      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/customer/recommendList`,
+      data: {pagestart: this.pageStart3, limit: this.limit, customeruid: this.options.uid}
+    }).then(res => {
+      wepy.hideLoading()
+      this.afterLoad3 = true
+      this.isLoading3 = false
+      const data = res.data
+      let retdata = data.data ? data.data : data
+      for (let i = 0; i < retdata.length; i++) {
+        let curd = retdata[i]
+        curd.dateline_str = new Time(curd.dateline * 1000).dateFormat('yyyy-MM-dd hh:mm')
+      }
+      this.listData3 = this.listData3.concat(retdata)
+      this.disList3 = true
+      if (retdata.length < this.limit && this.listData3.length) {
+        this.isDone3 = true
+      } else {
+        this.isDone3 = false
+      }
+      this.$apply()
+    })
+  }
+  handlePageData () {
+    this.globalData = this.$parent.globalData
+    Util.appInit(this.globalData, this)
+    this.userInfo = this.globalData.userInfo
+    wepy.request({
+      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/customer/info`,
+      data: {customeruid: this.options.uid}
+    }).then(res => {
+      const data = res.data
+      let retdata = data.data ? data.data : data
+      if (data.flag) {
+        retdata.dateline_str = new Time(retdata.dateline * 1000).dateFormat('yyyy-MM-dd hh:mm')
+        if (retdata.sex === 1) {
+          retdata.sex_str = '男'
+        } else if (retdata.sex === 2) {
+          retdata.sex_str = '女'
+        } else {
+          retdata.sex_str = '未知'
+        }
+        this.viewData = retdata
+        let buyinfo = data.buyinfo
+        let lasttime = buyinfo.lasttime
+        if (lasttime !== '无') {
+          let arr = lasttime.split(' ')
+          buyinfo.lasttime1 = arr[0]
+          buyinfo.lasttime2 = arr[1]
+        }
+        this.buyInfo = buyinfo
+        this.customerValue = data.customervalue
+        this.$apply()
+      }
+    })
+    switch (this.selectedIndex) {
+      case 0:
+        if (!this.listData1.length) {
+          this.getData1()
+        }
+        break
+      case 1:
+        if (!this.listData2.length) {
+          this.getData2()
+        }
+        break
+      case 2:
+        if (!this.listData3.length) {
+          this.getData3()
+        }
+        break
+    }
+  }
+  onLoad (options) {
+    this.options = options
+    this.limit = Config.Limit
+    this.pageStart1 = 0
+    this.pageStart2 = 0
+    this.pageStart3 = 0
+    this.afterLoad1 = true
+    this.afterLoad2 = true
+    this.afterLoad3 = true
+    if (this.$parent.globalData.flag.bokaAuth) {
+      this.handlePageData()
+    } else {
+      this.$parent.loadCallback = () => {
+        this.handlePageData()
+      }
+    }
+  }
+  methods = {
+    clickTab (index) {
+      this.selectedIndex = parseInt(index)
+      switch (this.selectedIndex) {
+        case 0:
+          if (!this.listData1.length) {
+            this.getData1()
+          }
+          break
+        case 1:
+          if (!this.listData2.length) {
+            this.getData2()
+          }
+          break
+        case 2:
+          if (!this.listData3.length) {
+            this.getData3()
+          }
+          break
+      }
+    },
+    toViewProduct () {
+      wepy.navigateTo({url: `/${Config.Router.product}?id=${this.viewData.maxview_fpid}&fid=${Config.Fid}&type=fpimport`})
+    },
+    toShareProduct () {
+      wepy.navigateTo({url: `/${Config.Router.product}?id=${this.viewData.maxshare_fpid}&fid=${Config.Fid}&type=fpimport`})
+    }
+  }
+}
+</script>

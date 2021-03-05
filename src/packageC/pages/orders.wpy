@@ -1,0 +1,344 @@
+<style lang="less">
+.orders-page{
+  .order-info,
+  .order-info .operate-area {
+    position: relative;
+  }
+  .order-info {
+    margin-bottom: 10px;
+  }
+  .order-info .operate-area:before,
+  .order-info:before {
+    content: ' ';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    border-top: 1px solid #f0f0f0;
+  }
+  .order-info .store-info,
+  .order-info .pay-info,
+  .order-info .operate-area {
+    background-color: #ffffff;
+  }
+  .order-info .store-info,
+  .order-info .product-info,
+  .order-info .product-info .product-img,
+  .order-info .product-info .product-detail {
+    display: flex;
+  }
+  .order-info .store-info {
+    padding: 0 10px;
+  }
+  .order-info .store-info .info-cell,
+  .order-info .product-info .product-detail {
+    flex: 1;
+  }
+  .order-info .store-info .info-cell text {
+    vertical-align: middle;
+  }
+  .order-info .product-info,
+  .order-info .products-info {
+    padding: 10px 15px;
+    background-color: #f7f7f7;
+  }
+  .order-info .store-info .status-cell {
+    text-align: center;
+  }
+  .order-info .store-info .status-cell text {
+    line-height: 34px;
+  }
+  .order-info .product-info .product-img image{
+    width: 60px;
+    height: 60px;
+    margin-right: 10px;
+    border: 1px solid #eeeeee;
+  }
+  .order-info .pay-info,
+  .order-info .operate-area {
+    text-align: right;
+  }
+  .order-info .pay-info {
+    padding: 5px 20px;
+  }
+  .order-info .operate-area {
+    padding: 8px 10px;
+  }
+  /* vux css hack */
+  .order-info .weui-btn + .weui-btn {
+    margin-top: 0;
+  }
+  .order-info .weui-btn {
+    margin-left: 5px;
+  }
+  .order-info navigator{display:block;}
+  .order-info .operate-area .db-in {
+    margin-left: 4px;
+  }
+  .btn{
+    background-color: #f8f8f8;
+    border-radius: 10rpx;
+    padding: 10rpx 28rpx;
+    border: 1rpx solid #cfcfcf;
+    box-sizing: border-box;
+  }
+  .bottom-area{
+    width:100%;height:100rpx;
+  }
+}
+</style>
+<template>
+  <view class="container bg-page orders-page">
+    <view wx:if="{{disList}}" class="scroll_list">
+      <view wx:if="{{!tabData.length}}" class="flex_empty">没有相关订单</view>
+      <block wx:else>
+        <repeat for="{{tabData}}" index="index" item="item">
+          <view class="order-info">
+            <view class="store-info">
+              <view class="info-cell" style="display:flex;align-items:center;">订单编号: {{item.orderno}}</view>
+              <view class="status-cell font12 color-orange6" wx:if="{{item.flagstr}}">
+                <text>{{item.flagstr}}</text>
+              </view>
+            </view>
+            <view class="products-info" wx:if="{{item.orderlist.length > 1}}">
+              <view class="product-img">
+                <repeat for="{{item.orderlist}}" key="index" item="order">
+                  <image mode="aspectFill" lazy-load class="v_middle imgcover" src="{{order.options.photo}}" wx:if="{{order.options && order.options.photo != ''}}"></image>
+                  <image mode="aspectFill" lazy-load class="v_middle imgcover" src="{{order.photo}}" wx:elif="{{order.photo != ''}}"></image>
+                  <image class="v_middle imgcover" src="https://tossharingsales.boka.cn/images/nopic.jpg" wx:else></image>
+                </repeat>
+              </view>
+            </view>
+            <view class="product-info" wx:else>
+              <view class="product-img">
+                <image mode="aspectFill" lazy-load class="v_middle imgcover" src="{{item.orderlist[0].photo}}" wx:if="{{item.orderlist[0].options && item.orderlist[0].photo != ''}}"></image>
+                  <image mode="aspectFill" lazy-load class="v_middle imgcover" src="{{item.orderlist[0].photo}}" wx:elif="{{item.orderlist[0].photo != ''}}"></image>
+                <image class="v_middle imgcover" src="https://tossharingsales.boka.cn/images/nopic.jpg" wx:else></image>
+              </view>
+              <view class="product-detail flex_left">
+                <view class="w_100">
+                  <view class="product-name clamp1 font12">{{item.orderlist[0].name}}</view>
+                  <view class="clamp1 mt5 color-gray font12" wx:if="{{item.orderlist[0].options && item.orderlist[0].options.id}}">{{item.orderlist[0].options.title}}</view>
+                  <view class="clamp1 mt5 color-theme font12" style="{{themeObject.colorStyle}}">￥{{item.orderlist[0].special}}</view>
+                  <view class="clamp1 mt5 color-gray font12">{{item.dateline_str}}</view>
+                </view>
+              </view>
+            </view>
+            <view class="flex_left padding10">
+              <text>收货人: {{item.linkman}}</text>
+            </view>
+            <view class="operate-area">
+              <view class="db-in">
+                <form data-data="{{item}}" data-index="{{index}}" bindsubmit="refundOne" report-submit='true'>
+                  <button type="mini" form-type="submit" class="btn font12">退款</button>
+                </form>
+              </view>
+            </view>
+          </view>
+        </repeat>
+      </block>
+      <block wx:if="{{tabData.length}}">
+        <view class="load-end-area loading" wx:if="{{isLoading}}"></view>
+        <view class="load-end-area done" wx:elif="{{isDone}}"></view>
+      </block>
+    </view>
+  </view>
+</template>
+<script>
+  import wepy from 'wepy'
+  import Util from '@/libs/util'
+  import Time from '@/libs/time'
+  import Config from '@/config'
+  export default class Orders extends wepy.page {
+    config = {
+      enablePullDownRefresh: true,
+      backgroundTextStyle: 'dark'
+    }
+    data = {
+      options: {},
+      globalData: {},
+      userInfo: {},
+      disList: false,
+      tabData: [],
+      isLoading: false,
+      isDone: false,
+      checkedAll: false,
+      checkedIds: [],
+      onAjaxEnd: false,
+      themeObject: {}
+    }
+    refreshPage () {
+      this.onAjaxEnd = false
+      this.disList = false
+      this.tabData = []
+      this.pageStart = 0
+      this.isLoading = false
+      this.isDone = false
+      this.$apply()
+      this.getData()
+    }
+    onPullDownRefresh () {
+      if (this.onAjaxEnd) {
+        wepy.showNavigationBarLoading()
+        setTimeout(function () {
+          wepy.hideNavigationBarLoading()
+          wepy.stopPullDownRefresh()
+        }, 500)
+        this.refreshPage()
+      }
+    }
+    onReachBottom () {
+      if (this.tabData.length === (this.pageStart + 1) * this.limit) {
+        this.isLoading = true
+        this.pageStart++
+        this.getData()
+      }
+    }
+    getData (count) {
+      let params = {fid: Config.Fid, flag: 2, pagestart: this.pageStart, limit: this.limit, from: 'factory'}
+      if (count) {
+        params = {fid: Config.Fid, flag: 2, pagestart: this.tabData.length, limit: count, from: 'factory'}
+      }
+      wepy.request({
+        url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/order/orderList/factory`,
+        data: params
+      }).then(res => {
+        wepy.hideLoading()
+        this.onAjaxEnd = true
+        const data = res.data
+        const retdata = data.data ? data.data : data
+        for (let i = 0; i < retdata.length; i++) {
+          retdata[i].dateline_str = new Time(retdata[i].dateline * 1000).dateFormat('yyyy-MM-dd hh:mm')
+        }
+        this.tabData = this.tabData.concat(retdata)
+        if (retdata.length < this.limit && this.tabData.length) {
+          this.isDone = true
+        }
+        this.isLoading = false
+        this.disList = true
+        this.$apply()
+      })
+    }
+
+    handleRefund (ids) {
+      if (!ids.length) {
+        wepy.showToast({
+          title: '请选择退款订单',
+          icon: 'none'
+        })
+        return false
+      }
+      wepy.showModal({
+        title: '确定要退款吗？'
+      }).then(res => {
+        if (res.confirm) {
+          wepy.showLoading()
+          wepy.request({
+            url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/order/orderBatchRefund`,
+            data: {ids: ids},
+            method: 'post'
+          }).then(res => {
+            wepy.hideLoading()
+            const data = res.data
+            wepy.showToast({
+              title: data.error,
+              icon: 'none',
+              duration: Util.delay(data.error)
+            })
+            if (data.flag) {
+              for (let i = 0; i < ids.length; i++) {
+                for (let j = 0; j < this.tabData.length; j++) {
+                  if (ids[i] === this.tabData[j].id) {
+                    this.tabData.splice(j, 1)
+                    break
+                  }
+                }
+              }
+              this.checkedIds = []
+              this.getData(ids.length)
+            }
+            this.$apply()
+          })
+        }
+      })
+    }
+    methods = {
+      changeOne (e) {
+        const dataset = e.currentTarget.dataset
+        const curdata = dataset.data
+        const index = dataset.index
+        if (e.detail.value.length) {
+          this.tabData[index].checked = true
+          this.checkedIds.push(curdata.id)
+        } else {
+          this.tabData[index].checked = false
+          for (let i = 0; i < this.checkedIds.length; i++) {
+            if (this.checkedIds[i] === curdata.id) {
+              this.checkedIds.splice(i, 1)
+              break
+            }
+          }
+        }
+        console.log(this.checkedIds)
+        this.checkedAll = false
+        this.$apply()
+      },
+      changeAll (e) {
+        this.checkedIds = []
+        if (e.detail.value.length) {
+          this.checkedAll = true
+        } else {
+          this.checkedAll = false
+        }
+        for (let i = 0; i < this.tabData.length; i++) {
+          this.tabData[i].checked = this.checkedAll
+          if (this.checkedAll) {
+            this.checkedIds.push(this.tabData[i].id)
+          }
+        }
+        this.$apply()
+      },
+      refundAll (e) {
+        this.handleRefund(this.checkedIds)
+      },
+      refundOne (e) {
+        const dataset = e.currentTarget.dataset
+        this.handleRefund([dataset.data.id])
+      },
+      scrollEvent () {
+        if (this.tabData.length === (this.pageStart + 1) * this.limit) {
+          this.isLoading = true
+          this.pageStart++
+          this.getData()
+        }
+      }
+    }
+
+    refund (order) {
+      this.showRefundModal = true
+      this.$apply()
+    }
+
+    handlePageData () {
+      this.globalData = this.$parent.globalData
+      Util.appInit(this.globalData, this)
+      this.userInfo = this.globalData.userInfo
+      wepy.showLoading()
+      this.getData()
+    }
+
+    onLoad (options) {
+      this.pageStart = 0
+      this.limit = Config.Limit
+      this.options = options
+      if (this.$parent.globalData.flag.bokaAuth) {
+        this.handlePageData()
+      } else {
+        this.$parent.loadCallback = () => {
+          this.handlePageData()
+        }
+      }
+    }
+  }
+</script>

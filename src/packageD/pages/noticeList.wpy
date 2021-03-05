@@ -1,0 +1,286 @@
+<style lang="less">
+.app-tab.fixed-top{position:fixed;left:0;top:0;right:0;z-index:10;}
+.notice-list-page{
+  padding-top:100rpx;
+  .list-area{
+    .order-item:not(:first-child){margin-top:20rpx;}
+  }
+  .list-area.notice{
+    padding:20rpx;
+    .order-item{border-radius:10rpx;}
+  }
+  .dot-cell{
+    width:20rpx;
+    .dot-ico{width:10rpx;height:10rpx;border-radius:50%;}
+  }
+  .app-photo{width:60rpx;height:60rpx;border-radius:50%;}
+}
+</style>
+<template>
+  <view class="app-tab fixed-top">
+    <view class="tab-item font14 {{selectedIndex == 0 ? 'active' : ''}}" data-current="0" bindtap="clickTab">
+      <text style="{{selectedIndex == 0 ? themeObject.colorStyle : ''}}">系统通知</text>
+      <view class="line" style="{{selectedIndex == 0 ? themeObject.bgStyle : ''}}"></view>
+    </view>
+    <view class="tab-item font14 {{selectedIndex==1 ? 'active' : ''}}" data-current="1" bindtap="clickTab">
+      <text style="{{selectedIndex == 1 ? themeObject.colorStyle : ''}}">公告</text>
+      <view class="line" style="{{selectedIndex == 1 ? themeObject.bgStyle : ''}}"></view>
+    </view>
+  </view>
+  <view class="notice-list-page">
+    <block wx:if="{{selectedIndex == 0}}">
+      <view wx:if="{{disList1}}" class="list-area notice">
+        <view wx:if="{{!tabData1.length}}" class="w_100 flex_empty">暂无相关数据</view>
+        <repeat for="{{repeatData1}}" index="index" item="item">
+          <view class="order-item b_top_after bg-white" data-data="{{item}}" @tap="toPage">
+            <view class="flex_left padding10 b_bottom_after">
+                <image class="app-photo" src="{{MiniInfo.photo}}" mode="aspectFill"></image>
+                <text class="ml10 flex_cell">{{MiniInfo.title}}</text>
+                <view class="font12 color-gray">{{item.dateline_str}}</view>
+            </view>
+            <view class="flex_left padding10">
+              <view class="color-theme" style="{{themeObject.colorStyle}}">【{{item.msgtype}}】{{item.content[0]}}</view>
+            </view>
+            <view class="pl10 pr10 pb10 flex_left">
+              <view class="flex_cell flex_left">
+                <view class="w_100">
+                  <repeat for="{{item.content}}" item="con" index="index1">
+                    <view wx:if="{{index1 > 0}}" class="clamp1 color-gray mt3">{{con}}</view>
+                  </repeat>
+                </view>
+              </view>
+            </view>
+          </view>
+        </repeat>
+        <view class="load-end-area loading" wx:if="{{load1}}"></view>
+        <view class="load-end-area done" wx:elif="{{done1}}"></view>
+      </view>
+    </block>
+    <block wx:if="{{selectedIndex == 1}}">
+      <view wx:if="{{disList2}}" class="list-area">
+        <view wx:if="{{!tabData2.length}}" class="w_100 flex_empty">暂无相关数据</view>
+        <repeat for="{{tabData2}}" index="index" item="item">
+          <view class="order-item b_top_after bg-white" data-data="{{item}}" data-index="{{index}}" @tap="toNotice">
+            <view class="flex_left padding10" data-data="{{item}}">
+              <view class="flex_cell flex_left">
+                <view class="w_100">
+                  <view class="clamp1">{{item.title}}</view>
+                  <view class="font12 color-gray">{{item.dateline_str}}</view>
+                </view>
+              </view>
+              <view wx:if="{{!item.isread}}" class="flex_center dot-cell">
+                <view class="dot-ico" style="{{themeObject.bgStyle}}"></view>
+              </view>
+              <view class="flex_right pl10">
+                <text class="al al-mjiantou-copy2 color-gray font20"></text>
+              </view>
+            </view>
+          </view>
+        </repeat>
+        <view class="load-end-area loading" wx:if="{{load2}}"></view>
+        <view class="load-end-area done" wx:elif="{{done2}}"></view>
+      </view>
+    </block>
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy'
+import Util from '@/libs/util'
+import Time from '@/libs/time'
+import Config from '@/config'
+export default class extends wepy.page {
+  config = {
+    enablePullDownRefresh: true,
+    backgroundTextStyle: 'dark'
+  }
+  data = {
+    selectedIndex: 0,
+    disList1: false,
+    disList2: false,
+    tabData1: [],
+    repeatData1: [],
+    tabData2: [],
+    load1: false,
+    load2: false,
+    done1: false,
+    done2: false,
+    MiniInfo: {},
+    themeObject: {}
+  }
+  initData () {
+    this.flag = this.options.flag ? parseInt(this.options.flag) : 0
+    this.Fid = Config.Fid
+    this.limit = Config.Limit
+    this.dataObject1 = {}
+    this.pageStart1 = 0
+    this.pageStart2 = 0
+  }
+  refreshPage () {
+    this.flag = this.options.flag ? parseInt(this.options.flag) : 0
+    this.dataObject1 = {}
+    this.disList1 = false
+    this.disList2 = false
+    this.tabData1 = []
+    this.repeatData1 = []
+    this.tabData2 = []
+    this.pageStart1 = 0
+    this.pageStart2 = 0
+    this.$apply()
+    switch (this.flag) {
+      case 0:
+        this.selectedIndex = 0
+        this.getData1()
+        break
+      case 1:
+        this.selectedIndex = 1
+        this.getData2()
+        break
+    }
+  }
+  onPullDownRefresh () {
+    this.refreshPage()
+    wepy.showNavigationBarLoading()
+    setTimeout(() => {
+      wepy.hideNavigationBarLoading()
+      wepy.stopPullDownRefresh()
+    }, 500)
+  }
+  onReachBottom (event) {
+    switch (this.selectedIndex) {
+      case 0:
+        if (this.tabData1.length === (this.pageStart1 + 1) * this.limit) {
+          this.pageStart1++
+          this.load1 = true
+          this.getData1()
+        }
+        break
+      case 1:
+        if (this.tabData2.length === (this.pageStart2 + 1) * this.limit) {
+          this.pageStart2++
+          this.load2 = true
+          this.getData2()
+        }
+        break
+    }
+  }
+  getData1 = function () {
+    if (this.isLoading) return false
+    wepy.showLoading()
+    this.isLoading = true
+    wepy.request({
+      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/message/getList`,
+      data: {pagestart: this.pageStart1, limit: this.limit, fid: Config.Fid},
+      method: 'post'
+    }).then(res => {
+      wepy.hideLoading()
+      this.isLoading = false
+      const data = res.data
+      let retdata = data.data ? data.data : data
+      for (let i = 0; i < retdata.length; i++) {
+        let curd = retdata[i]
+        if (!this.dataObject1[curd.id]) {
+          this.dataObject1[curd.id] = curd
+          this.repeatData1.push(curd)
+        }
+        curd.dateline_str = new Time(curd.dateline * 1000).dateFormat('yyyy-MM-dd hh:mm')
+      }
+      this.tabData1 = this.tabData1.concat(retdata)
+      this.disList1 = true
+      this.load1 = false
+      if (retdata.length < this.limit && this.tabData1.length) {
+        this.done1 = true
+      } else {
+        this.done1 = false
+      }
+      this.$apply()
+    })
+  }
+  getData2 = function () {
+    if (this.isLoading) return false
+    wepy.showLoading()
+    this.isLoading = true
+    wepy.request({
+      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/moduleList`,
+      data: {pagestart: this.pageStart2, limit: this.limit, fid: Config.Fid, module: 'notice'},
+      method: 'post'
+    }).then(res => {
+      wepy.hideLoading()
+      this.isLoading = false
+      const data = res.data
+      let retdata = data.data ? data.data : data
+      for (let i = 0; i < retdata.length; i++) {
+        retdata[i].dateline_str = new Time(retdata[i].dateline * 1000).dateFormat('yyyy-MM-dd hh:mm')
+      }
+      this.tabData2 = this.tabData2.concat(retdata)
+      this.disList2 = true
+      this.load2 = false
+      if (retdata.length < this.limit && this.tabData2.length) {
+        this.done2 = true
+      } else {
+        this.done2 = false
+      }
+      this.$apply()
+    })
+  }
+  handlePageData () {
+    this.globalData = this.$parent.globalData
+    Util.appInit(this.globalData, this)
+    this.MiniInfo = this.globalData.MiniInfo
+    this.userInfo = this.globalData.userInfo
+    this.userInfo.newmessages = 0
+    this.globalData.userInfo = this.userInfo
+    this.$parent.globalData = this.globalData
+    switch (this.flag) {
+      case 0:
+        this.selectedIndex = 0
+        this.getData1()
+        break
+      case 1:
+        this.selectedIndex = 1
+        this.getData2()
+        break
+    }
+  }
+  onLoad (options) {
+    this.options = options
+    this.initData()
+    if (this.$parent.globalData.flag.bokaAuth) {
+      this.handlePageData()
+    } else {
+      this.$parent.loadCallback = () => {
+        this.handlePageData()
+      }
+    }
+  }
+  methods = {
+    clickTab (e) {
+      this.selectedIndex = parseInt(e.currentTarget.dataset.current)
+      switch (this.selectedIndex) {
+        case 0:
+          if (!this.tabData1.length) {
+            this.getData1()
+          }
+          break
+        case 1:
+          if (!this.tabData2.length) {
+            this.getData2()
+          }
+          break
+      }
+    },
+    toPage (e) {
+      const dataset = e.currentTarget.dataset
+      const curData = dataset.data
+      wepy.navigateTo({url: curData.pageurl})
+    },
+    toNotice (e) {
+      const dataset = e.currentTarget.dataset
+      const curData = dataset.data
+      const index = dataset.index
+      this.tabData2[index].isread = 1
+      wepy.navigateTo({url: `/packageD/pages/notice?id=${curData.id}`})
+    }
+  }
+}
+</script>

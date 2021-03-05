@@ -1,0 +1,439 @@
+<style lang="less">
+.user-order-search-outter{
+  width: 100%;height: 100rpx;padding:20rpx;box-sizing:border-box;
+  background-color: white;display: flex;flex-direction: column;align-items: center;justify-content: center;
+  position:fixed;left:0;top:0;right:0;z-index:10;
+  .search-inner{width: 100%;display:flex; align-items: center;background-color: #f2f3f2;border-radius: 45px;height:100%;}
+  .search-input{width: 85%;box-sizing: border-box;font-size:24rpx;padding: 0 20rpx;flex:1;}
+}
+.app-tab.fixed-top{position:fixed;left:0;top:100rpx;right:0;z-index:10;}
+.orders-page{
+  padding-top:200rpx;padding-bottom:160rpx;
+  .avatar{width:60rpx;height:60rpx;border-radius:50%;}
+  .b-area{background-color:#fff;padding:20rpx;}
+  .btn-list{
+    .btn-item{border-radius:60rpx;}
+    .btn-item:not(:last-child){margin-right:10rpx;}
+    .btn{padding:8rpx 20rpx;font-size:24rpx;}
+  }
+  .list-area.zh_CN{
+    .product-img{
+      .ico:after{content:"優惠券";}
+    }
+  }
+  .list-area{
+    .order-item{margin-top:20rpx;}
+    .product-area{padding:20rpx;}
+    .product-img{
+      width:140rpx;position:relative;overflow:hidden;
+      image{width:120rpx;height:120rpx;border:#eee 2rpx solid;}
+      .ico{
+        position:absolute;left:0;top:0;width:290rpx;height:50rpx;line-height:50rpx;
+        color:#fff;text-align:center;font-size: 24rpx;
+        -webkit-transform: translate(-100rpx,20rpx) rotate(-45deg);
+        transform: translate(-100rpx,20rpx) rotate(-45deg);z-index:1;
+        background-color:#d81e07;
+      }
+      .ico:after{content:"优惠券";}
+    }
+    .pay-info{padding:10rpx 20rpx;line-height:40rpx;}
+    .btn-area{
+      padding:20rpx 20rpx;
+      .btn-item:not(:last-child){margin-right:20rpx;}
+      .btn-item{
+        display:inline-block;
+        .btn{padding:0 20rpx;line-height:50rpx;background-color: #F8F8F8;border:#d8d8d8 2rpx solid;border-radius:10rpx; font-size:24rpx;}
+      }
+    }
+  }
+}
+</style>
+<template>
+  <view class="user-order-search-outter b_bottom_after">
+    <view class="search-inner">
+      <input class="search-input" type="text" placeholder="搜索收件人手机号后四位" bindinput="setKeyword" value="{{keyword}}" bindconfirm="searchKeyword" confirm-type="search" />
+      <view wx:if="{{keyword}}" class="flex_center color-gray font12 pl10 pr10" bindtap="cancelSearch">取消</view>
+      <view wx:else class="flex_center color-gray font12 pl10 pr10"><text class="al al-sousuo font20"></text></view>
+    </view>
+  </view>
+  <view class="app-tab fixed-top">
+    <view class="tab-item font14 {{selectedIndex == 0 ? 'active' : ''}}" data-current="0" bindtap="clickTab">
+      <text style="{{selectedIndex == 0 ? themeObject.colorStyle : ''}}">有效订单</text>
+      <view class="line" style="{{selectedIndex == 0 ? themeObject.bgStyle : ''}}"></view>
+    </view>
+    <view class="tab-item font14 {{selectedIndex == 1 ? 'active' : ''}}" data-current="1" bindtap="clickTab">
+      <text style="{{selectedIndex == 1 ? themeObject.colorStyle : ''}}">已取消</text>
+      <view class="line" style="{{selectedIndex == 1 ? themeObject.bgStyle : ''}}"></view>
+    </view>
+    <view wx:if="{{userInfo.retaileridentity == 'B' || userInfo.retaileridentity == 'C'}}" class="tab-item font14 {{selectedIndex == 2 ? 'active' : ''}}" data-current="2" bindtap="clickTab">
+      <text style="{{selectedIndex == 2 ? themeObject.colorStyle : ''}}">代理订单退款</text>
+      <view class="line" style="{{selectedIndex == 2 ? themeObject.bgStyle : ''}}"></view>
+    </view>
+  </view>
+  <view class="orders-page">
+    <block wx:if="{{selectedIndex==2}}">
+      <view class="padding10 flex_center" style="{{themeObject.colorStyle}}">提示：请先搜索代理需要退款的订单后再进行退款</view>
+    </block>
+    <view wx:if="{{disObject[selectedIndex]}}" class="list-area">
+      <view wx:if="{{!tabDataObject[selectedIndex].length}}" class="w_100 flex_empty">暂无相关订单</view>
+      <repeat for="{{tabDataObject[selectedIndex]}}" index="index" item="item">
+        <view class="order-item b_top_after">
+          <view class="flex_left pl10 pr10 pt5 pb5 bg-white" data-data="{{item}}">
+            <view class="flex_cell flex_left">
+              <image class="avatar" src="{{item.avatar}}"></image>
+              <text class="ml5">{{item.username}}</text>
+            </view>
+            <view class="font12 color-orange6">{{item.flagstr}}</view>
+          </view>
+          <view class="product-area flex_left bg-page" data-data="{{item}}">
+            <view class="product-img">
+              <block wx:if="{{item.orderlist[0].options && item.orderlist[0].options.id && item.orderlist[0].options.photo != ''}}">
+                <image mode="aspectFill" src="{{item.orderlist[0].options.photo}}" />
+              </block>
+              <block wx:else>
+                <image mode="aspectFill" src="{{item.orderlist[0].photo}}" />
+              </block>
+              <view wx:if="{{item.carddeduct > 0}}" class="ico"></view>
+            </view>
+            <view class="flex_cell flex_left">
+              <view class="w_100">
+                <view class="font12 clamp1">{{item.orderlist[0].name}}</view>
+                <view class="color-gray font12" wx:if="{{item.orderlist[0].options && item.orderlist[0].options.id}}">{{item.orderlist[0].options.title}}</view>
+                <view class="db-flex font14">
+                  <view class="flex_cell flex_left" style="{{themeObject.colorStyle}}">￥ {{ item.orderlist[0].special }}</view>
+                  <view class="flex_cell flex_right color-gray">× <text class="font12">{{ item.orderlist[0].quantity }}</text></view>
+                </view>
+                <view class="color-gray">{{item.dateline_str}}</view>
+              </view>
+            </view>
+          </view>
+          <view class="b-area db-flex">
+            <view class="flex_left flex_cell color-gray">订单号: {{item.orderno}}</view>
+            <view class="flex_right btn-list" wx:if="{{item.canshoukuan || item.cantuikuan}}">
+              <block wx:if="{{item.canshoukuan}}">
+                <view class="btn-item bg-gray color-white" data-index="{{index}}" data-data="{{item}}" @tap="cancelOrder">
+                  <view class="btn">取消</view>
+                </view>
+                <view class="btn-item color-white" style="{{themeObject.bgStyle}}" data-index="{{index}}" data-data="{{item}}" @tap="confirmOrder">
+                  <view class="btn">确认收款</view>
+                </view>
+              </block>
+              <block wx:if="{{item.cantuikuan}}">
+                <view class="btn-item color-white" style="{{themeObject.bgStyle}}" data-index="{{index}}" data-data="{{item}}" @tap="refundOrder">
+                  <view class="btn">退款</view>
+                </view>
+              </block>
+            </view>
+          </view>
+        </view>
+      </repeat>
+      <view class="load-end-area loading" wx:if="{{loadObject[selectedIndex]}}"></view>
+      <view class="load-end-area done" wx:elif="{{doneObject[selectedIndex]}}"></view>
+    </view>
+  </view>
+  <view wx:if="{{showRefundModal}}" class="auto-modal refund-modal flex_center">
+    <view class="modal-inner border-box" style="width:80%;">
+      <view class="align_center font18 bold pb10 b_bottom_after color-theme pt20" style="{{themeObject.colorStyle}}">申请退款</view>
+      <view class="align_left txt padding10">
+        <view class="textarea-outer" style="padding:0;">
+          <textarea fixed="true" class="w_100" placeholder="请输入退款原因" bindinput="refundChange"></textarea>
+        </view>
+      </view>
+      <form class="db b_top_after" style="height:50px;" bindsubmit="submitRefund" bindreset="closeRefund" report-submit="true">
+        <view class="w_100 h_100 flex_center">
+          <button class="flex_cell flex_center h_100 b_right_after" form-type="reset">取消</button>
+          <button class="flex_cell flex_center h_100 color-orange" form-type="submit">提交</button>
+        </view>
+      </form>
+    </view>
+  </view>
+  <view wx:if="{{showServiceModal}}" class="auto-modal refund-modal flex_center">
+    <view class="modal-inner border-box" style="width:80%;">
+      <view class="align_center font18 bold pb10 b_bottom_after color-theme pt20" style="{{themeObject.colorStyle}}">申请售后</view>
+      <view class="align_left txt padding10 b_bottom_after">
+        <view class="textarea-outer" style="padding:0;">
+          <textarea fixed="true" class="w_100" placeholder="请输入售后原因，并上传1张快递面单+2张商品照片" bindinput="serviceChange"></textarea>
+        </view>
+      </view>
+      <view class="app-photo-list align_left bg-white">
+        <repeat for="{{servicePhotoArr}}" item="photo" index="index">
+          <view class="photoitem">
+            <view class="inner photo imgcover">
+              <image mode="aspectFill" src="{{photo}}" class="pic" data-type="update" data-index="{{index}}" @tap="uploadPhoto" />
+              <view class="close" @tap="deletePhoto(index)">×</view>
+            </view>
+          </view>
+        </repeat>
+        <view wx:if="{{servicePhotoArr.length < maxnum}}" class="photoitem add" @tap="uploadPhoto">
+          <view class="inner">
+            <view class="innerlist">
+              <view class="flex_center h_100">
+                <view>
+                  <text class="al al-zhaopian"></text>
+                  <view><text>{{ servicePhotoArr.length }}</text><text class="ml5 mr5">/</text><text>{{ maxnum }}</text></view>
+                </view>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+      <form class="db b_top_after" style="height:50px;" bindsubmit="submitService" bindreset="closeService" report-submit="true">
+        <view class="w_100 h_100 flex_center">
+          <button class="flex_cell flex_center h_100 b_right_after" form-type="reset">取消</button>
+          <button class="flex_cell flex_center h_100 color-orange" form-type="submit">提交</button>
+        </view>
+      </form>
+    </view>
+  </view>
+</template>
+<script>
+import wepy from 'wepy'
+import Time from '@/libs/time'
+import Config from '@/config'
+import Util from '@/libs/util'
+export default class extends wepy.page {
+  config = {
+    enablePullDownRefresh: true,
+    backgroundTextStyle: 'dark'
+  }
+  data = {
+    selectedIndex: 0,
+    tabDataObject: {0: [], 1: [], 2: []},
+    loadObject: {0: false, 1: false, 2: false},
+    doneObject: {0: false, 1: false, 2: false},
+    disObject: {0: false, 1: false, 2: false},
+    keyword: '',
+    themeObject: {}
+  }
+  initData () {
+    this.Fid = Config.Fid
+    this.limit = Config.Limit
+    this.defaultFlag = {
+      0: {pagestart: 0, from: 'retailer', valid: 1},
+      1: {pagestart: 0, from: 'retailer', valid: 0},
+      2: {pagestart: 0, from: 'manager'}
+    }
+    this.flagParams = this.defaultFlag
+    this.defaultData = this.tabDataObject
+    this.defaultLoad = this.loadObject
+    this.defaultDone = this.doneObject
+    this.defaultDis = this.disObject
+    this.$apply()
+  }
+  refreshPage () {
+    if (this.loadObject[this.selectedIndex]) return false
+    this.disObject = {0: false, 1: false, 2: false}
+    this.tabDataObject = {0: [], 1: [], 2: []}
+    this.initData()
+    this.getOrderData()
+  }
+  onPullDownRefresh () {
+    this.refreshPage()
+    wepy.showNavigationBarLoading()
+    setTimeout(() => {
+      wepy.hideNavigationBarLoading()
+      wepy.stopPullDownRefresh()
+    }, 500)
+  }
+  onReachBottom (event) {
+    if (this.loadObject[this.selectedIndex]) return false
+    if (this.tabDataObject[this.selectedIndex].length === (this.flagParams[this.selectedIndex].pagestart + 1) * this.limit) {
+      this.flagParams[this.selectedIndex].pagestart++
+      this.loadObject[this.selectedIndex] = true
+      this.getOrderData()
+    }
+  }
+  getLimitOrderData (count) {
+    let defaultParams = this.flagParams[this.selectedIndex]
+    let params = {
+      ...defaultParams,
+      limit: count,
+      fid: this.Fid
+    }
+    params.pagestart = this.tabDataObject[this.selectedIndex].length
+    if (this.keyword && this.keyword !== '') {
+      params.keyword = this.keyword
+    }
+    wepy.request({
+      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/order/orderTempList`,
+      data: params,
+      method: 'post'
+    }).then(res => {
+      const data = res.data
+      const retdata = data.data ? data.data : data
+      if (retdata.length) {
+        this.tabDataObject[this.selectedIndex] = this.tabDataObject[this.selectedIndex].concat(retdata)
+        this.disObject[this.selectedIndex] = true
+      }
+      if (this.tabDataObject[this.selectedIndex].length < this.limit) {
+        this.doneObject[this.selectedIndex] = true
+      }
+      this.$apply()
+    })
+  }
+  getOrderData () {
+    if (this.isLoading) return false
+    wepy.showLoading()
+    this.isLoading = true
+    let defaultParams = this.flagParams[this.selectedIndex]
+    let params = {
+      ...defaultParams,
+      limit: this.limit,
+      fid: this.Fid
+    }
+    if (this.keyword && this.keyword !== '') {
+      params.keyword = this.keyword
+    }
+    wepy.request({
+      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/order/orderTempList`,
+      data: params,
+      method: 'post'
+    }).then(res => {
+      wepy.hideLoading()
+      this.isLoading = false
+      const data = res.data
+      let retdata = data.data ? data.data : data
+      for (let i = 0; i < retdata.length; i++) {
+        retdata[i].dateline_str = new Time(retdata[i].dateline * 1000).dateFormat('yyyy-MM-dd hh:mm')
+      }
+      let flagData = this.tabDataObject[this.selectedIndex]
+      this.tabDataObject[this.selectedIndex] = flagData.concat(retdata)
+      this.loadObject[this.selectedIndex] = false
+      if (retdata.length < this.limit && this.tabDataObject[this.selectedIndex].length) {
+        this.doneObject[this.selectedIndex] = true
+      } else {
+        this.doneObject[this.selectedIndex] = false
+      }
+      this.disObject[this.selectedIndex] = true
+      this.$apply()
+    })
+  }
+  handlePageData () {
+    this.globalData = this.$parent.globalData
+    Util.appInit(this.globalData, this)
+    this.userinfo = this.globalData.userInfo
+    this.getOrderData()
+  }
+  onLoad (options) {
+    this.options = options
+    this.initData()
+    if (this.$parent.globalData.flag.bokaAuth) {
+      this.handlePageData()
+    } else {
+      this.$parent.loadCallback = () => {
+        this.handlePageData()
+      }
+    }
+  }
+  handleOrder (params) {
+    let tip = '确定要取消吗？'
+    if (params.agree) {
+      tip = '确定要收款吗？'
+    }
+    wepy.showModal({
+      title: tip
+    }).then(res => {
+      if (res.confirm) {
+        wepy.showLoading()
+        wepy.request({
+          url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/order/retailerConfirm`,
+          data: {agree: params.agree, id: [params.id]},
+          method: 'post'
+        }).then(res => {
+          wepy.hideLoading()
+          const data = res.data
+          wepy.showToast({
+            title: data.error,
+            icon: 'none',
+            duration: Util.delay(data.error)
+          })
+          if (data.flag) {
+            this.tabDataObject[this.selectedIndex][params.index].canshoukuan = 0
+            this.$apply()
+          }
+        })
+      }
+    })
+  }
+  methods = {
+    setKeyword (e) {
+      this.keyword = e.detail.value
+    },
+    searchKeyword (e) {
+      let value = e.detail.value
+      if (!/^\d{4,11}$/.test(value)) {
+        wepy.showToast({
+          title: '请输入正确的手机号，至少后4位',
+          icon: 'none'
+        })
+        return false
+      }
+      this.keyword = e.detail.value
+      this.disObject[this.selectedIndex] = false
+      this.loadObject[this.selectedIndex] = false
+      this.doneObject[this.selectedIndex] = false
+      this.tabDataObject[this.selectedIndex] = []
+      this.flagParams[this.selectedIndex].pagestart = 0
+      this.getOrderData()
+    },
+    cancelSearch () {
+      this.keyword = ''
+      this.disObject[this.selectedIndex] = false
+      this.loadObject[this.selectedIndex] = false
+      this.doneObject[this.selectedIndex] = false
+      this.tabDataObject[this.selectedIndex] = []
+      this.flagParams[this.selectedIndex].pagestart = 0
+      this.getOrderData()
+    },
+    clickTab (e) {
+      this.selectedIndex = parseInt(e.currentTarget.dataset.current)
+      if (this.selectedIndex !== 2 && !this.tabDataObject[this.selectedIndex].length) {
+        this.getOrderData()
+      }
+    },
+    cancelOrder (e) {
+      const dataset = e.currentTarget.dataset
+      this.handleOrder({
+        agree: 0,
+        id: dataset.data.id,
+        index: dataset.index
+      })
+    },
+    confirmOrder (e) {
+      const dataset = e.currentTarget.dataset
+      this.handleOrder({
+        agree: 1,
+        id: dataset.data.id,
+        index: dataset.index
+      })
+    },
+    refundOrder (e) {
+      const dataset = e.currentTarget.dataset
+      wepy.showModal({
+        title: '确定要退款吗？'
+      }).then(res => {
+        if (res.confirm) {
+          wepy.showLoading()
+          wepy.request({
+            url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/order/tempOrderRefund`,
+            data: {id: dataset.data.id},
+            method: 'post'
+          }).then(res => {
+            wepy.hideLoading()
+            const data = res.data
+            wepy.showToast({
+              title: data.error,
+              icon: 'none',
+              duration: Util.delay(data.error)
+            })
+            if (data.flag) {
+              this.tabDataObject[this.selectedIndex][dataset.index].cantuikuan = 0
+              this.$apply()
+            }
+          })
+        }
+      })
+    }
+  }
+}
+</script>

@@ -1,0 +1,272 @@
+<style lang="less">
+.store-template1{
+  width:100vw;
+  .btnShare{
+    box-sizing: border-box;width:160rpx;height:70rpx;
+    padding:10rpx 0;background-color: #8e8e8e;color: #fff;
+    border-radius: 100rpx;
+    .txt{margin-left:6rpx;}
+    .al{font-size:32rpx;font-weight:bold;}
+  }
+  .btn-open{
+    background-color: #e10c00;color: #fff;text-align: center;
+    border-radius:8rpx;padding:16rpx;letter-spacing:4rpx;
+  }
+  .store-content {position: absolute;left: 0;top: 0;right: 0;bottom:90rpx;overflow-y: auto;}
+  .al-shuaxin4{line-height:22rpx;width:22rpx;height:22rpx;position:relative;}
+  .al-shuaxin4:before{position:absolute;top:0;left:0;}
+  .al-xing{line-height:1.5;width:30rpx;height:30rpx;position:relative;}
+  .al-xing:before{position:absolute;top:0;left:0;}
+  .refresh-header {height:200rpx;text-align: center;}
+  .loading-icon {margin-top: 40rpx;width: 64rpx;height: 64rpx;}
+  .code{position: fixed;bottom:200rpx;right: 20rpx;z-index: 100;}
+  .gift{
+    display: flex;
+    flex-direction: row;
+    height: 200rpx;
+    width: 100%;
+    align-items: center;
+    .al{
+      margin-right: 20rpx;
+      color: #ea3a3a;
+      margin-left: 10rpx;
+    }
+  }
+  .list-box{
+    box-shadow:0px 0px 3px 1px #e6ebed;height:66rpx;
+    .item{
+      flex:1;height:100%;background-color:#fff;
+      .al{margin-right:10rpx;font-size:36rpx;}
+      .txt{color:#323232;}
+    }
+    .chat .al{color:#ff3b30;margin-top:-17rpx;}
+    .wetchat .al{color:#36ab60;margin-top:-17rpx;}
+  }
+  .btn-outer{
+    positin:relative;flex-shrink: 0;
+    button{width:260rpx;margin:0 auto;height:80rpx;border-radius:10rpx;flex:1;}
+  }
+}
+</style>
+<template>
+  <view class="column-content store-template1">
+    <view class="padding10 border-box bg-white b_bottom_after">
+      <view class="db-flex">
+        <view class="flex_left v_middle w50">
+          <image class="avatarimg1 imgcover" src="{{retailerInfo.avatar}}"></image>
+        </view>
+        <view class="flex_left flex_cell shopkeeper_txt">
+          <view class="clamp1 font16">{{retailerInfo.title}}</view>
+        </view>
+        <form class="flex_center w100" bindsubmit="onShareTap" report-submit="true">
+          <button class="btnShare flex_center" form-type="submit" style="{{themeObject.bgStyle}}">
+            <text class="al al-share1"></text>
+            <text class="txt">分享</text>
+          </button>
+        </form>
+      </view>
+    </view>
+    <block wx:if="{{productCount >= 31 && classData.length >= 5}}">
+      <view class="pt10 bg-page"></view>
+      <view :class="{'one': classDataArr.length == 1}" class="menu-swiper-outer" wx:if="{{classData.length}}">
+        <swiper
+          class="menu-swiper"
+          indicator-dots="{{showDot}}"
+          indicator-color="#d0cdd1"
+          indicator-active-color="#ff9900"
+          interval="6000"
+          circular>
+          <repeat for="{{classDataArr}}" index="index" item="classitem">
+            <swiper-item class="swiper-item">
+              <repeat for="{{classitem}}" index="index1" item="item">
+                <view class="inner flex_center {{selectedIndex == (index * colCount + index1) ? 'active' : ''}}" data-col="{{index}}" data-index="{{index * colCount + index1}}" data-data="{{item}}" bindtap="clickTab">
+                  <view class="w_100">
+                    <view class="pic-outer">
+                      <view class="pic">
+                        <image src="{{item.photo}}"></image>
+                      </view>
+                    </view>
+                    <view class="txt">{{item.title}}</view>
+                  </view>
+                </view>
+              </repeat>
+            </swiper-item>
+          </repeat>
+        </swiper>
+      </view>
+    </block>
+    <!-- 商品 -->
+    <block wx:if="{{disProduct}}">
+      <view class="bg-white mt5 padding10 b_top_after" wx:if="{{productCount >=0 && !(productCount >= 31 && classData.length >= 6)}}">
+        <view class="pl10 font16 vline border-box">全部商品</view>
+      </view>
+      <view class="b_top_after"></view>
+      <view class="productlist squarepic pb10 bg-page {{!products.length ? 'bg-white': ''}}">
+        <view wx:if="{{!products.length}}" class="flex_empty">暂无商品</view>
+        <block wx:else>
+          <repeat for="{{products}}" key="index" item="item">
+            <product :options.sync="options" :isAdmin.sync="isAdmin" :globalData.sync="globalData" :wid.sync="wid" :item.sync="item" :userInfo.sync="userInfo" :retailerInfo.sync="retailerInfo"></product>
+          </repeat>
+        </block>
+      </view>
+    </block>
+    <view class="load-end-area loading" wx:if="{{isLoading}}"></view>
+    <view class="load-end-area done" wx:elif="{{isDone}}"></view>
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy'
+import Product from '@/components/store/product'
+export default class store4 extends wepy.component {
+  components = {
+    'product': Product
+  }
+  props = {
+    globalData: {
+      type: Object,
+      default: {}
+    },
+    height: {
+      type: String,
+      default: '0'
+    },
+    barHeight: {
+      type: String,
+      default: '0'
+    },
+    userInfo: {
+      type: Object,
+      default: {}
+    },
+    retailerInfo: {
+      type: Object,
+      default: {}
+    },
+    wid: {
+      type: Number,
+      default: 0
+    },
+    images: {
+      type: Array,
+      default: []
+    },
+    isLoading: {
+      type: Boolean,
+      default: false
+    },
+    isDone: {
+      type: Boolean,
+      default: false
+    },
+    showDot: {
+      type: Boolean,
+      default: true
+    },
+    disSwiper: {
+      type: Boolean,
+      default: false
+    },
+    isFavorite: {
+      type: Boolean,
+      default: false
+    },
+    showFavorite: {
+      type: Boolean,
+      default: false
+    },
+    showSuggest: {
+      type: Boolean,
+      default: false
+    },
+    suggestData: {
+      type: Array,
+      default: []
+    },
+    FactorySuggest: {
+      type: Boolean,
+      default: false
+    },
+    products: {
+      type: Array,
+      default: []
+    },
+    disProduct: {
+      type: Boolean,
+      default: false
+    },
+    classData: {
+      type: Array,
+      default: []
+    },
+    classDataArr: {
+      type: Array,
+      default: []
+    },
+    selectedIndex: {
+      type: Number,
+      default: 0
+    },
+    productCount: {
+      type: Number,
+      default: -1
+    },
+    isAdmin: {
+      type: Boolean,
+      default: false
+    },
+    colCount: {
+      type: Number,
+      default: 10
+    },
+    themeObject: {
+      type: Object,
+      default: {}
+    },
+    options: {
+      type: Object,
+      default: {}
+    }
+  }
+  data = {
+  }
+  onLoad () {
+  }
+  methods = {
+    setSwiper (e) {
+      this.$emit('setSwiper')
+    },
+    setShow (e) {
+      this.$emit('setShow')
+    },
+    onShareTap (e) {
+      this.$emit('onShareTap')
+    },
+    toChat (e) {
+      this.$emit('toChat')
+    },
+    wetchatContact (e) {
+      this.$emit('wetchatContact')
+    },
+    clickHelp (e) {
+      this.$emit('clickHelp')
+    },
+    clickSuggest (e) {
+      this.$emit('clickSuggest')
+    },
+    toSuggest (e) {
+      const dataset = e.currentTarget.dataset
+      const data = dataset.data
+      this.$emit('toSuggest', data)
+    },
+    formSubmit (e) {
+      const dataset = e.currentTarget.dataset
+      this.$emit('formSubmit', dataset)
+    },
+    clickTab (e) {
+      const dataset = e.currentTarget.dataset
+      this.$emit('clickTab', dataset)
+    }
+  }
+}
+</script>

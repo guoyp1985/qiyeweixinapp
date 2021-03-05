@@ -1,0 +1,170 @@
+<style lang="less">
+.auth-modal{
+  position:fixed;left:0;right:0;bottom:0;top:0;background-color:rgba(0,0,0,0.5);z-index:1000;
+  display:flex;justify-content: center; align-items: center;
+  .auth-inner{
+    width:80%;
+    .pic{
+      width:100%;position:relative;border-top-left-radius:26rpx;border-top-right-radius:26rpx;
+      .bg-pic{width:100%;vertical-align: middle;border-top-left-radius:26rpx;border-top-right-radius:26rpx;}
+      .avatar-area{
+        position:absolute;left:0;right:0;top:0;bottom:0;
+        display:flex;justify-content: center; align-items: center;
+        .avatar{
+          width:160rpx;height:160rpx;border-radius: 50%;overflow: hidden;margin-top:-60rpx;
+          .photo-pic{width:160rpx;height:160rpx;border-radius: 50%;}
+        }
+      }
+    }
+    .txt-area{
+      background-color:#fff;border-bottom-left-radius:26rpx;border-bottom-right-radius:26rpx;padding-bottom:20rpx;
+      .txt{color:#5e5d5d;font-weight:bold;text-align:center;padding-top:30rpx;font-size:30rpx;}
+    }
+  }
+  .auth-btn{width:400rpx;height:80rpx;display:block;}
+  .auth-btn button{width:100%;height:100%;border-radius:60rpx;font-size:30rpx;}
+  .btn1{margin:60rpx auto 0;}
+  .btn2{margin:20rpx auto 0;}
+}
+.jl-modal{
+  position:fixed;left:0;right:0;bottom:0;top:0;background-color:rgba(0,0,0,0.5);z-index:1000;
+  display:flex;justify-content: center; align-items: center;
+  .jl-inner{
+    width:70%;height:600rpx;border-radius:20rpx;
+    padding:40rpx 20rpx;box-sizing:border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    .middle-area{flex:1;width:100%;}
+  }
+}
+</style>
+<template>
+  <view class="auth-modal">
+    <view class="auth-inner">
+      <view class="pic" style="{{themeObject.bgStyle}}">
+        <image class="bg-pic" mode="widthFix" src="https://tossharingsales.boka.cn/minigxk/auth/auth_bg.png" />
+        <view class="avatar-area">
+          <view class="avatar">
+            <open-data class="photo-pic" type="userAvatarUrl"></open-data>
+          </view>
+        </view>
+      </view>
+      <view class="txt-area">
+        <block wx:if="{{showCredit}}">
+          <view class="align_center font18 bold pt20">恭喜你获得了{{globalData.SystemParams.MemberRegister}}金币奖励</view>
+          <view class="auth-btn btn1 pb20">
+            <button class="flex_center" style="{{themeObject.bgStyle}}" @tap="continueEvent">知道了，继续</button>
+          </view>
+        </block>
+        <block wx:else>
+          <block wx:if="{{type == 'update'}}">
+            <view class="txt">Hi，请先登录授权</view>
+            <view class="txt">自动完成资料更新</view>
+          </block>
+          <block wx:else>
+            <view class="txt">Hi，終於等到妳啦！</view>
+            <view class="txt">完成登录体验更多精彩！</view>
+          </block>
+          <view class="auth-btn btn1">
+            <button class="flex_center" style="{{themeObject.bgStyle}}" open-type="getUserInfo" @getuserinfo="onGotUserInfo">马上登录</button>
+          </view>
+          <form class="auth-btn btn2" bindsubmit="cancelLogin">
+            <button class="flex_center" style="{{themeObject.colorStyle}}" form-type="submit">暂不登录</button>
+          </form>
+        </block>
+      </view>
+    </view>
+  </view>
+  <!-- <view class="jl-modal" wx:if="{{!showCredit}}">
+    <view class="jl-inner color-white" style="{{themeObject.linearBgStyle}}">
+      <view class="align_center font16 bold">恭喜你获得了{{globalData.SystemParams.MemberRegister}}金币奖励</view>
+      <view class="middle-area font30 flex_center bold">
+        <view>
+          <text>{{globalData.SystemParams.MemberRegister}}</text>
+          <text class="al al-jinbi font16 ml10 color-orange"></text>
+        </view>
+      </view>
+      <view class="mt20 pt20 flex_center">
+        <view class="circle-btn bg-orange color-white" @tap="continueEvent">我知道了，继续</view>
+      </view>
+    </view>
+  </view> -->
+</template>
+
+<script>
+import wepy from 'wepy'
+import Config from '@/config'
+export default class extends wepy.component {
+  props = {
+    type: {
+      type: String,
+      default: ''
+    },
+    themeObject: {
+      type: Object,
+      default: {}
+    },
+    globalData: {
+      type: Object,
+      default: {}
+    }
+  }
+  data = {
+    showCredit: false
+  }
+  onLoad () {
+  }
+  methods = {
+    continueEvent () {
+      this.$emit('afterAuth')
+    },
+    cancelLogin () {
+      this.$emit('cancelLogin')
+    },
+    async onGotUserInfo (user) {
+      const userDetail = user.detail
+      this.userInfo = user.detail.userInfo
+      if (user.detail.userInfo) {
+        wepy.showLoading()
+        wepy.request({
+          url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/user/miniUpdate`,
+          data: {
+            ...this.userInfo,
+            token: this.$parent.globalData.miniData.token,
+            openid: this.$parent.globalData.miniData.openid,
+            sessionkey: this.$parent.globalData.miniData.session_key,
+            iv: userDetail.iv,
+            encryptedData: userDetail.encryptedData,
+            appid: Config.AppId
+          },
+          method: 'POST'
+        }).then(res => {
+          wepy.hideLoading()
+          const data = res.data
+          if (data.flag) {
+            let retuser = data.user
+            this.$parent.globalData.userInfo = retuser
+            wepy.setStorageSync('user', retuser)
+            wepy.setStorageSync('version', Config.version)
+            this.$parent.globalData.flag.bokaAuth = true
+            if (this.globalData.giveCredit) {
+              this.showCredit = true
+              this.$apply()
+            } else {
+              this.$emit('afterAuth')
+            }
+          }
+        })
+      } else {
+        // wepy.showToast({
+        //   title: '授权之后,才能使用本小程序哦',
+        //   icon: 'none',
+        //   duration: 2500
+        // })
+      }
+    }
+  }
+}
+</script>

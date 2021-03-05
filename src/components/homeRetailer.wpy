@@ -1,0 +1,1072 @@
+<style lang="less">
+.home-retailer-page{
+  padding-bottom:200rpx;
+  .color-red{color:#ee5357 !important;}
+  .color-gray{color:#c3c3c3 !important;}
+  .toparea{
+    position:relative;padding:40rpx 20rpx;height:300rpx;box-sizing: border-box;color:#fff;
+    border-bottom-left-radius:50rpx;border-bottom-right-radius:50rpx;
+    /*background: linear-gradient(#F25D5D, #DB293E);*/
+    .top-pic{
+      .pic-cell{
+        width:120rpx;height:120rpx;border-radius:50%;box-sizing: border-box;margin-right:10rpx;
+        image{width:100%;height:100%;border-radius:50%;}
+      }
+    }
+  }
+  .fix-notice{
+    position:absolute;right:0;top:0rpx;right:12rpx;
+    display:flex;justify-content: flex-start;align-items: center;
+    .txt{
+      height:30rpx;margin-left:10rpx;padding:0 6rpx;
+      box-sizing: border-box;
+      display:flex;justify-content:center;align-items:center;
+      border:#fff 2rpx solid;border-radius:10rpx;font-size:16rpx;
+    }
+  }
+  .box-area1{margin-top:-80rpx;}
+  .scroll_list{
+    padding:20rpx;box-sizing: border-box;
+    .scroll_item:after{display:none;content:'';}
+    .scroll_item:not(:last-child){border-bottom:2rpx dashed #eee;}
+    .scroll_item{
+      width: 100%;background: #fff;padding: 30rpx 0;box-sizing: border-box;overflow:hidden;position:relative;
+      .inner{width:100%;display: flex;position:relative;box-sizing: border-box;}
+      .pic{
+        width:200rpx;
+        image{width:180rpx;height:180rpx;border-radius:15rpx;}
+      }
+      .avatar{
+        width:100rpx;
+        image{width:90rpx;height:90rpx;border-radius:50%;}
+      }
+      .pic-img{
+        width:120rpx;
+        image{width:110rpx;height:110rpx;border-radius:15rpx;}
+      }
+      .data_txt{
+        flex: 1;overflow: hidden;position:relative;
+        .empty-cell{width:240rpx;}
+      }
+      .btn-list{
+        padding-left:10rpx;box-sizing: border-box;
+        .btn-item{border-radius:60rpx;}
+        .btn-item:not(:last-child){margin-right:10rpx;}
+        .btn{padding:8rpx 20rpx;font-size:24rpx;}
+      }
+    }
+    .time-box{
+      font-size:24rpx;
+      display:flex;justify-content:flex-start;align-items: center;
+      .num{
+        background-color:#ee5357;color:#fff;
+        width:40rpx;height:40rpx;border-radius:10rpx;box-sizing: border-box;
+        display:flex;justify-content:center;align-items: center;
+      }
+      .num.big{width:60rpx;}
+      .txt{width:20rpx;height:30rpx;display:flex;justify-content:center;align-items: center;font-weight:bold;}
+    }
+    .radio-cell{width:50rpx;}
+  }
+  .user-list.scroll_list{
+    .scroll_item{display:block;padding:20rpx 0;}
+    .scroll_item:not(:last-child){border-bottom:#eee 2rpx solid;}
+  }
+  .order-list{
+    .scroll_item:not(:first-child){margin-top:20rpx;}
+    .scroll_item{
+      background-color:#fdeded;padding:10rpx 0;
+      .inner{padding:10rpx 20rpx;border-bottom:#ebdcdc 2rpx dashed;}
+      .b-area{
+        padding:10rpx 20rpx 0;
+      }
+    }
+  }
+  .scroll-view{height:330rpx;}
+  .user-search-outter{
+    width: 100%;height: 100rpx;padding:20rpx;box-sizing:border-box;
+    background-color: white;display: flex;flex-direction: column;align-items: center;justify-content: center;
+    .search-inner{
+      width: 100%;display:flex; align-items: center;box-sizing: border-box;
+      border:#f2f3f2 2rpx solid;;border-radius:60rpx;height:100%;
+    }
+    .search-input{box-sizing: border-box;font-size:24rpx;padding: 0 20rpx;flex:1;}
+    .btn{
+      height:56rpx;border-radius:56rpx;color:#fff;
+      margin-right:2rpx;padding:0 40rpx;box-sizing:border-box;
+      display: flex;align-items: center;justify-content: center;
+    }
+  }
+  .al-mark-store:after{content: "\e770";}
+  .al-mark-service:after{content: "\e666";}
+  .al-mark-orders:after{content: "\e79d";}
+  .al-mark-share:after{content: "\e602";}
+  .al-mark-invite:after{content: "\e656";}
+  .al-mark-income:after{content: "\e669";}
+  .al-mark-storeset:after{content: "\e622";}
+  .al-mark-message:after{content: "\e79c";}
+  .al-mark-businessschool:after{content: "\e677";}
+  .al-mark-wxgroups:after{content: "\e666";}
+  .al-mark-salestat:after{content: "\e601";}
+  .bg-store{background-color:#4281a4;}
+  .bg-service{background-color:#6f78f3;}
+  .bg-orders{background-color:#bc54fa;}
+  .bg-share{background-color:#6699ff;}
+  .bg-invite{background-color:#ff0400;}
+  .bg-income{background-color:orange;}
+  .bg-storeset{background-color:#4281a4;}
+  .bg-message{background-color:#4cd964;}
+  .bg-businessschool{background-color:#000;}
+  .bg-wxgroups{background-color: #6f78f3;}
+  .bg-salestart{background-color:#6699ff;}
+}
+.retailer-modal{
+  .avatar{width:200rpx;height:200rpx;border-radius:50%;}
+  .form-list{
+    padding:0 20rpx 20rpx;box-sizing: border-box;
+    .form-item{
+      background-color:#fff;box-sizing: border-box;
+      box-shadow:0px 0px 3px 1px #e4e4e4;border-radius:4rpx;
+      width:100%;min-height:100rpx;display:flex;align-items:center;padding:20rpx;position:relative;
+      margin-top:20rpx;
+      .title-cell{width:145rpx;height:100%;display: flex;align-items: left;justify-content:flex-start;align-items: center;text-align:left;}
+      .input-cell{
+        flex:1;height:100%;display:flex;justify-content: flex-end; align-items: center;position:relative;
+      }
+    }
+  }
+}
+</style>
+<template>
+  <view class="home-retailer-page">
+    <view class="toparea" style="{{themeObject.linearBgStyle}}">
+      <view class="db-flex top-pic">
+        <view class="pic-cell flex_left">
+          <image mode="aspectFill" src="{{userInfo.avatar}}"></image>
+        </view>
+        <view class="flex_cell flex_left">
+          <view class="w_100">
+            <view class="font16 bold">{{userInfo.linkman}}</view>
+            <view class="mt5">ID: {{userInfo.regwid}}</view>
+          </view>
+        </view>
+      </view>
+      <view class="fix-notice" @tap="toNotice">
+        <text class="al al-tongzhi2 color-white font20"></text>
+        <view class="txt">{{noticeCount}}未读</view>
+      </view>
+    </view>
+    <view class="box-area box-area1">
+      <view class="box-inner">
+        <view class="title b_bottom_after">我的销售</view>
+        <view class="block-list">
+          <view class="block-item">
+            <view class="block-inner">
+              <view class="txt1">￥{{retailerRevenue.todaysales}}</view>
+              <view class="txt2">今日销售额(元)</view>
+            </view>
+          </view>
+          <view class="block-item">
+            <view class="block-inner">
+              <view class="txt1">￥{{retailerRevenue.todaypays}}</view>
+              <view class="txt2">今日货款(元)</view>
+            </view>
+          </view>
+          <view class="block-item">
+            <view class="block-inner">
+              <view class="txt1">￥{{retailerRevenue.todayincome}}</view>
+              <view class="txt2">今日收入(元)</view>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+    <view class="box-area mt20">
+      <view class="box-inner">
+        <view class="title b_bottom_after">销售工具</view>
+        <view class="radius-list">
+          <view class="radius-item" @tap="toInvite">
+            <view class="radius-inner">
+              <view class="txt1 bg-invite">
+                <text class="al al-mark-invite"></text>
+              </view>
+              <view class="txt2">我要邀请</view>
+            </view>
+          </view>
+          <view class="radius-item">
+            <view class="radius-inner" data-url="/packageB/pages/income" @tap="navPage">
+              <view class="txt1 bg-income">
+                <text class="al al-mark-income"></text>
+              </view>
+              <view class="txt2">我的收入</view>
+            </view>
+          </view>
+          <view class="radius-item">
+            <view class="radius-inner" @tap="toApply">
+              <view class="txt1" style="background-color:#6fabf3;">
+                <text class="al al-zijinguanli"></text>
+              </view>
+              <view class="txt2">货款报单</view>
+            </view>
+          </view>
+          <view class="radius-item">
+            <view class="radius-inner" data-url="/packageD/pages/orders" @tap="navPage">
+              <view class="txt1 bg-orders">
+                <text class="al al-mark-orders"></text>
+              </view>
+              <view class="txt2">订单管理</view>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+    <view class="box-area mt20 mb20">
+      <view class="box-inner">
+        <view class="o-tab">
+          <view class="tab-item {{selectedIndex == 0 ? 'active' : ''}}" @tap="clickTab(0)">
+            <view class="tab-inner" style="{{selectedIndex == 0 ? themeObject.colorStyle : ''}}">
+              <text>今日团品</text>
+              <view wx:if="{{selectedIndex == 0}}" class="line" style="{{themeObject.bgStyle}}"></view>
+            </view>
+          </view>
+          <view class="tab-item {{selectedIndex == 1 ? 'active' : ''}}" @tap="clickTab(1)">
+            <view class="tab-inner" style="{{selectedIndex == 1 ? themeObject.colorStyle : ''}}">
+              <text>我要收款</text>
+              <view wx:if="{{selectedIndex == 1}}" class="line" style="{{themeObject.bgStyle}}"></view>
+              <block wx:if="{{newOrders > 0}}">
+                <view class="ico" style="{{themeObject.bgStyle}}" wx:if="{{newOrders > 99}}"><text class="al al-asmkticon0165 font10"></text></view>
+                <view class="ico" style="{{themeObject.bgStyle}}" wx:else>+{{newOrders}}</view>
+              </block>
+            </view>
+          </view>
+        </view>
+        <block wx:if="{{selectedIndex == 0}}">
+          <block wx:if="{{disProduct}}">
+            <view wx:if="{{!productData.length || !productData[0].length}}" class="flex_empty">上等好货，敬请期待</view>
+            <view wx:else class="product-list scroll_list">
+              <repeat for="{{productData}}" item="product" index="pageindex">
+                <repeat for="{{product}}" item="item" index="index">
+                  <view class="scroll_item">
+                    <view class="inner">
+                      <view class="pic" data-data="{{item}}" @tap="toFactoryProduct({{item}})">
+                        <image mode="aspectFill" src="{{item.photo}}" lazy-load></image>
+                      </view>
+                      <view class="data_txt" data-data="{{item}}" @tap="toFactoryProduct({{item}})">
+                        <view class="mb5 clamp1 font16">{{item.title}}</view>
+                        <view class="mb5 color-red" wx:if="{{item.sellingpoint && item.sellingpoint != ''}}">{{item.sellingpoint}}</view>
+                        <view class="time-box" wx:if="{{item.offshelftime && item.offshelftime != '' && item.interval}}">
+                          <text>距截团</text>
+                          <text :class="{big: (item.lefthour.length > 2 || item.lefthour >= 100)}" class="num ml5">{{item.lefthour}}</text>
+                          <text class="txt">:</text>
+                          <text class="num">{{item.leftminute}}</text>
+                          <text class="txt">:</text>
+                          <text class="num">{{item.leftsecond}}</text>
+                        </view>
+                        <view class="db-flex">
+                          <view class="flex_cell flex_left">
+                            <view class="clamp1">
+                              <text style="{{themeObject.colorStyle}}">￥</text>
+                              <text class="font16" style="{{themeObject.colorStyle}}" wx:if="{{item.minprice && item.maxprice && item.minprice != '' && item.maxprice != '' && item.minprice != item.maxprice}}">{{item.minprice}}-{{item.maxprice}}</text>
+                              <text class="font16" style="{{themeObject.colorStyle}}" wx:elif="{{item.minprice && item.minprice != ''}}">{{item.minprice}}</text>
+                              <text class="font16" style="{{themeObject.colorStyle}}" wx:else>{{item.price}}</text>
+                              <text class="ml5 color-gray" wx:if="{{item.oriprice && item.oriprice != '0.00'}}" style="text-decoration:line-through;">￥{{item.oriprice}}</text>
+                            </view>
+                          </view>
+                          <view class="btn-list flex_right">
+                            <view class="btn-item color-white" style="{{themeObject.bgStyle}}" data-pageindex="{{pageindex}}" data-index="{{index}}" data-data="{{item}}" catchtap="toShare">
+                              <view class="btn">分享下单</view>
+                            </view>
+                          </view>
+                        </view>
+                      </view>
+                    </view>
+                  </view>
+                </repeat>
+              </repeat>
+            </view>
+            <view class="load-end-area loading" wx:if="{{isLoadingProduct}}"></view>
+            <view class="load-end-area done" wx:elif="{{isDoneProduct}}"></view>
+          </block>
+        </block>
+        <block wx:if="{{selectedIndex == 1}}">
+          <block wx:if="{{disUserList}}">
+            <view class="block-list" data-url="/packageD/pages/orders" @tap="navPage">
+              <view class="block-item">
+                <view class="block-inner">
+                  <view class="txt1">{{orderInfo.waitconfirm}}</view>
+                  <view class="txt2">今日待确认订单</view>
+                </view>
+              </view>
+              <view class="block-item">
+                <view class="block-inner">
+                  <view class="txt1">{{orderInfo.haveconfirm}}</view>
+                  <view class="txt2">今日已确认订单</view>
+                </view>
+              </view>
+              <view class="block-item">
+                <view class="block-inner">
+                  <view class="txt1">{{orderInfo.totalorders}}</view>
+                  <view class="txt2">全部订单</view>
+                </view>
+              </view>
+            </view>
+            <view class="user-search-outter">
+              <view class="search-inner">
+                <input class="search-input" type="text" placeholder="搜索ID或昵称" bindinput="setKeyword" value="{{keyword}}" bindconfirm="searchKeyword" confirm-type="search" />
+                <!-- <view wx:if="{{keyword}}" class="btn bg-gray" bindtap="cancelSearch">取消</view>
+                <view wx:else class="btn" @tap="searchKeyword">搜索</view> -->
+                <view class="btn" @tap="clickSearch" style="{{themeObject.bgStyle}}">搜索</view>
+              </view>
+            </view>
+            <block wx:if="{{!userData.length}}">
+              <view wx:if="{{afterSearch}}" class="flex_empty">暂无搜索结果</view>
+              <view wx:else class="flex_empty">暂无收款数据</view>
+            </block>
+            <scroll-view wx:else class="{{scrollClass}}" scroll-y="{{allowScroll}}">
+              <radio-group class="user-list scroll_list" bindchange="userChange">
+                <repeat for="{{userData}}" item="item" index="index">
+                  <label class="radio scroll_item">
+                    <view class="inner">
+                      <view class="flex_left radio-cell">
+                        <radio class="dotradio" value="{{item.factoryuid}}" checked="{{item.checked}}"/>
+                      </view>
+                      <view class="avatar flex_left" data-data="{{item}}">
+                        <image mode="aspectFill" src="{{item.avatar}}" lazy-load></image>
+                      </view>
+                      <view class="flex_cell flex_left" data-data="{{item}}">
+                        <view class="w_100">
+                          <view class="clamp1 font16">{{item.username}}</view>
+                          <view class="flex_left">
+                            <view class="flex_cell">
+                              <view class="font12">
+                                <text class="color-gray">货款:</text>
+                                <text class="color-red ml5">￥{{item.total_sales}}</text>
+                              </view>
+                              <view class="font12">
+                                <text class="color-gray">订单:</text>
+                                <text class="color-red ml5">共{{item.total_count}}单</text>
+                              </view>
+                            </view>
+                            <view class="pl10 flex_right btn-list">
+                              <view class="btn-item bg-gray color-white" data-index="{{index}}" data-data="{{item}}" @tap="cancelUser">
+                                <view class="btn">取消</view>
+                              </view>
+                              <view class="btn-item color-white" style="{{themeObject.bgStyle}}" data-index="{{index}}" data-data="{{item}}" @tap="confirmUser">
+                                <view class="btn">确认收款</view>
+                              </view>
+                            </view>
+                          </view>
+                        </view>
+                      </view>
+                    </view>
+                  </label>
+                </repeat>
+              </radio-group>
+              <view class="load-end-area loading" wx:if="{{isLoadingUser}}"></view>
+              <view class="load-end-area done" wx:elif="{{isDoneUser}}"></view>
+            </scroll-view>
+          </block>
+        </block>
+      </view>
+    </view>
+    <view wx:if="{{selectedIndex == 1 && disOrderList}}" class="box-area mt20 mb20">
+      <view class="box-inner">
+        <view wx:if="{{!orderData.length}}" class="flex_empty">暂无收款数据}</view>
+        <view wx:else class="order-list scroll_list">
+          <repeat for="{{orderData}}" item="item" index="index">
+            <view class="scroll_item">
+              <view class="inner">
+                <view class="pic-img flex_left" data-data="{{item}}">
+                  <image mode="aspectFill" src="{{item.orderlist[0].photo}}" lazy-load></image>
+                </view>
+                <view class="flex_cell flex_left" data-data="{{item}}">
+                  <view class="w_100">
+                    <view class="font16">{{item.orderlist[0].name}}</view>
+                    <view class="flex_left">
+                      <view class="flex_cell">
+                        <view class="font12 color-gray" wx:if="{{item.orderlist[0].options}}">{{item.orderlist[0].options.title}}</view>
+                        <view class="color-red">
+                          <text class="font10">￥</text><text class="font16">{{item.orderlist[0].special}}</text>
+                        </view>
+                      </view>
+                      <view class="pl10 align_right">
+                        <text class="font10">×</text><text class="ml5 font12">{{item.orderlist[0].quantity}}</text>
+                      </view>
+                    </view>
+                  </view>
+                </view>
+              </view>
+              <view class="b-area flex_left">
+                <view class="flex_cell flex_left">
+                  <text>实际支付: </text>
+                  <text class="color-red">￥{{item.needpaymoney}}</text>
+                </view>
+                <view class="pl10 flex_right btn-list">
+                  <view class="btn-item bg-gray color-white" data-index="{{index}}" data-data="{{item}}" @tap="cancelOrder">
+                    <view class="btn">取消</view>
+                  </view>
+                  <view class="btn-item color-white" style="{{themeObject.bgStyle}}" data-index="{{index}}" data-data="{{item}}" @tap="confirmOrder">
+                    <view class="btn">确认收款</view>
+                  </view>
+                </view>
+              </view>
+            </view>
+          </repeat>
+        </view>
+        <view class="load-end-area loading" wx:if="{{isLoadingOrder}}"></view>
+        <view class="load-end-area done" wx:elif="{{isDoneOrder}}"></view>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy'
+import Util from '@/libs/util'
+import Config from '@/config'
+export default class extends wepy.component {
+  props = {
+    themeObject: {
+      type: Object,
+      default: {}
+    },
+    isIOS: {
+      type: Boolean,
+      default: false
+    }
+  }
+  data = {
+    userInfo: {},
+    noticeCount: 0,
+    productData: [],
+    disProduct: false,
+    isLoadingProduct: false,
+    isDoneProduct: false,
+    showAuth: false,
+    retailerRevenue: {todaysales: '0.00', todaypays: '0.00', todayincome: '0.00'},
+    newOrders: 0,
+    selectedIndex: 0,
+    buyAnimation: {},
+    clickProduct: {},
+    clickProductIndex: 0,
+    selectedOption: {},
+    selectedOptionIndex: 0,
+    showProductOpt: false,
+    genOrder: false,
+    disUserList: false,
+    isLoadingUser: false,
+    isDoneUser: false,
+    userData: [],
+    orderInfo: {haveconfirm: 0, totalorders: 0, waitconfirm: 0},
+    disOrderList: false,
+    isLoadingOrder: false,
+    isDoneOrder: false,
+    orderData: [],
+    selectedUid: null,
+    allowScroll: false,
+    scrollClass: '',
+    keyword: '',
+    afterSearch: false,
+    scrollTop: 0,
+    backScroll: 0,
+    addShopParams: null
+  }
+  initSkTab () {
+    this.disUserList = false
+    this.disOrderList = false
+    this.pageStart1 = 0
+    this.pageStart2 = 0
+    this.isLoadingUser = false
+    this.isDoneUser = false
+    this.userData = []
+    this.isLoadingOrder = false
+    this.isDoneOrder = false
+    this.orderData = []
+    this.selectedUid = null
+    this.allowScroll = false
+    this.scrollClass = ''
+    this.keyword = ''
+    this.afterSearch = false
+    this.scrollTop = 0
+    this.backScroll = 0
+    this.$apply()
+  }
+  initData () {
+    this.disProduct = false
+    this.pageStart = 0
+    this.productData = []
+    this.isLoadingProduct = false
+    this.isDoneProduct = false
+    this.showAuth = false
+    this.selectedIndex = 0
+    this.clickProduct = {}
+    this.clickProductIndex = 0
+    this.selectedOption = {}
+    this.selectedOptionIndex = 0
+    this.showProductOpt = false
+    this.genOrder = false
+    this.addShopParams = null
+    this.initSkTab()
+    this.$apply()
+  }
+  refreshPage () {
+    if (this.isLoadingProduct || this.isLoadingUser || this.isLoadingOrder) return false
+    this.initData()
+    this.getRevenue()
+    this.getProductData()
+  }
+  async addShop (params) {
+    this.genOrder = true
+    wepy.showLoading()
+    if (this.clickProduct.options && this.clickProduct.options.length && this.selectedOption && this.selectedOption.id) {
+      params.poid = this.selectedOption.id
+    }
+    let postData = {
+      ...params,
+      wid: this.globalData.Wid,
+      external: 1,
+      sessionkey: `factory_${this.userInfo.uid}`,
+      gxkuid: this.userInfo.gxkuid,
+      module: 'factoryproduct',
+      fid: Config.Fid
+    }
+    const res = await wepy.request({
+      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/order/addShop`,
+      data: postData,
+      method: 'POST'
+    })
+    const data = res.data
+    wepy.hideLoading()
+    if (data.flag === 1) {
+      let url = `/pages/addOrder?wid=${this.globalData.Wid}&shop_id=${data.data}&fromfid=${Config.Fid}`
+      if (this.clickProduct.agentfid) {
+        url = `${url}&agentfid=${this.clickProduct.agentfid}`
+      }
+      wepy.navigateTo({url: url})
+    } else {
+      wepy.showToast({
+        title: data.error,
+        icon: 'none'
+      })
+    }
+    this.genOrder = false
+  }
+  cutDown (item) {
+    item.interval = true
+    let h = parseInt(item.lefthour)
+    let m = parseInt(item.leftminute)
+    let s = parseInt(item.leftsecond)
+    if (s > 0) {
+      s--
+      if (s < 10) {
+        item.leftsecond = '0' + s
+      } else {
+        item.leftsecond = s
+      }
+    } else if (m > 0) {
+      m--
+      if (m < 10) {
+        item.leftminute = '0' + m
+      } else {
+        item.leftminute = m
+      }
+      item.leftsecond = '59'
+      s = 59
+    } else if (h > 0) {
+      h--
+      if (h < 10) {
+        item.lefthour = '0' + h
+      } else {
+        item.lefthour = h
+      }
+      item.leftminute = '59'
+      item.leftsecond = '59'
+      m = 59
+      s = 59
+    }
+    if (h === 0 && m === 0 && s === 0) {
+      item.interval = null
+      clearInterval(item.interval)
+    }
+  }
+  handleTimer () {
+    clearInterval(this.intervalId)
+    this.intervalId = setInterval(() => {
+      for (let j in this.productData) {
+        let data = this.productData[j]
+        for (let i in data) {
+          data[i].showOriprice = false
+          let curOriprice = data[i].oriprice
+          if (curOriprice && curOriprice !== '' && parseFloat(curOriprice.replace(/,/g, '')) > 0) {
+            data[i].showOriprice = true
+          }
+          let offshelftime = data[i].offshelftime
+          if (offshelftime && offshelftime !== '') {
+            let now = parseInt((new Date().getTime()) / 1000)
+            let lefttime = offshelftime - now
+            if (lefttime > 0) {
+              let hour = Math.floor(lefttime / 60 / 60)
+              if (hour < 100) {
+                if (hour < 10) {
+                  hour = `0${hour}`
+                }
+                let minute = Math.floor((lefttime - hour * 60 * 60) / 60)
+                if (minute < 10) {
+                  minute = `0${minute}`
+                }
+                let second = lefttime - hour * 60 * 60 - minute * 60
+                if (second < 10) {
+                  second = `0${second}`
+                }
+                data[i].lefthour = hour
+                data[i].leftminute = minute
+                data[i].leftsecond = second
+                data[i].interval = null
+                data[i]._offshelftime = true
+                this.cutDown(data[i])
+              }
+            }
+          }
+        }
+      }
+      // this.setData({
+      //   productData: this.productData
+      // })
+      this.$apply()
+    }, 1000)
+  }
+  getProductData () {
+    if (this.isLoadingProduct) return false
+    this.isLoadingProduct = true
+    let params = {
+      fid: Config.Fid,
+      haveoptions: 0,
+      pagestart: this.pageStart,
+      limit: this.limit,
+      from: 'retailer'
+    }
+    wepy.showLoading()
+    if (this.clickClassId) {
+      params.classid = this.clickClassId
+    }
+    wepy.request({
+      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/factory/factoryproductList`,
+      data: params,
+      method: 'post'
+    }).then(res => {
+      wepy.hideLoading()
+      const data = res.data
+      const retdata = data.data ? data.data : data
+      this.productData.push(retdata)
+      this.afterProduct = true
+      this.handleTimer()
+      this.disProduct = true
+      if (retdata.length < this.limit && this.productData[0].length) {
+        this.isDoneProduct = true
+      } else {
+        this.isDoneProduct = false
+      }
+      this.setData({
+        [`productData[${this.pageStart}]`]: retdata
+      })
+      this.isLoadingProduct = false
+      this.$apply()
+    })
+  }
+  getRevenue () {
+    wepy.request({
+      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/order/retailerRevenue`
+    }).then(res => {
+      const data = res.data
+      if (data.flag) {
+        this.retailerRevenue = data.data
+      }
+      this.newOrders = data.neworders
+      this.$apply()
+    })
+  }
+  handlePageData () {
+    this.initData()
+    this.globalData = this.$root.$parent.globalData
+    this.userInfo = this.globalData.userInfo
+    this.Wid = this.globalData.Wid
+    this.noticeCount = parseInt(this.userInfo.newmessages)
+    this.getRevenue()
+    this.getProductData()
+    this.$apply()
+  }
+  onLoad (options) {
+    this.options = options
+    this.limit = Config.Limit
+    this.pageStart = 0
+    this.pageStart1 = 0
+    this.pageStart2 = 0
+  }
+  onHide () {
+    this.inOnLoad = false
+    this.afterProduct = false
+    clearInterval(this.intervalId)
+  }
+  onUnload () {
+    this.afterProduct = false
+    clearInterval(this.intervalId)
+  }
+  getUserData () {
+    if (this.isLoadingUser) return false
+    this.isLoadingUser = true
+    let params = {
+      fid: Config.Fid,
+      pagestart: this.pageStart1,
+      limit: 1000
+    }
+    if (this.keyword && this.keyword !== '') {
+      params.keyword = this.keyword
+    }
+    wepy.showLoading()
+    wepy.request({
+      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/order/getTodayUser`,
+      data: params,
+      method: 'post'
+    }).then(res => {
+      wepy.hideLoading()
+      const data = res.data
+      const retdata = data.data ? data.data : data
+      if (this.keyword && this.keyword !== '') {
+        this.afterSearch = true
+      } else {
+        this.afterSearch = false
+      }
+      if (!this.pageStart1) {
+        for (let key in this.orderInfo) {
+          this.orderInfo[key] = data[key]
+        }
+      }
+      if (!this.selectedUid && (retdata.length || this.userData.length)) {
+        this.selectedUid = retdata[0].factoryuid
+        retdata[0].checked = true
+        this.getOrderData()
+      }
+      this.disUserList = true
+      this.userData = this.userData.concat(retdata)
+      if (retdata.length < this.limit && this.userData.length && this.userData.length > this.limit) {
+        this.isDoneUser = true
+      } else {
+        this.isDoneUser = false
+      }
+      this.setScrollViewClass()
+      this.isLoadingUser = false
+      this.$apply()
+      if (this.afterSearch && this.backScroll) {
+        wepy.pageScrollTo({scrollTop: this.backScroll})
+        this.backScroll = 0
+        this.$apply()
+      }
+    })
+  }
+  setScrollViewClass () {
+    if (this.userData.length > 3) {
+      this.scrollClass = 'scroll-view'
+      this.allowScroll = true
+    } else {
+      this.allowScroll = false
+    }
+  }
+  getOrderData () {
+    if (this.isLoadingOrder) return false
+    this.isLoadingOrder = true
+    let params = {
+      fid: Config.Fid,
+      pagestart: this.pageStart2,
+      limit: this.limit,
+      factoryuid: this.selectedUid
+    }
+    wepy.showLoading()
+    wepy.request({
+      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/order/orderTempList`,
+      data: params,
+      method: 'post'
+    }).then(res => {
+      wepy.hideLoading()
+      const data = res.data
+      const retdata = data.data ? data.data : data
+      this.disOrderList = true
+      this.orderData = this.orderData.concat(retdata)
+      if (retdata.length < this.limit && this.orderData.length) {
+        this.isDoneOrder = true
+      } else {
+        this.isDoneOrder = false
+      }
+      this.isLoadingOrder = false
+      this.$apply()
+    })
+  }
+  getLimitOrderData (count) {
+    let params = {
+      fid: Config.Fid,
+      pagestart: this.orderData.length,
+      limit: count,
+      factoryuid: this.selectedUid
+    }
+    wepy.request({
+      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/order/orderTempList`,
+      data: params,
+      method: 'post'
+    }).then(res => {
+      const data = res.data
+      const retdata = data.data ? data.data : data
+      if (retdata.length) {
+        this.orderData = this.orderData.concat(retdata)
+        this.disOrderList = true
+      }
+      if (this.orderData.length < this.limit) {
+        this.isDoneOrder = true
+      }
+      if (!this.orderData.length) {
+        this.disOrderList = false
+        this.deleteUserData()
+      }
+      this.$apply()
+    })
+  }
+  afterShoukuan () {
+    if (this.ShoukuanArr && this.ShoukuanArr.length) {
+      let idarr = this.ShoukuanArr
+      for (let i = 0; i < idarr.length; i++) {
+        for (let j = 0; j < this.orderData.length; j++) {
+          if (idarr[i] === this.orderData[j].id) {
+            this.orderData.splice(j, 1)
+            break
+          }
+        }
+      }
+      if (this.isDoneOrder || (this.orderData.length + idarr.length) < this.limit) {
+        if (!this.orderData.length) {
+          this.disOrderList = false
+          this.deleteUserData()
+        }
+      } else {
+        if (!this.orderData.length) {
+          this.disOrderList = false
+        }
+        this.getLimitOrderData(idarr.length)
+      }
+    }
+  }
+  deleteUserData () {
+    for (let j = 0; j < this.userData.length; j++) {
+      if (this.selectedUid === this.userData[j].factoryuid) {
+        this.userData.splice(j, 1)
+        this.selectedUid = null
+        break
+      }
+    }
+  }
+  handleOrder (params) {
+    let tip = '确定要取消吗？'
+    if (params.agree) {
+      tip = '确定要收款吗？'
+    }
+    let idarr = params.ids
+    let dataarr = params.dataarr
+    if (!params.ids) {
+      idarr = []
+      dataarr = []
+      for (let i = 0; i < this.orderData.length; i++) {
+        idarr.push(this.orderData[i].id)
+        if (params.agree) {
+          dataarr.push(this.orderData[i])
+        }
+      }
+    }
+    this.ShoukuanArr = idarr
+    wepy.showModal({
+      title: tip
+    }).then(res => {
+      if (res.confirm) {
+        wepy.showLoading()
+        wepy.request({
+          url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/order/retailerConfirm`,
+          data: {agree: params.agree, id: idarr},
+          method: 'post'
+        }).then(res => {
+          wepy.hideLoading()
+          const data = res.data
+          wepy.showToast({
+            title: data.error,
+            icon: 'none',
+            duration: Util.delay(data.error)
+          })
+          if (data.flag) {
+            let newOrders = this.newOrders
+            newOrders = newOrders - idarr.length
+            if (newOrders < 0) {
+              newOrders = 0
+            }
+            this.newOrders = newOrders
+            if (params.agree) {
+              let checkedUser = null
+              let checkedIndex = 0
+              for (let j = 0; j < dataarr.length; j++) {
+                let curdata = dataarr[j]
+                let curmoney = parseFloat(curdata.needpaymoney)
+                for (let i = 0; i < this.userData.length; i++) {
+                  let curUser = this.userData[i]
+                  if (curUser.checked) {
+                    checkedUser = this.userData[i]
+                    let usermoney = (parseFloat(curUser.total_sales) - curmoney).toFixed(2)
+                    if (usermoney < 0) usermoney = '0.00'
+                    this.userData[i].total_sales = usermoney
+                    checkedIndex = i
+                    break
+                  }
+                }
+              }
+              if (checkedUser) {
+                let count = checkedUser.total_count - dataarr.length
+                if (count < 0) count = 0
+                this.userData[checkedIndex].total_count = count
+              }
+            }
+            this.afterShoukuan()
+            this.$apply()
+          }
+        })
+      }
+    })
+  }
+  searchUser () {
+    this.disUserList = false
+    this.isLoadingUser = false
+    this.isDoneUser = false
+    this.userData = []
+    this.pageStart1 = 0
+    this.disOrderList = false
+    this.isLoadingOrder = false
+    this.isDoneOrder = false
+    this.orderData = []
+    this.pageStart2 = 0
+    this.selectedUid = null
+    this.$apply()
+    this.getUserData()
+  }
+  switchTab () {
+    switch (this.selectedIndex) {
+      case 0:
+        if (!this.productData.length || !this.productData[0].length) {
+          this.getProductData()
+        }
+        break
+      case 1:
+        if (!this.userData || !this.userData.length) {
+          this.getUserData()
+        }
+        break
+    }
+  }
+  methods = {
+    toNotice () {
+      wepy.navigateTo({url: '/packageD/pages/noticeList'})
+    },
+    toInvite (e) {
+      Util.checkTmpMsg({
+        systeminfo: this.globalData.systemInfo,
+        tmplIds: [this.globalData.Templates.order_delivery, this.globalData.Templates.msg_reply],
+        callback: () => {
+          wepy.navigateTo({url: '/pages/vip?from=commission'})
+        }
+      })
+    },
+    navPage (e) {
+      const dataset = e.currentTarget.dataset
+      let url = dataset.weburl ? dataset.weburl : dataset.url
+      let navurl = url
+      if (dataset.weburl) {
+        url = encodeURIComponent(url)
+        navurl = `/pages/webview?url=${url}`
+      }
+      wepy.navigateTo({url: navurl})
+    },
+    toApply () {
+      if (this.userInfo.retaileridentity === 'D') {
+        wepy.navigateTo({url: '/packageD/pages/orderApplyD'})
+      } else {
+        wepy.navigateTo({url: '/packageD/pages/orderApplyC'})
+      }
+    },
+    clickTab (index) {
+      this.selectedIndex = parseInt(index)
+      this.switchTab()
+    },
+    toFactoryProduct (item) {
+      wepy.setStorageSync('selectedProduct', item)
+      wepy.navigateTo({url: `/${Config.Router.product}?id=${item.id}&fid=${Config.Fid}&from=home&select=product&type=fpimport`})
+    },
+    userChange (e) {
+      const value = parseInt(e.detail.value)
+      this.selectedUid = value
+      for (let i = 0; i < this.userData.length; i++) {
+        let cur = this.userData[i]
+        if (cur.factoryuid === value) {
+          this.userData[i].checked = true
+        } else {
+          delete this.userData[i].checked
+        }
+      }
+      this.disOrderList = false
+      this.pageStart2 = 0
+      this.orderData = []
+      this.isLoadingOrder = false
+      this.isDoneOrder = false
+      this.getOrderData()
+      this.$apply()
+    },
+    cancelUser (e) {
+      this.handleOrder({
+        agree: 0,
+        type: 'user'
+      })
+    },
+    confirmUser (e) {
+      this.handleOrder({
+        agree: 1,
+        type: 'user'
+      })
+    },
+    cancelOrder (e) {
+      const curData = e.currentTarget.dataset.data
+      this.handleOrder({
+        agree: 0,
+        ids: [curData.id]
+      })
+    },
+    confirmOrder (e) {
+      const curData = e.currentTarget.dataset.data
+      this.handleOrder({
+        agree: 1,
+        ids: [curData.id],
+        dataarr: [curData]
+      })
+    },
+    setKeyword (e) {
+      this.keyword = e.detail.value
+    },
+    searchKeyword (e) {
+      if (e.detail.value !== '') this.keyword = e.detail.value
+      this.backScroll = this.scrollTop
+      this.searchUser()
+    },
+    cancelSearch () {
+      this.keyword = ''
+      this.backScroll = this.scrollTop
+      this.searchUser()
+    },
+    clickSearch () {
+      this.backScroll = this.scrollTop
+      this.searchUser()
+    },
+    toShare (e) {
+      this.$emit('productShare', e.currentTarget.dataset.data)
+    }
+  }
+}
+</script>

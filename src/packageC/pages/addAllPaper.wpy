@@ -1,0 +1,231 @@
+<style lang="less">
+.app-tab.none-fixed-top{position:fixed;left:0;top:0rpx;right:0;z-index:10;}
+.addallpaper-page{
+  padding-top:100rpx;padding-bottom:160rpx;
+  .set-item{margin:20rpx;height:80rpx}
+  padding-top:100rpx;padding-bottom:160rpx;
+  .al-left:before{
+    content:'\e744'
+  }
+  .al-xing:before{
+    content:'\e6c3'
+  }
+  .al-user-profile:before{
+      content:'\e8c8'
+  }
+  .al-yan:before{content:'\e6a0'}
+  .al-share:before{content:'\e7c2'}
+  input{width:90%}
+  .check-user{padding: 0 100rpx;border-radius: 66rpx;border:2rpx solid;
+  }
+  .create-btn{position:fixed; bottom:20rpx;width:100%;
+    view{ width:600rpx;
+    border-radius:66rpx;
+    margin:auto;
+    text-align:center;}
+  }
+  .record-area{
+    padding: 30rpx 0 20rpx;
+    .tab-item{
+      .number{
+        text-align:center;
+        line-height:100rpx;
+        color:#fff;
+      }
+    }
+  }
+  .record-item{
+    position:relative;
+    .user-img{
+       width:120rpx;
+       .img{background:#ca2121;color:#fff;text-align: center;line-height: 100rpx;}
+    }
+    .operate-btn{
+      position:absolute;
+      right:40rpx;
+      padding:10rpx 20rpx;
+      border-radius:50rpx;
+    }
+  }
+  .operate-area{position:fixed;bottom:0;left:0;right:0;
+     .operate-item{
+       height:100rpx;
+       line-height:100rpx;
+       text-align:center;
+     }
+  }
+}
+</style>
+<template>
+  <view class="app-tab none-fixed-top">
+    <view class="tab-item font14 {{selectedIndex == 0 ? 'active' : ''}}" data-current="0" bindtap="clickTab">
+      <text style="{{selectedIndex == 0 ? themeObject.colorStyle : ''}}">创建全员抢券</text>
+      <view class="line" style="{{selectedIndex == 0 ? themeObject.bgStyle : ''}}"></view>
+    </view>
+    <view class="tab-item font14 {{selectedIndex == 1 ? 'active' : ''}}" data-current="1" bindtap="clickTab">
+      <text style="{{selectedIndex == 1 ? themeObject.colorStyle : ''}}">活动列表</text>
+      <view class="line" style="{{selectedIndex == 1 ? themeObject.bgStyle : ''}}"></view>
+    </view>
+  </view>
+  <view class="addallpaper-page">
+    <view wx:if="{{selectedIndex == 0}}" class="list-area">
+    <view class="db-flex bg-white padding10 set-item">
+        <view class="flex_left">活动名称<text class="al al-xing font16 ml5 color-red1"></text></view>
+        <view class="flex_cell flex_right"><input class="search-input" type="text" placeholder="请输入活动名称" bindinput="setKeyword" value="{{keyword}}" bindconfirm="searchKeyword" confirm-type="search" /></view>
+      </view>
+      <view class="db-flex bg-white padding10 set-item">
+        <view class="flex_cell flex_left bold">设置优惠券<text class="al al-xing font16 ml5 color-red1"></text></view>
+        <view class="flex_cell flex_right" style="{{themeObject.colorStyle}}">去设置<text class="al al-left font25"></text></view>
+      </view>
+      <view class="create-btn">
+         <view class=" padding10" style="{{themeObject.bgStyle}}">立即创建</view>
+      </view>
+    </view>
+    <view wx:if="{{selectedIndex == 1 && disList}}" class="list-area">
+     <view wx:if="{{!tabData.length}}" class="w_100 flex_empty">暂无数据</view>
+      <repeat for="{{tabData}}" index="index" item="item">
+          <view class="record-item flex_center b_bottom padding10 bg-white">
+            <view class="user-img"><view class="avatarimg2 img"><text class="al al-user-profile font25"></text></view></view>
+            <view  class="flex_cell">
+              <view class="font15 bold">新福利，大家快来一起抢卷</view>
+              <view class="color-gray01 font14 flex_left"><text class="al al-yan font25 mr5"></text>10 <text class="al al-share font20 mr5 ml10"></text>10</view>
+              <view class="color-gray3 font12">2020-04-09 13：30</view>
+            </view>
+            <view class="operate-btn" style="{{themeObject.bgStyle}}" @tap="showOperate">操作</view>
+          </view>
+          <view class="record-item flex_center b_bottom padding10 bg-white">
+            <view class="user-img"><view class="avatarimg2 img"><text class="al al-user-profile font25"></text></view></view>
+            <view  class="flex_cell">
+              <view class="font15 bold">大额优惠券，快来一起抢卷吧！先到先得</view>
+              <view class="color-gray01 font14 flex_left"><text class="al al-yan font25 mr5"></text>10 <text class="al al-share font20 mr5 ml10"></text>10</view>
+              <view class="color-gray3 font12">2020-04-09 13：30</view>
+            </view>
+            <view class="operate-btn" style="{{themeObject.bgStyle}}" @tap="showOperate">操作</view>
+          </view>
+      </repeat>
+      <view class="load-end-area loading" wx:if="{{isLoading}}"></view>
+      <view class="load-end-area done" wx:elif="{{isDone}}"></view>
+      <view wx:if="{{showOperate}}" class="modalarea">
+        <view class="operate-area bg-white">
+          <view class="operate-item b_bottom" @tap="toStatistics">统计</view>
+          <view class="operate-item b_bottom">停止活动</view>
+          <view class="operate-item b_bottom" @tap="hideOperate">取消</view>
+        </view>
+      </view>
+     </view>
+  </view>
+</template>
+<script>
+import wepy from 'wepy'
+import Time from '@/libs/time'
+import Config from '@/config'
+import Util from '@/libs/util'
+export default class extends wepy.page {
+  config = {
+    enablePullDownRefresh: true,
+    backgroundTextStyle: 'dark'
+  }
+  data = {
+    selectedIndex: 0,
+    flag: 0,
+    tabData: [],
+    isLoading: false,
+    isDone: false,
+    disList: false,
+    themeObject: {},
+    showServiceModal: false,
+    servicePhotoArr: [],
+    serviceContent: '',
+    maxnum: 4,
+    showOperate: false
+  }
+  refreshPage () {
+    this.selectedIndex = 0
+    this.disList = false
+    this.pagestart = 0
+    this.tabData = []
+    this.$apply()
+    this.handlePageData()
+  }
+  onPullDownRefresh () {
+    this.refreshPage()
+    wepy.showNavigationBarLoading()
+    setTimeout(() => {
+      wepy.hideNavigationBarLoading()
+      wepy.stopPullDownRefresh()
+    }, 500)
+  }
+  onReachBottom (event) {
+    if (this.isLoading) return false
+    if (this.tabData.length === (this.pagestart + 1) * this.limit) {
+      this.pagestart++
+      this.isLoading = true
+      this.getData()
+    }
+  }
+  getData () {
+    wepy.showLoading()
+    wepy.request({
+      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/customer/ordersList`,
+      data: {pagestart: this.pageStart1, limit: this.limit, customeruid: '4903'},
+      method: 'post'
+    }).then(res => {
+      wepy.hideLoading()
+      this.isLoading = false
+      const data = res.data
+      let retdata = data.data ? data.data : data
+      for (let i = 0; i < retdata.length; i++) {
+        let curd = retdata[i]
+        curd.dateline_str = new Time(curd.dateline * 1000).dateFormat('yyyy-MM-dd hh:mm')
+      }
+      this.tabData = this.tabData.concat(retdata)
+      this.disList = true
+      if (retdata.length < this.limit && this.tabData.length) {
+        this.isDone = true
+      } else {
+        this.isDone = false
+      }
+      this.$apply()
+    })
+  }
+  handlePageData () {
+    this.globalData = this.$parent.globalData
+    Util.appInit(this.globalData, this)
+    this.userinfo = this.globalData.userInfo
+    this.$apply()
+  }
+  onLoad (options) {
+    this.options = options
+    this.pageStart = 0
+    this.limit = Config.Limit
+    this.$apply()
+  }
+  onShow () {
+    this.pagestart = 0
+    if (this.$parent.globalData.flag.bokaAuth) {
+      this.handlePageData()
+    } else {
+      this.$parent.loadCallback = () => {
+        this.handlePageData()
+      }
+    }
+  }
+  methods = {
+    clickTab (e) {
+      this.selectedIndex = parseInt(e.currentTarget.dataset.current)
+      if (!this.tabData.length && this.selectedIndex === 1) {
+        this.getData()
+      }
+    },
+    showOperate () {
+      this.showOperate = true
+    },
+    hideOperate () {
+      this.showOperate = false
+    },
+    toStatistics () {
+      wepy.navigateTo({url: `packageC/pages/paperStats?actionid=${this.productid}`})
+    }
+  }
+}
+</script>

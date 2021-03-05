@@ -1,0 +1,437 @@
+<style lang="less">
+.add-card.app-tab{position:fixed;left:0;right:0;top:0;z-index:10;}
+.add-card-page{
+  padding-top:100rpx;box-sizing: border-box;
+  .info-area{
+    background-color:#fff;padding:20rpx;
+    .pic{
+      width:130rpx;
+      image{width:110rpx;height:110rpx;border-radius:10rpx;}
+    }
+  }
+  .bottom-btn{
+    position:fixed;left:0;right:0;bottom:0;
+    .btn-item{padding-bottom:20rpx;}
+    .btn{
+      width:280rpx;height:70rpx;border-radius:79rpx;
+      display:flex;justify-content: center;align-items: center;
+    }
+  }
+  .radius-list{
+    background-color:#fff;
+    .radius-item{width:33.33333%;}
+  }
+  .flex_empty{height:200rpx;}
+  .list_area{
+    margin-top:30rpx;margin-bottom:30rpx;background-color:#fff;
+    .scroll_item{
+      width:100%;padding:20rpx;display:flex;box-sizing: border-box;
+      .pic{
+        width:100rpx;
+        image{width:90rpx;height:90rpx;border-radius:50%;}
+      }
+      .btn-cell{
+        padding-left:20rpx;
+        .btn{
+          width:130rpx;height:50rpx;border-radius:30rpx;
+          display:flex;justify-content: center;align-items: center;
+        }
+      }
+    }
+  }
+}
+.share-modal{
+  .modal-inner{padding:40rpx 0;}
+  .icon-success{
+    width:80rpx;height:80rpx;border-radius:50%;background-color:#fff;
+    border-style:solid;border-width:4rpx;margin:0 auto;
+    .al{font-size:70rpx;margin-top:6rpx;}
+  }
+  .btn-share{
+    width:200rpx;height:70rpx;border-radius:60rpx;
+    margin:40rpx auto 20rpx;
+    display:flex;justify-content: center;align-items: center;
+  }
+}
+</style>
+<template>
+  <view class="app-tab add-card">
+    <view class="tab-item {{selectedIndex == 0 ? 'active' : ''}}" data-current="0" bindtap="clickTab">
+      <text style="{{selectedIndex == 0 ? themeObject.colorStyle : ''}}">创建优惠券</text>
+      <view class="line" style="{{selectedIndex == 0 ? themeObject.bgStyle : ''}}"></view>
+    </view>
+    <view class="tab-item {{selectedIndex == 1 ? 'active' : ''}}" data-current="1" bindtap="clickTab">
+      <text style="{{selectedIndex == 1 ? themeObject.colorStyle : ''}}">领取记录</text>
+      <view class="line" style="{{selectedIndex == 1 ? themeObject.bgStyle : ''}}"></view>
+    </view>
+  </view>
+  <view class="container add-card-page">
+    <block wx:if="{{selectedIndex == 0}}">
+      <view class="flex_left info-area">
+        <view class="pic">
+          <image src="{{product.photo}}" />
+        </view>
+        <view class="flex_cell flex_left">
+          <view class="w_100">
+            <view>{{product.title}}</view>
+            <view class="w_100 font12 color-gray clamp1">
+              <text>最大可创建:</text>
+              <!-- <text class="color-red" wx:if="{{product.minsalesrebate && product.maxsalesrebate && product.minsalesrebate != product.maxsalesrebate}}"> ￥{{ product.minsalesrebate }}-{{ product.maxsalesrebate }}</text>
+              <text class="color-red" wx:else> ￥{{ product.minsalesrebate }}</text> -->
+              <text class="color-red"> ￥{{ product.minsalesrebate }}</text>
+            </view>
+            <view wx:if="{{cardInfo && cardInfo.id}}">
+              <text>优惠券剩余:</text>
+              <text style="{{themeObject.colorStyle}}">{{cardInfo.leftcount}}</text>
+              <text>张</text>
+            </view>
+          </view>
+        </view>
+      </view>
+      <view class="app-form-list">
+        <view class="form-item">
+          <view class="title-cell">
+            <text>优惠券数量</text>
+            <text class="al al-xing5 font12 color-red"></text></view>
+          <view class="input-cell">
+            <block wx:if="{{disBtn}}">
+              <input wx:if="{{cardInfo && cardInfo.id}}" class="input" placeholder-class="input-placeholder" bindinput="inputChange" value="{{addCount}}" type="tel" placeholder="请输入优惠券增加数量"></input>
+              <input wx:else class="input" placeholder-class="input-placeholder" bindinput="inputChange" value="{{addCount}}" type="tel" placeholder="请输入优惠券发放数量"></input>
+            </block>
+          </view>
+          <view>张</view>
+        </view>
+        <view class="form-item">
+          <view class="title-cell">
+            <text>优惠券金额</text>
+          </view>
+          <view class="input-cell">
+            <input wx:if="{{cardInfo && cardInfo.id}}" class="input" placeholder-class="input-placeholder" bindinput="moneyChange" type="text" placeholder="请输入优惠券金额" value="{{cardMoney}}"></input>
+            <input wx:else class="input" placeholder-class="input-placeholder" bindinput="moneyChange" type="text" placeholder="请输入优惠券金额"></input>
+          </view>
+          <view>元</view>
+        </view>
+      </view>
+      <view class="mt20 flex_right pl10 pr10">
+        <text class="al al-xing5 font16 color-red"></text>
+        <text class="color-gray">优惠券使用期限: 24小时</text>
+      </view>
+      <view class="mt20 flex_right pl10 pr10">
+        <view class="flex_right" @tap="toHelp">
+          <text class="al al-bangzhu font16 color-red"></text>
+          <text class="color-gray">使用小贴士</text>
+        </view>
+      </view>
+      <view wx:if="{{disBtn}}" class="bottom-btn flex_center">
+        <view class="btn-item flex_cell flex_center" wx:if="{{cardInfo && cardInfo.id}}">
+          <button class="btn bg-orange color-white" open-type="share">分享优惠券</button>
+        </view>
+        <view class="btn-item flex_cell flex_center" wx:if="{{cardInfo && cardInfo.id}}">
+          <view class="btn" style="{{themeObject.bgStyle}}" @tap="addEvent">增加优惠券数量</view>
+        </view>
+        <view class="btn-item flex_cell flex_center" wx:else>
+          <view class="btn" style="{{themeObject.bgStyle}}" @tap="addEvent">立即创建优惠券</view>
+        </view>
+      </view>
+    </block>
+    <block wx:if="{{selectedIndex == 1}}">
+      <view class="radius-list">
+        <view class="radius-item">
+          <view class="radius-inner">
+            <view class="txt1 bg-orange">{{resultObject.cardcount}}</view>
+            <view class="txt2">优惠券</view>
+          </view>
+        </view>
+        <view class="radius-item">
+          <view class="radius-inner">
+            <view class="txt1 bg-blue">{{resultObject.lingqu}}</view>
+            <view class="txt2">领取人数</view>
+          </view>
+        </view>
+        <view class="radius-item">
+          <view class="radius-inner">
+            <view class="txt1" style="{{themeObject.bgStyle}}">{{resultObject.used}}</view>
+            <view class="txt2">使用人数</view>
+          </view>
+        </view>
+      </view>
+      <block wx:if="{{disList1}}">
+        <view wx:if="{{!tabData1.length}}" class="flex_empty">暂无领取记录</view>
+        <view wx:else class="list_area b_top_after">
+          <repeat for="{{tabData1}}" item="item" index="index">
+            <view class="scroll_item b_bottom_after">
+              <view class="pic flex_left">
+                <image src="{{item.avatar}}" />
+              </view>
+              <view class="flex_cell">
+                <view style="{{themeObject.colorStyle}}">优惠券 {{item.money}}元</view>
+                <view>领取人: {{item.linkman}}</view>
+                <view class="color-gray font12">领取时间: {{item.dateline_str}}</view>
+                <view class="color-gray font12">到期时间: {{item.deadline_str}}</view>
+              </view>
+              <view class="btn-cell flex_right">
+                <view wx:if="{{item.used}}" class="btn bg-gray color-white">已使用</view>
+                <block wx:else>
+                  <view wx:if="{{item.usedateline}}" class="btn bg-gray color-white">已过期</view>
+                  <view wx:else class="btn" style="{{themeObject.bgStyle}}">未使用</view>
+                </block>
+              </view>
+            </view>
+          </repeat>
+        </view>
+      </block>
+    </block>
+  </view>
+  <view wx:if="{{showShareModal}}" class="auto-modal share-modal flex_center">
+    <view class="modal-inner border-box">
+      <view class="align_left txt pt10 pb10">
+        <view class="icon-success flex_center" style="{{themeObject.borderStyle}}">
+          <text style="{{themeObject.colorStyle}}" class="al al-duihao2"></text>
+        </view>
+        <view style="{{themeObject.colorStyle}}" class="flex_center mt10">{{tipTxt}}</view>
+        <button style="{{themeObject.bgStyle}}" class="btn-share" open-type="share">立即分享</button>
+      </view>
+      <form class="close-area flex_center" bindsubmit="closeShareModal" report-submit="true">
+        <button formType="submit" class="al al-close1"></button>
+      </form>
+    </view>
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy'
+import Util from '@/libs/util'
+import Time from '@/libs/time'
+import Config from '@/config'
+export default class extends wepy.page {
+  config = {
+    enablePullDownRefresh: true,
+    backgroundTextStyle: 'dark'
+  }
+  data = {
+    selectedIndex: 0,
+    disList1: false,
+    tabData1: [],
+    themeObject: {},
+    addCount: '',
+    showShareModal: false,
+    cardMoney: '',
+    resultObject: {
+      cardcount: 0,
+      lingqu: 0,
+      used: 0
+    },
+    product: {},
+    cardInfo: {},
+    tipTxt: '',
+    disBtn: false
+  }
+  onPullDownRefresh () {
+    wepy.showNavigationBarLoading()
+    setTimeout(function () {
+      wepy.hideNavigationBarLoading()
+      wepy.stopPullDownRefresh()
+    }, 500)
+    this.refreshPage()
+  }
+  onReachBottom () {
+    if (this.selectedIndex === 1 && this.tabData1.length === (this.pageStart1 + 1) * this.limit) {
+      this.pageStart1++
+      this.getData1()
+    }
+  }
+  getData1 = function () {
+    wepy.request({
+      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/card/retailerCardStat`,
+      data: {productid: this.productid, pagestart: this.pageStart1, limit: this.limit},
+      method: 'post'
+    }).then(res => {
+      const data = res.data
+      for (let key in this.resultObject) {
+        if (data[key]) {
+          this.resultObject[key] = data[key]
+        }
+      }
+      let retdata = data.data ? data.data : data
+      for (let i = 0; i < retdata.length; i++) {
+        retdata[i].dateline_str = new Time(retdata[i].dateline * 1000).dateFormat('yyyy-MM-dd hh:mm')
+        retdata[i].deadline_str = new Time(retdata[i].deadline * 1000).dateFormat('yyyy-MM-dd hh:mm')
+      }
+      this.tabData1 = this.tabData1.concat(retdata)
+      this.disList1 = true
+      wepy.stopPullDownRefresh()
+      this.$apply()
+    })
+  }
+  refreshPage () {
+    this.selectedIndex = 0
+    this.disList1 = false
+    this.tabData1 = []
+    this.pageStart1 = 0
+    this.$apply()
+    this.handlePageData()
+  }
+  handlePageData () {
+    this.globalData = this.$parent.globalData
+    Util.appInit(this.globalData, this)
+    this.userInfo = this.globalData.userInfo
+    wepy.request({
+      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/card/retailerCardList`,
+      data: {productid: this.productid},
+      method: 'post'
+    }).then(res => {
+      const data = res.data
+      if (data.flag) {
+        const retdata = data.data
+        if (retdata) {
+          this.cardInfo = retdata
+          this.cardMoney = this.cardInfo.cardmoney
+        }
+        this.product = data.productinfo
+      }
+      this.disBtn = true
+      this.$apply()
+    })
+    this.$apply()
+  }
+  onLoad (options) {
+    this.options = options
+    this.productid = options.productid
+    this.pageStart1 = 0
+    this.limit = Config.Limit
+    wepy.hideShareMenu()
+    this.$apply()
+  }
+  onShow () {
+    this.pageStart1 = 0
+    if (this.$parent.globalData.flag.bokaAuth) {
+      this.handlePageData()
+    } else {
+      this.$parent.loadCallback = () => {
+        this.handlePageData()
+      }
+    }
+  }
+  handleShare () {
+    let shareurl = `/${Config.Router.product}?id=${this.options.id}&type=fpimport&module=fpimport&share_uid=${this.userInfo.uid}&share_wid=${this.globalData.Wid}&wid=${this.globalData.Wid}&shareuser=self&comefrom=${Config.AppName}`
+    let backUrl = encodeURIComponent(shareurl)
+    shareurl = `${shareurl}&currentUrl=${backUrl}`
+    this.shareParams = {
+      title: `【送你一张${this.cardMoney}元优惠券】${this.product.title}`,
+      imageUrl: this.product.photo.split(',')[0],
+      path: shareurl
+    }
+  }
+  onShareAppMessage (res) {
+    this.handleShare()
+    return this.shareParams
+  }
+  onShareTimeline () {
+    this.handleShare()
+    return this.shareParams
+  }
+  methods = {
+    inputChange (e) {
+      this.addCount = e.detail.value
+      this.$apply()
+    },
+    moneyChange (e) {
+      this.cardMoney = e.detail.value
+      this.$apply()
+    },
+    clickTab (e) {
+      this.selectedIndex = parseInt(e.currentTarget.dataset.current)
+      if (this.selectedIndex === 1 && !this.tabData1.length) {
+        this.pageStart1 = 0
+        this.getData1()
+      }
+    },
+    addEvent () {
+      if (this.isSubmit) return false
+      let newCount = this.addCount
+      let postMoney = this.cardMoney
+      let numReg = /^[1-9]\d*$/
+      if (newCount === '') {
+        wepy.showToast({
+          title: '请输入优惠券数量',
+          icon: 'none'
+        })
+        return false
+      }
+      if (postMoney === '') {
+        wepy.showToast({
+          title: '请输入优惠券金额',
+          icon: 'none'
+        })
+        return false
+      }
+      if (isNaN(newCount) || parseFloat(newCount) < 0 || !numReg.test(newCount)) {
+        wepy.showToast({
+          title: '请输入正确的优惠券数量',
+          icon: 'none'
+        })
+        return false
+      }
+      if (isNaN(postMoney) || parseFloat(postMoney) < 0) {
+        wepy.showToast({
+          title: '请输入正确的优惠券金额',
+          icon: 'none'
+        })
+        return false
+      }
+      if (parseFloat(postMoney) > this.product.minsalesrebate) {
+        wepy.showToast({
+          title: `优惠券金额不能超过${this.product.minsalesrebate}元`,
+          icon: 'none'
+        })
+        return false
+      }
+      this.isSubmit = false
+      this.shareObject = {
+        title: `【送你一张${this.cardMoney}元优惠券】`
+      }
+      this.isSubmit = true
+      wepy.showLoading()
+      let url = `${Config.BokaApi}/${Config[Config.ApiVersion]}/card/createRetailerCard`
+      let postData = {productid: this.productid, cardcount: newCount, cardmoney: postMoney}
+      if (this.cardInfo && this.cardInfo.id) {
+        url = `${Config.BokaApi}/${Config[Config.ApiVersion]}/card/retailerCardPlus`
+        postData = {id: this.cardInfo.id, add: newCount, cardmoney: postMoney}
+      }
+      wepy.request({
+        url: url,
+        data: postData,
+        method: 'post'
+      }).then(res => {
+        wepy.hideLoading()
+        this.isSubmit = false
+        const data = res.data
+        if (data.flag) {
+          this.addCount = ''
+          if (this.cardInfo && this.cardInfo.id) {
+            this.tipTxt = '增加成功'
+            this.cardInfo.leftcount = this.cardInfo.leftcount + parseInt(newCount)
+          } else {
+            this.tipTxt = '创建成功'
+            this.cardInfo = data.data
+          }
+          this.showShareModal = true
+          this.$apply()
+        } else {
+          wepy.showToast({
+            title: data.error,
+            icon: 'none'
+          })
+        }
+      })
+    },
+    closeShareModal () {
+      this.showShareModal = false
+      this.$apply()
+    },
+    toHelp () {
+      wepy.navigateTo({url: `/packageD/pages/helpCenter?classid=${Config.CardClassID}`})
+    }
+  }
+}
+</script>

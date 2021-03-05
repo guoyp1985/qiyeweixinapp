@@ -1,0 +1,27 @@
+{
+  "extEnable": true,
+  "extAppid": "wx7ce62088102d5b2f",
+  "directCommit": false,
+  "ext": {
+    "version": "0.0.1",
+    "appName": "厂商",
+    "appLogo": "https://ossxsb.boka.cn/logo.png",
+    "bokaApi": "https://factory.boka.cn",
+    "gxkApi": "https://laravel.boka.cn",
+    "webViewUrl": "https://www.sharingsales.cn",
+    "fid": 3,
+    "wid": 14,
+    "gxkAppId": "wx52f62bbdcf1ee04f",
+    "Accept": ""
+  },
+  "window":{
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#fff",
+    "navigationBarTitleText": "共销客",
+    "navigationBarTextStyle": "black"
+  },
+  "networkTimeout": {
+    "request": 30000,
+    "downloadFile": 30000
+  }
+}

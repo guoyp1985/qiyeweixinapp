@@ -1,0 +1,827 @@
+<style lang="less">
+.user-order-search-outter{
+  width: 100%;height: 100rpx;padding:20rpx;box-sizing:border-box;
+  background-color: white;display: flex;flex-direction: column;align-items: center;justify-content: center;
+  position:fixed;left:0;top:0;right:0;z-index:10;
+  .search-inner{width: 100%;display:flex; align-items: center;background-color: #f2f3f2;border-radius: 45px;height:100%;}
+  .search-input{width: 85%;box-sizing: border-box;font-size:24rpx;padding: 0 20rpx;flex:1;}
+}
+.app-tab.fixed-top{position:fixed;left:0;top:100rpx;right:0;z-index:10;}
+.user-order-page{
+  padding-top:200rpx;padding-bottom:260rpx;
+  .list-area.zh_CN{
+    .product-img{
+      .ico:after{content:"優惠券";}
+    }
+  }
+  .list-area{
+    .order-item{margin-top:20rpx;}
+    .product-area{padding:20rpx;}
+    .product-img{
+      width:140rpx;position:relative;overflow:hidden;
+      image{width:120rpx;height:120rpx;border:#eee 2rpx solid;}
+      .ico{
+        position:absolute;left:0;top:0;width:290rpx;height:50rpx;line-height:50rpx;
+        color:#fff;text-align:center;font-size: 24rpx;
+        -webkit-transform: translate(-100rpx,20rpx) rotate(-45deg);
+        transform: translate(-100rpx,20rpx) rotate(-45deg);z-index:1;
+        background-color:#d81e07;
+      }
+      .ico:after{content:"优惠券";}
+    }
+    .pay-info{padding:10rpx 20rpx;line-height:40rpx;}
+    .btn-area{
+      padding:20rpx 20rpx;
+      .btn-item:not(:last-child){margin-right:20rpx;}
+      .btn-item{
+        display:inline-block;
+        .btn{padding:0 20rpx;line-height:50rpx;background-color: #F8F8F8;border:#d8d8d8 2rpx solid;border-radius:10rpx; font-size:24rpx;}
+      }
+    }
+  }
+}
+.fixed-share{
+  position:fixed;right:30rpx;bottom:150rpx;border-radius:50%;z-index:10;
+  width:100rpx;height:100rpx;line-height:100rpx;text-align:center;
+}
+.fixed-help{
+  position:fixed;right:30rpx;bottom:30rpx;border-radius:50%;z-index:10;
+  width:100rpx;height:100rpx;line-height:100rpx;text-align:center;
+}
+</style>
+<template>
+  <view wx:if="{{userInfo && userInfo.regwid && userInfo.bindstatus}}" class="fixed-share bg-theme color-white" style="{{themeObject.bgStyle}}" @tap="toShare">分享</view>
+  <view class="fixed-help bg-theme color-white" style="{{themeObject.bgStyle}}" @tap="toHelp">帮助</view>
+  <view class="user-order-search-outter b_bottom_after">
+    <view class="search-inner">
+      <input class="search-input" type="text" placeholder="请输入商品名称" bindinput="setKeyword" value="{{keyword}}" bindconfirm="searchKeyword" confirm-type="search" />
+      <view wx:if="{{keyword}}" class="flex_center color-gray font12 pl10 pr10" bindtap="cancelSearch">取消</view>
+      <view wx:else class="flex_center color-gray font12 pl10 pr10"><text class="al al-sousuo font20"></text></view>
+    </view>
+  </view>
+  <view class="app-tab fixed-top">
+    <view class="tab-item font14 {{selectedIndex==0 ? 'active' : ''}}" data-current="0" bindtap="clickTab">
+      <text style="{{selectedIndex == 0 ? themeObject.colorStyle : ''}}">全部</text>
+      <view class="line" style="{{selectedIndex == 0 ? themeObject.bgStyle : ''}}"></view>
+    </view>
+    <view class="tab-item font14 {{selectedIndex == 1 ? 'active' : ''}}" data-current="1" bindtap="clickTab">
+      <text style="{{selectedIndex == 1 ? themeObject.colorStyle : ''}}">待发货</text>
+      <view class="line" style="{{selectedIndex == 1 ? themeObject.bgStyle : ''}}"></view>
+    </view>
+    <view class="tab-item font14 {{selectedIndex == 2 ? 'active' : ''}}" data-current="2" bindtap="clickTab">
+      <text style="{{selectedIndex == 2 ? themeObject.colorStyle : ''}}">备货中</text>
+      <view class="line" style="{{selectedIndex == 2 ? themeObject.bgStyle : ''}}"></view>
+    </view>
+    <view class="tab-item font14 {{selectedIndex == 3 ? 'active' : ''}}" data-current="3" bindtap="clickTab">
+      <text style="{{selectedIndex == 3 ? themeObject.colorStyle : ''}}">待收货</text>
+      <view class="line" style="{{selectedIndex == 3 ? themeObject.bgStyle : ''}}"></view>
+    </view>
+    <view class="tab-item font14 {{selectedIndex == 4 ? 'active' : ''}}" data-current="4" bindtap="clickTab">
+      <text style="{{selectedIndex == 4 ? themeObject.colorStyle : ''}}">已完成}</text>
+      <view class="line" style="{{selectedIndex == 4 ? themeObject.bgStyle : ''}}"></view>
+    </view>
+  </view>
+  <view class="user-order-page">
+    <view wx:if="{{disObject[flag]}}" class="list-area">
+      <view wx:if="{{!tabDataObject[flag].length}}" class="w_100 flex_empty">暂无相关订单</view>
+      <block wx:else>
+        <view wx:if="{{flag == 101}}" class="flex_center padding10" style="{{themeObject.bgStyle}}">您的订单正在备货准备发出，暂时无法申请退款！</view>
+        <repeat for="{{tabDataObject[flag]}}" index="index" item="item">
+          <view class="order-item b_top_after">
+            <view class="flex_left pl10 pr10 bg-white" data-data="{{item}}" @tap="toDetail">
+              <view class="flex_cell flex_left" style="{{themeObject.colorStyle}}">
+                <block wx:if="{{item.retailertitle && item.retailertitle != ''}}">
+                  <text class="al al-weidian font20"></text><text class="ml5">{{item.retailertitle}}</text>
+                </block>
+              </view>
+              <view class="font12 color-orange6">{{item.flagstr}}</view>
+            </view>
+            <view class="product-area flex_left bg-page" data-data="{{item}}" @tap="toDetail">
+              <view class="product-img">
+                <block wx:if="{{item.orderlist[0].options && item.orderlist[0].options.id && item.orderlist[0].options.photo != ''}}">
+                  <image mode="aspectFill" src="{{item.orderlist[0].options.photo}}" />
+                </block>
+                <block wx:else>
+                  <image mode="aspectFill" src="{{item.orderlist[0].photo}}" />
+                </block>
+                <view wx:if="{{item.carddeduct > 0}}" class="ico"></view>
+              </view>
+              <view class="flex_cell flex_left">
+                <view class="w_100">
+                  <view class="font12 clamp1">{{item.orderlist[0].name}}</view>
+                  <view class="color-gray font12" wx:if="{{item.orderlist[0].options && item.orderlist[0].options.id}}">{{item.orderlist[0].options.title}}</view>
+                  <view class="db-flex font14">
+                    <view class="flex_cell flex_left color-red4">￥ {{ item.orderlist[0].special }}</view>
+                    <view class="flex_cell flex_right color-999">× <text class="font12">{{ item.orderlist[0].quantity }}</text></view>
+                  </view>
+                </view>
+              </view>
+            </view>
+            <view class="pay-info flex_right bg-white" data-data="{{item}}" @tap="toDetail">
+              <view class="clamp1 w_100">
+                <text class="v_middle font12">实际支付: </text>
+                <text class="v_middle font14">￥{{item.needpaymoney}}</text>
+                <block wx:if="{{!item.delivertype && item.postage && item.postage != ''}}">
+                  <text class="v_middle font12 color-gray ml5" wx:if="{{item.postage == 0}}">( 运费 : 包邮 )</text>
+                  <text class="v_middle font12 color-gray ml5" wx:else>( 运费 : ￥{{ item.postage }} )</text>
+                </block>
+                <block wx:if="{{item.carddeduct && item.carddeduct != '0' && item.carddeduct != '0.00'}}">
+                  <text class="v_middle font12 color-gray ml5">优惠券抵扣: ￥{{ item.carddeduct }}</text>
+                </block>
+              </view>
+            </view>
+            <view class="btn-area flex_right bg-white b_top_after" wx:if="{{item.buttons && item.buttons.length}}">
+              <repeat for="{{item.buttons}}" index="index1" item="button">
+                <form class="btn-item" data-data="{{item}}" data-index="{{index}}" data-button="{{button}}" @tap="buttonEvent" report-submit="true">
+                  <button class="btn">{{button.name}}</button>
+                </form>
+              </repeat>
+            </view>
+          </view>
+        </repeat>
+        <view class="load-end-area loading" wx:if="{{loadObject[flag]}}"></view>
+        <view class="load-end-area done" wx:elif="{{doneObject[flag]}}"></view>
+      </block>
+    </view>
+  </view>
+  <view wx:if="{{showRefundModal}}" class="auto-modal refund-modal flex_center">
+    <view class="modal-inner border-box" style="width:80%;">
+      <view class="align_center font18 bold pb10 b_bottom_after color-theme pt20">申请退款</view>
+      <view class="align_left txt padding10">
+        <view class="textarea-outer" style="padding:0;">
+          <textarea fixed="true" class="w_100" placeholder="请输入退款原因" bindinput="refundChange"></textarea>
+        </view>
+      </view>
+      <form class="db b_top_after" style="height:50px;" bindsubmit="submitRefund" bindreset="closeRefund" report-submit="true">
+        <view class="w_100 h_100 flex_center">
+          <button class="flex_cell flex_center h_100 b_right_after" form-type="reset">取消</button>
+          <button class="flex_cell flex_center h_100 color-orange" form-type="submit">提交</button>
+        </view>
+      </form>
+    </view>
+  </view>
+  <view wx:if="{{showServiceModal}}" class="auto-modal refund-modal flex_center">
+    <view class="modal-inner border-box" style="width:80%;">
+      <view class="align_center font18 bold pb10 b_bottom_after color-theme pt20">申请售后</view>
+      <view class="align_left txt padding10 b_bottom_after">
+        <view class="textarea-outer" style="padding:0;">
+          <textarea fixed="true" class="w_100" placeholder="'请输入售后原因，并上传1张快递面单+2张商品照片" bindinput="serviceChange"></textarea>
+        </view>
+      </view>
+      <view class="app-photo-list align_left bg-white">
+        <repeat for="{{servicePhotoArr}}" item="photo" index="index">
+          <view class="photoitem">
+            <view class="inner photo imgcover">
+              <image mode="aspectFill" src="{{photo}}" class="pic" data-type="update" data-index="{{index}}" @tap="uploadPhoto" />
+              <view class="close" @tap="deletePhoto(index)">×</view>
+            </view>
+          </view>
+        </repeat>
+        <view wx:if="{{servicePhotoArr.length < maxnum}}" class="photoitem add" @tap="uploadPhoto">
+          <view class="inner">
+            <view class="innerlist">
+              <view class="flex_center h_100">
+                <view>
+                  <text class="al al-zhaopian"></text>
+                  <view><text>{{ servicePhotoArr.length }}</text><text class="ml5 mr5">/</text><text>{{ maxnum }}</text></view>
+                </view>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+      <form class="db b_top_after" style="height:50px;" bindsubmit="submitService" bindreset="closeService" report-submit="true">
+        <view class="w_100 h_100 flex_center">
+          <button class="flex_cell flex_center h_100 b_right_after" form-type="reset">取消</button>
+          <button class="flex_cell flex_center h_100 color-orange" form-type="submit">提交</button>
+        </view>
+      </form>
+    </view>
+  </view>
+  <share
+    :themeObject.sync="themeObject"
+    :globalData.sync="globalData"
+    :userInfo.sync="userInfo"
+    opacity="1"
+    module="userorders"
+    pagePath="packageD/pages/userOrders">
+  </share>
+</template>
+<script>
+import wepy from 'wepy'
+import Config from '@/config'
+import Util from '@/libs/util'
+import Share from '@/components/store/share'
+export default class extends wepy.page {
+  config = {
+    enablePullDownRefresh: true,
+    backgroundTextStyle: 'dark'
+  }
+  components = {
+    share: Share
+  }
+  data = {
+    globalData: {},
+    userInfo: {},
+    selectedIndex: 0,
+    flag: 0,
+    tabDataObject: {0: [], 2: [], 3: [], 4: [], 101: []},
+    loadObject: {0: false, 2: false, 3: false, 4: false, 101: false},
+    doneObject: {0: false, 2: false, 3: false, 4: false, 101: false},
+    disObject: {0: false, 2: false, 3: false, 4: false, 101: false},
+    showRefundModal: false,
+    showServiceModal: false,
+    servicePhotoArr: [],
+    serviceContent: '',
+    maxnum: 4,
+    keyword: '',
+    themeObject: {},
+    clickShare: false
+  }
+  clearRefund () {
+    this.refundContent = ''
+    this.showRefundModal = false
+  }
+  clearService () {
+    this.serviceContent = ''
+    this.servicePhoto = ''
+    this.servicePhotoArr = []
+    this.showServiceModal = false
+  }
+  initData () {
+    this.flag = this.options.flag ? parseInt(this.options.flag) : 0
+    this.indexFlag = {0: 0, 1: 2, 2: 101, 3: 3, 4: 4}
+    this.flagIndex = {0: 0, 2: 1, 101: 2, 3: 2, 4: 3}
+    this.setIndex()
+    this.Fid = Config.Fid
+    this.limit = Config.Limit
+    this.flagParams = {
+      0: {flag: 0, pagestart: 0, history: false},
+      2: {flag: 2, pagestart: 0, history: false},
+      3: {flag: 3, pagestart: 0, history: false},
+      4: {flag: 4, pagestart: 0, history: false},
+      101: {flag: 101, pagestart: 0, history: false}
+    }
+    this.clearRefund()
+    this.clearService()
+    this.$apply()
+  }
+  refreshPage () {
+    this.disObject = {0: false, 2: false, 3: false, 4: false, 101: false}
+    this.tabDataObject = {0: [], 2: [], 3: [], 4: [], 101: []}
+    this.initData()
+    this.getOrderData()
+  }
+  onPullDownRefresh () {
+    this.refreshPage()
+    wepy.showNavigationBarLoading()
+    setTimeout(() => {
+      wepy.hideNavigationBarLoading()
+      wepy.stopPullDownRefresh()
+    }, 500)
+  }
+  onReachBottom (event) {
+    if (this.loadObject[this.flag]) return false
+    if (this.flagParams[this.flag].history && !this.doneObject[this.flag]) {
+      this.flagParams[this.flag].pagestart++
+      this.loadObject[this.flag] = true
+      this.getOrderData()
+    } else {
+      if (this.tabDataObject[this.flag].length === (this.flagParams[this.flag].pagestart + 1) * this.limit) {
+        this.flagParams[this.flag].pagestart++
+        this.loadObject[this.flag] = true
+        this.getOrderData()
+      }
+    }
+  }
+  getOrderData () {
+    if (this.isLoading) return false
+    wepy.showLoading()
+    this.isLoading = true
+    let defaultParams = this.flagParams[this.flag]
+    if (this.flagParams[this.flag].history) {
+      defaultParams.history = 1
+    } else {
+      delete defaultParams.history
+    }
+    let params = {...defaultParams, limit: this.limit, flag: this.flag, fid: this.Fid, from: 'user'}
+    if (this.keyword && this.keyword !== '') {
+      params.keyword = this.keyword
+    }
+    wepy.request({
+      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/order/orderList`,
+      data: params,
+      method: 'post'
+    }).then(res => {
+      wepy.hideLoading()
+      this.isLoading = false
+      const data = res.data
+      let retdata = data.data ? data.data : data
+      for (let i = 0; i < retdata.length; i++) {
+        let item = this.setButton(retdata[i])
+        retdata[i].buttons = item.buttons
+        if (params.history) {
+          retdata[i]._history = 1
+        }
+      }
+      let flagData = this.tabDataObject[this.flag]
+      this.tabDataObject[this.flag] = flagData.concat(retdata)
+      this.loadObject[this.flag] = false
+      if (!retdata.length && !this.tabDataObject[this.flag].length && !this.flagParams[this.flag].history) {
+        this.flagParams[this.flag].history = true
+        this.flagParams[this.flag].pagestart = 0
+        this.getOrderData()
+      } else {
+        if (retdata.length < this.limit && this.tabDataObject[this.flag].length) {
+          if (this.flagParams[this.flag].history) {
+            this.doneObject[this.flag] = true
+          } else {
+            this.flagParams[this.flag].history = true
+            this.flagParams[this.flag].pagestart = -1
+          }
+        } else {
+          this.doneObject[this.flag] = false
+        }
+        this.disObject[this.flag] = true
+      }
+      this.$apply()
+    })
+  }
+  handlePageData () {
+    this.globalData = this.$parent.globalData
+    Util.appInit(this.globalData, this)
+    this.userInfo = this.globalData.userInfo
+    this.getOrderData()
+  }
+  setIndex () {
+    switch (this.flag) {
+      case 0:
+        this.selectedIndex = 0
+        break
+      case 2:
+        this.selectedIndex = 1
+        break
+      case 101:
+        this.selectedIndex = 2
+        break
+      case 3:
+        this.selectedIndex = 3
+        break
+      case 4:
+        this.selectedIndex = 4
+        break
+    }
+  }
+  setFlag () {
+    switch (this.selectedIndex) {
+      case 0:
+        this.flag = 0
+        break
+      case 1:
+        this.flag = 2
+        break
+      case 2:
+        this.flag = 101
+        break
+      case 3:
+        this.flag = 3
+        break
+      case 4:
+        this.flag = 4
+        break
+    }
+  }
+  setButton (item) {
+    switch (item.flag) {
+      case 0:
+        item.buttons = []
+        break
+      case 1:
+        item.buttons = [
+          {id: 1, name: '取消订单'}
+        ]
+        if (item.singlepay) {
+          item.buttons.push({id: 2, name: '去支付'})
+        }
+        break
+      case 2:
+        if (item.canback && item.backflag !== 20 && (!item.frommin || item.frommin === '' || (item.frommin !== '' && (item.orderonline !== 0 || (item.orderonline === 0 && item.fid))))) {
+          item.buttons = [
+            {id: 3, name: '申请退款'}
+          ]
+        }
+        break
+      case 3:
+        let arr = [{id: 4, name: '查看物流'}]
+        if (item.canservice) {
+          arr.push({id: 5, name: '申请售后'})
+        }
+        arr.push({id: 6, name: '确认收货'})
+        item.buttons = arr
+        break
+      case 4:
+        let arr1 = []
+        if (item.canservice) {
+          arr1.push({id: 5, name: '申请售后'})
+        }
+        if (item.backflag === 120) {
+          arr1.push({id: 9, name: '查看售后进度'})
+        }
+        item.buttons = arr1
+        break
+    }
+    return item
+  }
+  onLoad (options) {
+    this.options = options
+    this.initData()
+    if (this.$parent.globalData.flag.bokaAuth) {
+      this.handlePageData()
+    } else {
+      this.$parent.loadCallback = () => {
+        this.handlePageData()
+      }
+    }
+  }
+  // onShow () {
+  //   this.initData()
+  //   if (this.$parent.globalData.flag.bokaAuth) {
+  //     this.handlePageData()
+  //   } else {
+  //     this.$parent.loadCallback = () => {
+  //       this.handlePageData()
+  //     }
+  //   }
+  // }
+  cancelEvent () {
+    wepy.showModal({
+      title: '',
+      content: '确认取消订单？'
+    }).then(res => {
+      if (res.confirm) {
+        wepy.showLoading()
+        wepy.request({
+          url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/order/cancelOrder`,
+          data: {id: this.clickOrder.id},
+          method: 'post'
+        }).then(res => {
+          wepy.hideLoading()
+          const data = res.data
+          wepy.showToast({
+            title: data.error,
+            icon: 'none',
+            duration: Util.delay(data.error)
+          })
+          if (data.flag) {
+            this.clickOrder.flag = 0
+            this.clickOrder.flagstr = '订单取消'
+            this.clickOrder = this.setButton(this.clickOrder)
+            this.tabDataObject[this.flag][this.clickIndex] = this.clickOrder
+            this.$apply()
+          }
+        })
+      }
+    })
+  }
+  finishService () {
+    wepy.showModal({
+      title: '',
+      content: '确认结束售后服务？'
+    }).then(res => {
+      if (res.confirm) {
+        wepy.showLoading()
+        wepy.request({
+          url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/order/finishService`,
+          data: {id: this.clickOrder.id},
+          method: 'post'
+        }).then(res => {
+          wepy.hideLoading()
+          const data = res.data
+          wepy.showToast({
+            title: data.error,
+            icon: 'none',
+            duration: Util.delay(data.error)
+          })
+          if (data.flag) {
+            this.refreshPage()
+          }
+        })
+      }
+    })
+  }
+  confirmEvent () {
+    wepy.showModal({
+      title: '',
+      content: '请确认货物已收到'
+    }).then(res => {
+      if (res.confirm) {
+        wepy.showLoading()
+        wepy.request({
+          url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/order/orderReceive`,
+          data: {id: this.clickOrder.id},
+          method: 'post'
+        }).then(res => {
+          wepy.hideLoading()
+          const data = res.data
+          wepy.showToast({
+            title: data.error,
+            icon: 'none',
+            duration: Util.delay(data.error)
+          })
+          if (data.flag) {
+            this.refreshPage()
+          }
+        })
+      }
+    })
+  }
+  methods = {
+    setKeyword (e) {
+      this.keyword = e.detail.value
+    },
+    searchKeyword (e) {
+      if (e.detail.value !== '') this.keyword = e.detail.value
+      this.disObject = {0: false, 2: false, 3: false, 4: false}
+      this.flagParams = {
+        0: {flag: 0, pagestart: 0, history: false},
+        2: {flag: 2, pagestart: 0, history: false},
+        3: {flag: 3, pagestart: 0, history: false},
+        4: {flag: 4, pagestart: 0, history: false},
+        101: {flag: 101, pagestart: 0, history: false}
+      }
+      this.tabDataObject = {0: [], 2: [], 3: [], 4: [], 5: []}
+      this.getOrderData()
+    },
+    cancelSearch () {
+      this.keyword = ''
+      this.disObject = {0: false, 2: false, 3: false, 4: false, 101: false}
+      this.flagParams = {
+        0: {flag: 0, pagestart: 0, history: false},
+        2: {flag: 2, pagestart: 0, history: false},
+        3: {flag: 3, pagestart: 0, history: false},
+        4: {flag: 4, pagestart: 0, history: false},
+        101: {flag: 101, pagestart: 0, history: false}
+      }
+      this.tabDataObject = {0: [], 2: [], 3: [], 4: [], 101: []}
+      this.getOrderData()
+    },
+    clickTab (e) {
+      this.selectedIndex = parseInt(e.currentTarget.dataset.current)
+      this.setFlag()
+      if (!this.tabDataObject[this.flag].length) {
+        this.getOrderData()
+      }
+    },
+    toDetail (e) {
+      const dataset = e.currentTarget.dataset
+      const data = dataset.data
+      let url = `/packageD/pages/orderDetail?id=${data.id}&fromType=user`
+      if (data._history) {
+        url = `${url}&history=1`
+      }
+      wepy.navigateTo({url: url})
+    },
+    buttonEvent (e) {
+      const dataset = e.currentTarget.dataset
+      const order = dataset.data
+      const index = dataset.index
+      const buttonData = dataset.button
+      this.clickOrder = order
+      this.clickIndex = index
+      this.$apply()
+      switch (buttonData.id) {
+        case 1:
+          this.cancelEvent()
+          break
+        case 2:
+          wepy.navigateTo({url: `/packageB/pages/pay?id=${order.id}`})
+          break
+        case 3:
+          // 订单退款通知、退款失败通知、售后受理通知
+          Util.checkTmpMsg({
+            systeminfo: this.globalData.systemInfo,
+            tmplIds: [this.globalData.Templates.order_refund, this.globalData.Templates.refund_failed, this.globalData.Templates.msg_reply],
+            callback: () => {
+              this.refundContent = ''
+              this.showRefundModal = true
+              this.$apply()
+            }
+          })
+          break
+        case 4:
+          wepy.navigateTo({url: `/packageD/pages/deliverInfo?id=${order.id}`})
+          break
+        case 5:
+          // 订单退款通知、售后受理通知
+          Util.checkTmpMsg({
+            systeminfo: this.globalData.systemInfo,
+            tmplIds: [this.globalData.Templates.order_refund, this.globalData.Templates.msg_reply],
+            callback: () => {
+              this.showServiceModal = true
+              this.$apply()
+            }
+          })
+          break
+        case 6:
+          this.confirmEvent()
+          break
+        case 7:
+          // wepy.navigateTo({url: `/packageD/pages/evaluate?id=${order.id}`})
+          break
+        case 8:
+          this.finishService()
+          break
+        case 9:
+          let url = `/packageD/pages/orderDetail?id=${order.id}&fromType=user`
+          if (order._history) {
+            url = `${url}&history=1`
+          }
+          wepy.navigateTo({url: url})
+          break
+      }
+    },
+    closeRefund (e) {
+      this.clearRefund()
+    },
+    refundChange (e) {
+      this.refundContent = e.detail.value
+    },
+    submitRefund (e) {
+      if (this.isIng) return false
+      this.isIng = true
+      wepy.showLoading()
+      wepy.request({
+        url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/order/applyRefund`,
+        data: {id: this.clickOrder.id, reasonreturn: this.refundContent},
+        method: 'post'
+      }).then(res => {
+        wepy.hideLoading()
+        this.isIng = false
+        this.clearRefund()
+        const data = res.data
+        wepy.showToast({
+          title: data.error,
+          icon: 'none',
+          duration: Util.delay(data.error)
+        })
+        if (data.flag) {
+          this.clickOrder.backflag = 20
+          this.clickOrder.flagstr = '待发货(退款申请中)'
+          this.clickOrder.buttons = []
+          let curFlag = this.indexFlag[this.selectedIndex]
+          this.tabDataObject[curFlag][this.clickIndex] = this.clickOrder
+          switch (this.selectedIndex) {
+            case 0:
+              let tabData2 = this.tabDataObject[2]
+              for (let i = 0; i < tabData2.length; i++) {
+                if (tabData2[i].id === this.clickOrder.id) {
+                  this.tabDataObject[2][i] = this.clickOrder
+                  break
+                }
+              }
+              break
+            case 1:
+              let tabData1 = this.tabDataObject[0]
+              for (let i = 0; i < tabData1.length; i++) {
+                if (tabData1.id === this.clickOrder.id) {
+                  this.tabDataObject[0][i] = this.clickOrder
+                  break
+                }
+              }
+              break
+          }
+          this.$apply()
+        }
+      })
+    },
+    serviceChange (e) {
+      this.serviceContent = e.detail.value
+    },
+    closeService (e) {
+      this.clearService()
+    },
+    submitService (e) {
+      if (this.isIng) return false
+      if (Util.trim(this.serviceContent) === '' && Util.trim(this.servicePhoto) === '') {
+        wepy.showToast({
+          title: '请完善售后信息',
+          icon: 'none'
+        })
+        return false
+      }
+      let sphoto = ''
+      if (this.servicePhotoArr.length) {
+        sphoto = this.servicePhotoArr.join(',')
+      }
+      this.isIng = true
+      wepy.showLoading()
+      wepy.request({
+        url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/order/applyService`,
+        data: {id: this.clickOrder.id, reasonreturn: this.serviceContent, proofphoto: sphoto},
+        method: 'post'
+      }).then(res => {
+        this.isIng = false
+        wepy.hideLoading()
+        const data = res.data
+        wepy.showToast({
+          title: data.error,
+          icon: 'none',
+          duration: Util.delay(data.error)
+        })
+        if (data.flag) {
+          this.clearService()
+          this.clickOrder.backflag = 120
+          this.clickOrder.canservice = 0
+          this.clickOrder = this.setButton(this.clickOrder)
+          let curFlag = this.indexFlag[this.selectedIndex]
+          this.tabDataObject[curFlag][this.clickIndex] = this.clickOrder
+          switch (this.selectedIndex) {
+            case 0:
+              let tabData3 = this.tabDataObject[3]
+              for (let i = 0; i < tabData3.length; i++) {
+                if (tabData3[i].id === this.clickOrder.id) {
+                  this.tabDataObject[3][i] = this.clickOrder
+                  break
+                }
+              }
+              break
+            case 1:
+              let tabData1 = this.tabDataObject[0]
+              for (let i = 0; i < tabData1.length; i++) {
+                if (tabData1.id === this.clickOrder.id) {
+                  this.tabDataObject[0][i] = this.clickOrder
+                  break
+                }
+              }
+              break
+          }
+          this.$apply()
+        }
+      })
+    },
+    uploadPhoto (e) {
+      const dataset = e.currentTarget.dataset
+      const curType = dataset.type
+      const index = dataset.index
+      let imgcount = this.maxnum - this.servicePhotoArr.length
+      wepy.chooseImage({
+        count: imgcount, // 默认9
+        sizeType: ['original', 'compressed'], // 可以指定是原图还是压缩图，默认二者都有
+        sourceType: ['album', 'camera'] // 可以指定来源是相册还是相机，默认二者都有
+      }).then(res => {
+        if (res.tempFiles) {
+          Util.taskData({
+            data: res.tempFiles,
+            handleFunction: (d) => {
+              return (done) => {
+                wepy.showLoading()
+                wepy.uploadFile({
+                  url: `${Config.GxkApi}/api/upload/photo`,
+                  method: 'POST',
+                  name: 'photo',
+                  filePath: d.path
+                }).then(res => {
+                  wepy.hideLoading()
+                  const resdata = JSON.parse(res.data)
+                  if (!resdata.flag) {
+                    wepy.showToast({
+                      title: resdata.error,
+                      icon: 'none',
+                      duration: Util.delay(resdata.error)
+                    })
+                  } else {
+                    let jsonData = JSON.parse(res.data)
+                    if (curType === 'update') {
+                      this.servicePhotoArr.splice(index, 1, jsonData.data)
+                    } else {
+                      this.servicePhotoArr.push(jsonData.data)
+                    }
+                    this.servicePhoto = this.servicePhotoArr.join(',')
+                    this.$apply()
+                  }
+                  done()
+                })
+              }
+            }
+          })
+        }
+      })
+    },
+    deletePhoto (index) {
+      this.servicePhotoArr.splice(index, 1)
+      this.servicePhoto = this.servicePhotoArr.join(',')
+      this.$apply()
+    },
+    toHelp () {
+      wepy.navigateTo({url: '/packageD/pages/helpCenter?classid=1'})
+    },
+    toProduct (product) {
+      wepy.setStorageSync('selectedProduct', product)
+      wepy.navigateTo({url: `/${Config.Router.product}?id=${product.fpimportid}&type=fpimport&fid=${this.Fid}&select=product`})
+    },
+    toShare () {
+      this.$invoke('share', 'onCodeTap')
+    }
+  }
+}
+</script>

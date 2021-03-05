@@ -1,0 +1,251 @@
+<style lang="less">
+.new-address {
+  .gap {padding: 20px;display:block;}
+  .gap button{height: 90rpx;border-radius:10rpx;font-size:36rpx;background-color:#ccc;color:#000;}
+
+  .form-list{
+    width:100%;
+    .form-item:not(:last-child){margin-bottom:20rpx;}
+    .form-item{
+      background-color:#fff;box-sizing: border-box;
+      box-shadow:0px 0px 3px 1px #e4e4e4;border-radius:4rpx;
+      width:100%;min-height:100rpx;display:flex;align-items:center;padding:20rpx;position:relative;
+      .title-cell{width:145rpx;height:100%;display: flex;justify-content:flex-start;align-items: center;text-align:left;}
+      .btn-cell{width:145rpx;height:200rpx;display:block;}
+      .input-cell{
+        flex:1;height:100%;display:flex;justify-content: flex-end; align-items: center;position:relative;
+        input{
+          width:100%;padding:0 10rpx;box-sizing: border-box;border-radius:10rpx;
+          color: #333333;text-align:right;
+          justify-content:flex-end;align-items: center;
+        }
+        .input-placeholder{color:rgba(153,153,153,0.65)}
+      }
+      .textarea{position:relative;width:100%;height:200rpx;box-sizing:border-box;border:#d9d9d9 1rpx solid;padding:10rpx;box-sizing: border-box;}
+      .textarea.empty{color:#999;}
+    }
+  }
+}
+</style>
+<template>
+  <view class="new-address">
+    <view class="form-list">
+      <view class="form-item">
+        <view class="title-cell">收货人<text class="al al-xing5 font12 color-red"></text></view>
+        <view class="input-cell">
+          <input class="input" data-name="linkman" bindinput="keyupInput" value="{{viewData.linkman}}" placeholder-class="input-placeholder" type="text" placeholder="(必填)收货人"></input>
+        </view>
+      </view>
+      <view class="form-item">
+        <view class="title-cell">手机<text class="al al-xing5 font12 color-red"></text></view>
+        <view class="input-cell">
+          <input class="input" data-name="telephone" bindinput="keyupInput" value="{{viewData.telephone}}" placeholder-class="input-placeholder" type="text" placeholder="(必填)手机"></input>
+        </view>
+      </view>
+      <view class="form-item" @tap="tapHandle">
+        <view class="title-cell">地址<text class="al al-xing5 font12 color-red"></text></view>
+        <view class="input-cell">
+          <text wx:if="{{!!nameValue}}">{{nameValue}}</text>
+          <text wx:else class="input-placeholder">(必填)请选择地址</text>
+        </view>
+      </view>
+      <view class="form-item">
+        <view class="title-cell">详细地址<text class="al al-xing5 font12 color-red"></text></view>
+        <view class="input-cell">
+          <textarea data-name="address" bindinput="keyupInput" value="{{viewData.address}}" class="textarea" placeholder-class="input-placeholder" placeholder="(必填)详细地址" maxlength="-1"></textarea>
+        </view>
+      </view>
+      <view class="form-item">
+        <view class="title-cell">默认地址</view>
+        <view class="input-cell">
+          <view :class="{'checked': isdefault}" class="app-switch" style="{{isdefault ? themeObject.bgStyle + themeObject.borderStyle : ''}}" bindtap="changeSwitch">
+            <view class="ico" style="{{isdefault ? themeObject.switchShadowStyle : ''}}"></view>
+          </view>
+        </view>
+      </view>
+      <form class="form-item db" bindreset="identifyEvent" report-submit="true" wx:if="{{!showPopup}}">
+        <view class="flex_left w_100">
+          <view class="input-cell">
+            <textarea data-name="newaddress" bindinput="keyupInput" value="{{newaddress}}" class="textarea" placeholder-class="input-placeholder" placeholder="粘贴整段地址,自动识别电话、姓名和地址" maxlength="-1"></textarea>
+          </view>
+          <view class="btn-cell bg-theme color-white" style="{{themeObject.bgStyle}}">
+            <button class="w_100 h_100 flex_center" form-type="reset">智能识别</button>
+          </view>
+        </view>
+      </form>
+      <form class="gap" bindsubmit="save" bindreset="cancel" report-submit="true">
+        <button form-type="submit" class="bg-theme color-white flex_center" style="{{themeObject.bgStyle}}" :class="{'disabled-state' : disabledSave}">保存</button>
+        <button form-type="reset" class="flex_center mt10">取消</button>
+      </form>
+    </view>
+  </view>
+  <popup-picker :show.sync="showPopup" :columns="columns" :value.sync="area" @on-cancel.user="onCancel" @on-confirm.user="onConfirm"></popup-picker>
+</template>
+<script>
+  import wepy from 'wepy'
+  import 'wepy-async-function'
+  import Config from '@/config'
+  import Util from '@/libs/util'
+  import PopupPicker from '@/components/popup-picker'
+
+  export default class NewAddress extends wepy.page {
+    components = {
+      'popup-picker': PopupPicker
+    }
+
+    data = {
+      area: [],
+      isdefault: 0,
+      disabledSave: false,
+      nameValue: null,
+      showPopup: false,
+      columns: 3,
+      postData: {},
+      viewData: {linkman: '', telephone: '', address: ''},
+      newaddress: '',
+      themeObject: {}
+    }
+
+    computed = {
+      nameValue () {
+        return this.area.join(' ')
+      }
+    }
+
+    methods = {
+      keyupInput (e) {
+        const dataset = e.currentTarget.dataset
+        const curName = dataset.name
+        this.postData[curName] = e.detail.value
+      },
+      tapHandle () {
+        this.showPopup = !this.showPopup
+      },
+      changeSwitch (e) {
+        this.isdefault = this.isdefault === 1 ? 0 : 1
+      },
+      onConfirm (val) {
+        this.area = val
+      },
+      onCancel () {
+        this.$broadcast('cancel-broadcast', this.area)
+      },
+      identifyEvent (e) {
+        if (Util.trim(this.postData.newaddress) === '') {
+          wepy.showToast({
+            title: '请输入要识别的地址',
+            icon: 'none',
+            duration: 1000
+          })
+          return false
+        }
+        wepy.showLoading()
+        wepy.request({
+          url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/order/getAddressinfo`,
+          data: {text: this.postData.newaddress},
+          method: 'POST'
+        }).then(res => {
+          wepy.hideLoading()
+          const data = res.data
+          if (data.flag) {
+            this.newaddress = ''
+            delete this.postData.newaddress
+            const info = data.data
+            this.viewData = {linkman: info.name, telephone: info.mobile, address: info.detail}
+            this.postData = {linkman: info.name, telephone: info.mobile, address: info.detail}
+            this.area = [info.province_name, info.city_name, info.county_name]
+            this.$apply()
+          } else {
+            wepy.showToast({
+              title: '无法识别的地址',
+              icon: 'none',
+              duration: 1000
+            })
+          }
+        })
+      },
+      save (e) {
+        if (this.disabledSave) return
+        let address = {
+          linkman: this.postData.linkman,
+          telephone: Util.trim(this.postData.telephone),
+          address: this.postData.address,
+          isdefault: this.isdefault,
+          province: this.area[0],
+          city: this.area[1],
+          counties: this.area[2]
+        }
+        if (this.viewData && this.viewData.id) {
+          address.id = this.viewData.id
+          address.do = 'update'
+        } else {
+          address.do = 'add'
+        }
+        if (Util.validateQueue(
+          [
+            {linkman: address.linkman},
+            {telephone: address.telephone, r: 'Phone'},
+            {address: address.address},
+            {area: this.area.join('')}
+          ],
+          model => {
+            switch (model.key) {
+              case 'telephone':
+                wepy.showToast({
+                  title: '手机号错误',
+                  icon: 'none',
+                  duration: 1000
+                })
+                break
+              default:
+                wepy.showToast({
+                  title: '必填项不能为空',
+                  icon: 'none',
+                  duration: 1000
+                })
+            }
+          }
+        )) {
+          this.disabledSave = true
+          wepy.showLoading()
+          wepy.request({
+            url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/address/add`,
+            data: address,
+            method: 'POST'
+          }).then(res => {
+            wepy.hideLoading()
+            this.disabledSave = false
+            wepy.navigateBack()
+          })
+        }
+      },
+      cancel (e) {
+        wepy.navigateBack()
+      }
+    }
+    handlePageData () {
+      this.globalData = this.$parent.globalData
+      Util.appInit(this.globalData, this)
+      this.userInfo = this.globalData.userInfo
+    }
+    onLoad (options, data) {
+      this.options = options
+      if (data && data.preload && data.preload.preload) {
+        const preload = data.preload.preload
+        this.viewData = {id: preload.id, linkman: preload.linkman, telephone: preload.telephone, address: preload.address}
+        this.postData = {linkman: preload.linkman, telephone: preload.telephone, address: preload.address}
+        this.isdefault = preload.isdefault
+        this.area = [preload.province, preload.city, preload.counties]
+      } else {
+        this.viewData = {linkman: '', telephone: '', address: ''}
+      }
+      if (this.$parent.globalData.flag.bokaAuth) {
+        this.handlePageData()
+      } else {
+        this.$parent.loadCallback = () => {
+          this.handlePageData()
+        }
+      }
+    }
+  }
+</script>

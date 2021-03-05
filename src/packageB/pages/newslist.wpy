@@ -1,0 +1,374 @@
+<style lang="less">
+.news-list-page{
+  width:100%;
+  .page-inner{width:100%;height:100%;}
+  .top-area{height:100rpx;}
+  .scroll_list{
+    .empty_scroll_item{width:100%;height:300rpx;color:#999;display: flex;justify-content: center;align-items: center;}
+    .scroll_item:not(:last-child){margin-bottom: 20rpx;}
+    .scroll_item{
+      display:block;width: 100%;padding: 40rpx 20rpx;box-sizing: border-box;background-color: #fff;
+      .inner{width:100%;display: flex;justify-content: flex-start;align-items: center;position:relative;}
+      .pic{width:160rpx;}
+      .pic image{width:140rpx;height:140rpx;}
+    }
+  }
+  .empty_item image{max-width:100%;width:80%;}
+  .blank-area{width:100%;height:116rpx;}
+  .blank-area.share{height:186rpx;}
+  .blank-area.iphone{height:210rpx;}
+}
+.fixed-ico{
+  position:fixed;right:30rpx;bottom:130rpx;width:100rpx;height:100rpx;border-radius:50%;display:block;
+  .inner{position:absolute;;left:0;right:0;bottom:0;top:0;border-radius:50%;}
+}
+.fixed-ico.iphone{bottom:198rpx;}
+.banner-nav{position: fixed;z-index: 100;}
+</style>
+<template>
+  <view :class="{'iphone' : isIpx}" class="havemenu news-list-page">
+    <view class="banner-outer" wx:if="{{bannerData.length}}">
+      <view class="news-swiper-outer" wx:if="{{bannerData.length > 1}}">
+        <swiper
+          class="news-swiper"
+          autoplay
+          indicator-dots="{{bannerData.length > 1}}"
+          indicator-color="#d0cdd1"
+          indicator-active-color="{{themeObject.themeColor}}"
+          interval="6000"
+          circular>
+          <repeat for="{{bannerData}}" index="index" item="item">
+            <swiper-item>
+              <image mode="aspectFill" src="{{item.photo}}" data-data="{{item}}" bindtap="clickBanner"></image>
+            </swiper-item>
+          </repeat>
+        </swiper>
+      </view>
+      <view class="banner-pic" wx:else data-data="{{bannerData[0]}}" bindtap="clickBanner">
+        <image mode="aspectFill" src="{{bannerData[0].photo}}"></image>
+      </view>
+    </view>
+    <scroll-view scroll-x="true" class="app-menu bg-white {{bannerData.length === 0 ? 'banner-nav' : ''}}" wx:if="{{classData.length > 1}}">
+      <repeat for="{{classData}}" item="item" index="index">
+        <view class="menu-item {{selectedIndex == index ? 'active' : ''}}" data-index="{{index}}" data-data="{{item}}" bindtap="clickTab">
+          <text style="{{selectedIndex == index ? themeObject.colorStyle : ''}}">{{item.title}}</text>
+          <view class="line" style="{{selectedIndex == index ? themeObject.bgStyle : ''}}"></view>
+        </view>
+      </repeat>
+    </scroll-view>
+    <view class="{{bannerData.length < 1 ? 'top-area' : ''}}"></view>
+    <view wx:if="{{disList}}" class="scroll_list b_top_after w_100">
+      <view wx:if="{{!tabData.length}}" class="empty_scroll_item">暂无数据</view>
+      <block wx:else>
+        <repeat for="{{tabData}}" item="item" index="index">
+          <form class="scroll_item" bindsubmit="toNews" report-submit="true" data-data="{{item}}">
+            <button class="inner" form-type="submit">
+              <view class="pic flex_left">
+                <image mode="aspectFill" src='{{item.photo}}'></image>
+              </view>
+              <view class="flex_cell flex_left">
+                <view class="w_100">
+                  <view class="clamp1 font16 bold">{{item.title}}</view>
+                  <view class="clamp2 color-gray font12 mt10" wx:if="{{item.summary && item.summary != ''}}">{{item.summary}}</view>
+                </view>
+              </view>
+            </button>
+          </form>
+        </repeat>
+      </block>
+    </view>
+    <view class="load-end-area loading" wx:if="{{isLoading}}"></view>
+    <view class="load-end-area done" wx:elif="{{isDone}}"></view>
+    <view :class="{'iphone' : isIpx, 'share': ((userInfo.regwid && userInfo.bindstatus) || userInfo.fid)}" class="blank-area"></view>
+  </view>
+  <bottomMenu
+    current="news"
+    :allowNav.sync="allowNav"
+    :globalData.sync="globalData"
+    :isIpx.sync="isIpx"
+    :themeObject.sync="themeObject">
+  </bottomMenu>
+  <form wx:if="{{(userInfo.regwid && userInfo.bindstatus) || userInfo.fid}}" :class="{'iphone' : isIpx}" class="fixed-ico" bindsubmit="clickShare" report-submit="true">
+    <button class="inner bg-theme color-white flex_center" style="{{themeObject.bgStyle}}" form-type="submit">分享</button>
+  </form>
+  <share :themeObject.sync="themeObject" :globalData.sync="globalData" :userInfo.sync="userInfo" :wid.sync="Wid" opacity="1" :module.sync="module" pagePath="packageB/pages/newslist"></share>
+</template>
+<script>
+import wepy from 'wepy'
+import Config from '@/config'
+import Util from '@/libs/util'
+import Time from '@/libs/time'
+import Cached from '@/libs/cached'
+import BottomMenu from '@/components/bottomMenu'
+import Share from '@/components/store/share'
+export default class NewsList extends wepy.page {
+  config = {
+    enablePullDownRefresh: true,
+    backgroundTextStyle: 'dark'
+  }
+  components = {
+    bottomMenu: BottomMenu,
+    share: Share
+  }
+  data = {
+    options: {},
+    userInfo: {},
+    globalData: {},
+    channelInfo: {},
+    tabData: [],
+    disList: false,
+    shareData: {},
+    classData: [],
+    clickClassId: 0,
+    selectedIndex: 0,
+    systemInfo: {},
+    bannerData: [],
+    module: 'default',
+    isLoading: false,
+    isDone: false,
+    isFirst: true,
+    isIpx: false,
+    themeObject: {},
+    allowNav: false
+  }
+  refreshPage () {
+    this.options = {}
+    this.userInfo = {}
+    this.globalData = {}
+    this.disList = false
+    this.isLoading = false
+    this.isDone = false
+    this.tabData = []
+    this.shareData = {}
+    this.classData = []
+    this.systemInfo = {}
+    this.bannerData = []
+    // this.clickClassId = 0
+    this.pageStart = 0
+    this.handlePageData()
+  }
+  onPullDownRefresh () {
+    this.refreshPage()
+    wepy.showNavigationBarLoading()
+    setTimeout(() => {
+      wepy.hideNavigationBarLoading()
+      wepy.stopPullDownRefresh()
+    }, 500)
+  }
+  onReachBottom (event) {
+    if (!this.loading) {
+      if (this.tabData.length === (this.pageStart + 1) * this.limit) {
+        this.pageStart++
+        this.isLoading = true
+        this.getData()
+      }
+    }
+  }
+  getClasses () {
+    wepy.request({
+      url: `${Config.GxkApi}/api/list_n/factorynewsclass`,
+      data: {pagestart: 0, limit: 500, ascdesc: 'asc', noauth: 1, fid: Config.Fid}
+    }).then(res => {
+      const data = res.data
+      let retdata = data.data ? data.data : data
+      let txt = '全部'
+      retdata = [{id: 0, title: txt}].concat(retdata)
+      this.classData = retdata
+      this.$apply()
+    })
+  }
+  getData () {
+    let params = {pagestart: this.pageStart, limit: this.limit, noauth: 1, fid: Config.Fid}
+    // let params = {pagestart: this.pageStart, limit: this.limit, fid: Config.Fid, module: 'factorynews'}
+    if (this.clickClassId) {
+      params.classid = this.clickClassId
+    }
+    console.log(`newslist.news.${this.clickClassId}`)
+    wepy.showLoading()
+    Cached.queueRequest({
+      url: `${Config.GxkApi}/api/list_n/factorynews`,
+      // url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/moduleList`,
+      data: params
+    }, `newslist.news.${this.clickClassId}`, Config.URT.H,
+    cacheData => {
+      const isCachePaging = cacheData.prevPage >= this.pageStart
+      if (!isCachePaging) {
+        cacheData.prevPage = this.pageStart
+      }
+      return isCachePaging
+    },
+    cacheData => {
+      wepy.hideLoading()
+      this.processData(cacheData.data)
+      let dataarr = cacheData.data.slice(this.pageStart * this.limit, (this.pageStart + 1) * this.limit)
+      this.tabData = this.tabData.concat(dataarr)
+      this.isLoading = false
+      if (dataarr.length < this.limit && this.tabData.length) {
+        this.isDone = true
+      } else {
+        this.isDone = false
+      }
+      this.$apply()
+    },
+    res => {
+      wepy.hideLoading()
+      const data = res.data
+      const retdata = data.data ? data.data : data
+      this.processData(retdata)
+      this.tabData = this.tabData.concat(retdata)
+      this.isLoading = false
+      if (retdata.length < this.limit && this.tabData.length) {
+        this.isDone = true
+      } else {
+        this.isDone = false
+      }
+      this.$apply()
+      return { data: this.tabData, prevPage: this.pageStart, count: data.allcount }
+    },
+    error => {
+      wepy.hideLoading()
+      console.log('新闻列表请求error')
+      console.log(error)
+    })
+  }
+  processData (data) {
+    for (let i = 0; i < data.length; i++) {
+      data[i].dateline_str = new Time(data[i].dateline * 1000).dateFormat('yyyy-MM-dd hh:mm')
+    }
+    this.disList = true
+    this.allowNav = true
+  }
+  afterChannel () {
+    let shareParams = Util.getShareParams(this.options)
+    if (shareParams.wid && shareParams.share_uid) {
+      wepy.request({
+        url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/common/shareClick`,
+        data: {...shareParams, module: 'menumin', moduleid: this.channelInfo.id},
+        method: 'post'
+      })
+    }
+    if (this.isFirst) {
+      this.classData = []
+      this.tabData = []
+      this.isFirst = false
+    }
+    if (!this.classData.length) {
+      this.getClasses()
+    }
+    if (!this.tabData.length) {
+      this.getData()
+    }
+  }
+  handlePageData () {
+    this.globalData = this.$parent.globalData
+    Util.appInit(this.globalData, this)
+    this.userInfo = this.globalData.userInfo
+    let shareParams = Util.getShareParams(this.options)
+    let params = {...shareParams, fid: Config.Fid, module: 'news'}
+    if (this.options.wid) {
+      if (this.options.scene && (!this.userInfo.regwid || !this.userInfo.bindstatus)) {
+        this.globalData.Wid = this.options.wid
+        this.$parent.globalData.Wid = this.options.wid
+      }
+    }
+    this.$apply()
+    Cached.request({
+      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/channel/info`,
+      data: params,
+      method: 'post'
+    }, 'newslist.channelInfo', Config.URT.H,
+    cacheData => {
+      this.channelInfo = cacheData
+      this.bannerData = cacheData.banner
+      this.afterChannel()
+    },
+    res => {
+      const data = res.data
+      const retdata = data.data ? data.data : data
+      this.channelInfo = retdata
+      if (retdata.banner && retdata.banner.length) {
+        this.bannerData = retdata.banner
+      }
+      this.afterChannel()
+      this.$apply()
+      return this.channelInfo
+    })
+  }
+  onLoad (options) {
+    this.pageStart = 0
+    this.limit = Config.Limit
+    this.isFirst = true
+    if (options.scene) {
+      let sceneOptions = Util.queryScene(options.scene)
+      options = {...options, ...sceneOptions}
+    }
+    this.options = options
+    this.$apply()
+    wepy.getSystemInfo().then(res => {
+      this.systemInfo = res
+      if (res.model.substring(0, res.model.indexOf('X')) + 'X' === 'iPhone X') {
+        this.isIpx = true
+      }
+      this.$apply()
+    })
+    if (this.$parent.globalData.flag.bokaAuth) {
+      this.handlePageData()
+    } else {
+      this.$parent.loadCallback = () => {
+        this.handlePageData()
+      }
+    }
+  }
+  handleShare () {
+    const lastshareuid = this.options.share_uid
+    let shareurl = `/${Config.Router.newslist}?fid=${Config.Fid}&share_uid=${this.userInfo.uid}&share_wid=${this.globalData.Wid}&wid=${this.globalData.Wid}&comefrom=${Config.AppName}`
+    if (lastshareuid) {
+      shareurl = `${shareurl}&lastshareuid=${lastshareuid}`
+    }
+    let backUrl = encodeURIComponent(shareurl)
+    shareurl = `${shareurl}&currentUrl=${backUrl}`
+    this.shareParams = {
+      path: shareurl
+    }
+  }
+  onShareAppMessage (res) {
+    this.handleShare()
+    return this.shareParams
+  }
+  onShareTimeline () {
+    this.handleShare()
+    return this.shareParams
+  }
+  methods = {
+    clickBanner (e) {
+      Util.clickBanner(e, this)
+    },
+    scrollEvent () {
+      if (this.tabData.length === (this.pageStart + 1) * this.limit) {
+        this.pageStart++
+        this.getData()
+      }
+    },
+    toNews (e) {
+      const dataset = e.currentTarget.dataset
+      const data = dataset.data
+      wepy.navigateTo({url: `/packageB/pages/news?id=${data.id}&fid=${data.fid}`})
+    },
+    clickTab (e) {
+      const dataset = e.currentTarget.dataset
+      this.selectedIndex = dataset.index
+      this.clickClassId = dataset.data.id
+      this.isLoading = false
+      this.isDone = false
+      this.disList = false
+      this.$apply()
+      this.tabData = []
+      this.pageStart = 0
+      this.getData()
+    },
+    clickShare (e) {
+      this.$invoke('share', 'showPopuModal')
+    }
+  }
+}
+</script>

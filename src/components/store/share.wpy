@@ -1,0 +1,921 @@
+<template>
+  <block>
+    <popup :opacity="opacity" :show.sync="showPopup" class="share-popup-layer">
+      <view class="share-method flex_center" >
+        <view class="inner flex_center">
+          <block wx:if="{{module == 'live'}}">
+            <view class="item b_right_after chat" wx:if="{{userInfo.isadmin}}">
+              <view class="w_100 h_100 flex_center" @tap="uploadPoster">
+                <view>
+                  <view class="bg-radius flex_center">
+                    <text class="al al-photo"></text>
+                  </view>
+                  <view class="font14 mt5">上传背景图(1000*1868)</view>
+                </view>
+              </view>
+            </view>
+          </block>
+          <view class="item b_right_after chat" wx:else>
+            <button open-type="share" class="w_100 h_100 flex_center">
+              <view>
+                <view class="bg-radius flex_center">
+                  <text class="al al-weixin2"></text>
+                </view>
+                <view class="font14 mt5">发给好友</view>
+              </view>
+            </button>
+          </view>
+          <view class="item flex_center pic" @tap="onCodeTap">
+            <view>
+              <view class="bg-radius flex_center">
+                <text class="al al-pengyouquan"></text>
+              </view>
+              <view class="font14 mt5">生成二维码</view>
+            </view>
+          </view>
+          <view class="item flex_center b_left_after link" @tap="clickLink" wx:if="{{module == 'news' || module == 'product'}}">
+            <view>
+              <view class="bg-radius flex_center">
+                <text class="al al-link"></text>
+              </view>
+              <view class="font14 mt5">链接分享</view>
+            </view>
+          </view>
+        </view>
+      </view>
+    </popup>
+    <block wx:if="{{canvasShow}}">
+      <view wx:if="{{module == 'home' && useScrollView}}"  class="share-canvas" style="top:0px;opacity:{{opacity}};" catchtouchmove="onTouchmove">
+        <scroll-view scroll-y="1" class="flex_center flex_cell">
+          <canvas canvas-id="myCanvas" style="width:{{myCanvasWidth}}px;height:{{myCanvasHeight}}px"></canvas>
+        </scroll-view>
+        <view class="btn">
+          <form  report-submit='true' bindsubmit="onCancelTap">
+            <button class="cancel bg-white" form-type="submit">取消</button>
+          </form>
+          <form  report-submit='true' bindsubmit="onSaveTap">
+            <button class="save" style="{{themeObject.bgStyle}}" form-type="submit" wx:if="{{saveBtnShow}}" >保存到相册</button>
+          </form>
+        </view>
+      </view>
+      <view wx:else class="share-canvas" style="top:0px;opacity:{{opacity}};" catchtouchmove="onTouchmove">
+        <canvas canvas-id="myCanvas" style="width:{{myCanvasWidth}}px;height:{{myCanvasHeight}}px"></canvas>
+        <view class="btn">
+          <form  report-submit='true' bindsubmit="onCancelTap">
+            <button class="cancel bg-white" form-type="submit">取消</button>
+          </form>
+          <form  report-submit='true' bindsubmit="onSaveTap">
+            <button class="save" style="{{themeObject.bgStyle}}" form-type="submit" wx:if="{{saveBtnShow}}" >保存到相册</button>
+          </form>
+        </view>
+      </view>
+    </block>
+  </block>
+</template>
+
+<script>
+import Util from '@/libs/util'
+import wepy from 'wepy'
+import Config from '@/config'
+import Popup from '@/components/popup'
+export default class extends wepy.component {
+  components = {
+    'popup': Popup
+  }
+  props = {
+    animationShareMethod: {
+      type: Object,
+      default: {}
+    },
+    title: {
+      type: String,
+      default: ''
+    },
+    price: {
+      type: String,
+      default: ''
+    },
+    youshi: {
+      type: String,
+      default: ''
+    },
+    userInfo: {
+      type: Object,
+      default: null
+    },
+    retailerInfo: {
+      type: Object,
+      default: null
+    },
+    globalData: {
+      type: Object,
+      default: {}
+    },
+    photo: {
+      type: String,
+      default: ''
+    },
+    id: {
+      type: Number,
+      default: null
+    },
+    opacity: {
+      type: String,
+      default: '1'
+    },
+    module: {
+      type: String,
+      default: 'default'
+    },
+    cre: {
+      type: Number,
+      default: null
+    },
+    viewData: {
+      type: Object,
+      default: {}
+    },
+    pagePath: {
+      type: String,
+      default: ''
+    },
+    addmodule: {
+      type: String,
+      default: ''
+    },
+    themeObject: {
+      type: Object,
+      default: {}
+    }
+  }
+  data = {
+    canvasShow: false,
+    saveBtnShow: false,
+    myCanvasWidth: 0,
+    myCanvasHeight: 0,
+    showPopup: false,
+    useScrollView: false,
+    useDefault: false
+  }
+  initVar () {
+    this.top = 0
+    this.ratio = 0
+    this.systemInfo = null
+    this.bgPhoto = ''
+    this.tips = ''
+    this.avatarPhoto = ''
+    this.avatarPhoto1 = ''
+    this.miniQrcode = ''
+    this.context = null
+  }
+  setCanvas () {
+    let cw = this.systemInfo.windowWidth * 0.8
+    let ch = cw * 1.555
+    let defaultH = this.systemInfo.windowHeight * 0.6
+    if (defaultH > 600) defaultH = 600
+    if (ch > defaultH) {
+      ch = defaultH
+      cw = defaultH * 0.64
+    }
+    cw = cw.toFixed(2)
+    ch = ch.toFixed(2)
+    if (this.module === 'facehongbao') {
+      let newWidth = (1000 / 1670 * ch).toFixed(2)
+      if (newWidth < cw) {
+        cw = newWidth
+      }
+    } else if (this.module === 'live') {
+      let newWidth = (1000 / 1868 * ch).toFixed(2)
+      if (newWidth < cw) {
+        cw = newWidth
+      }
+    }
+    this.myCanvasWidth = parseInt(cw)
+    this.myCanvasHeight = parseInt(ch)
+    this.ratio = this.myCanvasWidth * 2 / this.myCanvasHeight
+  }
+  createImage () {
+    const context = this.context
+    const _canvasWidth = parseFloat(this.myCanvasWidth)
+    const _canvasHeight = parseFloat(this.myCanvasHeight)
+    console.log('画布宽度=', _canvasWidth)
+    console.log('画布高度=', _canvasHeight)
+    const bgPhoto = this.bgPhoto
+    const tips = this.tips
+    const avatarPhoto = this.avatarPhoto
+    const avatarPhoto1 = this.avatarPhoto1
+    const miniQrcode = this.miniQrcode
+    let userName = this.userInfo.linkman
+    if (this.userInfo.subscribe === 0) {
+      if (this.userInfo.province === '') {
+        userName = '未知地区用户'
+      } else {
+        let ltxt = '地区用户'
+        userName = `${this.userInfo.province}${ltxt}`
+      }
+    }
+    // 画图片
+    if (this.module === 'facehongbao') {
+      // 画背景图
+      context.fillRect(0, 0, _canvasWidth, _canvasHeight)
+      context.drawImage(bgPhoto, 0, 0, _canvasWidth, _canvasHeight)
+      context.setFontSize(12)
+      context.setFillStyle('#fae2b5')
+      context.setTextAlign('left')
+      let ltxt = '让客户离你更近一步'
+      context.fillText(`${Config.AppName}，${ltxt}`, _canvasWidth * 0.16, _canvasHeight * 0.06, _canvasWidth - _canvasWidth * 0.16)
+
+      let avatarWidth = Math.ceil(_canvasWidth * 0.21)
+      if (avatarWidth % 2 !== 0) {
+        avatarWidth = avatarWidth + 1
+      }
+      let avatarR = avatarWidth / 2
+      context.save()
+      context.beginPath()
+      context.arc(_canvasWidth / 2, _canvasHeight * 0.13 + avatarR, avatarR, 0, 2 * Math.PI, false)
+      context.clip()
+      context.drawImage(avatarPhoto, _canvasWidth / 2 - avatarR, _canvasHeight * 0.13, avatarWidth, avatarWidth)
+      context.restore()
+
+      context.setFontSize(16)
+      context.setFillStyle('#fae2b5')
+      context.setTextAlign('center')
+      context.fillText(`${userName}`, _canvasWidth / 2, _canvasHeight * 0.31, _canvasWidth)
+
+      let codeWidth = Math.ceil(_canvasWidth * 0.30)
+      if (codeWidth % 2 !== 0) {
+        codeWidth = codeWidth + 1
+      }
+      let codeR = codeWidth / 2
+      context.save()
+      context.beginPath()
+      context.arc(_canvasWidth / 2, _canvasHeight * 0.39 + codeR, codeR, 0, 2 * Math.PI, false)
+      context.clip()
+      context.drawImage(miniQrcode, _canvasWidth / 2 - codeR, _canvasHeight * 0.39, codeWidth, codeWidth)
+      context.restore()
+
+      context.save()
+      let txt = `${this.viewData.title}`
+      let fontSize = Math.ceil(16 / 320 * _canvasWidth)
+      let maxLen = Math.floor((_canvasWidth - fontSize * 4) / fontSize)
+      let maxCount = Math.ceil(txt.length / maxLen)
+      for (let i = 0; i < maxCount; i++) {
+        context.font = `bold ${fontSize}px`
+        context.setFillStyle('#fae2b5')
+        context.setTextAlign('center')
+        let disTxt = txt.substr(i * maxLen, maxLen)
+        if (maxCount >= 3 && i === 1) {
+          disTxt = txt.substr(i * maxLen, maxLen - 3)
+          disTxt = `${disTxt}...`
+          context.fillText(`${disTxt}`, _canvasWidth / 2, _canvasHeight * 0.64 + 30 * i, _canvasWidth)
+          break
+        } else {
+          context.fillText(`${disTxt}`, _canvasWidth / 2, _canvasHeight * 0.64 + 30 * i, _canvasWidth)
+        }
+      }
+    } else if (this.module === 'giftcard') {
+      // 画背景图
+      context.setFillStyle('#ffffff')
+      context.fillRect(0, 0, _canvasWidth, _canvasHeight)
+      context.drawImage(bgPhoto, 0, 0, _canvasWidth, _canvasWidth * 404 / 721)
+
+      let avatarWidth = Math.ceil(_canvasWidth * 0.21)
+      if (avatarWidth % 2 !== 0) {
+        avatarWidth = avatarWidth + 1
+      }
+      let avatarR = avatarWidth / 2
+      context.save()
+      context.beginPath()
+      context.arc(_canvasWidth / 2, _canvasHeight * 0.30 + avatarR, avatarR, 0, 2 * Math.PI, false)
+      context.clip()
+      context.drawImage(avatarPhoto, _canvasWidth / 2 - avatarR, _canvasHeight * 0.30, avatarWidth, avatarWidth)
+      context.restore()
+
+      context.setFontSize(16)
+      context.setFillStyle('#000')
+      context.setTextAlign('center')
+      context.fillText(`${this.viewData.linkman}`, _canvasWidth / 2, _canvasHeight * 0.50, _canvasWidth)
+
+      let txt = `${this.viewData.remark}`
+      let fontSize = Math.ceil(16 / 320 * _canvasWidth)
+      let maxLen = Math.floor((_canvasWidth - fontSize * 4) / fontSize)
+      let maxCount = Math.ceil(txt.length / maxLen)
+      for (let i = 0; i < maxCount; i++) {
+        context.font = `bold ${fontSize}px`
+        context.setFillStyle('#000')
+        context.setTextAlign('center')
+        let disTxt = txt.substr(i * maxLen, maxLen)
+        if (maxCount >= 3 && i === 1) {
+          disTxt = txt.substr(i * maxLen, maxLen - 3)
+          disTxt = `${disTxt}...`
+          context.fillText(`${disTxt}`, _canvasWidth / 2, _canvasHeight * 0.6 + 30 * i, _canvasWidth)
+          break
+        } else {
+          context.fillText(`${disTxt}`, _canvasWidth / 2, _canvasHeight * 0.6 + 30 * i, _canvasWidth)
+        }
+      }
+
+      // 画分隔线
+      context.beginPath()
+      context.setLineWidth(1)
+      context.moveTo(20, _canvasHeight * 3 / 4)
+      context.lineTo(_canvasWidth - 20, _canvasHeight * 0.75)
+      context.stroke()
+
+      // 画二维码
+      context.drawImage(miniQrcode, 20, _canvasHeight * 0.8 + 15, 40, 40)
+      context.drawImage(avatarPhoto1, 70, _canvasHeight * 0.8 + 15, 20, 20)
+      context.setFontSize(12)
+      context.setFillStyle('#000000')
+      context.setTextAlign('left')
+      context.fillText(`${this.viewData.retailerinfo.linkman}`, 100, _canvasHeight * 0.8 + 25)
+      context.setFillStyle('#8a8a8a')
+      let ltxt = '赠送了你一张优惠券，快来使用吧'
+      context.fillText(ltxt, 70, _canvasHeight * 0.8 + 50)
+    } else if (this.module === 'default' || (this.module === 'home' && this.useDefault)) {
+      // 画背景图
+      context.setFillStyle('#ffffff')
+      context.fillRect(0, 0, _canvasWidth, _canvasHeight)
+      context.drawImage(bgPhoto, 0, 0, _canvasWidth, _canvasHeight)
+      let lineY = parseInt(_canvasHeight * 0.13)
+      let marginLeft = parseInt(_canvasWidth * 0.16)
+      let disWidth = _canvasWidth - marginLeft * 2
+      let avatarWidth = parseInt(_canvasWidth * 0.13)
+      if (avatarWidth % 2 !== 0) {
+        avatarWidth = avatarWidth + 1
+      }
+      let avatarR = avatarWidth / 2
+      context.save()
+      context.beginPath()
+      context.arc(marginLeft + avatarR, lineY + avatarR, avatarR, 0, 2 * Math.PI, false)
+      context.clip()
+      context.drawImage(avatarPhoto, marginLeft, lineY, avatarWidth, avatarWidth)
+      context.restore()
+      let fontSize = Math.ceil(14 / 320 * _canvasWidth)
+      let maxLen = Math.floor(disWidth / fontSize)
+      let disname = userName
+      if (disname.length > maxLen) {
+        disname = disname.substr(0, maxLen - 3)
+        disname = `${disname}...`
+      }
+      let mt = (avatarWidth - fontSize * 2) / 2 + 5
+      context.setFontSize(fontSize)
+      context.setFillStyle('#000000')
+      context.setTextAlign('left')
+      context.fillText(`${disname}`, marginLeft + avatarWidth + 10, lineY + mt)
+
+      context.setFontSize(fontSize)
+      context.setFillStyle('#000000')
+      context.setTextAlign('left')
+      context.fillText(`${tips}`, marginLeft + avatarWidth + 10, lineY + fontSize + mt + 5)
+
+      lineY = parseInt(_canvasHeight * 0.33)
+      let codeWidth = parseInt(_canvasWidth * 0.52)
+      if (codeWidth % 2 !== 0) {
+        codeWidth = codeWidth + 1
+      }
+      let codeR = codeWidth / 2
+      context.save()
+      context.beginPath()
+      context.arc(_canvasWidth / 2, lineY + codeR, codeR, 0, 2 * Math.PI, false)
+      context.clip()
+      context.drawImage(miniQrcode, _canvasWidth / 2 - codeR, lineY, codeWidth, codeWidth)
+      context.restore()
+    } else if (this.module === 'home' && !this.useDefault) {
+      // 画背景图
+      context.setFillStyle('#ffffff')
+      context.fillRect(0, 0, _canvasWidth, _canvasHeight)
+      context.drawImage(bgPhoto, 0, 0, _canvasWidth, _canvasHeight)
+      let codeWidth = _canvasWidth * 0.3
+      let codeR = codeWidth / 2
+      let codeTop = _canvasHeight - _canvasWidth * 0.15 - codeWidth
+      context.save()
+      context.beginPath()
+      context.arc(_canvasWidth / 2, codeTop + codeR, codeR, 0, 2 * Math.PI, false)
+      context.clip()
+      context.drawImage(miniQrcode, _canvasWidth / 2 - codeR, codeTop, codeWidth, codeWidth)
+      context.restore()
+    } else if (this.module === 'live') {
+      // 画背景图
+      context.setFillStyle('#ffffff')
+      context.fillRect(0, 0, _canvasWidth, _canvasHeight)
+      context.drawImage(bgPhoto, 0, 0, _canvasWidth, _canvasHeight)
+
+      let codeWidth = parseInt(_canvasWidth * 0.3)
+      if (codeWidth % 2 !== 0) {
+        codeWidth = codeWidth + 1
+      }
+      let lineY = _canvasHeight - codeWidth - 20
+      let codeR = codeWidth / 2
+      let lineX = _canvasWidth - codeWidth - 10
+      context.save()
+      context.beginPath()
+      context.arc(lineX + codeR, lineY + codeR, codeR, 0, 2 * Math.PI, false)
+      context.clip()
+      context.drawImage(miniQrcode, lineX, lineY, codeWidth, codeWidth)
+      context.restore()
+    } else if (this.module === 'userorders') {
+      let fontSize = Math.ceil(14 / 320 * _canvasWidth)
+      // 画背景图
+      context.setFillStyle('#ffffff')
+      context.fillRect(0, 0, _canvasWidth, _canvasHeight)
+
+      let codeWidth = parseInt(_canvasWidth * 0.6)
+      if (codeWidth % 2 !== 0) {
+        codeWidth = codeWidth + 1
+      }
+      let lineY = (_canvasHeight - codeWidth) / 2 - 20
+      let codeR = codeWidth / 2
+      let lineX = (_canvasWidth - codeWidth) / 2
+      context.save()
+      context.beginPath()
+      context.arc(lineX + codeR, lineY + codeR, codeR, 0, 2 * Math.PI, false)
+      context.clip()
+      context.drawImage(miniQrcode, lineX, lineY, codeWidth, codeWidth)
+      context.restore()
+      context.setFillStyle('#000')
+      context.setTextAlign('center')
+      context.font = `bold`
+      context.setFontSize(fontSize + 6)
+      let ltxt = '长按识别查订单'
+      context.fillText(ltxt, _canvasWidth / 2, lineY + codeWidth + 60, _canvasWidth)
+    } else {
+      let fontSize = Math.ceil(14 / 320 * _canvasWidth)
+      // 画背景图
+      context.setFillStyle('#ffffff')
+      context.fillRect(0, 0, _canvasWidth, _canvasHeight)
+
+      let _avatarW1 = _canvasWidth * 0.15
+      let _avatarR1 = _avatarW1 / 2
+      let _avatarLeft = _canvasWidth * 0.041
+      let _avatarTop = _canvasHeight * 0.033
+      let txtFontSize1 = fontSize - 2
+      let mt1 = parseInt((_avatarW1 - txtFontSize1 - 10) / 2)
+      let txtTop1 = _avatarTop + ((_avatarW1 - fontSize - txtFontSize1 - mt1) / 2) - 3
+      let txtTop2 = txtTop1 + fontSize + txtFontSize1 + mt1
+      context.save()
+      context.beginPath()
+      context.arc(_avatarLeft + _avatarR1, _avatarTop + _avatarR1, _avatarR1, 0, 2 * Math.PI, false)
+      context.clip()
+      context.drawImage(avatarPhoto, _avatarLeft, _avatarTop, _avatarW1, _avatarW1)
+      context.restore()
+
+      context.font = `bold ${fontSize}px`
+      context.setFontSize(fontSize)
+      context.setFillStyle('#000000')
+      context.setTextAlign('left')
+      context.fillText(`${userName}`, _canvasWidth * 0.23, _avatarTop + txtTop1)
+
+      context.setFontSize(txtFontSize1)
+      context.setFillStyle('#8a8a8a')
+      context.setTextAlign('left')
+      context.fillText(tips, _canvasWidth * 0.23, txtTop2)
+
+      let borderW = _canvasWidth * 0.01
+      let photoW = _canvasWidth - borderW * 2
+      let photoTop = _canvasHeight * 0.16
+      context.setFillStyle(this.themeObject.themeColor)
+      context.fillRect(0, photoTop - borderW, _canvasWidth, _canvasWidth)
+      context.drawImage(bgPhoto, borderW, photoTop, photoW, photoW)
+
+      let marginLeft = parseInt(_canvasWidth * 0.03)
+      let disWidth = _canvasWidth * 0.65
+      let txt = `${this.title}`
+      // 每行最多显示文字个数
+      let maxLen = Math.floor(disWidth / fontSize)
+      let txtMarginTop = _canvasHeight * 0.86 + borderW
+      let disTxt = txt
+      if (txt.length > maxLen) {
+        disTxt = txt.substr(0, maxLen - 2)
+        disTxt = `${disTxt}...`
+      }
+      context.font = `bold ${fontSize}px`
+      context.setFontSize(fontSize)
+      context.setFillStyle('#000000')
+      context.setTextAlign('left')
+      context.fillText(`${disTxt}`, marginLeft, txtMarginTop, _canvasWidth - marginLeft * 2)
+
+      let txtFontSize = fontSize - 2
+      if (this.module === 'product' || this.module === 'factoryproduct' || (this.module === 'store' && this.retailerInfo.content && this.retailerInfo.content !== '')) {
+        let selltxt = null
+        if (this.module === 'product' || this.module === 'factoryproduct') {
+          let priceW = photoW * 0.4
+          let priceH = priceW * 0.25 + borderW
+          let priceLeft = borderW
+          let priceTop = photoTop + photoW - priceH + borderW / 2
+          context.setFillStyle(this.themeObject.themeColor)
+          context.fillRect(priceLeft, priceTop, priceW, priceH)
+          context.font = `bold ${fontSize}px`
+          context.setFontSize(fontSize)
+          context.setFillStyle('#ffffff')
+          context.setTextAlign('left')
+          context.fillText(`￥`, priceLeft, priceTop + priceH - fontSize / 2 - borderW * 1.5, priceW)
+          context.font = `bold ${fontSize}px`
+          context.setFontSize(fontSize + 2)
+          context.setFillStyle('#ffffff')
+          context.setTextAlign('left')
+          let disPrice = this.viewData.price
+          if (this.viewData.minprice && this.viewData.minprice !== '') {
+            disPrice = this.viewData.minprice
+          }
+          context.fillText(`${disPrice}`, priceLeft + fontSize, priceTop + priceH - fontSize / 2 - borderW * 1.5, priceW)
+          if (this.viewData && this.viewData.sellingpoint) {
+            selltxt = this.viewData.sellingpoint
+          }
+        } else {
+          selltxt = this.retailerInfo.content
+        }
+        if (selltxt && selltxt !== '') {
+          // 每行最多显示文字个数
+          let maxLen1 = Math.floor(disWidth / txtFontSize)
+          // 共显示多少行
+          let maxCount1 = Math.ceil(selltxt.length / maxLen1)
+          for (let i = 0; i < maxCount1; i++) {
+            context.setFontSize(txtFontSize)
+            context.setFillStyle(this.themeObject.themeColor)
+            context.setTextAlign('left')
+            let disFacTxt = selltxt.substr(i * maxLen1, maxLen1)
+            if (maxCount1 >= 3 && i === 1) {
+              disFacTxt = txt.substr(i * maxLen1, maxLen1 - 2)
+              disFacTxt = `${disTxt}...`
+              context.fillText(`${disFacTxt}`, marginLeft, txtMarginTop + fontSize + 5 + fontSize * i, disWidth)
+              break
+            } else {
+              context.fillText(`${disFacTxt}`, marginLeft, txtMarginTop + fontSize + 5 + fontSize * i, disWidth)
+            }
+          }
+        }
+      }
+      let qrcodeW = parseInt(_canvasWidth * 0.3)
+      let qrcodeTop = photoTop + photoW + borderW * 3
+      let bottomH = _canvasHeight - qrcodeTop
+      if (qrcodeW > bottomH) {
+        qrcodeW = bottomH
+      }
+      // 画二维码
+      context.drawImage(miniQrcode, _canvasWidth - marginLeft - qrcodeW, qrcodeTop, qrcodeW, qrcodeW)
+    }
+    context.draw()
+    if (this.module !== 'material') {
+      wepy.hideLoading()
+      this.saveBtnShow = true
+    } else {
+      this.handleSave()
+    }
+    this.$apply()
+  }
+  handleSave () {
+    wepy.canvasToTempFilePath({
+      canvasId: 'myCanvas'
+    }).then(res => {
+      Util.savePhoto({
+        path: res.tempFilePath,
+        callback: () => {
+          wepy.hideLoading()
+          this.canvasShow = false
+          this.saveBtnShow = false
+          this.showPopup = false
+          this.$apply()
+        }
+      })
+    }, res => {
+      console.log('下载画布图片1失败')
+      console.log(res)
+    })
+  }
+  handleCode () {
+    this.setCanvas()
+    let optionalPage = ''
+    let paramPhoto = this.photo
+    if (this.module === 'default' || this.module === 'addmodule' || this.module === 'channel' || this.module === 'userorders') {
+      paramPhoto = Config.QrcodeBg
+    } else if (this.module === 'live') {
+      if (this.viewData.poster) {
+        paramPhoto = this.viewData.poster
+      } else {
+        paramPhoto = this.viewData.share_img
+      }
+    } else if (this.module === 'home') {
+      if (!this.photo || this.photo === '') {
+        paramPhoto = Config.QrcodeBg
+        this.useScrollView = false
+        this.useDefault = true
+      } else {
+        this.useScrollView = true
+        this.useDefault = false
+      }
+    }
+    if (this.pagePath && this.pagePath !== '') {
+      optionalPage = this.pagePath
+    } else if (this.module === 'live') {
+      optionalPage = 'pages/index'
+    } else if (this.module) {
+      optionalPage = Config.Router[this.module]
+    }
+    if (paramPhoto === '') {
+      wepy.showToast({
+        title: '请先添加商品',
+        icon: 'none'
+      })
+      return
+    }
+    this.canvasShow = true
+    if (this.module === 'material') {
+    }
+    let photo = paramPhoto.replace(/http:/g, 'https:')
+    let avatar = this.userInfo.avatar.replace(/http:/g, 'https:')
+    if (this.module === 'giftcard') {
+      avatar = this.viewData.avatar.replace(/http:/g, 'https:')
+    }
+    let sceneArr = []
+    let queryArr = []
+    let str = '生成二维码'
+    if (this.module === 'material') {
+      str = ''
+    }
+    wepy.showLoading({
+      title: str
+    }).then(res => {
+      return wepy.downloadFile({
+        url: avatar
+      })
+    }).then(res => {
+      if (!res.tempFilePath) {
+        return new Promise()
+      }
+      this.avatarPhoto = res.tempFilePath
+      return wepy.downloadFile({
+        url: photo
+      })
+    }).then(res => {
+      if (!res.tempFilePath) {
+        return new Promise()
+      }
+      this.bgPhoto = res.tempFilePath
+      return wepy.getImageInfo({
+        src: this.bgPhoto
+      })
+    }).then(res => {
+      console.log('------==========下载了背景图片后=======')
+      console.log(res)
+      if (this.module === 'home') {
+        let bgW = res.width
+        let bgH = res.height
+        this.myCanvasHeight = this.myCanvasWidth * bgH / bgW
+      }
+      if (this.id) {
+        sceneArr.push(`id:${this.id}`)
+        queryArr.push(`id=${this.id}`)
+      }
+      sceneArr.push(`sd:${this.userInfo.uid}`)
+      sceneArr.push(`wd:${this.globalData.Wid}`)
+      queryArr.push(`share_uid=${this.userInfo.uid}`)
+      queryArr.push(`wid=${this.globalData.Wid}`)
+      if (this.addmodule && this.addmodule !== '') {
+        sceneArr.push(`m:${this.addmodule}`)
+        queryArr.push(`module=${this.addmodule}`)
+      }
+      if (this.module === 'channel') {
+        sceneArr.push(`id:${this.viewData.id}`)
+        queryArr.push(`id=${this.viewData.id}`)
+      } else if (this.module === 'live') {
+        sceneArr.push(`rid:${this.viewData.roomid}`)
+        queryArr.push(`roomid=${this.viewData.roomid}`)
+        queryArr.push(`liveid=${this.viewData.id}`)
+      }
+      switch (this.module) {
+        case 'default':
+          this.tips = '精心推荐'
+          break
+        case 'store':
+          this.tips = '向你推荐一家好店'
+          break
+        case 'product':
+          this.tips = '向你推荐一款好产品，长按扫码查看'
+          break
+        case 'factoryproduct':
+          this.tips = '向你推荐一款好产品，长按扫码查看'
+          queryArr.push('type=fpimport')
+          break
+        case 'news':
+          this.tips = '推荐你看这篇文章'
+          break
+        case 'factorynews':
+          this.tips = '推荐你看这篇文章'
+          break
+        case 'facehongbao':
+          this.tips = '让客户离你更近一步'
+          break
+        case 'answer':
+          this.tips = '邀请你一起玩答题活动'
+          break
+        case 'kouling':
+          this.tips = '邀请你抢口令红包'
+          break
+        case 'voucher':
+          this.tips = '邀请你拼手速抢大额优惠券'
+          break
+        case 'luckdraw':
+          this.tips = '邀请你抢现金红包or优惠券'
+          break
+        default:
+          this.tips = '精心推荐'
+          break
+      }
+      // return wepy.request({
+      //   url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/wxa/getQrcode`,
+      //   method: 'POST',
+      //   data: {
+      //     appid: Config.AppId,
+      //     scene: sceneArr.join(','),
+      //     optional: {
+      //       page: optionalPage
+      //     }
+      //   }
+      // })
+      let sourceurl = `/${optionalPage}`
+      if (queryArr.length) {
+        let querystr = queryArr.join('&')
+        sourceurl = `${sourceurl}?${querystr}`
+      }
+      return wepy.request({
+        url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/wxa/createPoster`,
+        method: 'POST',
+        data: {
+          appid: Config.AppId,
+          sourceurl: sourceurl,
+          page: 'pages/index'
+        }
+      })
+    }).then(res => {
+      if (res.data.flag === 1) {
+        let retdata = res.data.data
+        retdata = retdata.replace(/http:/g, 'https:')
+        return wepy.downloadFile({
+          url: retdata
+        })
+      }
+    }).then(res => {
+      if (!res.tempFilePath) {
+        return new Promise()
+      }
+      this.miniQrcode = res.tempFilePath
+      this.context = wepy.createCanvasContext('myCanvas')
+      this.context.save()
+      if (this.module === 'giftcard') {
+        return wepy.downloadFile({
+          url: this.viewData.retailerinfo.avatar.replace(/http:/g, 'https:')
+        })
+      } else {
+        this.createImage()
+      }
+    }).then(res => {
+      if (this.module === 'giftcard') {
+        if (!res.tempFilePath) {
+          return new Promise()
+        }
+        this.avatarPhoto1 = res.tempFilePath
+        this.createImage()
+      }
+    })
+  }
+  methods = {
+    showPopuModal () {
+      this.showPopup = true
+    },
+    closePopupModal () {
+      this.showPopup = false
+    },
+    onTouchmove () {},
+    popupClose () {
+      this.$emit('on-cancel')
+    },
+    onCodeTap () {
+      this.handleCode()
+    },
+    clickLink (e) {
+      if (this.viewData.sellingpoint && this.viewData.sellingpoint !== '') {
+        wepy.setClipboardData({
+          data: `${this.viewData.title} ${this.viewData.sellingpoint} ${Config.WebViewApi}/#/${this.module}?id=${this.viewData.id}&wid=${this.viewData.retailerinfo.uid}&share_uid=${this.userInfo.uid}`
+        })
+      } else {
+        wepy.setClipboardData({
+          data: `${this.viewData.title} ${Config.WebViewApi}/#/${this.module}?id=${this.viewData.id}&wid=${this.viewData.retailerinfo.uid}&share_uid=${this.userInfo.uid}`
+        })
+      }
+    },
+    onSaveTap (e) {
+      this.handleSave()
+    },
+    onCancelTap (e) {
+      this.canvasShow = false
+      this.saveBtnShow = false
+      this.showPopup = false
+      this.useScrollView = false
+      wepy.hideLoading()
+    },
+    uploadPoster () {
+      wepy.chooseImage({
+        count: 1, // 默认9
+        sizeType: ['original', 'compressed'], // 可以指定是原图还是压缩图，默认二者都有
+        sourceType: ['album', 'camera'] // 可以指定来源是相册还是相机，默认二者都有
+      }).then(res => {
+        if (res.tempFiles) {
+          Util.taskData({
+            data: res.tempFiles,
+            handleFunction: (d) => {
+              return (done) => {
+                wepy.showLoading()
+                wepy.uploadFile({
+                  url: `${Config.GxkApi}/api/upload/photo`,
+                  method: 'POST',
+                  name: 'photo',
+                  filePath: d.path
+                }).then(res => {
+                  const resdata = JSON.parse(res.data)
+                  if (!resdata.flag) {
+                    wepy.showToast({
+                      title: resdata.error,
+                      icon: 'none',
+                      duration: Util.delay(resdata.error)
+                    })
+                  } else {
+                    let jsonData = JSON.parse(res.data)
+                    this.viewData.poster = jsonData.data
+                    this.handleCode()
+                    this.$emit('afterCreatePoster', jsonData.data)
+                  }
+                  done()
+                })
+              }
+            }
+          })
+        }
+      })
+    }
+  }
+  async onLoad () {
+    this.initVar()
+    this.top = this.$root.$parent.globalData.barHeight
+    wepy.getSystemInfo().then(res => {
+      this.systemInfo = res
+      this.setCanvas()
+    })
+  }
+};
+</script>
+
+<style lang="less">
+.share-popup-layer{
+  .vux-popup-mask{background:transparent;}
+}
+.share-method{
+  width: 100%;
+  height: 200rpx;
+  background-color: #fff;
+  display: flex;
+  align-self: flex-end;
+  z-index: 600;
+  border-top: 1rpx solid #ddd;
+  .inner{
+    width:100%;height:100%;
+    .item{flex:1;height:100%;}
+  }
+  .bg-radius{width:100rpx;height:100rpx;border-radius:50%;background-color:#36ab60;color:#fff;margin:0 auto;}
+  .chat .al{font-size:60rpx;font-weight:bold;}
+  .pic .al{font-size:60rpx;margin-top:-6rpx;}
+  .link .al{font-size:60rpx;margin-top:-6rpx;}
+}
+.share-canvas{
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background-color: #222;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  canvas{
+    width: 300px;
+    height: 500px;
+    margin: 0 auto;
+  }
+  .btn{
+    width: 100vw;
+    margin-top: 30rpx;
+    text-align: center;
+    button{
+      display: inline-block;
+      height: 80rpx;
+      line-height: 80rpx;
+      border-radius: 10rpx !important;
+      padding: 0 60rpx !important;
+    }
+    .save{
+      margin-left: 20rpx;
+    }
+  }
+}
+</style>

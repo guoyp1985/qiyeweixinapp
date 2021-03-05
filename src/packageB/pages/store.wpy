@@ -1,0 +1,621 @@
+<style lang="less">
+.store-page{
+  .swiper:after{content:"";display:block;padding-top:55%;}
+  .swiper{
+    position:relative;
+    .pic-swiper{position:absolute;height:100%;width:100%;}
+    .item{
+      width:100%;height:100%;
+      image{width:100%;height:100%;}
+    }
+    .fix-swiper{
+      position:absolute;right:0;top:40rpx;
+      width:150rpx;height:70rpx;
+      .btn{
+        width:150rpx;height:70rpx;border-top-left-radius:40rpx;border-bottom-left-radius:40rpx;
+        color:#fff;
+        display:flex;justify-content: center; align-items: center;
+      }
+    }
+  }
+  .swiper-empty{
+    height:420rpx;
+    button{width:260rpx;height:80rpx;border-radius:10rpx;}
+  }
+  .vline{position:relative;}
+  .vline .line {
+    content: " ";display: block;position: absolute;
+    width: 6rpx;top: 0rpx;bottom:0rpx;
+    left: -2rpx;
+  }
+  .end-area{width:100%;height:100rpx;color:#ccc;display:flex;align-items:center;justify-content: center;}
+  .btn-apply{width:300rpx;height:70rpx;border-radius:40rpx;}
+}
+</style>
+<template>
+  <view class="container columnarea font14 store-page">
+    <block wx:if="{{showContainer}}">
+      <block wx:if="{{showTemplate1}}">
+        <store-view1
+          :options.sync="options"
+          :height.sync="height"
+          :barHeight.sync="barHeight"
+          :globalData.sync="globalData"
+          :userInfo.sync="userInfo"
+          :retailerInfo.sync="retailerInfo"
+          :wid.sync="wid"
+          :images.sync="images"
+          :showDot.sync="showDot"
+          :disSwiper.sync="disSwiper"
+          :isFavorite.sync="isFavorite"
+          :showFavorite.sync="showFavorite"
+          :showSuggest.sync="showSuggest"
+          :suggestData.sync="suggestData"
+          :FactorySuggest.sync="FactorySuggest"
+          :products.sync="products"
+          :disProduct.sync="disProduct"
+          :isLoading.sync="isLoading"
+          :isDone.sync="isDone"
+          :classData.sync="classData"
+          :classDataArr.sync="classDataArr"
+          :selectedIndex.sync="selectedIndex"
+          :productCount.sync="productCount"
+          :isAdmin.sync="isAdmin"
+          :colCount.sync="colCount"
+          :themeObject.sync="themeObject">
+        </store-view1>
+      </block>
+      <block wx:if="{{showTemplate2}}">
+        <store-view2
+          :options.sync="options"
+          :height.sync="height"
+          :barHeight.sync="barHeight"
+          :globalData.sync="globalData"
+          :userInfo.sync="userInfo"
+          :retailerInfo.sync="retailerInfo"
+          :wid.sync="wid"
+          :images.sync="images"
+          :showDot.sync="showDot"
+          :disSwiper.sync="disSwiper"
+          :isFavorite.sync="isFavorite"
+          :showFavorite.sync="showFavorite"
+          :showSuggest.sync="showSuggest"
+          :suggestData.sync="suggestData"
+          :FactorySuggest.sync="FactorySuggest"
+          :products.sync="products"
+          :disProduct.sync="disProduct"
+          :isLoading.sync="isLoading"
+          :isDone.sync="isDone"
+          :classData.sync="classData"
+          :classDataArr.sync="classDataArr"
+          :selectedIndex.sync="selectedIndex"
+          :productCount.sync="productCount"
+          :isAdmin.sync="isAdmin"
+          :colCount.sync="colCount"
+          :themeObject.sync="themeObject">
+        </store-view2>
+      </block>
+      <block wx:if="{{showTemplate3}}">
+        <store-view3
+          :options.sync="options"
+          :height.sync="height"
+          :barHeight.sync="barHeight"
+          :globalData.sync="globalData"
+          :userInfo.sync="userInfo"
+          :retailerInfo.sync="retailerInfo"
+          :wid.sync="wid"
+          :images.sync="images"
+          :showDot.sync="showDot"
+          :disSwiper.sync="disSwiper"
+          :isFavorite.sync="isFavorite"
+          :showFavorite.sync="showFavorite"
+          :showSuggest.sync="showSuggest"
+          :suggestData.sync="suggestData"
+          :FactorySuggest.sync="FactorySuggest"
+          :products.sync="products"
+          :disProduct.sync="disProduct"
+          :isLoading.sync="isLoading"
+          :isDone.sync="isDone"
+          :classData.sync="classData"
+          :classDataArr.sync="classDataArr"
+          :selectedIndex.sync="selectedIndex"
+          :productCount.sync="productCount"
+          :isAdmin.sync="isAdmin"
+          :colCount.sync="colCount"
+          :themeObject.sync="themeObject">
+        </store-view3>
+      </block>
+      <block wx:if="{{showTemplate4}}">
+        <store-view4
+          :options.sync="options"
+          :height.sync="height"
+          :barHeight.sync="barHeight"
+          :globalData.sync="globalData"
+          :userInfo.sync="userInfo"
+          :retailerInfo.sync="retailerInfo"
+          :wid.sync="wid"
+          :images.sync="images"
+          :showDot.sync="showDot"
+          :disSwiper.sync="disSwiper"
+          :isFavorite.sync="isFavorite"
+          :showFavorite.sync="showFavorite"
+          :showSuggest.sync="showSuggest"
+          :suggestData.sync="suggestData"
+          :FactorySuggest.sync="FactorySuggest"
+          :products.sync="products"
+          :disProduct.sync="disProduct"
+          :isLoading.sync="isLoading"
+          :isDone.sync="isDone"
+          :classData.sync="classData"
+          :classDataArr.sync="classDataArr"
+          :selectedIndex.sync="selectedIndex"
+          :productCount.sync="productCount"
+          :isAdmin.sync="isAdmin"
+          :colCount.sync="colCount"
+          :themeObject.sync="themeObject">
+        </store-view4>
+      </block>
+    </block>
+  </view>
+  <share :themeObject.sync="themeObject" :globalData.sync="globalData" :userInfo.sync="userInfo" :photo.sync="photo" opacity="1" :title.sync="title" :retailerInfo.sync="retailerInfo" :module.sync="module"></share>
+  <retailerWechat :userInfo.sync="userInfo" :retailerInfo.sync="retailerInfo" :themeObject.sync="themeObject"></retailerWechat>
+  <block wx:if="{{showHelpModal}}">
+    <tipBgLayer2
+      :themeObject.sync="themeObject"
+      title="超值优惠"
+      content="超值优惠商品是官方为你提供的爆款低价商品，帮助你转化客户，促进用户购买，用户购买完成后，你还可以获得商品的佣金奖励哦！">
+    </tipBgLayer2>
+  </block>
+</template>
+
+<script>
+import wepy from 'wepy'
+import Util from '@/libs/util'
+import Config from '@/config'
+import Product from '@/components/store/product'
+import Share from '@/components/store/share'
+import RetailerWechat from '@/components/retailerWechat'
+import TipBgLayer from '@/components/tipBgLayer'
+import storeView1 from '@/components/store/store1'
+import storeView2 from '@/components/store/store2'
+import storeView3 from '@/components/store/store3'
+import storeView4 from '@/components/store/store4'
+import Cached from '@/libs/cached'
+export default class store1 extends wepy.page {
+  config = {
+    enablePullDownRefresh: true,
+    backgroundTextStyle: 'dark'
+  }
+  components = {
+    'product': Product,
+    'share': Share,
+    retailerWechat: RetailerWechat,
+    tipBgLayer1: TipBgLayer,
+    tipBgLayer2: TipBgLayer,
+    'store-view1': storeView1,
+    'store-view2': storeView2,
+    'store-view3': storeView3,
+    'store-view4': storeView4
+  }
+  data = {
+    showContainer: true,
+    options: {},
+    globalData: {},
+    userInfo: {},
+    retailerInfo: {},
+    products: [],
+    photo: '',
+    pullDownRefresh: false,
+    loaded: false,
+    images: [],
+    showDot: true,
+    isFavorite: false,
+    showFavorite: false,
+    wid: null,
+    module: 'store',
+    showSharePopup: false,
+    retailerQrcodeShow: false,
+    height: 0,
+    barHeight: 0,
+    title: '',
+    disProduct: false,
+    disSwiper: false,
+    showSuggest: false,
+    suggestData: [],
+    showHelpModal: false,
+    menuTitle: '',
+    FactorySuggest: Config.FactorySuggest,
+    showTemplate1: false,
+    showTemplate2: false,
+    showTemplate3: false,
+    showTemplate4: false,
+    isFirst: false,
+    sysParams: {},
+    isLoading: false,
+    isDone: false,
+    loadDone: false,
+    classData: [],
+    classDataArr: [],
+    clickClassId: 0,
+    selectedIndex: 0,
+    productCount: -1,
+    colCount: 10,
+    AdminUids: Config.AdminUids,
+    isAdmin: false,
+    themeObject: {}
+  }
+  initData () {
+    this.isFirst = false
+    this.$apply()
+  }
+  // 下拉刷新无法实现
+  onPullDownRefresh () {
+    wepy.showNavigationBarLoading()
+    setTimeout(function () {
+      wepy.hideNavigationBarLoading()
+      wepy.stopPullDownRefresh()
+    }, 500)
+    this.refresh()
+  }
+  onReachBottom () {
+    this.isLoading = true
+    this.pageStart++
+    this.getProducts()
+  }
+  refresh () {
+    this.pullDownRefresh = true
+    this.showTemplate1 = false
+    this.showTemplate2 = false
+    this.showTemplate3 = false
+    this.showTemplate4 = false
+    this.images = []
+    this.products = []
+    this.topLines = []
+    this.pageStart = 0
+    this.classData = []
+    this.$apply()
+    this.getRetailerInfo()
+    this.getClasses()
+    this.getProducts()
+  }
+  onLoad (options) {
+    this.pageStart = 0
+    this.limit = Config.Limit
+    // 处理通过二维码进入的场景
+    if (options.scene) {
+      let sceneOptions = Util.queryScene(options.scene)
+      options = {...options, ...sceneOptions}
+    }
+    this.options = options
+    this.sysParams = wepy.getStorageSync('SystemParams')
+    this.$apply()
+    if (this.$parent.globalData.flag.bokaAuth) {
+      this.handlePageData()
+    } else {
+      this.$parent.loadCallback = () => {
+        this.handlePageData()
+      }
+    }
+    wepy.showShareMenu({
+      withShareTicket: true
+    })
+  }
+  handlePageData () {
+    this.globalData = this.$parent.globalData
+    Util.appInit(this.globalData, this)
+    this.userInfo = this.globalData.userInfo
+    if (this.userInfo.fid === Config.Fid) {
+      this.isAdmin = true
+    } else if (this.AdminUids[Config.Fid]) {
+      let curArr = this.AdminUids[Config.Fid]
+      for (let i in curArr) {
+        if (curArr[i] === this.userInfo.regwid) {
+          this.isAdmin = true
+          break
+        }
+      }
+    }
+    if (this.options.wid) {
+      if (this.options.scene && (!this.userInfo.regwid || !this.userInfo.bindstatus)) {
+        this.globalData.Wid = this.options.wid
+        this.$parent.globalData.Wid = this.options.wid
+      }
+    }
+    this.showContainer = true
+    this.wid = this.globalData.Wid
+    let shareParams = Util.getShareParams(this.options)
+    if (shareParams.wid && shareParams.share_uid) {
+      let params = {...shareParams, module: 'store', moduleid: shareParams.wid}
+      wepy.request({
+        url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/common/shareClick`,
+        data: params,
+        method: 'post'
+      })
+    }
+    this.barHeight = this.globalData.barHeight
+    this.height = this.globalData.systemInfo.screenHeight - this.barHeight
+    this.$apply()
+    this.getRetailerInfo()
+    this.getClasses()
+    this.getCollectStatus()
+    if (!this.products.length) {
+      this.getProducts()
+    }
+  }
+  // 获取分类信息
+  processClasses (retdata) {
+    let txt = '全部'
+    retdata = [{id: 0, title: txt, photo: 'https://tossharingsales.boka.cn/minigxk/allclass.png'}].concat(retdata)
+    this.classData = retdata
+    this.classDataArr = []
+    let colcount = this.colCount
+    let len = retdata.length
+    let col = Math.ceil(len / colcount)
+    if (col > 1) {
+      this.showDot = true
+    } else {
+      this.showDot = false
+    }
+    for (let i = 0; i < col; i++) {
+      let arr = []
+      for (let j = 0; j < (i + 1) * colcount; j++) {
+        arr.push(retdata[j + i * colcount])
+      }
+      this.classDataArr.push(arr)
+    }
+    this.$apply()
+  }
+  getClasses () {
+    Cached.request({
+      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/factory/fpClass`,
+      data: {pagestart: 0, limit: 500, ascdesc: 'asc', fid: Config.Fid}
+    }, 'store.classes', Config.URT.H,
+    cacheData => {
+      this.processClasses(cacheData)
+    },
+    res => {
+      const data = res.data
+      let retdata = data.data ? data.data : data
+      this.processClasses(retdata)
+      this.$apply()
+      return retdata
+    })
+  }
+  // 获取卖家信息
+  getRetailerInfo () {
+    const params = {uid: this.wid, appid: Config.AppId}
+    if (this.options.share_uid) {
+      params.share_uid = this.options.share_uid
+      params.share_module = 'store'
+    }
+    if (this.options.comefrom) {
+      params.comefrom = this.options.comefrom
+    }
+    if (this.options.lastshareuid) {
+      params.lastshareuid = this.options.lastshareuid
+    }
+    Cached.request({
+      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/retailer/info`,
+      data: params
+    }, 'store.retailer', Config.URT.H,
+    cacheData => {
+      this.processRetailer(cacheData)
+    },
+    res => {
+      const data = res.data
+      if (data.flag) {
+        this.processRetailer(data.data)
+      }
+      this.$apply()
+      return this.retailerInfo
+    })
+  }
+  processRetailer (data) {
+    this.retailerInfo = data
+    this.title = this.retailerInfo.title
+    let shopmodel = `${this.retailerInfo.shopmodel}`
+    if (shopmodel === '2') {
+      this.showTemplate2 = true
+    } else if (shopmodel === '3') {
+      this.showTemplate3 = true
+    } else if (shopmodel === '4') {
+      this.showTemplate4 = true
+    } else {
+      this.showTemplate1 = true
+    }
+  }
+  // 获取店铺是否被收藏
+  getCollectStatus () {
+    wepy.request({
+      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/user/favorite/show`,
+      data: {module: 'store', id: this.wid},
+      method: 'POST'
+    }).then(res => {
+      const data = res.data
+      if (data.flag === 1) {
+        this.isFavorite = true
+      } else {
+        this.isFavorite = false
+      }
+      this.showFavorite = true
+      this.$apply()
+    })
+  }
+  // 获取商品
+  getProducts () {
+    let params = {fid: Config.Fid, pagestart: this.pageStart, limit: this.limit}
+    if (this.clickClassId) {
+      params.classid = this.clickClassId
+    }
+    wepy.showLoading()
+    Cached.queueRequest({
+      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/factory/factoryproductList`,
+      data: params,
+      method: 'post'
+    }, `store.products.${this.clickClassId}`, Config.URT.H,
+    cacheData => {
+      const isCachePaging = cacheData.prevPage >= this.pageStart
+      if (!isCachePaging) {
+        cacheData.prevPage = this.pageStart
+      }
+      return isCachePaging
+    },
+    cacheData => {
+      this.processProducts(cacheData)
+      let dataarr = cacheData.data.slice(this.pageStart * this.limit, (this.pageStart + 1) * this.limit)
+      this.products = this.products.concat(dataarr)
+      if (dataarr.length < this.limit && this.products.length && this.pageStart > 0) {
+        this.isDone = true
+      } else {
+        this.isDone = false
+      }
+    },
+    res => {
+      this.loadingComplete = true
+      wepy.hideLoading()
+      const data = res.data
+      const retdata = data.data ? data.data : data
+      this.processProducts(data)
+      this.products = this.products.concat(retdata)
+      if (retdata.length < this.limit && this.products.length && this.pageStart > 0) {
+        this.isDone = true
+      } else {
+        this.isDone = false
+      }
+      this.$apply()
+      return { data: this.products, prevPage: this.pageStart, count: data.count }
+    },
+    error => {
+      wepy.hideLoading()
+      console.log('商城页面，商品列表请求error')
+      console.log(error)
+      // wepy.showToast({
+      //   icon: 'none',
+      //   title: JSON.stringify(error),
+      //   duration: 10000
+      // })
+    })
+  }
+  processProducts (pdata) {
+    let data = pdata.data
+    wepy.hideLoading()
+    if (!this.clickClassId) {
+      this.productCount = pdata.allcount
+    }
+    if (data.length) {
+      // this.products = this.products.concat(data)
+      this.photo = data[0].photo
+    }
+    console.log('进入到了店铺页面')
+    console.log(this.photo)
+    // if (data.length < this.limit && this.products.length && this.pageStart > 0) {
+    //   this.isDone = true
+    //   this.loadDone = true
+    // } else {
+    //   this.isDone = false
+    // }
+    this.isLoading = false
+    this.disProduct = true
+  }
+  handleShare () {
+    this.$invoke('share', 'closePopupModal')
+    const lastshareuid = this.options.share_uid
+    let shareurl = `/${Config.Router.store}?wid=${this.wid}&share_uid=${this.userInfo.uid}&share_wid=${this.globalData.Wid}&wid=${this.globalData.Wid}&comefrom=${Config.AppName}`
+    if (lastshareuid) {
+      shareurl = `${shareurl}&lastshareuid=${lastshareuid}`
+    }
+    let backUrl = encodeURIComponent(shareurl)
+    shareurl = `${shareurl}&currentUrl=${backUrl}`
+    let txt1 = '我发现一家好店'
+    let txt2 = '推荐给你'
+    this.shareParams = {
+      title: `${txt1}【${this.retailerInfo.title}】${txt2}！`,
+      path: shareurl
+    }
+  }
+  onShareAppMessage (res) {
+    this.handleShare()
+    return this.shareParams
+  }
+  onShareTimeline () {
+    this.handleShare()
+    return this.shareParams
+  }
+  methods = {
+    toVip (e) {
+      const backurl = encodeURIComponent(`/${Config.Router.store}?wid=${this.wid}`)
+      wepy.navigateTo({url: `/pages/vip?backurl=${backurl}`})
+    }
+  }
+  events = {
+    setSwiper () {
+      const url = encodeURIComponent(`decorationShop?uid=${this.wid}&fromModule=retailer`)
+      wepy.navigateTo({url: `/pages/webview?url=${url}`})
+    },
+    setShow () {
+      const url = encodeURIComponent(`decorationShop?fromModule=retailer`)
+      wepy.navigateTo({url: `/pages/webview?url=${url}`})
+    },
+    onShareTap () {
+      this.$invoke('share', 'showPopuModal')
+    },
+    toChat () {
+      const url = encodeURIComponent(`chat?uid=${this.wid}&fromModule=store&fromId=${this.wid}`)
+      wepy.navigateTo({url: `/pages/webview?url=${url}`})
+    },
+    wetchatContact () {
+      if (!this.retailerInfo.qrcode || this.retailerInfo.qrcode === '') {
+        Util.remindQrcode(this.retailerInfo.uid)
+      }
+      this.$invoke('retailerWechat', 'showModal')
+    },
+    clickHelp () {
+      this.showHelpModal = true
+    },
+    clickSuggest () {
+      wepy.showModal({
+        title: '',
+        content: '确认关闭超值优惠商品？关闭后可在卖家设置中开启。'
+      }).then(res => {
+        if (res.confirm) {
+          this.showSuggest = false
+          wepy.request({
+            url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/card/setParas`,
+            data: {params: {suggest_open: 0}},
+            method: 'POST'
+          }).then(res => {
+            const data = res.data
+            if (data.flag) {
+              this.userInfo.retailerinfo.params = data.data
+              this.retailerInfo.params = data.data
+              this.$parent.globalData.userInfo = this.userInfo
+              this.$apply()
+            }
+          })
+        }
+      })
+    },
+    toSuggest (data) {
+      wepy.navigateTo({url: `/${Config.Router.product}?id=${data.id}&type=fpimport&fid=${Config.Fid}`})
+    },
+    formSubmit (dataset) {
+      wepy.navigateTo({url: dataset.url})
+    },
+    closeTipBg () {
+      this.showHelpModal = false
+    },
+    clickTab (dataset) {
+      this.disProduct = false
+      this.$apply()
+      this.selectedIndex = dataset.index
+      this.clickClassId = dataset.data.id
+      this.isLoading = false
+      this.loadDone = false
+      this.products = []
+      this.pageStart = 0
+      this.$apply()
+      this.getProducts()
+    }
+  }
+}
+</script>

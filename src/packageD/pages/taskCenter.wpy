@@ -1,0 +1,348 @@
+<style lang="less">
+.task-center-page{
+  padding-bottom:20rpx;
+  .top-box{
+    padding:20rpx 20rpx 60rpx;width:100%;box-sizing:border-box;color:#fff;
+    border-bottom-left-radius:40rpx;border-bottom-right-radius:40rpx;position:relative;
+    .top-inner{position:relative;}
+    .avatar{
+      padding-right:20rpx;
+      image{width:130rpx;height:130rpx;border-radius:50%;border:#fff 8rpx solid;}
+    }
+    .txt{font-size:32rpx;font-weight:bold;width:250rpx;}
+    .r-txt{position:absolute;right:20rpx;bottom:0rpx;font-weight:bold;}
+    .txt1{font-size:70rpx;font-weight:bold;}
+    .txt2{font-size:32rpx;font-weight:bold;}
+  }
+  .box1{
+    margin-top:-40rpx;
+    .box-inner{padding:20rpx;box-sizing: border-box;}
+  }
+  .day-list{
+    display:flex;margin-top:10rpx;
+    .day-item{
+      flex:1;padding:0 10rpx;box-sizing: border-box;
+      justify-content: center;align-items: center;
+      .item-inner{
+        width:100%;
+        .radius-ico{width:100%;position:relative;}
+        .radius-ico:after{
+          content:'';display:block;padding-top:100%;
+        }
+        .radius{
+          position:absolute;left:0;top:0;right:0;bottom:0;
+          border-radius:50%;background-color:#ccc;color:#fff;
+          display:flex;justify-content: center;align-items: center;
+          .al{font-size:40rpx;}
+        }
+      }
+      .txt{font-size:20rpx;text-align:center;margin-top:6rpx;}
+    }
+  }
+}
+</style>
+<template>
+  <view class="task-center-page">
+    <view class="top-box" style="{{themeObject.linearBgStyle}}">
+      <view class="top-inner w_100 flex_left">
+        <view class="avatar">
+          <image mode="aspectFill" src="{{userInfo.avatar}}"></image>
+        </view>
+        <view class="txt flex_left">
+          <view class="w_100">
+            <view class="clamp1">{{userInfo.linkman}}</view>
+            <view class="clamp1">(ID: {{userInfo.regwid}})</view>
+          </view>
+        </view>
+        <view class="align_right flex_cell" @tap="clickJifen">
+          <text class="txt1">{{userInfo.retailerinfo.jifen}}</text>
+          <text class="txt2">分</text>
+        </view>
+      </view>
+    </view>
+    <block wx:if="{{showContainer}}">
+      <view class="app-box-area box1">
+        <view class="box-inner">
+          <view class="flex_left bold">
+            <text>已连续完成</text>
+            <text class="ml3 mr3" style="{{themeObject.colorStyle}}">{{doneDay}}</text>
+            <text>天</text>
+          </view>
+          <view class="color-gray font12">连续完成7天任务，共可获得10元现金红包奖励</view>
+          <view class="day-list">
+            <repeat for="{{taskData}}" item="item" index="index">
+              <view class="day-item">
+                <view class="item-inner">
+                  <view class="radius-ico">
+                    <view class="radius" style="{{(index <= doneDay) ? themeObject.bgStyle : ''}}">
+                      <view wx:if="{{index <= doneDay}}" class="al al-duihao2"></view>
+                      <view wx:else class="font12">+{{item.hongbao}}</view>
+                    </view>
+                  </view>
+                  <view class="txt">第{{index}}天</view>
+                </view>
+              </view>
+            </repeat>
+          </view>
+        </view>
+      </view>
+      <view class="app-box-area mt10" wx:if="{{retailerTask.day}}">
+        <view class="box-inner">
+          <view class="b_bottom_after padding10 bold">第{{retailerTask.day}}天任务</view>
+          <view class="padding10">
+            <view class="flex_left">
+              <view class="flex_cell">{{retailerTask.title}}</view>
+              <view class="flex_right r-cell" wx:if="{{retailerTask.buttontitle && item.retailerTask != ''}}">
+                <view wx:if="{{retailerTask.isbutton}}" class="circle-btn color-white" style="{{themeObject.bgStyle}}" @tap="clickTask">{{retailerTask.buttontitle}}</view>
+                <text wx:else style="{{retailerTask.finished ? themeObject.colorStyle : ''}}">{{retailerTask.buttontitle}}</text>
+              </view>
+            </view>
+            <view class="flex_center mt20" wx:if="{{retailerTask.photo && retailerTask.photo != ''}}">
+              <image mode="widthFix" style="width:80%;" src="{{retailerTask.photo}}"></image>
+            </view>
+          </view>
+        </view>
+      </view>
+    </block>
+  </view>
+  <view wx:if="{{showPhotoTask}}" class="auto-modal refund-modal flex_center">
+    <view class="modal-inner border-box" style="width:80%;">
+      <view class="align_center font18 bold pb10 b_bottom_after color-theme pt20" style="{{themeObject.colorStyle}}">拍照上传</view>
+      <view class="app-photo-list align_left bg-white">
+        <repeat for="{{taskPhotoArr}}" item="photo" index="index">
+          <view class="photoitem">
+            <view class="inner photo imgcover">
+              <image mode="aspectFill" src="{{photo}}" class="pic" data-type="update" data-index="{{index}}" @tap="uploadPhoto" />
+              <view class="close" @tap="deletePhoto(index)">×</view>
+            </view>
+          </view>
+        </repeat>
+        <view wx:if="{{taskPhotoArr.length < maxnum}}" class="photoitem add" @tap="uploadPhoto">
+          <view class="inner">
+            <view class="innerlist">
+              <view class="flex_center h_100">
+                <view>
+                  <text class="al al-zhaopian"></text>
+                  <view><text>{{ taskPhotoArr.length }}</text><text class="ml5 mr5">/</text><text>{{ maxnum }}</text></view>
+                </view>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+      <view class="db b_top_after" style="height:50px;">
+        <view class="w_100 h_100 flex_center">
+          <view class="flex_cell flex_center h_100 b_right_after" @tap="closeTaskPhoto">取消</view>
+          <view class="flex_cell flex_center h_100 color-orange" @tap="submitTaskPhoto">提交</view>
+        </view>
+      </view>
+    </view>
+  </view>
+</template>
+<script>
+  import wepy from 'wepy'
+  import Config from '@/config'
+  import Util from '@/libs/util'
+  export default class TaskCenter extends wepy.page {
+    data = {
+      options: {},
+      globalData: {},
+      userInfo: {},
+      themeObject: {},
+      doneDay: 0,
+      taskData: [],
+      retailerTask: {},
+      taskPhotoArr: [],
+      showPhotoTask: false,
+      maxnum: 9,
+      showContainer: false
+    }
+    getTask () {
+      wepy.request({
+        url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/Task/getNewRetailerTask`,
+        method: 'post'
+      }).then(res => {
+        const data = res.data
+        if (data.data) {
+          this.retailerTask = data.data
+        }
+        if (data.daylist) {
+          this.taskData = data.daylist
+        }
+        if (data.days) {
+          this.doneDay = data.days
+        }
+        this.showContainer = true
+        this.$apply()
+      })
+    }
+    handlePageData () {
+      this.globalData = this.$parent.globalData
+      Util.appInit(this.globalData, this)
+      this.userInfo = this.globalData.userInfo
+      this.$apply()
+      this.getTask()
+    }
+    onLoad (options) {
+      if (options.scene) {
+        let sceneOptions = Util.queryScene(options.scene)
+        options = {...options, ...sceneOptions}
+      }
+      this.options = options
+      this.isIng = false
+      if (this.$parent.globalData.flag.bokaAuth) {
+        this.handlePageData()
+      } else {
+        this.$parent.loadCallback = () => {
+          this.handlePageData()
+        }
+      }
+    }
+    handleShare () {
+      const lastshareuid = this.options.share_uid
+      let shareurl = `/packageD/pages/about?fid=${this.Fid}&share_uid=${this.userInfo.uid}&share_wid=${this.globalData.Wid}&wid=${this.globalData.Wid}&comefrom=${Config.AppName}`
+      if (lastshareuid) {
+        shareurl = `${shareurl}&lastshareuid=${lastshareuid}`
+      }
+      let backUrl = encodeURIComponent(shareurl)
+      shareurl = `${shareurl}&currentUrl=${backUrl}`
+      this.shareParams = {
+        title: this.factoryInfo.title,
+        imageUrl: 'https://tossharingsales.boka.cn/minigxk/factory/share.png',
+        path: shareurl
+      }
+    }
+    onShareAppMessage (res) {
+      this.handleShare()
+      return this.shareParams
+    }
+    onShareTimeline () {
+      this.handleShare()
+      return this.shareParams
+    }
+    methods = {
+      clickTask () {
+        if (this.retailerTask.finished) {
+          if (this.isIng) return false
+          this.isIng = true
+          wepy.showLoading()
+          wepy.request({
+            url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/Task/finishNewRetailerTask`,
+            data: {day: this.retailerTask.day},
+            method: 'post'
+          }).then(res => {
+            wepy.hideLoading()
+            const data = res.data
+            wepy.showToast({
+              title: data.error,
+              icon: 'none',
+              duration: Util.delay(data.error)
+            })
+            if (data.flag) {
+              this.retailerTask.isbutton = false
+              this.retailerTask.buttontitle = '已完成'
+              this.retailerTask.finished = true
+              this.doneDay = this.retailerTask.day
+              this.isIng = false
+              this.$apply()
+            } else {
+              this.isIng = false
+            }
+          })
+        } else {
+          if (this.retailerTask.finishtype === 'photo') {
+            this.taskPhotoArr = []
+            this.showPhotoTask = true
+          }
+        }
+      },
+      uploadPhoto (e) {
+        const dataset = e.currentTarget.dataset
+        const curType = dataset.type
+        const index = dataset.index
+        let imgcount = this.maxnum - this.taskPhotoArr.length
+        wepy.chooseImage({
+          count: imgcount, // 默认9
+          sizeType: ['original', 'compressed'], // 可以指定是原图还是压缩图，默认二者都有
+          sourceType: ['album', 'camera'] // 可以指定来源是相册还是相机，默认二者都有
+        }).then(res => {
+          if (res.tempFiles) {
+            Util.taskData({
+              data: res.tempFiles,
+              handleFunction: (d) => {
+                return (done) => {
+                  wepy.showLoading()
+                  wepy.uploadFile({
+                    url: `${Config.GxkApi}/api/upload/photo`,
+                    method: 'POST',
+                    name: 'photo',
+                    filePath: d.path
+                  }).then(res => {
+                    wepy.hideLoading()
+                    const resdata = JSON.parse(res.data)
+                    if (!resdata.flag) {
+                      wepy.showToast({
+                        title: resdata.error,
+                        icon: 'none',
+                        duration: Util.delay(resdata.error)
+                      })
+                    } else {
+                      let jsonData = JSON.parse(res.data)
+                      if (curType === 'update') {
+                        this.taskPhotoArr.splice(index, 1, jsonData.data)
+                      } else {
+                        this.taskPhotoArr.push(jsonData.data)
+                      }
+                      this.$apply()
+                    }
+                    done()
+                  })
+                }
+              }
+            })
+          }
+        })
+      },
+      deletePhoto (index) {
+        this.taskPhotoArr.splice(index, 1)
+        this.$apply()
+      },
+      closeTaskPhoto () {
+        this.showPhotoTask = false
+      },
+      submitTaskPhoto () {
+        if (this.isIng) return false
+        if (!this.taskPhotoArr.length) {
+          wepy.showToast({
+            title: '请上传图片',
+            icon: 'none'
+          })
+          return false
+        }
+        let postPhoto = this.taskPhotoArr.join(',')
+        this.isIng = true
+        wepy.showLoading()
+        wepy.request({
+          url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/Task/recordTask`,
+          data: {type: 'newretailertask', id: this.retailerTask.day, photo: postPhoto},
+          method: 'post'
+        }).then(res => {
+          this.isIng = false
+          wepy.hideLoading()
+          const data = res.data
+          wepy.showToast({
+            title: data.error,
+            icon: 'none',
+            duration: Util.delay(data.error)
+          })
+          if (data.flag) {
+            this.showPhotoTask = false
+            this.retailerTask.isbutton = false
+            this.retailerTask.buttontitle = '待审核'
+            this.$apply()
+          }
+        })
+      }
+    }
+  }
+</script>

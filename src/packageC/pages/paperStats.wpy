@@ -1,0 +1,363 @@
+<style lang="less">
+.papwer-record-tab.none-fixed-top{position:fixed;left:0;top:0rpx;right:0;z-index:10;
+  .record-area{
+    padding: 30rpx 0 20rpx;
+    .tab-item{
+      .number{
+        text-align:center;
+        line-height:100rpx;
+        color:#fff;
+      }
+    }
+  }
+}
+.paperstats-page{
+  padding-top:328rpx;padding-bottom:160rpx;
+  .al-left:before{
+    content:'\e744'
+  }
+  .al-xing:before{
+    content:'\e6c3'
+  }
+  .al-share:before{
+    content:'\e61d'
+  }
+  .packet-item{height:116rpx;padding:0 20rpx;}
+  .btn-area{
+    .btn-item{
+      display:inline-block;
+      padding:0 25rpx;line-height:50rpx;border:2rpx solid;border-radius:50rpx;
+    }
+    .btn-item:not(:last-child){margin-right:20rpx;border:none}
+  }
+  .share-btn{
+    width:400rpx;
+    border-radius:32rpx;
+    margin:auto;
+  }
+  .record-item{
+    .user-img{
+       width:140rpx;
+    }
+    .volume-state{
+      padding:10rpx 20rpx;
+      border-radius:16rpx;
+      color: #fff;
+    }
+  }
+}
+</style>
+<template>
+  <view class="papwer-record-tab none-fixed-top">
+   <view class="flex_center record-area bg-white mb12">
+      <view class="tab-item font14 flex_column flex_cell">
+        <view class="avatarimg2 bg-green2 number">10</view>
+        <view class="mt10 color-gray">浏览人数</view>
+      </view>
+      <view class="tab-item font14 flex_column flex_cell">
+        <view class="avatarimg2 bg-orange number">2</view>
+        <view class="mt10 color-gray">分享人数</view>
+      </view>
+      <view class="tab-item font14 flex_column flex_cell">
+        <view class="avatarimg2 bg-green number">1</view>
+        <view class="mt10 color-gray">领取人数</view>
+      </view>
+    </view>
+    <view class="app-tab">
+        <view class="tab-item font14 {{selectedIndex == 0 ? 'active' : ''}}" data-current="0" bindtap="clickTab">
+          <text style="{{selectedIndex == 0 ? themeObject.colorStyle : ''}}">抢卷记录</text>
+          <view class="line" style="{{selectedIndex == 0 ? themeObject.bgStyle : ''}}"></view>
+        </view>
+        <view class="tab-item font14 {{selectedIndex == 1 ? 'active' : ''}}" data-current="1" bindtap="clickTab">
+          <text style="{{selectedIndex == 1 ? themeObject.colorStyle : ''}}">浏览</text>
+          <view class="line" style="{{selectedIndex == 1 ? themeObject.bgStyle : ''}}"></view>
+        </view>
+        <view class="tab-item font14 {{selectedIndex == 2 ? 'active' : ''}}" data-current="2" bindtap="clickTab">
+          <text style="{{selectedIndex == 2 ? themeObject.colorStyle : ''}}">分享</text>
+          <view class="line" style="{{selectedIndex ==2 ? themeObject.bgStyle : ''}}"></view>
+        </view>
+    </view>
+  </view>
+  <view class="paperstats-page">
+    <view wx:if="{{selectedIndex == 0 && disList1}}" class="list-area">
+      <view wx:if="{{!listData1.length}}" class="w_100 flex_empty">暂无抢卷记录</view>
+      <repeat for="{{listData1}}" index="index" item="item">
+        <view class="record-item flex_center b_bottom padding10 bg-white">
+          <view class="user-img"><image class="avatarimg3" mode="aspectFill" src="" /></view>
+          <view  class="flex_cell">
+            <view class="font15 bold mb5">Yuannn</view>
+            <view class="font12 mb5" style="{{themeObject.colorStyle}}">优惠券: ￥2.50</view>
+            <view class="color-gray3 font12 mb5"><text>影响力：30</text><text class="ml10">成交概率：20%</text></view>
+            <view class="color-gray3 font12 mb5">2020-04-09 13：30</view>
+          </view>
+        </view>
+      </repeat>
+      <view class="load-end-area loading" wx:if="{{isLoading1}}"></view>
+      <view class="load-end-area done" wx:elif="{{isDone1}}"></view>
+    </view>
+    <view wx:if="{{selectedIndex == 1 && disList2}}" class="list-area">
+      <view wx:if="{{!listData2.length}}" class="w_100 flex_empty">暂无浏览记录</view>
+      <repeat for="{{listData2}}" index="index" item="item">
+        <view class="record-item flex_center b_bottom padding10 bg-white">
+          <view class="user-img"><image class="avatarimg3" mode="aspectFill" src="" /></view>
+          <view  class="flex_cell">
+            <view class="font15 bold mb5">Yuannn</view>
+            <view class="color-gray3 font12 mb5"><text>影响力：30</text><text class="ml10">成交概率：20%</text></view>
+            <view class="color-gray3 font12 mb5">2020-04-09 13：30</view>
+          </view>
+        </view>
+      </repeat>
+      <view class="load-end-area loading" wx:if="{{isLoading2}}"></view>
+      <view class="load-end-area done" wx:elif="{{isDone2}}"></view>
+    </view>
+    <view wx:if="{{selectedIndex == 2 && disList3}}" class="list-area">
+      <view wx:if="{{!listData3.length}}" class="w_100 flex_empty">暂无分享记录</view>
+      <repeat for="{{listData3}}" index="index" item="item">
+        <view class="record-item flex_center b_bottom padding10 bg-white">
+          <view class="user-img"><image class="avatarimg3" mode="aspectFill" src="" /></view>
+          <view  class="flex_cell">
+            <view class="font15 bold mb5">Yuannn</view>
+            <view class="color-gray3 font12 mb5"><text>影响力：30</text><text class="ml10">成交概率：20%</text></view>
+            <view class="color-gray3 font12 mb5">2020-04-09 13：30</view>
+          </view>
+        </view>
+      </repeat>
+      <view class="load-end-area loading" wx:if="{{isLoading3}}"></view>
+      <view class="load-end-area done" wx:elif="{{isDone3}}"></view>
+    </view>
+  </view>
+</template>
+<script>
+import wepy from 'wepy'
+import Config from '@/config'
+import Util from '@/libs/util'
+import Time from '@/libs/time'
+export default class CustomerView extends wepy.page {
+  data = {
+    query: {},
+    options: {},
+    globalData: {},
+    userInfo: {},
+    viewData: {},
+    buyInfo: {lasttime: '', lasttime1: '', lasttime2: '', ordercount: 0, ordersmoney: '0.00'},
+    customerValue: {nextbuy: 0, sellerspercent: 0, type: ''},
+    themeObject: {},
+    selectedIndex: 0,
+    disList1: false,
+    disList2: false,
+    disList3: false,
+    listData1: [],
+    listData2: [],
+    listData3: [],
+    isLoading1: false,
+    isLoading2: false,
+    isLoading3: false,
+    isDone1: false,
+    isDone2: false,
+    isDone3: false
+  }
+  refreshPage () {
+    this.disList1 = false
+    this.disList2 = false
+    this.disList3 = false
+    this.listData1 = []
+    this.listData2 = []
+    this.listData3 = []
+    this.pageStart1 = 0
+    this.pageStart2 = 0
+    this.pageStart3 = 0
+    this.$apply()
+    switch (this.selectedIndex) {
+      case 0:
+        this.getData1()
+        break
+      case 1:
+        this.getData2()
+        break
+      case 2:
+        this.getData3()
+        break
+    }
+  }
+  onPullDownRefresh () {
+    if (!this.afterLoad1 || !this.afterLoad2 || !this.afterLoad3) return false
+    this.refreshPage()
+    wepy.showNavigationBarLoading()
+    setTimeout(() => {
+      wepy.hideNavigationBarLoading()
+      wepy.stopPullDownRefresh()
+    }, 500)
+  }
+  onReachBottom () {
+    switch (this.selectedIndex) {
+      case 0:
+        if (!this.afterLoad1) return false
+        if (this.listData1.length === (this.pageStart1 + 1) * this.limit) {
+          this.pageStart1++
+          this.isLoading1 = true
+          this.getData1()
+        }
+        break
+      case 1:
+        if (!this.afterLoad2) return false
+        if (this.listData2.length === (this.pageStart2 + 1) * this.limit) {
+          this.pageStart2++
+          this.isLoading2 = true
+          this.getData2()
+        }
+        break
+      case 2:
+        if (!this.afterLoad3) return false
+        if (this.listData3.length === (this.pageStart3 + 1) * this.limit) {
+          this.pageStart3++
+          this.isLoading3 = true
+          this.getData3()
+        }
+        break
+    }
+  }
+  getData1 () {
+    if (!this.afterLoad1) return false
+    this.afterLoad1 = false
+    wepy.showLoading()
+    wepy.request({
+      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/customer/ordersList`,
+      data: {pagestart: this.pageStart1, limit: this.limit, customeruid: this.options.uid},
+      method: 'post'
+    }).then(res => {
+      wepy.hideLoading()
+      this.afterLoad1 = true
+      this.isLoading1 = false
+      const data = res.data
+      let retdata = data.data ? data.data : data
+      for (let i = 0; i < retdata.length; i++) {
+        let curd = retdata[i]
+        curd.dateline_str = new Time(curd.dateline * 1000).dateFormat('yyyy-MM-dd hh:mm')
+      }
+      this.listData1 = this.listData1.concat(retdata)
+      this.disList1 = true
+      if (retdata.length < this.limit && this.listData1.length) {
+        this.isDone1 = true
+      } else {
+        this.isDone1 = false
+      }
+      this.$apply()
+    })
+  }
+  getData2 () {
+    if (!this.afterLoad2) return false
+    this.afterLoad2 = false
+    wepy.showLoading()
+    wepy.request({
+      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/customer/shareList`,
+      data: {pagestart: this.pageStart2, limit: this.limit, customeruid: this.options.uid}
+    }).then(res => {
+      wepy.hideLoading()
+      this.afterLoad2 = true
+      this.isLoading2 = false
+      const data = res.data
+      let retdata = data.data ? data.data : data
+      for (let i = 0; i < retdata.length; i++) {
+        let curd = retdata[i]
+        curd.dateline_str = new Time(curd.dateline * 1000).dateFormat('yyyy-MM-dd hh:mm')
+      }
+      this.listData2 = this.listData2.concat(retdata)
+      this.disList2 = true
+      if (retdata.length < this.limit && this.listData2.length) {
+        this.isDone2 = true
+      } else {
+        this.isDone2 = false
+      }
+      this.$apply()
+    })
+  }
+  getData3 () {
+    if (!this.afterLoad3) return false
+    this.afterLoad3 = false
+    wepy.showLoading()
+    wepy.request({
+      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/customer/recommendList`,
+      data: {pagestart: this.pageStart3, limit: this.limit, customeruid: this.options.uid}
+    }).then(res => {
+      wepy.hideLoading()
+      this.afterLoad3 = true
+      this.isLoading3 = false
+      const data = res.data
+      let retdata = data.data ? data.data : data
+      for (let i = 0; i < retdata.length; i++) {
+        let curd = retdata[i]
+        curd.dateline_str = new Time(curd.dateline * 1000).dateFormat('yyyy-MM-dd hh:mm')
+      }
+      this.listData3 = this.listData3.concat(retdata)
+      this.disList3 = true
+      if (retdata.length < this.limit && this.listData3.length) {
+        this.isDone3 = true
+      } else {
+        this.isDone3 = false
+      }
+      this.$apply()
+    })
+  }
+  handlePageData () {
+    this.globalData = this.$parent.globalData
+    Util.appInit(this.globalData, this)
+    this.userInfo = this.globalData.userInfo
+    switch (this.selectedIndex) {
+      case 0:
+        if (!this.listData1.length) {
+          this.getData1()
+        }
+        break
+      case 1:
+        if (!this.listData2.length) {
+          this.getData2()
+        }
+        break
+      case 2:
+        if (!this.listData3.length) {
+          this.getData3()
+        }
+        break
+    }
+  }
+  onLoad (options) {
+    this.options = options
+    this.limit = Config.Limit
+    this.pageStart1 = 0
+    this.pageStart2 = 0
+    this.pageStart3 = 0
+    this.afterLoad1 = true
+    this.afterLoad2 = true
+    this.afterLoad3 = true
+    if (this.$parent.globalData.flag.bokaAuth) {
+      this.handlePageData()
+    } else {
+      this.$parent.loadCallback = () => {
+        this.handlePageData()
+      }
+    }
+  }
+  methods = {
+    clickTab (e) {
+      this.selectedIndex = parseInt(e.currentTarget.dataset.current)
+      switch (this.selectedIndex) {
+        case 0:
+          if (!this.listData1.length) {
+            this.getData1()
+          }
+          break
+        case 1:
+          if (!this.listData2.length) {
+            this.getData2()
+          }
+          break
+        case 2:
+          if (!this.listData3.length) {
+            this.getData3()
+          }
+          break
+      }
+    }
+  }
+}
+</script>

@@ -1,0 +1,166 @@
+<template>
+  <web-view id="web-view" src="{{url}}" @message="onMessage" ></web-view>
+</template>
+<script>
+  import wepy from 'wepy'
+  import Config from '@/config'
+  import Util from '@/libs/util'
+  export default class News extends wepy.page {
+    config = {
+      navigationBarTitleText: ''
+    }
+    data = {
+      url: '',
+      themeObject: {}
+    }
+    getData () {
+      let url = `${Config.BokaApi}/${Config[Config.ApiVersion]}/moduleInfo`
+      let params = {id: this.options.id}
+      if (this.options.module && this.options.module !== '') {
+        params.module = this.options.module
+      }
+      if (this.options.wid) {
+        params.wid = this.options.wid
+      }
+      if (this.options.share_uid) {
+        params.share_uid = this.options.share_uid
+      }
+      wepy.request({
+        url: url,
+        data: params,
+        method: 'post'
+      }).then(res => {
+        const data = res.data
+        const retdata = data.data ? data.data : data
+        this.viewData = retdata
+        this.$apply()
+      })
+    }
+    handlePageData () {
+      this.globalData = this.$parent.globalData
+      Util.appInit(this.globalData, this)
+      this.userInfo = this.$parent.globalData.userInfo
+      if (this.options.wid) {
+        if (this.options.scene && (!this.userInfo.regwid || !this.userInfo.bindstatus)) {
+          this.globalData.Wid = this.options.wid
+          this.$parent.globalData.Wid = this.options.wid
+        }
+      }
+      if (this.options.weburl) {
+        this.url = decodeURIComponent(this.options.weburl)
+        return false
+      }
+      let optionUrl = decodeURIComponent(this.options.url)
+      optionUrl = decodeURIComponent(optionUrl)
+      if (this.options.module && this.options.id) {
+        this.getData()
+      }
+      if (this.options.module === 'team') {
+        const tourl = encodeURIComponent(`team?id=${this.options.id}`)
+        let webquery = encodeURIComponent(`module=team&id=${this.options.id}`)
+        optionUrl = `${optionUrl}&weburl=${tourl}&webquery=${webquery}`
+      }
+      let url = `${Config.WebViewApi}/#/${optionUrl}`
+      if (optionUrl.indexOf('?') < 0) {
+        url = `${url}?`
+      } else {
+        url = `${url}&`
+      }
+      if (this.options.webquery && this.options.module !== 'team') {
+        let wquery = decodeURIComponent(this.options.webquery)
+        url = `${url}${wquery}`
+      }
+      url = `${url}appid=${Config.AppId}&fromapp=factory`
+      if (this.options.minibackurl) {
+        url = `${url}&minibackurl=${this.options.minibackurl}`
+      }
+      if (this.userInfo.subscribe === 0) {
+        url = `${url}&factoryuid=${this.userInfo.uid}`
+      }
+      this.url = url
+      console.log('处理后的webview url')
+      console.log(this.url)
+      if (this.options.module) {
+        this.allowShare = true
+        wepy.showShareMenu({
+          'withShareTicket': true
+        })
+      } else {
+        wepy.hideShareMenu()
+      }
+      this.$apply()
+    }
+    onLoad (options) {
+      this.globalData = {}
+      this.userInfo = {}
+      this.options = {}
+      this.allowShare = false
+      this.viewData = {}
+      if (options.scene) {
+        let sceneOptions = Util.queryScene(options.scene)
+        options = {...options, ...sceneOptions}
+        options.url = encodeURIComponent(`${options.module}?id=${options.id}`)
+      }
+      this.options = options
+      if (this.$parent.globalData.flag.bokaAuth) {
+        this.handlePageData()
+      } else {
+        this.$parent.loadCallback = () => {
+          this.handlePageData()
+        }
+      }
+      this.$apply()
+    }
+    methods = {
+      onMessage (e) {
+        console.log('进入到了webview的onmessage事件')
+        if (this.userInfo.subscribe === 0) {
+          wepy.request({
+            url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/user/show`
+          }).then(res => {
+            const retuser = res.data
+            this.userInfo = retuser
+            this.globalData.userInfo = retuser
+            if (retuser.regwid && retuser.bindstatus) {
+              this.Wid = retuser.regwid
+              this.globalData.Wid = retuser.regwid
+            }
+            this.$parent.globalData = this.globalData
+          })
+        }
+      }
+    }
+    handleShare () {
+      if (this.allowShare) {
+        const lastshareuid = this.options.share_uid
+        let shareurl = `/pages/webview?url=${this.options.url}&module=${this.options.module}&id=${this.options.id}&share_uid=${this.userInfo.uid}&share_wid=${this.globalData.Wid}&wid=${this.globalData.Wid}&comefrom=${Config.AppName}`
+        if (lastshareuid) {
+          shareurl = `${shareurl}&lastshareuid=${lastshareuid}`
+        }
+        let backUrl = encodeURIComponent(shareurl)
+        shareurl = `${shareurl}&currentUrl=${backUrl}`
+        let sharePhoto = ''
+        if (this.viewData.photo && this.viewData.photo !== '') {
+          sharePhoto = this.viewData.photo.split(',')[0]
+        }
+        this.shareParams = {
+          title: this.viewData.title,
+          path: shareurl,
+          imageUrl: sharePhoto
+        }
+      }
+    }
+    onShareAppMessage (res) {
+      if (this.allowShare) {
+        this.handleShare()
+        return this.shareParams
+      }
+    }
+    onShareTimeline () {
+      if (this.allowShare) {
+        this.handleShare()
+        return this.shareParams
+      }
+    }
+  }
+</script>

@@ -1,0 +1,1180 @@
+<style lang="less">
+.add-card.app-tab{position:fixed;left:0;right:0;top:0;z-index:10;}
+.add-card-page{
+  padding-top:100rpx;padding-bottom:100rpx;box-sizing: border-box;
+  .info-area{
+    background-color:#fff;padding:20rpx;
+    .pic{
+      width:130rpx;
+      image{width:110rpx;height:110rpx;border-radius:10rpx;}
+    }
+  }
+  .cardType-title{
+    flex:1;
+  }
+  .cardType{
+    .radio-cell{
+      padding: 20rpx 0;
+      .ico-cell{
+        width:50rpx
+      }
+    }
+  }
+  .btn-area{
+    .btn-item{
+      display:inline-block;
+      padding:0 25rpx;line-height:50rpx;border:2rpx solid;border-radius:50rpx;
+    }
+    .btn-item:not(:last-child){margin-right:20rpx;border:none}
+  }
+  .al-user-profile:before{
+      content:'\e8c8'
+  }
+  .al-jia:before{
+    content:'\e62c'
+  }
+  .al-left:before{
+    content:'\e744'
+  }
+  .al-share:before{
+    content:'\e61d'
+  }
+  .check-user{padding: 0 100rpx;border-radius: 66rpx;border:2rpx solid;}
+  .share-btn{
+    width:400rpx;
+    border-radius:32rpx;
+    margin:auto;
+  }
+  .radius-list{
+    background-color:#fff;
+    .radius-item{width:33.33333%;}
+  }
+  .flex_empty{height:200rpx;}
+  .list_area{
+    margin-top:30rpx;margin-bottom:30rpx;background-color:#fff;
+    .scroll_item{
+      width:100%;padding:20rpx;display:flex;box-sizing: border-box;position:relative;
+      .pic{
+        width:100rpx;
+        image{width:90rpx;height:90rpx;border-radius:50%;}
+        .img{background:#ca2121;color:#fff;text-align: center;line-height: 90rpx;width:90rpx;height:90rpx;border-radius:50%;}
+      }
+      .btn-cell{
+        padding-left:20rpx;
+        .btn{
+          width:130rpx;height:50rpx;border-radius:30rpx;
+          display:flex;justify-content: center;align-items: center;
+        }
+      }
+      .operate-btn{
+        position:absolute;
+        right:40rpx;
+        padding:10rpx 20rpx;
+        border-radius:50rpx;
+      }
+    }
+  }
+
+  .operate-area{position:fixed;bottom:0;left:0;right:0;
+    .operate-item{
+      height:100rpx;
+      line-height:100rpx;
+      text-align:center;
+    }
+  }
+}
+.card-bottom-btn{
+  position:fixed;left:0;right:0;bottom:0;height:100rpx;
+  .btn-item{}
+  .btn{
+    width:280rpx;height:70rpx;border-radius:79rpx;
+    display:flex;justify-content: center;align-items: center;
+  }
+}
+.product-user-checked-area{
+  .part1{
+    width:100%;
+     .product-search-outter{
+      width: 100%;height: 100rpx;padding:20rpx 0;box-sizing:border-box;
+      background-color: white;display: flex;flex-direction: column;align-items: center;justify-content: center;
+      .search-inner{width: 100%;display:flex; align-items: center;background-color: #f2f3f2;border-radius: 45px;height:100%;}
+      .search-input{width: 85%;box-sizing: border-box;font-size:24rpx;padding: 0 20rpx;flex:1;}
+     }
+  }
+}
+.share-modal{
+  .modal-inner{padding:40rpx 0;}
+  .icon-success{
+    width:80rpx;height:80rpx;border-radius:50%;background-color:#fff;
+    border-style:solid;border-width:4rpx;margin:0 auto;
+    .al{font-size:70rpx;margin-top:6rpx;}
+  }
+  .btn-share{
+    width:200rpx;height:70rpx;border-radius:60rpx;
+    margin:40rpx auto 20rpx;
+    display:flex;justify-content: center;align-items: center;
+  }
+}
+
+.modalarea {
+  .money-input{
+    border:2rpx solid;
+    margin:0 10rpx;
+    border-radius: 8rpx;
+    padding: 0 5rpx;
+  }
+  .money-conut-area{
+    display:flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    .money-conut-btn{
+     border:2rpx solid;
+     height: 70rpx;
+     width: 120rpx;
+     line-height:70rpx;
+     text-align:center;
+     border-radius: 8rpx;
+   }
+  }
+}
+</style>
+<template>
+  <view class="app-tab add-card">
+    <view class="tab-item {{selectedIndex == 0 ? 'active' : ''}}" data-current="0" bindtap="clickTab">
+      <text style="{{selectedIndex == 0 ? themeObject.colorStyle : ''}}">创建优惠券</text>
+      <view class="line" style="{{selectedIndex == 0 ? themeObject.bgStyle : ''}}"></view>
+    </view>
+    <view class="tab-item {{selectedIndex == 1 ? 'active' : ''}}" data-current="1" bindtap="clickTab">
+      <text style="{{selectedIndex == 1 ? themeObject.colorStyle : ''}}">领取记录</text>
+      <view class="line" style="{{selectedIndex == 1 ? themeObject.bgStyle : ''}}"></view>
+    </view>
+  </view>
+  <view class="add-card-page">
+    <block wx:if="{{selectedIndex == 0}}">
+      <view class="flex_left info-area" wx:if="{{!product.title}}" @tap="checkProduct">
+        <view class="pic">
+          <image src="{{product.photo}}" />
+        </view>
+        <view class="flex_cell flex_left" >
+          <view class="w_100">
+            <view>请选择商品</view>
+          </view>
+        </view>
+      </view>
+      <view class="flex_left info-area" wx:else  @tap="{{flag !=-1 ? 'checkProduct':''}}">
+        <view class="pic">
+          <image src="{{product.photo}}" />
+        </view>
+        <view class="flex_cell flex_left">
+          <view class="w_100">
+            <view>{{product.title}}</view>
+            <view class="w_100 font12 color-gray clamp1">
+              <text>最大可创建:</text>
+              <text class="color-red" wx:if="{{product.minsalesrebate && product.maxsalesrebate && product.minsalesrebate != product.maxsalesrebate}}"> ￥{{ product.minsalesrebate }}-{{ product.maxsalesrebate }}</text>
+              <text class="color-red" wx:else> ￥{{ product.minsalesrebate }}</text>
+            </view>
+            <view wx:if="{{cardInfo && cardInfo.id}}">
+              <text>优惠券剩余:</text>
+              <text style="{{themeObject.colorStyle}}">{{cardInfo.leftcount}}</text>
+              <text>张</text>
+            </view>
+          </view>
+        </view>
+      </view>
+      <view class="app-form-list">
+        <view class="form-item" wx:if="{{flag != -1}}">
+          <view class="title-cell cardType-title">
+            <text>优惠券类型</text>
+            <text class="al al-xing5 font12 color-red"></text>
+          </view>
+          <view class="cardType">
+            <view class="radio-cell flex_left" data-flag="0" bindtap="clickItem">
+              <block>
+                <view class="ico-cell flex_left">
+                  <view class="app-radio" wx:if="{{flag === 0}}" style="{{themeObject.borderStyle}}">
+                    <view class="checked-ico" style="{{themeObject.bgStyle}}"></view>
+                  </view>
+                  <view class="app-radio" wx:else></view>
+                </view>
+              </block>
+              <view>创建新人福利</view>
+            </view>
+            <view class="radio-cell flex_left" data-flag="1" bindtap="clickItem">
+              <block>
+                <view class="ico-cell flex_left">
+                  <view class="app-radio" wx:if="{{flag === 1}}" style="{{themeObject.borderStyle}}">
+                    <view class="checked-ico" style="{{themeObject.bgStyle}}"></view>
+                  </view>
+                  <view class="app-radio" wx:else></view>
+                </view>
+              </block>
+              <view>创建专属优惠券</view>
+            </view>
+            <view class="radio-cell flex_left" data-flag="2" bindtap="clickItem">
+              <block>
+                <view class="ico-cell flex_left">
+                  <view class="app-radio" wx:if="{{flag === 2}}" style="{{themeObject.borderStyle}}">
+                    <view class="checked-ico" style="{{themeObject.bgStyle}}"></view>
+                  </view>
+                  <view class="app-radio" wx:else></view>
+                </view>
+              </block>
+              <view>创建全员抢券</view>
+            </view>
+          </view>
+        </view>
+        <view class="form-item">
+          <view class="title-cell">
+            <text>优惠券数量</text>
+            <text class="al al-xing5 font12 color-red"></text>
+          </view>
+          <view class="input-cell">
+            <block wx:if="{{disBtn}}">
+              <input wx:if="{{cardInfo && cardInfo.id}}" class="input" placeholder-class="input-placeholder" bindinput="inputChange" value="{{addCount}}" type="tel" placeholder="请输入优惠券增加数量"/>
+              <input wx:else class="input" placeholder-class="input-placeholder" bindinput="inputChange" value="{{addCount}}" type="tel" placeholder="请输入优惠券发放数量"/>
+            </block>
+          </view>
+          <view>张</view>
+        </view>
+        <view class="form-item">
+          <view class="title-cell">
+            <text>优惠券金额</text>
+          </view>
+          <view class="input-cell">
+            <text class="pr5" wx:if="{{cardInfo && cardInfo.id}}" style="{{themeObject.colorStyle}}">{{cardInfo.cardmoney}}</text>
+            <block wx:else>
+              <input class="input" placeholder-class="input-placeholder" bindinput="moneyChange" type="text" placeholder="请输入优惠券金额"/>
+            </block>
+          </view>
+          <view>元</view>
+        </view>
+        <block wx:if="{{flag != -1}}">
+          <block wx:if="{{flag === 0}}">
+            <view class="form-item">
+              <view class="title-cell">开启红包</view>
+              <view class="input-cell" bindtap="openPaper">
+                <view class="app-switch" style="{{isOpen ? themeObject.bgStyle+themeObject.borderStyle:''}}">
+                  <view class="ico"  style="{{isOpen ? 'left: auto;right: 0.5px':''}}"></view>
+                </view>
+              </view>
+            </view>
+            <block wx:if="{{isOpen}}">
+              <view class="form-item">
+                <view class="title-cell">
+                  每人最多领取金额<text class="color-gray1">（最少领取0.3元）</text>
+                </view>
+                <view class="input-cell" style="{{themeObject.colorStyle}}" @tap="toSetmaxMoney">
+                  {{maxMoney}}元
+                  <text class="al al-left font25"></text>
+                </view>
+              </view>
+              <view class="form-item">
+                <view class="title-cell" style="{{themeObject.colorStyle}}">红包账户余额￥</view>
+                <view class="input-cell btn-area" style="{{themeObject.colorStyle}}">
+                  <view class="btn-item" style="{{themeObject.bgStyle}}" @tap="Recharge">充值</view>
+                  <view class="btn-item" style="{{themeObject.borderStyle}}" @tap="Withdrawal">提现</view>
+                </view>
+              </view>
+             </block>
+             <view class="flex_right padding10">
+                <text style="{{themeObject.colorStyle}}">*</text>优惠券和红包同时开启时，将会为客户随机发放
+              </view>
+              <!-- <button open-type="share" class="share-btn flex_center mt25" style="{{themeObject.bgStyle}}"><text class="al al-share font25 mr10"></text>分享</button> -->
+          </block>
+          <block wx:if="{{flag === 1}}">
+            <view class="form-item">
+              <view class="title-cell">奖励语<text class="al al-xing5 font12 ml5 color-red"></text>
+              </view>
+              <view class="input-cell"><input class="search-input" type="text" placeholder="请输入奖励语" bindinput="setRewardword"  placeholder-class="input-placeholder"/></view>
+            </view>
+            <view class="form-item">
+              <view class="title-cell">
+                选择客户<text class="al al-xing5 font12 ml5 color-red"></text>
+              </view>
+              <view class="input-cell" @tap="checkUser">
+                <view wx:if="{{!user.title}}" class="flex_center check-user" style="{{themeObject.borderStyle+themeObject.colorStyle}}">
+                  <text class="al al-jia font25"></text>选择领劵用户</view>
+                <view wx:else>{{user.title}}</view>
+              </view>
+            </view>
+          </block>
+          <block wx:if="{{flag === 2}}">
+            <view class="form-item">
+              <view class="title-cell">
+                活动名称<text class="al al-xing5 font12 ml5 color-red"></text>
+              </view>
+              <view class="input-cell"><input class="search-input" type="text" placeholder="请输入活动名称" bindinput="activeName" placeholder-class="input-placeholder"/></view>
+            </view>
+          </block>
+        </block>
+        <view class="mt20 flex_right pl10 pr10">
+          <text class="al al-xing5 font16 color-red"></text>
+          <text class="color-gray">优惠券使用期限: 24小时</text>
+        </view>
+        <view class="mt20 flex_right pl10 pr10">
+          <view class="flex_right" @tap="toHelp">
+            <text class="al al-bangzhu font16 color-red"></text>
+            <text class="color-gray">使用小贴士</text>
+          </view>
+        </view>
+      </view>
+    </block>
+    <block wx:if="{{selectedIndex == 1}}">
+      <block wx:if="{{flag === -1 ||flag === 0}}">
+        <view class="radius-list">
+          <view class="radius-item">
+            <view class="radius-inner">
+              <view class="txt1 bg-orange">{{resultObject.cardcount}}</view>
+              <view class="txt2">优惠券</view>
+            </view>
+          </view>
+          <view class="radius-item">
+            <view class="radius-inner">
+              <view class="txt1 bg-blue">{{resultObject.lingqu}}</view>
+              <view class="txt2">领取人数</view>
+            </view>
+          </view>
+          <block wx:if="{{flag === 0}}">
+              <view class="radius-item">
+                <view class="radius-inner">
+                  <view class="txt1 bg-blue">{{resultObject.lingqu}}</view>
+                  <view class="txt2">红包发放总额</view>
+                </view>
+              </view>
+          </block>
+          <view class="radius-item">
+            <view class="radius-inner">
+              <view class="txt1" style="{{themeObject.bgStyle}}">{{resultObject.used}}</view>
+              <view class="txt2">使用人数</view>
+            </view>
+          </view>
+        </view>
+        <block wx:if="{{disList1}}">
+          <view wx:if="{{!tabData1.length}}" class="flex_empty">暂无领取记录</view>
+          <view wx:else class="list_area b_top_after">
+            <repeat for="{{tabData1}}" item="item" index="index">
+              <view class="scroll_item b_bottom_after">
+                <view class="pic flex_left">
+                  <image src="{{item.avatar}}" />
+                </view>
+                <view class="flex_cell">
+                  <view style="{{themeObject.colorStyle}}">优惠券 {{item.money}}元</view>
+                  <view>领取人: {{item.linkman}}</view>
+                  <view class="color-gray font12">领取时间: {{item.dateline_str}}</view>
+                  <view class="color-gray font12">到期时间: {{item.deadline_str}}</view>
+                </view>
+                <view class="btn-cell flex_right">
+                  <view wx:if="{{item.used}}" class="btn bg-gray color-white">已使用</view>
+                  <block wx:else>
+                    <view wx:if="{{item.usedateline}}" class="btn bg-gray color-white">已过期</view>
+                    <view wx:else class="btn" style="{{themeObject.bgStyle}}">未使用</view>
+                  </block>
+                </view>
+              </view>
+            </repeat>
+          </view>
+        </block>
+      </block>
+      <block wx:if="{{flag === 2}}">
+        <block wx:if="{{disList1}}">
+          <view wx:if="{{!tabData1.length}}" class="w_100 flex_empty">暂无数据</view>
+           <view wx:else class="list_area b_top_after">
+              <repeat for="{{tabData1}}" index="index" item="item">
+                <view class="scroll_item b_bottom_after flex_center">
+                  <view class="pic flex_left"><view class="img"><text class="al al-user-profile font25"></text></view></view>
+                  <view  class="flex_cell">
+                    <view class="font15 bold">新福利，大家快来一起抢卷</view>
+                    <view class="color-gray01 font14 flex_left"><text class="al al-yan font25 mr5"></text>10 <text class="al al-share font20 mr5 ml10"></text>10</view>
+                    <view class="color-gray3 font12">2020-04-09 13：30</view>
+                  </view>
+                  <view class="operate-btn" style="{{themeObject.bgStyle}}" @tap="showOperate">操作</view>
+                </view>
+                <view class="scroll_item b_bottom_after flex_center">
+                  <view class="pic flex_left"><view class="img"><text class="al al-user-profile font25"></text></view></view>
+                  <view  class="flex_cell">
+                    <view class="font15 bold">大额优惠券，快来一起抢卷吧！先到先得</view>
+                    <view class="color-gray01 font14 flex_left"><text class="al al-yan font25 mr5"></text>10 <text class="al al-share font20 mr5 ml10"></text>10</view>
+                    <view class="color-gray3 font12">2020-04-09 13：30</view>
+                  </view>
+                  <view class="operate-btn" style="{{themeObject.bgStyle}}" @tap="showOperate">操作</view>
+                </view>
+              </repeat>
+              <view class="load-end-area loading" wx:if="{{isLoading1}}"></view>
+              <view class="load-end-area done" wx:elif="{{isDone1}}"></view>
+              <view wx:if="{{showOperate}}" class="modalarea">
+                <view class="operate-area bg-white">
+                  <view class="operate-item b_bottom" @tap="toStatistics">统计</view>
+                  <view class="operate-item b_bottom">停止活动</view>
+                  <view class="operate-item b_bottom" @tap="hideOperate">取消</view>
+                </view>
+              </view>
+          </view>
+      </block>
+      </block>
+    </block>
+  </view>
+  <view wx:if="{{disBtn}}" class="card-bottom-btn flex_center">
+    <view class="btn-item flex_cell flex_center" wx:if="{{cardInfo && cardInfo.id}}">
+      <button class="btn bg-orange color-white" open-type="share">分享优惠券</button>
+    </view>
+    <view class="btn-item flex_cell flex_center" wx:if="{{cardInfo && cardInfo.id}}">
+      <view class="btn" style="{{themeObject.bgStyle}}" @tap="addEvent">增加优惠券数量</view>
+    </view>
+    <view class="btn-item flex_cell flex_center" wx:else>
+      <view class="btn" style="{{themeObject.bgStyle}}" @tap="addEvent">立即创建优惠券</view>
+    </view>
+  </view>
+  <view wx:if="{{showShareModal}}" class="auto-modal share-modal flex_center">
+    <view class="modal-inner border-box">
+      <view class="align_left txt pt10 pb10">
+        <view class="icon-success flex_center" style="{{themeObject.borderStyle}}">
+          <text style="{{themeObject.colorStyle}}" class="al al-duihao2"></text>
+        </view>
+        <view style="{{themeObject.colorStyle}}" class="flex_center mt10">{{tipTxt}}</view>
+        <button style="{{themeObject.bgStyle}}" class="btn-share" open-type="share">立即分享</button>
+      </view>
+      <form class="close-area flex_center" bindsubmit="closeShareModal" report-submit="true">
+        <button formType="submit" class="al al-close1"></button>
+      </form>
+    </view>
+  </view>
+  <view class="product-checked-area columnarea product-user-checked-area" :class="{'fade-out' : showUserOpt, 'fade-in' : !showUserOpt}">
+    <view class="checked-box columnarea" :class="{'slide-out' : showUserOpt, 'slide-in' : !showUserOpt}">
+      <view class="column-content columnarea">
+        <view class="part1">
+          <view class="align_center">选择客户</view>
+          <view class="product-search-outter b_bottom_after">
+            <view class="search-inner">
+              <input class="search-input" type="text" placeholder="搜索" bindinput="setKeyword" value="{{keyword}}" bindconfirm="searchKeyword" confirm-type="search" />
+              <view wx:if="{{keyword}}" class="flex_center color-gray font12 pl10 pr10" bindtap="cancelSearch">取消</view>
+              <view wx:else class="flex_center color-gray font12 pl10 pr10"><text class="al al-sousuo font20"></text></view>
+            </view>
+          </view>
+        </view>
+        <view class="part2 column-content" style="position:relative;">
+         <scroll-view scroll-y="true" scroll-with-animation="true" bindscrollToUser="scrollToUser"  style="position:absolute;left:0;top:0;right:0;bottom:0;height:100%;">
+          <block wx:if="{{disList}}">
+            <view wx:if="{{!tabData.length}}" class="flex_empty">暂无相关数据</view>
+            <view wx:else class="list_area b_top_after">
+              <repeat for="{{tabData}}" item="item" index="index">
+                <view class="scroll_item b_bottom_after" data-data="{{item}}" bindtap="toUser">
+                  <view class="inner">
+                    <view class="ico-cell flex_left">
+                      <view class="app-radio" wx:if="{{item.checked}}" style="{{themeObject.borderStyle}}">
+                        <view class="checked-ico" style="{{themeObject.bgStyle}}"></view>
+                      </view>
+                      <view class="app-radio" wx:else></view>
+                    </view>
+                    <view class="pic">
+                      <image mode="aspectFill" src='{{item.photo}}' lazy-load></image>
+                    </view>
+                    <view class="data_txt">
+                      <view class="mb5 clamp1">{{item.title}}</view>
+                    </view>
+                  </view>
+                </view>
+              </repeat>
+              <view class="load-end-area loading" wx:if="{{isLoading}}"></view>
+              <view class="load-end-area done" wx:elif="{{isDone}}"></view>
+            </view>
+          </block>
+         </scroll-view>
+        </view>
+      </view>
+      <div data-v-c05f883e="" class="popup-bottom flex_center">
+        <div data-v-c05f883e="" class="flex_cell h_100 flex_center bg-gray color-white" @tap="closeCheckedUser">取消</div>
+        <div data-v-c05f883e="" class="flex_cell h_100 flex_center" style="{{themeObject.bgStyle}}" @tap="submitCheckedUser">确定</div>
+      </div>
+    </view>
+  </view>
+  <view class="product-checked-area columnarea product-user-checked-area" :class="{'fade-out' : showProductOpt, 'fade-in' : !showProductOpt}">
+    <view class="checked-box columnarea" :class="{'slide-out' : showProductOpt, 'slide-in' : !showProductOpt}">
+      <view class="column-content columnarea">
+        <view class="part1">
+          <view class="align_center">选择商品</view>
+          <view class="product-search-outter b_bottom_after">
+            <view class="search-inner">
+              <input class="search-input" type="text" placeholder="搜索" bindinput="setKeyword1" value="{{keyword1}}" bindconfirm="searchKeyword1" confirm-type="search" />
+              <view wx:if="{{keyword1}}" class="flex_center color-gray font12 pl10 pr10" bindtap="cancelSearch1">取消</view>
+              <view wx:else class="flex_center color-gray font12 pl10 pr10"><text class="al al-sousuo font20"></text></view>
+            </view>
+          </view>
+        </view>
+        <view class="part2 column-content" style="position:relative;">
+         <scroll-view scroll-y="true" scroll-with-animation="true" bindscrollToUser="scrollToProduct"  style="position:absolute;left:0;top:0;right:0;bottom:0;height:100%;">
+          <block wx:if="{{disList2}}">
+            <view wx:if="{{!tabData2.length}}" class="flex_empty">暂无相关数据</view>
+            <view wx:else class="list_area b_top_after">
+              <repeat for="{{tabData2}}" item="item" index="index">
+                <view class="scroll_item b_bottom_after" data-data="{{item}}" bindtap="toProduct">
+                  <view class="inner">
+                    <view class="ico-cell flex_left">
+                      <view class="app-radio" wx:if="{{item.checked}}" style="{{themeObject.borderStyle}}">
+                        <view class="checked-ico" style="{{themeObject.bgStyle}}"></view>
+                      </view>
+                      <view class="app-radio" wx:else></view>
+                    </view>
+                    <view class="pic">
+                      <image mode="aspectFill" src='{{item.photo}}' lazy-load></image>
+                    </view>
+                    <view class="data_txt">
+                      <view class="mb5 clamp1">{{item.title}}</view>
+                      <view class="mb5 clamp1 color-red" wx:if="{{item.sellingpoint && item.sellingpoint != ''}}">{{item.sellingpoint}}</view>
+                      <view class="mb5 font12 clamp1" wx:if="{{item.minprice && item.maxprice && item.minprice != '' && item.maxprice != '' && item.minprice != item.maxprice}}">￥{{item.minprice}}-{{item.maxprice}}</view>
+                      <view class="mb5 font12 clamp1" wx:elif="{{item.minprice && item.minprice != ''}}">￥{{item.minprice}}</view>
+                      <view class="mb5 font12 clamp1" wx:else>￥{{item.price}}</view>
+                      <view class="flex_left">
+                        <view class="flex_cell">
+                          <view class="w_100 font12 color-gray clamp1">
+                            <text>分享赚:</text>
+                            <text class="color-red" wx:if="{{item.minsalesrebate && item.maxsalesrebate && item.minsalesrebate != item.maxsalesrebate}}"> ￥{{ item.minsalesrebate }}-{{ item.maxsalesrebate }}</text>
+                            <text class="color-red" wx:elif="{{item.options.length && item.minsalesrebate && item.minsalesrebate != ''}}"> ￥{{ item.minsalesrebate }}</text>
+                            <text class="color-red" wx:else> ￥{{ item.newsalesrebate }}</text>
+                          </view>
+                        </view>
+                        <view class="empty-cell"></view>
+                      </view>
+                    </view>
+                  </view>
+                </view>
+              </repeat>
+              <view class="load-end-area loading" wx:if="{{isLoading2}}"></view>
+              <view class="load-end-area done" wx:elif="{{isDone2}}"></view>
+            </view>
+          </block>
+         </scroll-view>
+        </view>
+      </view>
+      <div data-v-c05f883e="" class="popup-bottom flex_center">
+        <div data-v-c05f883e="" class="flex_cell h_100 flex_center bg-gray color-white" @tap="closeCheckedProduct">取消</div>
+        <div data-v-c05f883e="" class="flex_cell h_100 flex_center" style="{{themeObject.bgStyle}}" @tap="submitCheckedProduct">确定</div>
+      </div>
+    </view>
+  </view>
+    <view class="modalarea flex_center" wx:if="{{isSetMaxMoney}}">
+      <form class="modal" bindsubmit="SetMaxMoney" bindreset="closeSetModal" report-submit="true">
+        <view class="pagetop flex_center b_bottom_after">
+          <view class="clamp1">设置金额</view>
+        </view>
+        <view class="pagemiddle padding10">
+          <view class="mb12 flex_center">
+            每人最多领取
+            <input fixed class="flex_cell money-input border-gray" name="title" value="{{maxMoney}}" bindinput="inputMaxMoney"/>
+              元
+          </view>
+          <view>微信规定每个红包不能小于0.3元,所发放的红包金额将在0.3元和设置的金额之间随机</view>
+        </view>
+        <view class="pagebottom flex_center b_top_after">
+          <view class="flex_cell flex_center">
+            <button class="btn bg-gray02 color-white flex_center" form-type="reset">取消</button>
+          </view>
+          <view class="flex_cell flex_center">
+            <button class="btn bg-theme color-white flex_center" style="{{themeObject.bgStyle}}" form-type="submit">设置</button>
+          </view>
+        </view>
+      </form>
+    </view>
+    <view class="modalarea flex_center" wx:if="{{isRecharge}}">
+      <form class="modal" bindsubmit="saveRecharge" bindreset="closeRechargeModal" report-submit="true">
+        <view class="pagetop flex_center b_bottom_after">
+          <view class="clamp1">充值金额</view>
+        </view>
+        <view class="pagemiddle padding10">
+          <view class="mb12 money-conut-area">
+            <repeat for="{{rechargeAmount}}" item="item" index="index">
+              <view class="money-conut-btn mb10" data-flag="{{index}}" data-item="{{item}}" @tap="checkedRecharge" style="{{checkedIndex == index ? themeObject.bgStyle : themeObject.colorStyle+themeObject.borderStyle}}">{{item}}元</view>
+            </repeat>
+          </view>
+          <view class="align_center" style="{{themeObject.colorStyle}}">微信收取手续费0.6%</view>
+        </view>
+        <view class="pagebottom flex_center b_top_after">
+          <view class="flex_cell flex_center">
+            <button class="btn bg-gray02 color-white flex_center" form-type="reset">取消</button>
+          </view>
+          <view class="flex_cell flex_center">
+            <button class="btn bg-theme color-white flex_center" style="{{themeObject.bgStyle}}" form-type="submit">充值</button>
+          </view>
+        </view>
+      </form>
+    </view>
+    <view wx:if="{{isWithdrawal}}" class="auto-modal flex_center">
+      <view class="modal-inner border-box" style="width:80%;">
+        <view class="align_center padding20">确定要提现吗？</view>
+        <form class="db b_top_after" style="height:50px;" bindsubmit="submitWithdrawal" bindreset="closeWithdrawal" report-submit="true">
+          <view class="w_100 h_100 flex_center">
+            <button class="flex_cell flex_center h_100 b_right_after" form-type="reset">取消</button>
+            <button class="flex_cell flex_center h_100 color-orange" form-type="submit">确定</button>
+          </view>
+        </form>
+      </view>
+    </view>
+</template>
+
+<script>
+import wepy from 'wepy'
+import Util from '@/libs/util'
+import Time from '@/libs/time'
+import Config from '@/config'
+export default class extends wepy.page {
+  config = {
+    enablePullDownRefresh: true,
+    backgroundTextStyle: 'dark'
+  }
+  data = {
+    selectedIndex: 0,
+    disList1: false,
+    tabData1: [],
+    isLoading1: false,
+    isDone1: false,
+    themeObject: {},
+    addCount: '',
+    showShareModal: false,
+    cardMoney: '',
+    resultObject: {
+      cardcount: 0,
+      lingqu: 0,
+      used: 0
+    },
+    product: {},
+    cardInfo: {},
+    tipTxt: '',
+    disBtn: false,
+    flag: -1,
+    isOpen: false,
+    showProductOpt: false,
+    showUserOpt: false,
+    disList: false,
+    tabData: [],
+    isLoading: false,
+    isDone: false,
+    disList2: false,
+    tabData2: [],
+    isLoading2: false,
+    isDone2: false,
+    user: {},
+    activeName: '',
+    rewardword: '',
+    isSetMaxMoney: false,
+    maxMoney: 0.3,
+    inputMaxMoney: 0.3,
+    isWithdrawal: false,
+    checkedIndex: 1,
+    isRecharge: false,
+    showOperate: false,
+    keyword: '',
+    keyword1: '',
+    rechargeAmount: [5, 20, 50, 100, 300, 500]
+  }
+  onPullDownRefresh () {
+    wepy.showNavigationBarLoading()
+    setTimeout(function () {
+      wepy.hideNavigationBarLoading()
+      wepy.stopPullDownRefresh()
+    }, 500)
+    this.refreshPage()
+  }
+  onReachBottom () {
+    if (this.selectedIndex === 1 && this.tabData1.length === (this.pageStart1 + 1) * this.limit) {
+      this.pageStart1++
+      this.getData1()
+    }
+  }
+  getData1 = function () {
+    wepy.request({
+      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/card/retailerCardStat`,
+      data: {productid: this.productid, pagestart: this.pageStart1, limit: this.limit},
+      method: 'post'
+    }).then(res => {
+      this.isLoading = false
+      const data = res.data
+      for (let key in this.resultObject) {
+        if (data[key]) {
+          this.resultObject[key] = data[key]
+        }
+      }
+      let retdata = data.data ? data.data : data
+      for (let i = 0; i < retdata.length; i++) {
+        retdata[i].dateline_str = new Time(retdata[i].dateline * 1000).dateFormat('yyyy-MM-dd hh:mm')
+        retdata[i].deadline_str = new Time(retdata[i].deadline * 1000).dateFormat('yyyy-MM-dd hh:mm')
+      }
+      this.tabData1 = this.tabData1.concat(retdata)
+      this.disList1 = true
+      wepy.stopPullDownRefresh()
+      this.$apply()
+    })
+  }
+  getData = function () {
+    wepy.showLoading()
+    wepy.request({
+      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/retailer/customerList`,
+      data: {pagestart: this.pageStart, limit: this.limit, orderby: 'dateline', appid: Config.AppId},
+      method: 'post'
+    }).then(res => {
+      wepy.hideLoading()
+      this.isLoading = false
+      const data = res.data
+      let retdata = data.data ? data.data : data
+      this.tabData = this.tabData.concat(retdata)
+      this.disList = true
+      if (retdata.length < this.limit && this.tabData.length) {
+        this.isDone = true
+      } else {
+        this.isDone = false
+      }
+      wepy.stopPullDownRefresh()
+      this.$apply()
+    })
+  }
+  getData2 = function () {
+    wepy.showLoading()
+    let params = {fid: Config.Fid, pagestart: this.pageStart2, limit: this.limit, showcustomers: 1}
+    if (this.keyword1 && this.keyword1 !== '' && Util.trim(this.keyword1) !== '') {
+      params.keyword = Util.trim(this.keyword1)
+    }
+    wepy.request({
+      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/factory/factoryproductList`,
+      data: params,
+      method: 'post'
+    }).then(res => {
+      wepy.hideLoading()
+      this.isLoading2 = false
+      const data = res.data
+      let retdata = data.data ? data.data : data
+      this.tabData2 = this.tabData2.concat(retdata)
+      this.disList2 = true
+      if (retdata.length < this.limit && this.tabData2.length) {
+        this.isDone2 = true
+      } else {
+        this.isDone2 = false
+      }
+      wepy.stopPullDownRefresh()
+      this.$apply()
+    })
+  }
+  refreshPage () {
+    this.flag = parseInt(this.checked.flag)
+    this.selectedIndex = 0
+    this.disList1 = false
+    this.tabData1 = []
+    this.pageStart1 = 0
+    this.disList = false
+    this.tabData = []
+    this.pageStart = 0
+    this.disList2 = false
+    this.tabData2 = []
+    this.pageStart2 = 0
+    this.$apply()
+    this.handlePageData()
+  }
+  handlePageData () {
+    this.globalData = this.$parent.globalData
+    Util.appInit(this.globalData, this)
+    this.userInfo = this.globalData.userInfo
+    wepy.request({
+      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/card/retailerCardList`,
+      data: {productid: this.productid},
+      method: 'post'
+    }).then(res => {
+      const data = res.data
+      if (data.flag) {
+        const retdata = data.data
+        if (retdata) {
+          this.cardInfo = retdata
+          this.cardMoney = this.cardInfo.cardmoney
+        }
+        this.product = data.productinfo
+      }
+      this.disBtn = true
+      this.$apply()
+    })
+    this.$apply()
+  }
+  onLoad (checked) {
+    this.checked = checked
+    this.productid = this.checked.productid
+    this.flag = this.checked.flag ? parseInt(this.checked.flag) : -1
+    this.pageStart1 = 0
+    this.pageStart2 = 0
+    this.pageStart = 0
+    this.limit = Config.Limit
+    wepy.hideShareMenu()
+    this.$apply()
+  }
+  onShow () {
+    this.pageStart1 = 0
+    this.pageStart2 = 0
+    this.pageStart = 0
+    if (this.$parent.globalData.flag.bokaAuth) {
+      this.handlePageData()
+    } else {
+      this.$parent.loadCallback = () => {
+        this.handlePageData()
+      }
+    }
+  }
+  handleShare () {
+    let shareurl = `/${Config.Router.product}?id=${this.checked.id}&type=fpimport&module=fpimport&share_uid=${this.userInfo.uid}&share_wid=${this.globalData.Wid}&wid=${this.globalData.Wid}&shareuser=self&comefrom=${Config.AppName}`
+    let backUrl = encodeURIComponent(shareurl)
+    shareurl = `${shareurl}&currentUrl=${backUrl}`
+    this.shareParams = {
+      title: `【送你一张${this.cardMoney}元优惠券】${this.cardInfo.title}`,
+      imageUrl: this.cardInfo.photo.split(',')[0],
+      path: shareurl
+    }
+  }
+  onShareAppMessage (res) {
+    this.handleShare()
+    return this.shareParams
+  }
+  onShareTimeline () {
+    this.handleShare()
+    return this.shareParams
+  }
+  methods = {
+    inputChange (e) {
+      this.addCount = e.detail.value
+      this.$apply()
+    },
+    moneyChange (e) {
+      this.cardMoney = e.detail.value
+      this.$apply()
+    },
+    clickTab (e) {
+      this.selectedIndex = parseInt(e.currentTarget.dataset.current)
+      if (this.selectedIndex === 1 && !this.tabData1.length && this.productid) {
+        this.pageStart1 = 0
+        this.getData1()
+      }
+    },
+    addEvent () {
+      if (this.isSubmit) return false
+      let newCount = this.addCount
+      let postMoney = this.cardMoney
+      let activeName = this.activeName
+      let flag = this.flag
+      let rewardword = this.rewardword
+      let user = this.user
+      let numReg = /^[1-9]\d*$/
+      if (newCount === '') {
+        wepy.showToast({
+          title: '请输入优惠券数量',
+          icon: 'none'
+        })
+        return false
+      }
+      if (postMoney === '') {
+        wepy.showToast({
+          title: '请输入优惠券金额',
+          icon: 'none'
+        })
+        return false
+      }
+      if (rewardword === '' && flag === 1) {
+        wepy.showToast({
+          title: '请输入奖励语',
+          icon: 'none'
+        })
+        return false
+      }
+      if (rewardword.length > 30 && flag === 1) {
+        wepy.showToast({
+          title: '奖励语字数应在30字以内',
+          icon: 'none'
+        })
+        return false
+      }
+      if (JSON.stringify(user) === '{}' && flag === 1) {
+        wepy.showToast({
+          title: '请选择客户',
+          icon: 'none'
+        })
+        return false
+      }
+      if (activeName === '' && flag === 2) {
+        wepy.showToast({
+          title: '请输入活动名称',
+          icon: 'none'
+        })
+        return false
+      }
+      if (isNaN(newCount) || parseFloat(newCount) < 0 || !numReg.test(newCount)) {
+        wepy.showToast({
+          title: '请输入正确的优惠券数量',
+          icon: 'none'
+        })
+        return false
+      }
+      if (isNaN(postMoney) || parseFloat(postMoney) < 0) {
+        wepy.showToast({
+          title: '请输入正确的优惠券金额',
+          icon: 'none'
+        })
+        return false
+      }
+      if (parseFloat(postMoney) > this.product.minsalesrebate) {
+        wepy.showToast({
+          title: `优惠券金额不能超过${this.product.minsalesrebate}元`,
+          icon: 'none'
+        })
+        return false
+      }
+      this.isSubmit = false
+      this.shareObject = {
+        title: `【送你一张${this.cardMoney}元优惠券】`
+      }
+      this.isSubmit = true
+      wepy.showLoading()
+      let url = `${Config.BokaApi}/${Config[Config.ApiVersion]}/card/createRetailerCard`
+      let postData = {productid: this.productid, cardcount: newCount, cardmoney: postMoney}
+      if (this.cardInfo && this.cardInfo.id) {
+        url = `${Config.BokaApi}/${Config[Config.ApiVersion]}/card/retailerCardPlus`
+        postData = {id: this.cardInfo.id, add: newCount}
+      }
+      wepy.request({
+        url: url,
+        data: postData,
+        method: 'post'
+      }).then(res => {
+        wepy.hideLoading()
+        this.isSubmit = false
+        const data = res.data
+        if (data.flag) {
+          this.addCount = ''
+          if (this.cardInfo && this.cardInfo.id) {
+            this.tipTxt = '增加成功'
+            this.cardInfo.leftcount = this.cardInfo.leftcount + parseInt(newCount)
+          } else {
+            this.tipTxt = '创建成功'
+            this.cardInfo = data.cardinfo
+          }
+          this.showShareModal = true
+          this.$apply()
+        } else {
+          wepy.showToast({
+            title: data.error,
+            icon: 'none'
+          })
+        }
+      })
+    },
+    closeShareModal () {
+      this.showShareModal = false
+      this.$apply()
+    },
+    toHelp () {
+      wepy.navigateTo({url: `/packageD/pages/helpCenter?classid=${Config.CardClassID}`})
+    },
+    checkProduct () {
+      this.showProductOpt = true
+      if (!this.tabData2.length) {
+        this.getData2()
+      }
+      for (let i = 0; i < this.tabData2.length; i++) {
+        const curd = this.tabData2[i]
+        curd.checked = false
+      }
+    },
+    submitCheckedProduct () {
+      if (!this.checkedProductid) {
+        wepy.showToast({
+          title: '请选择商品',
+          icon: 'none'
+        })
+        return false
+      }
+      wepy.request({
+        url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/card/retailerCardList`,
+        data: {productid: this.checkedProductid},
+        method: 'post'
+      }).then(res => {
+        this.showProductOpt = false
+        const data = res.data
+        if (data.flag) {
+          const retdata = data.data
+          if (retdata) {
+            this.cardInfo = retdata
+            this.cardMoney = this.cardInfo.cardmoney
+          }
+          this.product = data.productinfo
+        }
+        this.disBtn = true
+        this.productid = this.checkedProductid
+        this.$apply()
+      })
+    },
+    closeCheckedProduct () {
+      this.showProductOpt = false
+    },
+    toProduct (e) {
+      const data = e.currentTarget.dataset.data
+      const curd = this.tabData2
+      for (let i = 0; i < curd.length; i++) {
+        if (data.id === curd[i].id && !curd[i].checked) {
+          curd[i].checked = true
+          this.checkedProductid = curd[i].moduleid
+        } else {
+          curd[i].checked = false
+        }
+      }
+    },
+    scrollToProduct () {
+      if (this.tabData2.length === (this.pageStart2 + 1) * this.limit) {
+        this.pageStart2++
+        this.isLoading2 = true
+        this.getData2()
+      }
+    },
+    setKeyword1 (e) {
+      this.keyword1 = e.detail.value
+    },
+    searchKeyword1 (e) {
+      if (e.detail.value !== '') this.keyword1 = e.detail.value
+      this.disList2 = false
+      this.tabData2 = []
+      this.pageStart2 = 0
+      this.getData2()
+    },
+    cancelSearch1 () {
+      this.keyword1 = ''
+      this.disList2 = false
+      this.tabData2 = []
+      this.pageStart2 = 0
+      this.getData2()
+    },
+    clickItem (e) {
+      const flag = e.currentTarget.dataset.flag
+      this.flag = parseInt(flag)
+    },
+    openPaper () {
+      this.isOpen = !this.isOpen
+    },
+    toSetmaxMoney () {
+      this.isSetMaxMoney = true
+    },
+    inputMaxMoney (e) {
+      this.inputMaxMoney = e.detail.value
+    },
+    SetMaxMoney () {
+      if (this.inputMaxMoney < 0.3 || isNaN(this.inputMaxMoney)) {
+        wepy.showToast({
+          title: '请输入正确金额',
+          icon: 'none'
+        })
+      } else {
+        this.maxMoney = this.inputMaxMoney
+        this.isSetMaxMoney = false
+      }
+    },
+    closeSetModal () {
+      this.isSetMaxMoney = false
+    },
+    Recharge () {
+      this.isRecharge = true
+    },
+    saveRecharge () {
+      this.isRecharge = false
+      wepy.request({
+        url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/retailer/payHongbao`,
+        data: {money: this.checkMoney, appid: Config.AppId},
+        method: 'post'
+      }).then(res => {
+        console.log(res)
+      })
+    },
+    closeRechargeModal () {
+      this.isRecharge = false
+    },
+    checkedRecharge (e) {
+      const flag = e.currentTarget.dataset.flag
+      this.checkedIndex = flag
+      this.checkMoney = e.currentTarget.dataset.item
+    },
+    Withdrawal () {
+      this.isWithdrawal = true
+    },
+    submitWithdrawal () {
+      this.isWithdrawal = false
+    },
+    closeWithdrawal () {
+      this.isWithdrawal = false
+    },
+    setRewardword (e) {
+      this.rewardword = e.detail.value
+      this.$apply()
+    },
+    checkUser () {
+      this.showUserOpt = true
+      if (!this.tabData.length) {
+        this.getData()
+      }
+      for (let i = 0; i < this.tabData.length; i++) {
+        const curd = this.tabData[i]
+        curd.checked = false
+      }
+    },
+    submitCheckedUser () {
+      if (!this.checkedUser) {
+        wepy.showToast({
+          title: '请选择客户',
+          icon: 'none'
+        })
+        return false
+      }
+      this.user = this.checkedUser
+      this.showUserOpt = false
+    },
+    closeCheckedUser () {
+      this.showUserOpt = false
+    },
+    toUser (e) {
+      const data = e.currentTarget.dataset.data
+      const curd = this.tabData
+      for (let i = 0; i < curd.length; i++) {
+        if (data.id === curd[i].id && !curd[i].checked) {
+          curd[i].checked = true
+          this.checkedUser = curd[i]
+        } else {
+          curd[i].checked = false
+        }
+      }
+    },
+    scrollToUser () {
+      if (this.tabData.length === (this.pageStart + 1) * this.limit) {
+        this.pageStart++
+        this.isLoading = true
+        this.getData()
+      }
+    },
+    setKeyword (e) {
+      this.keyword = e.detail.value
+    },
+    searchKeyword (e) {
+      if (e.detail.value !== '') this.keyword = e.detail.value
+      this.disList = false
+      this.tabData = []
+      this.pageStart = 0
+      this.getData()
+    },
+    cancelSearch () {
+      this.keyword = ''
+      this.disList = false
+      this.tabData = []
+      this.pageStart = 0
+      this.getData()
+    },
+    activeName (e) {
+      this.activeName = e.detail.value
+      this.$apply()
+    },
+    toStatistics () {
+      wepy.navigateTo({url: `packageC/pages/paperStats?actionid=${this.productid}`})
+    },
+    showOperate () {
+      this.showOperate = true
+    },
+    hideOperate () {
+      this.showOperate = false
+    }
+  }
+}
+</script>

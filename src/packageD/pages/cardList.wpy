@@ -1,0 +1,360 @@
+<style lang="less">
+.cardlist .lists{padding:0rpx 40rpx 120rpx;}
+.cardlist .nodata{
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    display:flex !important;justify-content: center; align-items: center;
+    color:#666666;
+    padding:20rpx;
+}
+.cardlist .scroll_item{
+  width: 100%;position:relative;background-color: #eb6b5e;color:#fff;
+  display: flex;justify-content: center;align-items: center;
+  margin-top:40rpx;
+}
+.cardlist .scroll_item.grayitem{background-color: #999;}
+.cardlist .scroll_item .txt{color:#fff;}
+.cardlist .scroll_item.grayitem .txt{color:orange;}
+.cardlist .txt-cell{position:relative;padding-top:30rpx;padding-bottom:30rpx;padding-left:20rpx;box-sizing: border-box;}
+.cardlist .txt-cell:after{
+  content:"";display:block;
+  border-right:#f5f9fa 1px dashed;
+	position: absolute;right: 0;top: 0;bottom:0px;
+	-webkit-transform: scaleX(0.5) translateX(0.5px);
+	transform: scaleX(0.5) translateX(0.5px);
+	-webkit-transform-origin: 0% 0%;
+	transform-origin: 0% 0%;
+}
+.cardlist .forbid{position:relative;padding-top:30rpx;padding-bottom:30rpx;padding-left:20rpx;box-sizing: border-box;}
+.cardlist .forbid:after{
+  content:"";display:block;
+  border-right:#f5f9fa 1px dashed;
+	position: absolute;right: 0;top: -13px;bottom:0px;
+	-webkit-transform: scaleX(0.5) translateX(0.5px);
+	transform: scaleX(0.5) translateX(0.5px);
+	-webkit-transform-origin: 0% 0%;
+	transform-origin: 0% 0%;
+  height: 118px;
+}
+.cardlist .scroll_item .ball{
+  position: absolute;
+  right: -28rpx;
+  width: 60rpx;
+  height: 60rpx;
+  background-color: #f5f9fa;
+  border-radius: 50%;
+}
+.cardlist .scroll_item .ball-up{top: -30rpx;}
+.cardlist .scroll_item .ball-down{bottom: -30rpx;}
+.cardlist .scroll_item .pic{width:100rpx;}
+.cardlist .scroll_item .pic image{width:80rpx;height:80rpx;border-radius:50%;}
+.cardlist .btn-cell{width:180rpx;padding-top:30rpx;padding-bottom:30rpx;box-sizing: border-box;}
+.cardlist .btn-cell .al{font-size:130rpx;}
+.cardlist .btn-cell .icon-chat{margin-top:8rpx;}
+.cardlist .rbtn{display:inline-block;padding:10rpx;border-radius:10rpx;background-color: #fff;}
+.modalarea .modal{height:700rpx;}
+.modalarea .radio-group{width:100%;padding:20rpx;box-sizing: border-box;}
+.modalarea .radio-group .radio:not(:last-child){margin-bottom:20rpx;}
+.cardlist .fixed-icon{
+  position: absolute;z-index:10;bottom: 20rpx;right:30rpx;
+  font-size: 80rpx;width:80rpx;height:80rpx;color:#fff;border-radius:50%;
+}
+.cardlist .tag-add{right:20rpx;}
+.cardlist .fixed-icon .inner{width:100%;height:100%;}
+.cardlist .fixed-icon .al{font-weight:bold;color:#fff;font-size:52rpx;margin-top:-4rpx;}
+.w120{width:120px;}
+</style>
+<template>
+  <view class="container cardlist columnarea">
+    <view class="app-tab">
+      <view class="tab-item {{selectedIndex == 0 ? 'active' : ''}}" data-current="0" bindtap="clickTab">
+        <text style="{{selectedIndex == 0 ? themeObject.colorStyle : ''}}">未使用</text>
+        <view class="line" style="{{selectedIndex == 0 ? themeObject.bgStyle : ''}}"></view>
+      </view>
+      <view class="tab-item {{selectedIndex == 1 ? 'active' : ''}}" data-current="1" bindtap="clickTab">
+        <text style="{{selectedIndex == 1 ? themeObject.colorStyle : ''}}">已使用</text>
+        <view class="line" style="{{selectedIndex == 1 ? themeObject.bgStyle : ''}}"></view>
+      </view>
+    </view>
+    <swiper class="column-content" current="{{selectedIndex}}" duration="300" bindchange="switchTab">
+      <swiper-item>
+        <block wx:if="{{disList1}}">
+          <view wx:if="{{!tabData1.length}}" class="nodata">你还没有未使用的优惠券</view>
+          <scroll-view wx:else scroll-y="true" class="scroll-h" bindscrolltolower="scrollEvent1">
+            <view class="lists">
+              <repeat for="{{tabData1}}" item="item" index="index">
+                <view class="scroll_item" :class="{'grayitem': item.validate <= 0}" @tap="toUse({{item}})">
+                  <view class="flex_cell txt-cell" style="overflow:visible">
+                    <view class="font20 txt">满{{item.ordermoney}}减{{item.money}}</view>
+                    <view class="font12 w_100 flex_left">
+                      <block wx:if="{{item.limitpid}}">
+                        <text class="w40">仅限【</text>
+                        <text class="clamp1 producttitle" :class="{'w120' : item.producttitle.length >= 10 }">{{item.producttitle}}</text>
+                        <text class="w40">】使用</text>
+                      </block>
+                      <text wx:else class="clamp1 producttitle" :class="{'w120' : item.producttitle.length >= 10 }">{{item.producttitle}}</text>
+                    </view>
+                    <view class="font12">到期时间 {{item.deadline_str}}</view>
+                    <view class="ball ball-up"></view>
+                    <view class="ball ball-down"></view>
+                  </view>
+                  <view class="btn-cell flex_center" wx:if="{{item.validate}}">
+                    <view class="rbtn color-theme" style="{{themeObject.colorStyle}}">去使用</view>
+                  </view>
+                  <view class="flex_center" style="width:110px;" wx:else>
+                    <text class="al al-yiguoqi" style="font-size:50px;"></text>
+                  </view>
+                </view>
+              </repeat>
+            </view>
+          </scroll-view>
+        </block>
+      </swiper-item>
+      <swiper-item>
+        <block wx:if="{{disList2}}">
+          <view wx:if="{{!tabData2.length}}" class="nodata">你还没有已使用的优惠券</view>
+          <scroll-view wx:else scroll-y="true" class="scroll-h" bindscrolltolower="scrollEvent2">
+            <view class="lists">
+              <repeat for="{{tabData2}}" item="item" index="index">
+                <view class="scroll_item grayitem">
+                  <view class="flex_cell forbid" style="overflow:visible;">
+                    <view class="font20 clamp1 txt">满{{item.ordermoney}}减{{item.money}}</view>
+                    <view class="font12 w_100 flex_left">
+                      <text class="w40">仅限【</text>
+                      <text class="clamp1 producttitle" :class="{'w120' : item.producttitle.length >= 10 }">{{item.producttitle}}</text>
+                      <text class="w40">】使用</text>
+                    </view>
+                    <view class="font12" wx:if="{{item.usedateline}}">使用时间 {{item.usedateline_str}}</view>
+                    <view class="font12" wx:else>到期时间 {{item.deadline_str}}</view>
+                    <view class="ball ball-up" style="top:-30px;"></view>
+                    <view class="ball ball-down" style="bottom:-30px;"></view>
+                  </view>
+                  <view class="btn-cell flex_center" wx:if="{{item.used}}">
+                    <text class="al al-yishiyong1"></text>
+                  </view>
+                  <view class="btn-cell flex_center" wx:elif="{{item.validate}}">
+                    <text class="al al-yiguoqi"></text>
+                  </view>
+                </view>
+              </repeat>
+            </view>
+          </scroll-view>
+        </block>
+      </swiper-item>
+    </swiper>
+    <view class="modalarea flex_center" wx:if="{{disModal}}">
+      <view class="modal">
+        <view class="pagetop flex_center b_bottom_after">
+          <view class="clamp1">
+            <open-data type="groupName" open-gid="{{clickData.openGId}}"></open-data>
+          </view>
+        </view>
+        <view class="pagemiddle">
+          <view class="flext_center">
+            <radio-group class="radio-group" bindchange="radioChange">
+              <repeat for="{{classArr}}" item="item" index="index">
+                <label class="radio db">
+                  <radio value="{{item.name}}" checked="{{item.checked}}"/>{{item.value}}
+                </label>
+              </repeat>
+            </radio-group>
+          </view>
+        </view>
+        <view class="pagebottom flex_center b_top_after">
+          <view class="flex_cell flex_center">
+            <view class="btn bg-gray02 color-white flex_center" bindtap="closeModal">取消</view>
+          </view>
+          <view class="flex_cell flex_center">
+            <view class="btn bg-blue color-white flex_center" bindtap="submitModal">确定</view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy'
+import Util from '@/libs/util'
+import Time from '@/libs/time'
+import Config from '@/config'
+export default class CardList extends wepy.page {
+  config = {
+    enablePullDownRefresh: true,
+    backgroundTextStyle: 'dark'
+  }
+  data = {
+    options: {},
+    globalData: {},
+    userInfo: null,
+    disModal: false,
+    lastIndex: 0,
+    selectedIndex: 0,
+    disList1: false,
+    disList2: false,
+    tabData1: [],
+    tabData2: [],
+    themeObject: {}
+  }
+  dateFormat (value) {
+    return new Time(value * 1000).dateFormat('yyyy-MM-dd')
+  }
+  onPullDownRefresh () {
+    wepy.showNavigationBarLoading()
+    setTimeout(function () {
+      wepy.hideNavigationBarLoading()
+      wepy.stopPullDownRefresh()
+    }, 500)
+    this.refreshPage()
+  }
+  scrollEvent1 () {
+    if (this.tabData1.length === (this.pageStart1 + 1) * this.limit) {
+      this.pageStart1++
+      this.getData1()
+    }
+  }
+  scrollEvent2 () {
+    if (this.tabData2.length === (this.pageStart2 + 1) * this.limit) {
+      this.pageStart2++
+      this.getData2()
+    }
+  }
+  getData1 = function () {
+    wepy.request({
+      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/card/cardList`,
+      data: {fid: Config.Fid, from: 'user', used: 0, pagestart: this.pageStart1, limit: this.limit},
+      method: 'post'
+    }).then(res => {
+      const data = res.data
+      let retdata = data.data ? data.data : data
+      for (let i = 0; i < retdata.length; i++) {
+        retdata[i].dateline_str = new Time(retdata[i].dateline * 1000).dateFormat('yyyy-MM-dd hh:mm')
+      }
+      this.tabData1 = this.tabData1.concat(retdata)
+      this.disList1 = true
+      wepy.stopPullDownRefresh()
+      this.$apply()
+    })
+  }
+  getData2 = function () {
+    wepy.request({
+      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/card/cardList`,
+      data: {fid: Config.Fid, from: 'user', used: 1, pagestart: this.pageStart2, limit: this.limit},
+      method: 'post'
+    }).then(res => {
+      const data = res.data
+      let retdata = data.data ? data.data : data
+      for (let i = 0; i < retdata.length; i++) {
+        retdata[i].usedateline_str = new Time(retdata[i].usedateline * 1000).dateFormat('yyyy-MM-dd hh:mm')
+      }
+      this.tabData2 = this.tabData2.concat(retdata)
+      this.disList2 = true
+      this.$apply()
+    })
+  }
+  refreshPage () {
+    this.selectedIndex = 0
+    this.disList1 = false
+    this.disList2 = false
+    this.tabData1 = []
+    this.tabData2 = []
+    this.pageStart1 = 0
+    this.pageStart2 = 0
+    this.$apply()
+    this.handlePageData()
+  }
+  switchData () {
+    switch (this.selectedIndex) {
+      case 0:
+        if (!this.tabData1.length) {
+          this.pageStart1 = 0
+          this.getData1()
+        }
+        break
+      case 1:
+        if (!this.tabData2.length) {
+          this.pageStart2 = 0
+          this.getData2()
+        }
+        break
+    }
+  }
+  handlePageData () {
+    this.globalData = this.$parent.globalData
+    Util.appInit(this.globalData, this)
+    this.userInfo = this.globalData.userInfo
+    if (this.lastIndex === this.selectedIndex) {
+      this.switchData()
+    }
+    this.$apply()
+  }
+  onLoad (options) {
+    this.options = options
+    this.pageStart1 = 0
+    this.pageStart2 = 0
+    this.limit = Config.Limit
+    wepy.hideShareMenu()
+    this.$apply()
+  }
+  onShow () {
+    this.pageStart1 = 0
+    this.pageStart2 = 0
+    if (this.$parent.globalData.flag.bokaAuth) {
+      this.handlePageData()
+    } else {
+      this.$parent.loadCallback = () => {
+        this.handlePageData()
+      }
+    }
+  }
+  methods = {
+    toUse (item) {
+      if (item.validate === 0) return false
+      if (!item.limitpid) {
+        wepy.reLaunch({url: '/pages/index'})
+        return false
+      }
+      if (item.cardtype === 'retailercard') {
+        if (item.wid === this.globalData.Wid) {
+          wepy.navigateTo({url: `/${Config.Router.product}?id=${item.limitpid}`})
+        } else {
+          let txt1 = '请点击'
+          let txt2 = '分享的链接使用优惠券'
+          wepy.showToast({
+            title: `${txt1}【${item.retailer}】${txt2}`,
+            icon: 'none'
+          })
+        }
+      } else {
+        wepy.navigateTo({url: `/${Config.Router.product}?id=${item.limitpid}`})
+      }
+    },
+    toHome (e) {
+      wepy.reLaunch({url: Config.HomePage})
+    },
+    formSubmit (e) {
+      wepy.navigateTo({url: e.currentTarget.dataset.url})
+    },
+    clickTab (e) {
+      this.selectedIndex = e.currentTarget.dataset.current
+    },
+    switchTab (e) {
+      this.selectedIndex = e.detail.current
+      this.lastIndex = this.selectedIndex
+      this.switchData()
+    },
+    toChat (e) {
+      const dataset = e.currentTarget.dataset
+      const curdata = dataset.data
+      const url = encodeURIComponent(`chat?uid=${curdata.wid}&fromModule=retailer&fromId=${curdata.wid}`)
+      wepy.navigateTo({url: `/pages/webview?url=${url}`})
+    },
+    toStore (e) {
+      const dataset = e.currentTarget.dataset
+      const curdata = dataset.data
+      wepy.navigateTo({url: `/${Config.Router.store}?wid=${curdata.wid}`})
+    }
+  }
+}
+</script>

@@ -1,0 +1,249 @@
+<style lang="less">
+.bk-productitem{
+  display:block;box-sizing: border-box;
+  .inner{box-shadow:0px 0px 6rpx 2rpx #e6ebed;}
+  .pic{
+    .yhq{
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 30% !important;
+      height: 30% !important;
+    }
+    .t-icon{
+      position:absolute;
+      left:0;
+      top:10px;
+      border-top-right-radius:20px;
+      border-bottom-right-radius:20px;
+      background-color:#fff;
+      padding:5px 10px 5px 5px;
+      font-size:12px;
+      box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 8rpx 2rpx;
+    }
+  }
+  .ico{
+    position:absolute;left:0;top:0;width:290rpx;height:50rpx;line-height:50rpx;
+    color:#fff;text-align:center;font-size: 24rpx;
+    -webkit-transform: translate(-100rpx,20rpx) rotate(-45deg);
+    transform: translate(-100rpx,20rpx) rotate(-45deg);z-index:1;
+    background-color:#d81e07;
+  }
+  .ico:after{content:"优惠券";}
+  .desbox{
+    height:130rpx;overflow:hidden;box-sizing: border-box;width:100%;
+    .title{text-align:left;}
+    .jsxuan{padding:0 10rpx;height:40rpx;text-align:center;line-height:40rpx;background-color:#fd8c2c;color:#fff;border-radius:4rpx;margin-right:10rpx;}
+    .txt1{padding-right:10rpx;box-sizing: border-box;color:#d81e07;}
+    .txt2{padding-right:10rpx;box-sizing: border-box;color:#999;height:38rpx;}
+  }
+}
+</style>
+<template>
+  <view class="product-options-area columnarea" :class="{'fade-out' : showProductOpt, 'fade-in' : !showProductOpt}">
+    <view class="column-content" bindtap="closeOptions"></view>
+    <view class="options-box columnarea" :class="{'slide-out' : showProductOpt, 'slide-in' : !showProductOpt}">
+      <form class="close-area flex_center" bindsubmit="closeOptions" report-submit="true">
+        <view class="w_100 h_100">
+          <button class="w_100 h_100 flex_center" form-type="submit">
+            <text class="al al-close"></text>
+          </button>
+        </view>
+      </form>
+      <view class="column-content columnarea">
+        <view class="part1 flex_left">
+          <view class="pic flex_left">
+            <image wx:if="{{selectedOption.photo && selectedOption.photo != ''}}" bindtap="viewBigImg" mode="aspectFill" data-url="{{selectedOption.photo}}" src="{{selectedOption.photo}}"></image>
+            <image wx:else bindtap="viewBigImg" mode="aspectFill" data-url="{{clickProduct.photo}}" src="{{clickProduct.photo}}"></image>
+          </view>
+          <view class="flex_cell flex_left">
+            <view class="w_100">
+              <view class="color-theme" style="{{themeObject.colorStyle}}"><text>￥</text><text class="bold font16">{{selectedOption.price}}</text></view>
+              <view class="mt10 color-gray">库存{{selectedOption.storage}}{{clickProduct.unit}}</view>
+              <view class="mt10 clamp2" style="-webkit-line-clamp: 4;" wx:if="{{selectedOption.title}}">已选: {{selectedOption.title}}</view>
+              <view class="mt10" wx:else>请选择规格</view>
+            </view>
+          </view>
+        </view>
+        <view class="part2 column-content" style="position:relative;">
+          <scroll-view scroll-y="1" style="position:absolute;left:0;top:0;right:0;bottom:0;height:100%;">
+            <view class="pt10">规格</view>
+            <view class="options-list">
+              <repeat for="{{clickProduct.options}}" item="item" index="index">
+                <view
+                  class="options-item {{(selectedOptionIndex == index && item.storage > 0) ? 'active' : ''}} {{item.storage <= 0 ? 'disabled' : ''}}"
+                  style="{{(selectedOptionIndex == index && item.storage > 0) ? themeObject.borderStyle + themeObject.colorStyle : ''}}"
+                  @tap="clickOptions" data-index="{{index}}" data-data="{{item}}">
+                  <view class="flex_center">
+                    <view class="img">
+                      <image wx:if="{{item.photo && item.photo != ''}}" mode="aspectFill" src="{{item.photo}}"></image>
+                      <image wx:else mode="aspectFill" src="{{clickProduct.photo}}"></image>
+                    </view>
+                    <text class="ml5">{{item.title}}</text>
+                  </view>
+                </view>
+              </repeat>
+            </view>
+            <block wx:if="{{saveMoneyMode && fromModule == 'product' && userInfo.regwid && userInfo.bindstatus && (fromPage != 'home' || showRebate) && selectedOption.memberprice && selectedOption.memberprice != ''}}">
+              <view class="pt10 pb10 b_bottom_after levelarea">
+                <view class="db-flex">
+                  <view class="flex_cell flex_left">合伙人价格: <text style="{{themeObject.colorStyle}}">￥{{ selectedOption.memberprice }}</text></view>
+                </view>
+              </view>
+            </block>
+          </scroll-view>
+        </view>
+      </view>
+      <block wx:if="{{selectedOption.storage && afterSys && (fromModule != 'product' || (fromModule == 'product' && clickProduct.isshow == 1 && (!clickProduct.fromfid || (clickProduct.fromfid && clickProduct.originmoderate != 0))))}}">
+        <block wx:if="{{fromModule == 'cart'}}">
+          <view class="options-bottom">
+            <view class="w_100 h_100 flex_center">
+              <view class="flex_cell h_100 flex_center">
+                <button class="bg-theme color-white flex_center btn" style="{{themeObject.bgStyle}}" @tap="updateCartOption">确定</button>
+              </view>
+            </view>
+          </view>
+        </block>
+        <block wx:else>
+          <block wx:if="{{clickCart}}">
+            <view class="options-bottom">
+              <view class="w_100 h_100 flex_center">
+                <view class="flex_cell h_100 flex_center">
+                  <button class="bg-theme color-white flex_center btn" style="{{themeObject.bgStyle}}" @tap="toAddCart">确定</button>
+                </view>
+              </view>
+            </view>
+          </block>
+          <block wx:else>
+            <block wx:if="{{(OnlyRetailerBuy && userInfo.regwid && userInfo.bindstatus) || !OnlyRetailerBuy}}">
+              <view class="options-bottom">
+                <view class="w_100 h_100 flex_center">
+                  <view class="flex_cell h_100 flex_center">
+                    <button class="bg-theme color-white flex_center btn" style="{{themeObject.bgStyle}}" @tap="buyOption">立即购买</button>
+                  </view>
+                </view>
+              </view>
+            </block>
+            <block wx:if="{{OnlyRetailerBuy && (!userInfo.regwid || !userInfo.bindstatus)}}">
+              <form class="options-bottom">
+                <view class="w_100 h_100 flex_center">
+                  <view class="flex_cell h_100 flex_center">
+                    <button class="bg-theme color-white flex_center btn" style="{{themeObject.bgStyle}}" @tap="retailerBuy">找店主下单</button>
+                  </view>
+                </view>
+              </form>
+            </block>
+          </block>
+        </block>
+      </block>
+    </view>
+  </view>
+</template>
+<script>
+  import wepy from 'wepy'
+  export default class extends wepy.component {
+    props = {
+      selectedOption: {
+        type: Object,
+        default: {}
+      },
+      selectedOptionIndex: {
+        type: Number,
+        default: 0
+      },
+      clickProduct: {
+        type: Object,
+        default: {}
+      },
+      themeObject: {
+        type: Object,
+        default: {}
+      },
+      afterSys: {
+        type: Boolean,
+        default: false
+      },
+      OnlyRetailerBuy: {
+        type: Boolean,
+        default: false
+      },
+      userInfo: {
+        type: Object,
+        default: {}
+      },
+      clickCart: {
+        type: Boolean,
+        default: false
+      },
+      fromModule: {
+        type: String,
+        default: ''
+      },
+      showRebate: {
+        type: Boolean,
+        default: false
+      },
+      fromPage: {
+        type: String,
+        default: ''
+      },
+      saveMoneyMode: {
+        type: Boolean,
+        default: false
+      }
+    }
+    data = {
+      showProductOpt: false,
+      isIOS: false
+    }
+    onLoad () {
+      wepy.getSystemInfo().then(res => {
+        if (res.model.indexOf('iPhone') > -1 || res.system.indexOf('iOS') > -1) {
+          this.isIOS = true
+        } else {
+          this.isIOS = false
+        }
+        this.$apply()
+      })
+    }
+    handleOptionsArea (type) {
+      if (type === 'show') {
+        this.showProductOpt = true
+      } else {
+        this.showProductOpt = false
+      }
+    }
+    methods = {
+      closeOptions () {
+        this.$emit('closeOptions')
+        this.handleOptionsArea()
+      },
+      clickOptions (e) {
+        const dataset = e.currentTarget.dataset
+        this.$emit('clickOptions', dataset)
+      },
+      buyOption () {
+        this.$emit('buyOption')
+      },
+      retailerBuy () {
+        this.$emit('retailerBuy')
+      },
+      viewBigImg (e) {
+        let url = e.currentTarget.dataset.url
+        wepy.previewImage({
+          urls: [url],
+          current: url
+        })
+      },
+      showOptions () {
+        this.handleOptionsArea('show')
+      },
+      toAddCart () {
+        this.$emit('toAddCart')
+      },
+      updateCartOption () {
+        this.$emit('updateCartOption')
+      }
+    }
+  }
+</script>

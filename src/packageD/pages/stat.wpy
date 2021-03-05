@@ -1,0 +1,503 @@
+<style lang="less">
+.stat-page{
+  background-color:#f5f9fa;
+  .app-tab .tab-item.active:after{height:6rpx;}
+  .sta_data {padding:20rpx;background-color:#fff;box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.07);}
+  .sta_data .data_item{width:33.3%;margin:20rpx 0;}
+  .sta_data .data_item:nth-child(1) .item_inner{background:#3ecbc0;}
+  .sta_data .data_item:nth-child(2) .item_inner{background:#f0cb51;}
+  .sta_data .data_item:nth-child(3) .item_inner{background:#aed370;}
+  .sta_data .data_item:nth-child(4) .item_inner{background:#69c8fc;}
+  .sta_data .data_item:nth-child(5) .item_inner{background:#ff9a6a;}
+  .sta_data .data_item:nth-child(6) .item_inner{background:#93cd9b;}
+  .sta_data .item_inner{
+    position:relative;
+    padding-bottom:65%;
+    width:65%;
+    height:0px;
+    background:#000;
+    border-radius:50%;
+    text-align: center;
+    margin:0 auto;
+  }
+  .sta_data .sta_count{
+    position:absolute;
+    width:100%;
+    height:100%;
+    color:#fff;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+  }
+  .sta_data .sta_txt{text-align: center;font-size:24rpx;color:#333;padding-top:20rpx;}
+  .scroll_list{
+    .data_item{
+      display:flex;
+      align-items:center;
+      padding:30rpx 30rpx;
+      box-sizing: border-box;
+      position:relative;
+    }
+    .data_item:after{
+      content:"";position:absolute;left:0;bottom:0;right:0;
+      height:1px;
+      border-bottom:1px solid #D9D9D9;
+      color:#D9D9D9;
+      -webkit-transform-origin:0 100%;
+      transform-origin:0 100%;
+      -webkit-transform:scaleY(0.5);
+      transform:scaleY(0.5);
+    }
+    .pic{
+      width:110rpx;
+      image{width:100rpx;height:100rpx;display: block;border-radius:50%;}
+    }
+    .data_txt{padding-left:20rpx;flex:1;}
+    .txt_name{font-size:28rpx;padding-bottom:4rpx;}
+    .date_txt{font-size:24rpx;color:#666;margin-top:6rpx;}
+    .ico-cell{
+      width:120rpx;
+      .contact{
+        width:100rpx;height:50rpx;border-radius:50rpx;
+        .al{color:#fff;font-size:40rpx;}
+      }
+    }
+    .detail_card{
+      background-color:#fff;
+      .detailInfo{
+        display:flex;padding:20rpx;box-sizing:border-box;flex-wrap: wrap;
+        .txt-item{width:50%;box-sizing:border-box;line-height:50rpx;}
+        .txt-item:nth-child(odd){padding-right:10rpx;}
+        .txt-item:nth-child(even){padding-left:10rpx;}
+      }
+    }
+  }
+  .tab-content{margin-top: 0rpx;padding:0rpx;height:auto;}
+  .icon-phone{width:35rpx;height:35rpx;background-color:red;color:#fff;border-radius:10rpx;text-align:center;line-height:35rpx;margin-top:7rpx;}
+}
+</style>
+<template>
+  <view wx:if="{{showContainer}}" class="stat stat-page">
+      <view class="padding10 font16 bg-theme color-white" style="{{themeObject.linearBgStyle}}">{{viewData.title}}</view>
+      <view class='sta_data flex_left' wx:if="{{radiusData.length > 0}}">
+        <repeat for="{{radiusData}}" item="item" index="index" wx:if="item">
+          <view class="data_item">
+            <view class="item_inner">
+              <view class="sta_count"><text>{{item.value}}</text></view>
+            </view>
+            <view class="sta_txt">{{item.title}}</view>
+          </view>
+        </repeat>
+      </view>
+      <view wx:if="{{tabData.length > 0}}" class="app-tab mt10">
+        <repeat for="{{tabData}}" item="item" index="index">
+          <view class="tab-item {{index == selectedIndex ? 'active' : ''}}" data-current="{{index}}" data-index="{{index}}" data-data="{{item}}" bindtap="clickTab">
+            <text style="{{index == selectedIndex ? themeObject.colorStyle : ''}}">{{item.title}}</text>
+            <view class="line" style="{{index == selectedIndex ? themeObject.bgStyle : ''}}"></view>
+          </view>
+        </repeat>
+      </view>
+      <view wx:if="{{tabData.length > 0}}" current="{{selectedIndex}}" class="tab-content" duration="300" bindchange="switchTab">
+        <repeat for="{{tabData}}" item="sitem" index="sindex">
+          <view class="scroll_list" wx:if="{{selectedIndex == sindex}}">
+            <block wx:if="{{!listData[sindex] || !listData[sindex].length}}">
+              <view class="havedata">
+                <view class="data_item flex_left">暂无数据</view>
+              </view>
+            </block>
+            <block wx:else>
+              <repeat for="{{listData[sindex]}}" item="item" index="index">
+                <view id="{{item.viewId}}" class="havedata" wx:if="{{tabData[sindex].type == 'buylist'}}" data-item="{{item}}" data-index="{{index}}">
+                  <view class="data_item" data-data="{{item}}" data-index="{{index}}" bindtap="expandEvent">
+                    <view class="pic">
+                      <image mode="aspectFill" wx:if="{{item.avatar && item.avatar != ''}}" src="{{item.avatar}}"></image>
+                      <image mode="aspectFill" wx:else src="https://tossharingsales.boka.cn/images/user.jpg"></image>
+                    </view>
+                    <view data-data="{{item}}" class="data_txt">
+                      <view class="txt_name">{{item.linkman}}</view>
+                      <view class="font12 color-gray2" wx:if="{{item.yingxiangli || item.percent}}">
+                        <text class="mr10" wx:if="{{item.yingxiangli}}">影响力: {{item.yingxiangli}}</text>
+                        <text wx:if="{{item.percent}}">成交概率: {{item.percent}}%</text>
+                      </view>
+                      <view class="date_txt">{{item.dateline_str}}</view>
+                    </view>
+                    <view class="ico-cell flex_right">
+                      <view class="contact flex_center" style="{{themeObject.bgStyle}}" data-data="{{item}}" data-index="{{index}}"><text class="al al-asmkticon0165"></text></view>
+                    </view>
+                  </view>
+                  <view wx:if="{{item.checked}}" class="detail_card">
+                    <view class="detailInfo w_100 color-gray b_bottom_after" data-data="{{item}}" data-index="{{index}}" bindtap="expandEvent">
+                      <view class="txt-item">性别: {{userData[item.uid].sex_str}}</view>
+                      <view class="txt-item flex_table" wx:if="{{userData[item.uid].mobile && userData[item.uid].mobile != ''}}">
+                        手机号: {{userData[item.uid].mobile}}<view class="icon-phone ml5" data-data="{{item}}" bindtap="toPhone"><text class="al al-dianhua font16"></text></view>
+                      </view>
+                      <view class="txt-item">地区: {{userData[item.uid].country}} {{userData[item.uid].province}} {{userData[item.uid].city}}</view>
+                      <view class="txt-item" wx:if="{{userData[item.uid].yingxiangli}}">影响力: <text class="color-red4">{{userData[item.uid].yingxiangli}}</text></view>
+                      <view class="txt-item" wx:if="{{userData[item.uid].uploader > 0}}">推荐人: {{userData[item.uid].uploadname}}</view>
+                      <view class="txt-item" wx:if="{{item.uid != userInfo.uid && userData[item.uid].customertype}}">客户类型: {{userData[item.uid].customertype}}</view>
+                      <view class="txt-item">获客时间: {{userData[item.uid].dateline_str}}</view>
+                    </view>
+                  </view>
+                </view>
+                <view id="{{item.viewId}}" class="havedata" wx:elif="{{tabData[sindex].type == 'sharelist'}}" data-item="{{item}}" data-index="{{index}}">
+                  <view class="data_item" data-data="{{item}}" data-index="{{index}}" bindtap="expandEvent">
+                    <view class="pic">
+                      <image mode="aspectFill" wx:if="{{item.avatar && item.avatar != ''}}" src="{{item.avatar}}"></image>
+                      <image mode="aspectFill" wx:else src="https://tossharingsales.boka.cn/images/user.jpg"></image>
+                    </view>
+                    <view data-data="{{item}}" class="data_txt">
+                      <view class="txt_name">{{item.linkman}}</view>
+                      <view class="font12 color-gray2" wx:if="{{item.yingxiangli || item.percent}}">
+                        <text class="mr10" wx:if="{{item.yingxiangli}}">影响力: {{item.yingxiangli}}</text>
+                        <text wx:if="{{item.percent}}">成交概率: {{item.percent}}%</text></view>
+                      <view class="date_txt">{{item.dateline_str}}</view>
+                    </view>
+                    <view class="ico-cell flex_right">
+                      <view class="contact flex_center" style="{{themeObject.bgStyle}}" data-data="{{item}}" data-index="{{index}}"><text class="al al-asmkticon0165"></text></view>
+                    </view>
+                  </view>
+                  <view wx:if="{{item.checked}}" class="detail_card">
+                    <view class="detailInfo w_100 color-gray b_bottom_after" data-data="{{item}}" data-index="{{index}}" bindtap="expandEvent">
+                      <view class="txt-item">性别: {{userData[item.uid].sex_str}}</view>
+                      <view class="txt-item flex_table" wx:if="{{userData[item.uid].mobile && userData[item.uid].mobile != ''}}">
+                        手机号: {{userData[item.uid].mobile}}<view class="icon-phone ml5" data-data="{{item}}" bindtap="toPhone"><text class="al al-dianhua font16"></text></view>
+                      </view>
+                      <view class="txt-item">地区: {{userData[item.uid].country}} {{userData[item.uid].province}} {{userData[item.uid].city}}</view>
+                      <view class="txt-item" wx:if="{{userData[item.uid].yingxiangli}}">影响力: <text class="color-red4">{{userData[item.uid].yingxiangli}}</text></view>
+                      <view class="txt-item" wx:if="{{userData[item.uid].uploader > 0}}">推荐人: {{userData[item.uid].uploadname}}</view>
+                      <view class="txt-item" wx:if="{{item.uid != userInfo.uid && userData[item.uid].customertype}}">客户类型: {{userData[item.uid].customertype}}</view>
+                      <view class="txt-item">获客时间: {{userData[item.uid].dateline_str}}</view>
+                    </view>
+                  </view>
+                </view>
+                <view id="{{item.viewId}}" class="havedata" wx:elif="{{tabData[sindex].type == 'viewlist' || tabData[sindex].type == 'shareview'}}" data-item="{{item}}" data-index="{{index}}">
+                  <view class="data_item" data-data="{{item}}" data-index="{{index}}" bindtap="expandEvent">
+                    <view class="pic">
+                      <image mode="aspectFill" wx:if="{{item.avatar && item.avatar != ''}}" src="{{item.avatar}}"></image>
+                      <image mode="aspectFill" wx:else src="https://tossharingsales.boka.cn/images/user.jpg"></image>
+                    </view>
+                    <view data-data="{{item}}" class="data_txt">
+                      <view class="txt_name">{{item.linkman}}</view>
+                      <view class="font12 color-gray2" wx:if="{{item.staytime}}">停留时间: {{item.staytime}}秒</view>
+                      <view class="font12 color-gray2" wx:if="{{item.yingxiangli || item.percent}}">
+                        <text class="mr10" wx:if="{{item.yingxiangli}}">影响力: {{item.yingxiangli}}</text>
+                        <text wx:if="{{item.percent}}">成交概率: {{item.percent}}%</text>
+                      </view>
+                      <view class="date_txt">{{item.dateline_str}}</view>
+                    </view>
+                    <view class="ico-cell flex_right">
+                      <view class="contact flex_center" style="{{themeObject.bgStyle}}" data-data="{{item}}" data-index="{{index}}"><text class="al al-asmkticon0165"></text></view>
+                    </view>
+                  </view>
+                  <view wx:if="{{item.checked}}" class="detail_card">
+                    <view class="detailInfo w_100 color-gray b_bottom_after" data-data="{{item}}" data-index="{{index}}" bindtap="expandEvent">
+                      <view class="txt-item">性别: {{userData[item.uid].sex_str}}</view>
+                      <view class="txt-item flex_table" wx:if="{{userData[item.uid].mobile && userData[item.uid].mobile != ''}}">
+                        手机号: {{userData[item.uid].mobile}}<view class="icon-phone ml5" data-data="{{item}}" bindtap="toPhone"><text class="al al-dianhua font16"></text></view>
+                      </view>
+                      <view class="txt-item">地区: {{userData[item.uid].country}} {{userData[item.uid].province}} {{userData[item.uid].city}}</view>
+                      <view class="txt-item" wx:if="{{userData[item.uid].yingxiangli}}">影响力: <text class="color-red4">{{userData[item.uid].yingxiangli}}</text></view>
+                      <view class="txt-item" wx:if="{{userData[item.uid].uploader > 0}}">推荐人: {{userData[item.uid].uploadname}}</view>
+                      <view class="txt-item" wx:if="{{item.uid != userInfo.uid && userData[item.uid].customertype}}">客户类型: {{userData[item.uid].customertype}}</view>
+                      <view class="txt-item">获客时间: {{userData[item.uid].dateline_str}}</view>
+                    </view>
+                  </view>
+                </view>
+                <view id="{{item.viewId}}" class="havedata" wx:else data-item="{{item}}" data-index="{{index}}">
+                  <view class="data_item" data-data="{{item}}" data-index="{{index}}" bindtap="expandEvent">
+                    <view class="pic">
+                      <image mode="aspectFill" wx:if="{{item.avatar && item.avatar != ''}}" src="{{item.avatar}}"></image>
+                      <image mode="aspectFill" wx:else src="https://tossharingsales.boka.cn/images/user.jpg"></image>
+                    </view>
+                    <view data-data="{{item}}" class="data_txt">
+                      <view class="txt_name">{{item.linkman}}</view>
+                      <view class="font12 color-gray2" wx:if="{{item.staytime}}">停留时间: {{item.staytime}}秒</view>
+                      <view class="font12 color-gray2" wx:if="{{item.yingxiangli || item.percent}}">
+                        <text class="mr10" wx:if="{{item.yingxiangli}}">影响力: {{item.yingxiangli}}</text>
+                        <text wx:if="{{item.percent}}">成交概率: {{item.percent}}%</text>
+                      </view>
+                      <view class="date_txt">{{item.dateline_str}}</view>
+                    </view>
+                    <view class="ico-cell flex_right">
+                      <view class="contact flex_center" style="{{themeObject.bgStyle}}" data-data="{{item}}" data-index="{{index}}"><text class="al al-asmkticon0165"></text></view>
+                    </view>
+                  </view>
+                  <view wx:if="{{item.checked}}" class="detail_card">
+                    <view class="detailInfo w_100 color-gray b_bottom_after" data-data="{{item}}" data-index="{{index}}" bindtap="expandEvent">
+                      <view class="txt-item">性别: {{userData[item.uid].sex_str}}</view>
+                      <view class="txt-item flex_table" wx:if="{{userData[item.uid].mobile && userData[item.uid].mobile != ''}}">
+                        手机号: {{userData[item.uid].mobile}}<view class="icon-phone ml5" data-data="{{item}}" bindtap="toPhone"><text class="al al-dianhua font16"></text></view>
+                      </view>
+                      <view class="txt-item">地区: {{userData[item.uid].country}} {{userData[item.uid].province}} {{userData[item.uid].city}}</view>
+                      <view class="txt-item" wx:if="{{userData[item.uid].yingxiangli}}">影响力: <text class="color-red4">{{userData[item.uid].yingxiangli}}</text></view>
+                      <view class="txt-item" wx:if="{{userData[item.uid].uploader > 0}}">推荐人: {{userData[item.uid].uploadname}}</view>
+                      <view class="txt-item" wx:if="{{item.uid != userInfo.uid && userData[item.uid].customertype}}">客户类型: {{userData[item.uid].customertype}}</view>
+                      <view class="txt-item">获客时间: {{userData[item.uid].dateline_str}}</view>
+                    </view>
+                  </view>
+                </view>
+              </repeat>
+            </block>
+          </view>
+        </repeat>
+      </view>
+  </view>
+  <view wx:if="{{showError}}" style="width:100%;height:100%;" class="flex_center bold font20">信息不存在</view>
+</template>
+<script>
+import wepy from 'wepy'
+import Config from '@/config'
+import Time from '@/libs/time'
+import Util from '@/libs/util'
+export default class Stat extends wepy.page {
+  data = {
+    userInfo: {},
+    showContainer: false,
+    showError: false,
+    globalData: {},
+    options: {},
+    viewData: null,
+    radiusData: [],
+    tabData: [],
+    listData: [],
+    selectedIndex: 0,
+    winHeight: 0,
+    dateline_str: '',
+    getsex: '',
+    userData: {},
+    scrollData: [],
+    toView: '',
+    themeObject: {}
+  }
+  initData () {
+    this.listData = []
+    this.scrollData = []
+  }
+  handlePageData () {
+    this.globalData = this.$parent.globalData
+    Util.appInit(this.globalData, this)
+    this.userInfo = this.globalData.userInfo
+    this.$apply()
+    if (this.options.id) {
+      this.initData()
+      wepy.request({
+        url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/statData/${this.options.module}`,
+        data: {id: this.options.id}
+      }).then(res => {
+        let retdata = res.data
+        if (retdata.moduleinfo) {
+          this.viewData = retdata.moduleinfo
+          this.radiusData = retdata.data
+          this.tabData = retdata.detail
+          for (let i = 0; i < this.tabData.length; i++) {
+            this.listData.push([])
+          }
+          this.switchEvent()
+          this.showError = false
+          this.showContainer = true
+        } else {
+          this.showError = true
+          this.showContainer = false
+        }
+        this.$apply()
+      })
+    }
+  }
+  onLoad (options) {
+    this.limit = Config.Limit
+    this.options = options
+    if (options.id) {
+      this.id = options.id
+    }
+    this.$apply()
+    wepy.getSystemInfo().then(res => {
+      let clientHeight = res.windowHeight
+      let clientWidth = res.windowWidth
+      let rpxR = 750 / clientWidth
+      let calc = clientHeight * rpxR - 100
+      this.winHeight = calc
+    })
+    if (this.$parent.globalData.flag.bokaAuth) {
+      this.handlePageData()
+    } else {
+      this.$parent.loadCallback = () => {
+        this.handlePageData()
+      }
+    }
+  }
+  getListData (index) {
+    const curtype = this.tabData[index].type
+    wepy.request({
+      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/statDetail/${this.options.module}`,
+      data: {type: curtype, id: this.options.id, pagestart: this.scrollData[this.selectedIndex].pagestart, limit: this.limit, wid: this.userInfo.regwid, appid: Config.AppId}
+    }).then(res => {
+      const data = res.data
+      let retdata = data.data ? data.data : data
+      for (var i = 0; i < retdata.length; i++) {
+        retdata[i].checked = false
+        retdata[i].viewId = `tab${this.selectedIndex}-item-${retdata[i].uid}`
+        retdata[i].dateline_str = new Time(retdata[i].dateline * 1000).dateFormat('yyyy-MM-dd hh:mm')
+        if (curtype === 'facelist') {
+          let arr = []
+          for (let key in retdata[i].answer) {
+            arr.push(retdata[i].answer[key])
+          }
+          if (arr.length) {
+            retdata[i].answer_str = arr.join(', ')
+          }
+        }
+      }
+      if (!this.listData[index]) {
+        this.listData[index] = []
+      }
+      this.listData[index] = this.listData[index].concat(retdata)
+      this.$apply()
+    })
+  }
+  switchEvent () {
+    if (this.scrollData.length === 0) {
+      for (let i = 0; i < this.tabData.length; i++) {
+        this.scrollData.push({ pagestart: 0 })
+        this.listData.push([])
+      }
+    }
+    if (!this.listData[this.selectedIndex].length) {
+      this.getListData(this.selectedIndex)
+    }
+    this.$apply()
+  }
+  onReachBottom (event) {
+    let index = this.selectedIndex
+    if (this.listData[index].length === (this.scrollData[index].pagestart + 1) * this.limit) {
+      this.scrollData[index].pagestart++
+      this.getListData(index)
+    }
+  }
+  methods = {
+    toSubscribe (e) {
+      wepy.navigateTo({url: `/pages/subscribe`})
+    },
+    scrollEvent () {
+      let index = this.selectedIndex
+      if (this.listData[index].length === (this.scrollData[index].pagestart + 1) * this.limit) {
+        this.scrollData[index].pagestart++
+        this.getListData(index)
+      }
+    },
+    toPhone (e) {
+      const data = e.currentTarget.dataset.data
+      const uid = data.uid
+      const number = this.userData[uid].mobile
+      wepy.makePhoneCall({
+        phoneNumber: number
+      }).then(res => {
+        console.log(number)
+      })
+    },
+    toChat (e) {
+      const data = e.currentTarget.dataset.data
+      const uid = data.uid
+      let tourl = encodeURIComponent(`chat?uid=${uid}&fromModule=retailer`)
+      wepy.navigateTo({url: `/pages/webview?url=${tourl}`})
+    },
+    toMember (e) {
+      const data = e.currentTarget.dataset.data
+      const uid = data.uid
+      let tourl = encodeURIComponent(`membersView?uid=${uid}`)
+      wepy.navigateTo({url: `/pages/webview?url=${tourl}`})
+    },
+    toTimeline (e) {
+      const curdata = e.currentTarget.dataset.data
+      const url = encodeURIComponent(`timeline?uid=${curdata.uid}`)
+      wepy.navigateTo({url: `/pages/webview?url=${url}`})
+    },
+    toPriority (e) {
+      const dataset = e.currentTarget.dataset
+      const curdata = dataset.data
+      const index = dataset.index
+      wepy.showLoading()
+      wepy.request({
+        url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/retailer/sellerAction`,
+        data: {action: 'stickcustomer', customeruid: curdata.uid},
+        method: 'post'
+      }).then(res => {
+        wepy.hideLoading()
+        const data = res.data
+        let error = data.error
+        if (data.flag) {
+          if (curdata.priority) {
+            error = '已在客户列表中取消置顶'
+          } else {
+            error = '已在客户列表中置顶成功'
+          }
+        }
+        const timeout = Util.delay(error)
+        wepy.showToast({
+          title: error,
+          icon: 'none',
+          duration: timeout
+        })
+        setTimeout(() => {
+          if (data.flag) {
+            this.listData[this.selectedIndex][index].priority = !this.listData[this.selectedIndex][index].priority
+            this.userData[curdata.uid].priority = !this.userData[curdata.uid].priority
+            this.$apply()
+          }
+        }, timeout)
+      })
+    },
+    clickTab (e) {
+      this.selectedIndex = e.currentTarget.dataset.index
+      this.switchEvent()
+      this.$apply()
+    },
+    switchTab: function (e) {
+      this.selectedIndex = e.detail.current
+      this.switchEvent()
+    },
+    expandEvent (e) {
+      const dataset = e.currentTarget.dataset
+      const itemData = dataset.data
+      const index = dataset.index
+      let curList = this.listData[this.selectedIndex]
+      for (let i = 0; i < curList.length; i++) {
+        if (curList[i].checked && i !== index) {
+          this.listData[this.selectedIndex][i].checked = false
+          break
+        }
+      }
+      if (itemData.checked) {
+        this.listData[this.selectedIndex][index].checked = false
+      } else {
+        if (this.userData[itemData.uid]) {
+          this.listData[this.selectedIndex][index].checked = true
+          this.toView = this.listData[this.selectedIndex][index].viewId
+        } else {
+          let cuid = itemData.uid
+          if (itemData.factoryuid) {
+            cuid = itemData.factoryuid
+          }
+          wepy.request({
+            url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/retailer/customerView?customeruid=${cuid}`
+          }).then(res => {
+            const data = res.data
+            const retdata = data.data ? data.data : data
+            retdata.dateline_str = new Time(retdata.dateline * 1000).dateFormat('yyyy-MM-dd')
+            let sex = '未知'
+            if (retdata.sex === 1) {
+              sex = '男'
+            } else if (retdata.sex === 2) {
+              sex = '女'
+            }
+            retdata.sex_str = sex
+            this.userData[itemData.uid] = retdata
+            this.listData[this.selectedIndex][index].checked = true
+            this.toView = this.listData[this.selectedIndex][index].viewId
+            this.$apply()
+          })
+        }
+      }
+    }
+  }
+}
+</script>

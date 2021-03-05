@@ -1,0 +1,277 @@
+<style lang="less">
+.center-user.iphone{bottom:68rpx;}
+.center-user{
+  left:0;right:0;top:0;bottom:0;position:absolute;
+  .page-inner{width:100%;height:100%;}
+}
+</style>
+<template>
+  <view :class="{'iphone' : isIpx}" class="center-user havemenu">
+    <view class="page-inner columnarea">
+      <!-- <creditSwiper :listData.sync="creditData" :themeObject.sync="themeObject"></creditSwiper> -->
+      <centerUser
+        :globalData.sync="globalData"
+        :userInfo.sync="userInfo"
+        fromType="user"
+        :userName.sync="userName"
+        :systemInfo.sync="systemInfo"
+        :bannerData.sync="bannerData"
+        :moduleListData.sync="moduleListData"
+        :manageData.sync="manageData"
+        :cancelLogin.sync="cancelLogin"
+        :channelInfo.sync="channelInfo"
+        :noticeCount.sync="noticeCount"
+        :showTest.sync="showTest"
+        :themeObject.sync="themeObject">
+      </centerUser>
+    </view>
+  </view>
+  <bottomMenu
+    current="own"
+    :globalData.sync="globalData"
+    :isIpx.sync="isIpx"
+    :themeObject.sync="themeObject">
+  </bottomMenu>
+  <block wx:if="{{showAuth}}">
+    <auth type="update" :themeObject.sync="themeObject" :globalData.sync="globalData"></auth>
+  </block>
+</template>
+
+<script>
+import wepy from 'wepy'
+import Util from '@/libs/util'
+import Cached from '@/libs/cached'
+import Config from '@/config'
+import CenterUser from '@/components/centerUser'
+import BottomMenu from '@/components/bottomMenu'
+import Auth from '@/components/auth'
+import CreditSwiper from '@/components/creditSwiper'
+export default class Own extends wepy.page {
+  config = {
+    enablePullDownRefresh: true,
+    backgroundTextStyle: 'dark'
+  }
+  components = {
+    centerUser: CenterUser,
+    bottomMenu: BottomMenu,
+    auth: Auth,
+    creditSwiper: CreditSwiper
+  }
+  data = {
+    options: {},
+    globalData: {},
+    userInfo: {},
+    showCenter: false,
+    showHome: false,
+    userName: '',
+    systemInfo: {},
+    showQuery: {},
+    bannerData: [],
+    moduleListData: [],
+    manageData: [],
+    isIpx: false,
+    channelInfo: {},
+    showAuth: false,
+    noticeCount: 0,
+    showTest: false,
+    themeObject: {},
+    creditData: []
+  }
+  onPullDownRefresh () {
+    this.handlePageData()
+    wepy.showNavigationBarLoading()
+    setTimeout(() => {
+      wepy.hideNavigationBarLoading()
+      wepy.stopPullDownRefresh()
+    }, 500)
+  }
+  handleShowData () {
+    this.globalData = this.$parent.globalData
+    this.userInfo = this.globalData.userInfo
+    this.noticeCount = parseInt(this.userInfo.newmessages)
+    this.getCreditData()
+    this.$apply()
+  }
+  handlePageData () {
+    this.globalData = this.$parent.globalData
+    Util.appInit(this.globalData, this)
+    this.userInfo = this.globalData.userInfo
+    this.noticeCount = parseInt(this.userInfo.newmessages)
+    this.$apply()
+    let shareParams = Util.getShareParams(this.options)
+    let params = {...shareParams, fid: Config.Fid, module: 'own'}
+    Cached.request({
+      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/channel/info`,
+      data: params,
+      method: 'post'
+    }, 'own.channelInfo', Config.URT.H,
+    cacheData => {
+      this.channelInfo = cacheData
+      this.bannerData = this.channelInfo.banner
+    },
+    res => {
+      const data = res.data
+      const retdata = data.data ? data.data : data
+      if (retdata.banner && retdata.banner.length) {
+        this.bannerData = retdata.banner
+      }
+      this.channelInfo = data
+      this.$apply()
+      return this.channelInfo
+    })
+    Cached.request({
+      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/codemaker/showcodemaker`,
+      data: {fid: Config.Fid}
+    }, 'own.codemaker', Config.URT.H,
+    cacheData => {
+      this.moduleListData = cacheData
+    },
+    res => {
+      const data = res.data
+      const retdata = data.data ? data.data : data
+      this.moduleListData = retdata
+      this.$apply()
+      return this.moduleListData
+    })
+    if (this.userInfo.fid) {
+      this.getSettingList()
+    }
+    if (this.options.gxkfid && parseInt(this.options.gxkfid) === parseInt(Config.Fid)) {
+      wepy.request({
+        url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/miniopen/bindFactoryManager`,
+        data: {appid: Config.AppId, factoryuid: this.userInfo.uid},
+        method: 'post'
+      }).then(res => {
+        const data = res.data
+        if (data.flag) {
+          this.userInfo.fid = Config.Fid
+          this.getSettingList()
+          this.$apply()
+        }
+      })
+    }
+  }
+  getSettingList () {
+    Cached.request({
+      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/factory/controlsettingList`,
+      data: {fid: Config.Fid, type: 'my'},
+      method: 'post'
+    }, 'own.settings', Config.URT.H,
+    cacheData => {
+      this.manageData = cacheData
+    },
+    res => {
+      const data = res.data
+      let retdata = data.data ? data.data : data
+      this.manageData = []
+      for (let i = 0; i < retdata.length; i++) {
+        if (retdata[i].moderate) {
+          this.manageData.push(retdata[i])
+        }
+      }
+      this.$apply()
+      return this.manageData
+    })
+  }
+  onLoad (options) {
+    console.log('in 进入到了own页面的onload里')
+    this.options = options
+    wepy.hideShareMenu()
+    this.pageurl = Util.objectToUrl('/pages/own', this.options)
+    if (Config.BoboAppIds[Config.AppId]) {
+      this.showTest = true
+    }
+    this.$apply()
+    wepy.getSystemInfo().then(res => {
+      this.systemInfo = res
+      if (res.model.substring(0, res.model.indexOf('X')) + 'X' === 'iPhone X') {
+        this.isIpx = true
+      }
+      this.$apply()
+    })
+    if (this.$parent.globalData.flag.bokaAuth) {
+      this.handlePageData()
+    } else {
+      this.$parent.loadCallback = () => {
+        this.handlePageData()
+      }
+    }
+  }
+  onShow () {
+    if (this.$parent.globalData.flag.bokaAuth) {
+      this.handleShowData()
+    } else {
+      this.$parent.showCallback = () => {
+        this.handleShowData()
+      }
+    }
+  }
+  getCreditData () {
+    // wepy.request({
+    //   url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/Task/creditList`,
+    //   data: {pagestart: 0, limit: 10},
+    //   method: 'post'
+    // }).then(res => {
+    //   wepy.hideLoading()
+    //   const data = res.data
+    //   if (data.flag) {
+    //     let data = res.data
+    //     let retdata = data.data ? data.data : data
+    //     for (let i = 0; i < retdata.length; i++) {
+    //       let curd = retdata[i]
+    //       let credits = curd.credit.toString()
+    //       if (credits.indexOf('-') === -1) {
+    //         curd.credit = '+' + curd.credit
+    //       }
+    //     }
+    //     this.creditData = retdata
+    //     this.$apply()
+    //   }
+    // })
+  }
+  handleShare () {
+    const lastshareuid = this.options.share_uid
+    let shareurl = `/pages/index?share_uid=${this.userInfo.uid}&share_wid=${this.globalData.Wid}&wid=${this.globalData.Wid}&comefrom=${Config.AppName}`
+    if (lastshareuid) {
+      shareurl = `${shareurl}&lastshareuid=${lastshareuid}`
+    }
+    let backUrl = encodeURIComponent(shareurl)
+    shareurl = `${shareurl}&currentUrl=${backUrl}`
+    let shareTitle = Config.StartTitle
+    this.shareParams = {
+      title: shareTitle,
+      path: shareurl,
+      imageUrl: Config.StartPhoto
+    }
+  }
+  onShareAppMessage (res) {
+    this.handleShare()
+    return this.shareParams
+  }
+  onShareTimeline () {
+    this.handleShare()
+    return this.shareParams
+  }
+  methods = {
+  }
+  events = {
+    updateUser () {
+      this.showAuth = true
+    },
+    afterAuth () {
+      this.globalData = this.$parent.globalData
+      this.userInfo = this.globalData.userInfo
+      this.showAuth = false
+    },
+    cancelLogin () {
+      this.showAuth = false
+    },
+    afterSet (data) {
+      this.userInfo = data
+      this.globalData.userInfo = data
+      this.$parent.globalData = this.globalData
+      this.$apply()
+    }
+  }
+}
+</script>

@@ -1,0 +1,134 @@
+<style lang="less">
+.buy-tip-modal{
+  position:fixed;left:0;right:0;bottom:0;top:0;z-index:1000;background-color:rgba(0,0,0,0.6);
+  display:flex;justify-content:center;align-items:center;
+  .tip-inner{width:80%;position:relative;}
+  .tip-box{background-color:#fff;border-radius:20rpx;}
+  .tip-pic{
+    width:100%;height:100rpx;position:relative;
+    .pic-outer{
+      width:200rpx;height:200rpx;border-radius:50%;background-color:#fff;
+      position:absolute;left:50%;margin-left:-100rpx;top:-100rpx;
+      display:flex;justify-content:center;align-items:center;
+      image{width:160rpx;height:160rpx;border-radius:50%;}
+    }
+  }
+  .line-area{
+    width:100%;height:20rpx;position:relative;
+    .line-item{
+      width:14rpx;height:40rpx;background-color:#fff;box-shadow: 0px 4rpx 14rpx rgba(0,0,0,0.3);
+      position:absolute;top:-10rpx;
+    }
+    .line-item:nth-child(1){left:30%;}
+    .line-item:nth-child(2){right:30%;}
+  }
+  .user-avatar{
+    width:160rpx;height:160rpx;
+    image{width:140rpx;height:140rpx;border-radius:20rpx;}
+  }
+  .txt-cell{height:160rpx;}
+  .btn{padding:10rpx;border-radius:10rpx;}
+  .close-area{position:absolute;left:0;bottom:-120rpx;right:0;height:100rpx;}
+  .close-area .al{font-weight:bold;font-size:70rpx;color:#fff;}
+}
+</style>
+<template>
+  <view class="buy-tip-modal">
+    <view class="tip-inner">
+      <view class="tip-box pb20">
+        <view class="tip-pic">
+          <view class="pic-outer">
+            <image src="https://tossharingsales.boka.cn/minigxk/laba.png"></image>
+          </view>
+        </view>
+        <block wx:if="{{type == 'card'}}">
+          <view class="padding10">
+            <view class="flex_center font16">需要联系</view>
+            <view class="flex_center font16">
+              <text style="{{themeObject.colorStyle}}">{{sellerUser.linkman}}</text>
+              <text>才能领取优惠券哦!</text>
+            </view>
+          </view>
+        </block>
+        <block wx:else>
+          <view class="padding10">
+            <view class="flex_center font16">你太有眼光啦！</view>
+            <view class="flex_center font16">这个宝贝太火爆，需要联系</view>
+            <view class="flex_center font16">
+              <text style="{{themeObject.colorStyle}}">{{sellerUser.linkman}}</text>
+              <text>才能下单哦!</text>
+            </view>
+          </view>
+        </block>
+      </view>
+      <view class="line-area">
+        <view class="line-item"></view>
+        <view class="line-item"></view>
+      </view>
+      <view class="tip-box pt20">
+        <view class="pl10 pr10 pb10 flex_left">
+          <view class="user-avatar flex_left">
+            <image src="{{sellerUser.avatar}}"></image>
+          </view>
+          <view class="flex_cell flex_left txt-cell">
+            <view class="w_100">
+              <view class="bold font18">{{sellerUser.linkman}}</view>
+              <view class="flex_left mt5" wx:if="{{sellerUser.weixinaccount && sellerUser.weixinaccount != ''}}">
+                <text class="al al-weixin font20 color-green"></text>
+                <text class="ml5">{{sellerUser.weixinaccount}}</text>
+                <text class="btn ml10" style="{{themeObject.bgStyle}}" @tap="copyWechat">复制微信号</text>
+              </view>
+              <!-- <view class="flex_left mt5" wx:else>
+                <text class="btn" style="{{themeObject.bgStyle}}" @tap="toNotice">通知TA设置微信号</text>
+              </view> -->
+            </view>
+          </view>
+        </view>
+      </view>
+      <view class="close-area flex_center">
+        <view @tap="closeEvent" class="al al-close1"></view>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy'
+export default class extends wepy.component {
+  props = {
+    sellerUser: {
+      type: Object,
+      default: {}
+    },
+    themeObject: {
+      type: Object,
+      default: {}
+    },
+    type: {
+      type: String,
+      default: 'buy'
+    }
+  }
+  data = {
+  }
+  onLoad () {
+  }
+  methods = {
+    closeEvent (e) {
+      this.$emit('closeBuyTip')
+    },
+    clickMobile () {
+      wepy.makePhoneCall({
+        phoneNumber: this.sellerUser.mobile
+      })
+    },
+    copyWechat () {
+      wepy.setClipboardData({
+        data: `${this.sellerUser.weixinaccount}`
+      })
+    },
+    toNotice () {
+    }
+  }
+}
+</script>

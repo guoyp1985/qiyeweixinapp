@@ -1,0 +1,1002 @@
+<style lang="less">
+@import '../../styles/1px.less';
+.app-tab.fixed-top{position:fixed;left:0;top:0;right:0;z-index:10;}
+.order-c-page{
+  padding-top:100rpx;
+  .color-red{color:#ee5357 !important;}
+  .color-gray{color:#c3c3c3 !important;}
+  .user-search-outter{
+    width: 100%;height: 100rpx;padding:20rpx;box-sizing:border-box;
+    background-color: white;display: flex;align-items: center;justify-content: center;
+    .search-inner{
+      width: 100%;display:flex; align-items: center;box-sizing: border-box;
+      border:#f2f3f2 2rpx solid;;border-radius:60rpx;height:100%;
+    }
+    .search-input{box-sizing: border-box;font-size:24rpx;padding: 0 20rpx;flex:1;}
+    .btn{
+      height:100%;border-radius:60rpx;background-color:#ee5357;color:#fff;
+      padding:0 40rpx;box-sizing:border-box;
+      display: flex;align-items: center;justify-content: center;
+    }
+  }
+  .scroll_list{
+    padding:20rpx;box-sizing: border-box;
+    .scroll_item:after{display:none;content:'';}
+    .scroll_item:not(:last-child){border-bottom:2rpx dashed #eee;}
+    .scroll_item{
+      width: 100%;background: #fff;padding: 30rpx 0;box-sizing: border-box;overflow:hidden;position:relative;
+      .inner{width:100%;display: flex;position:relative;box-sizing: border-box;}
+      .pic{
+        width:200rpx;
+        image{width:180rpx;height:180rpx;border-radius:15rpx;}
+      }
+      .avatar{
+        width:80rpx;
+        image{width:70rpx;height:70rpx;border-radius:50%;}
+      }
+      .pic-img{
+        width:120rpx;
+        image{width:110rpx;height:110rpx;border-radius:15rpx;}
+      }
+      .data_txt{
+        flex: 1;overflow: hidden;position:relative;
+        .empty-cell{width:240rpx;}
+      }
+      .btn-list{
+        padding-left:10rpx;box-sizing: border-box;
+        .btn-item{background-color:#ee5357;border-radius:60rpx;}
+        .btn-item:not(:last-child){margin-right:10rpx;}
+        .btn{padding:8rpx 20rpx;font-size:24rpx;}
+      }
+    }
+    .time-box{
+      font-size:24rpx;
+      display:flex;justify-content:flex-start;align-items: center;
+      .num{
+        background-color:#ee5357;color:#fff;
+        width:40rpx;height:40rpx;border-radius:10rpx;box-sizing: border-box;
+        display:flex;justify-content:center;align-items: center;
+      }
+      .num.big{width:60rpx;}
+      .txt{width:20rpx;height:30rpx;display:flex;justify-content:center;align-items: center;font-weight:bold;}
+    }
+    .radio-cell{width:50rpx;}
+  }
+  .user-list{
+    .scroll_item{display:block;padding:20rpx 0;}
+    .scroll_item:not(:last-child){border-bottom:2rpx solid #eee;}
+  }
+  .order-list{
+    padding:20rpx 0;
+    .box-area{
+      margin-top:50rpx;padding-top:45rpx;position:relative;
+      .pic-row{
+        position:absolute;left:50rpx;right:40rpx;top:0rpx;z-index:1;
+        display:flex;height:90rpx;
+        .avatar-cell{
+          width:100rpx;height:90rpx;overflow:hidden;
+          image{width:90rpx;height:90rpx;border-radius:50%;}
+        }
+        .txt-row{display:flex;height:45rpx;}
+      }
+      .box-inner{padding-top:60rpx;}
+    }
+    .pic{width:120rpx;height:120rpx;}
+    .b-area{border-top:#eee 2rpx dashed;padding:20rpx;}
+    .btn-list{
+      .btn-item{background-color:#ee5357;border-radius:60rpx;}
+      .btn-item:not(:last-child){margin-right:10rpx;}
+      .btn{padding:8rpx 20rpx;font-size:24rpx;}
+    }
+  }
+  .box2{
+    position:relative;padding-top:100rpx;
+    .box-inner{padding-top:100rpx;}
+    .avatar{
+      width:100rpx;
+      image{width:90rpx;height:90rpx;border-radius:50%;}
+    }
+    .logo{
+      position:absolute;left:50%;top:0rpx;width:200rpx;height:200rpx;margin-left:-100rpx;
+      image{width:200rpx;height:200rpx;border-radius:50%;}
+    }
+  }
+  .list-area{
+    .box-area{margin-bottom:20rpx;}
+    .title-row{
+      padding:20rpx;font-size:32rpx;box-sizing: border-box;
+      display:flex;justify-content: flex-start;align-items: center;
+    }
+    .btn{
+      width:80%;height:90rpx;margin:20rpx auto;font-size:36rpx;
+      display:flex;justify-content:center; align-items:center;
+      background: linear-gradient(#F25D5D, #DB293E);color:#fff;
+      border-radius:10rpx;
+    }
+    .pic{width:120rpx;height:120rpx;}
+  }
+  .time-out{color:#ee5357;z-index:99;padding: 0px 10px;border:1px solid #ee5357;border-radius: 15px;}
+  .text-list{
+    font-size:32rpx;
+    .text-item:not(:first-child){margin-top:6rpx;}
+    .text-item{
+      display:flex;
+      .txt1{color:#999}
+      .txt2{margin-left:10rpx;}
+    }
+  }
+  .text-list.bank{
+    .text-item{
+      .txt1{width:120rpx;text-align:justify;text-align-last:justify;}
+      .txt2{flex:1;}
+    }
+  }
+  .box-txt{
+    border:#ee5357 2rpx solid;;color:#ee5357;border-radius:5rpx;padding:10rpx;
+    font-size:20rpx;box-sizing: border-box;display:inline-block;
+  }
+}
+</style>
+<template>
+  <view class="app-tab fixed-top">
+    <view class="tab-item font14 {{selectedIndex==0 ? 'active' : ''}}" data-current="0" @tap="clickTab">
+      <text style="{{selectedIndex == 0 ? themeObject.colorStyle : ''}}">待确认</text>
+      <view class="line" style="{{selectedIndex == 0 ? themeObject.bgStyle : ''}}"></view>
+    </view>
+    <view class="tab-item font14 {{selectedIndex == 1 ? 'active' : ''}}" data-current="1" @tap="clickTab">
+      <text style="{{selectedIndex == 1 ? themeObject.colorStyle : ''}}">已确认</text>
+      <view class="line" style="{{selectedIndex == 1 ? themeObject.bgStyle : ''}}"></view>
+    </view>
+    <view class="tab-item font14 {{selectedIndex == 2 ? 'active' : ''}}" data-current="2" @tap="clickTab">
+      <text style="{{selectedIndex == 2 ? themeObject.colorStyle : ''}}">给公司打款</text>
+      <view class="line" style="{{selectedIndex == 2 ? themeObject.bgStyle : ''}}"></view>
+    </view>
+  </view>
+  <view class="order-c-page">
+    <block wx:if="{{selectedIndex === 0 || selectedIndex == 1}}">
+      <view class="box-area mt10" wx:if="{{selectedIndex === 0}}">
+        <view class="box-inner">
+          <view class="title b_bottom_after">代理销售</view>
+          <view class="block-list">
+            <view class="block-item">
+              <view class="block-inner">
+                <view class="txt1">￥{{saleObject[selectedIndex].todaysales}}</view>
+                <view class="txt2">今日销售额(元)</view>
+              </view>
+            </view>
+            <view class="block-item">
+              <view class="block-inner">
+                <view class="txt1">￥{{saleObject[selectedIndex].todaypay}}</view>
+                <view class="txt2">今日货款(元)</view>
+              </view>
+            </view>
+            <view class="block-item">
+              <view class="block-inner">
+                <view class="txt1">￥{{saleObject[selectedIndex].todayincome}}</view>
+                <view class="txt2">今日收入(元)</view>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+      <view class="box-area mt10">
+        <view class="box-inner">
+          <block wx:if="{{disUser[selectedIndex]}}">
+            <view class="user-search-outter">
+              <view class="search-inner flex_cell">
+                <input class="search-input" type="text" placeholder="搜索ID或昵称" bindinput="setKeyword" value="{{keyword}}" bindconfirm="searchKeyword" confirm-type="search" />
+                <view class="btn" @tap="clickSearch">搜索</view>
+              </view>
+              <view class="time-out" wx:if="{{selectedIndex == 1}}">
+                <view class="time-inner">
+                  <picker mode="date" start="{{minDate}}" end="{{maxDate}}" fields="day" bindchange="dateChange">
+                    <view class="align_center">{{dateVal}}<text class="al al-sanjiaoxing font14"></text></view>
+                  </picker>
+                </view>
+              </view>
+            </view>
+            <block wx:if="{{!userData[selectedIndex].length}}">
+              <view wx:if="{{afterSearch}}" class="flex_empty">暂无搜索结果</view>
+              <view wx:else class="flex_empty">暂无数据</view>
+            </block>
+            <scroll-view wx:else class="{{scrollClass}}" scroll-y="{{allowScroll}}">
+              <radio-group class="user-list scroll_list" @change="userChange">
+                <repeat for="{{userData[selectedIndex]}}" item="item" index="i">
+                  <label class="radio scroll_item">
+                    <view class="inner">
+                      <view class="flex_left radio-cell">
+                        <radio class="dotradio" value="{{item.wid}}" checked="{{item.checked}}"/>
+                      </view>
+                      <view class="avatar flex_left" data-data="{{item}}">
+                        <image mode="aspectFill" src="{{item.avatar}}" lazy-load></image>
+                      </view>
+                      <view class="flex_left" data-data="{{item}}">
+                        <view class="font16">{{item.linkman}}</view>
+                      </view>
+                      <view class="flex_cell flex_right font12">
+                        <text class="color-red">货款:</text>
+                        <text class="color-red ml5">￥{{item.money}}</text>
+                      </view>
+                    </view>
+                  </label>
+                </repeat>
+              </radio-group>
+              <view class="load-end-area loading" wx:if="{{userLoad[selectedIndex]}}"></view>
+              <view class="load-end-area done" wx:elif="{{userDone[selectedIndex]}}"></view>
+            </scroll-view>
+          </block>
+        </view>
+      </view>
+      <view class="order-list" wx:if="{{disOrder[selectedIndex]}}">
+        <view wx:if="{{!orderData[selectedIndex].length}}" class="flex_empty">暂无数据</view>
+        <block wx:else>
+          <repeat for="{{orderData[selectedIndex]}}" item="item" index="index">
+            <view class="box-area">
+              <view class="pic-row">
+                <view class="avatar-cell">
+                  <image src="{{item.avatar}}"></image>
+                </view>
+                <view class="flex_cell flex_left">
+                  <view class="w_100">
+                    <view class="db-flex txt-row">
+                      <view class="flex_cell flex_left" wx:if="{{item.weixinaccount && item.weixinaccount != ''}}">
+                        <text class="al al-weixin color-green font16"></text>
+                        <text class="ml5">{{item.weixinaccount}}</text>
+                      </view>
+                      <view class="flex_cell flex_right" wx:if="{{item.mobile && item.mobile != ''}}" @tap="clickMobile({{item}})">
+                        <text class="al al-dianhua color-blue font16"></text>
+                        <text class="ml5">{{item.mobile}}</text>
+                      </view>
+                    </view>
+                    <view class="db-flex txt-row">
+                      <view class="flex_cell flex_left">
+                        <view class="clamp1">{{item.linkman}}</view>
+                      </view>
+                      <view class="flex_right color-red">货款: ￥{{item.money}}</view>
+                    </view>
+                  </view>
+                </view>
+              </view>
+              <view class="box-inner">
+                <view class="flex_left padding10">
+                  <view class="text-list flex_cell">
+                    <view class="text-item">
+                      <text class="txt1">本次报单订单数量: </text>
+                      <text class="txt2">{{item.ordercount}}单</text>
+                    </view>
+                    <view class="text-item">
+                      <text class="txt1">本次报单销售金额: </text>
+                      <text class="ml5">￥{{item.sales}}</text>
+                    </view>
+                    <view class="text-item">
+                      <text class="txt1">本次报单代理收入: </text>
+                      <text class="txt2">￥{{item.income}}</text>
+                    </view>
+                    <view class="text-item">
+                      <text class="txt1">货款状态: </text>
+                      <text class="txt2 color-red">{{item.status}}</text>
+                    </view>
+                  </view>
+                  <view class="flex_right pl10" wx:if="{{item.photo && item.photo != ''}}">
+                    <image class="pic" mode="aspectFill" src="{{item.photo}}" data-photo="{{item.photo}}" data-index="{{index}}" @tap="viewBigImg" />
+                  </view>
+                </view>
+                <view class="b-area db-flex" wx:if="{{selectedIndex === 0}}">
+                  <view class="flex_left flex_cell color-red">
+                    <text class="al al-rili font20"></text>
+                    <view class="ml5">{{item.dateline_str}}</view>
+                  </view>
+                  <view class="flex_right btn-list">
+                    <view class="btn-item bg-gray color-white" data-index="{{index}}" data-data="{{item}}" @tap="cancelOrder">
+                      <view class="btn">取消</view>
+                    </view>
+                    <view class="btn-item color-white" data-index="{{index}}" data-data="{{item}}" @tap="confirmOrder">
+                      <view class="btn">确认收款</view>
+                    </view>
+                  </view>
+                </view>
+              </view>
+            </view>
+          </repeat>
+        </block>
+      </view>
+    </block>
+    <block wx:if="{{selectedIndex == 2}}">
+      <view class="box-area mt20 box2">
+        <view class="box-inner">
+          <view class="logo">
+            <image src="{{MiniInfo.photo}}"></image>
+          </view>
+          <view class="padding10 flex_left">
+            <view class="flex_cell font16">
+              <view class="text-list bank flex_cell">
+                <view class="text-item">
+                  <view class="txt1">银行</view>
+                  <view class="txt2">{{factoryInfo.newbankname}}</view>
+                </view>
+                <view class="text-item">
+                  <view class="txt1">开户名</view>
+                  <view class="txt2">{{factoryInfo.accountname}}</view>
+                </view>
+                <view class="text-item">
+                    <view class="txt1">账号</view>
+                    <view class="ml5">
+                      <view>{{factoryInfo.newbankcardno}}</view>
+                      <view class="box-txt" @tap="copyCardno">复制账号</view>
+                    </view>
+                </view>
+                <view class="text-item">
+                  <view class="txt1">联系人</view>
+                  <view class="txt2">{{factoryInfo.newbankuser}}</view>
+                </view>
+              </view>
+            </view>
+            <view class="flex_right pl10" @tap="clickQrcode" wx:if="{{factoryInfo.shoukuanma && factoryInfo.shoukuanma != ''}}">
+              <view class="align_center">
+                <text class="al al-erweima font30 color-red"></text>
+                <view class="color-gray align_center">收款码</view>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+      <view class="mt20 flex_center color-red font16">(提示：汇款或转账时请务必备注ID及微信昵称)</view>
+      <block wx:if="{{disOrder[selectedIndex]}}">
+        <view wx:if="{{!orderData[selectedIndex].length}}" class="flex_empty">暂无报单数据</view>
+        <view wx:else class="list-area mt20">
+          <repeat for="{{orderData[selectedIndex]}}" item="item" index="index">
+            <view class="box-area">
+              <view class="box-inner">
+                <view class="title-row color-red b_bottom_after">
+                  <view>
+                    <text class="al al-rili font20"></text>
+                  </view>
+                  <view class="pl5">{{item.dateline_str}}</view>
+                  <view class="flex_cell flex_right">
+                    <view>
+                      <text class="font14">货款: ￥</text>
+                      <text class="font16">{{item.reportmoney}}</text>
+                    </view>
+                  </view>
+                </view>
+                <view class="flex_left padding10">
+                  <view class="text-list flex_cell">
+                    <view class="text-item">
+                      <text class="txt1">本次报单订单数量: </text>
+                      <text class="txt2">{{item.ordercount}}单</text>
+                    </view>
+                    <view class="text-item">
+                      <text class="txt1">本次报单销售金额: </text>
+                      <text class="ml5">￥{{item.sales}}</text>
+                    </view>
+                    <view class="text-item">
+                      <text class="txt1">本次报单经理收入: </text>
+                      <text class="txt2">￥{{item.income}}</text>
+                    </view>
+                    <view class="text-item">
+                      <text class="txt1">货款状态: </text>
+                      <text class="txt2 color-red">{{item.status}}</text>
+                    </view>
+                  </view>
+                  <view class="flex_right pl10" wx:if="{{item.photo && item.photo != ''}}">
+                    <image class="pic" mode="aspectFill" src="{{item.photo}}" data-photo="{{item.photo}}" data-index="{{index}}" @tap="viewBigImg" />
+                  </view>
+                </view>
+                <view wx:if="{{!item.dealed}}" class="mt10 pb10">
+                  <view class="btn" @tap="baodanEvent({{item}},{{index}})">一键报单</view>
+                </view>
+              </view>
+            </view>
+          </repeat>
+        </view>
+        <view class="load-end-area loading" wx:if="{{isLoading}}"></view>
+        <view class="load-end-area done" wx:elif="{{isDone}}"></view>
+      </block>
+    </block>
+  </view>
+  <view wx:if="{{showModal}}" class="auto-modal flex_center">
+    <view class="modal-inner border-box" style="width:80%;">
+      <view class="align_center font18 bold pb10 b_bottom_after color-theme pt20" style="{{themeObject.colorStyle}}">报单</view>
+      <view class="app-photo-list align_left bg-white">
+        <repeat for="{{photoArr}}" item="photo" index="index">
+          <view class="photoitem">
+            <view class="inner photo imgcover">
+              <image mode="aspectFill" src="{{photo}}" class="pic" data-type="update" data-index="{{index}}" @tap="uploadPhoto" />
+              <view class="close" @tap="deletePhoto(index)">×</view>
+            </view>
+          </view>
+        </repeat>
+        <view wx:if="{{photoArr.length < 1}}" class="photoitem add" @tap="uploadPhoto">
+          <view class="inner">
+            <view class="innerlist">
+              <view class="flex_center h_100">
+                <view>
+                  <text class="al al-zhaopian"></text>
+                  <view><text>{{ photoArr.length }}</text><text class="ml5 mr5">/</text><text>1</text></view>
+                </view>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+      <form class="db b_top_after" style="height:50px;" bindsubmit="submitBaodan" bindreset="cancelBaodan" report-submit="true">
+        <view class="w_100 h_100 flex_center">
+          <button class="flex_cell flex_center h_100 b_right_after" form-type="reset">取消</button>
+          <button class="flex_cell flex_center h_100 color-orange" form-type="submit">提交</button>
+        </view>
+      </form>
+    </view>
+  </view>
+</template>
+<script>
+import wepy from 'wepy'
+import Config from '@/config'
+import Time from '@/libs/time'
+import Util from '@/libs/util'
+
+export default class extends wepy.page {
+  config = {
+    enablePullDownRefresh: true,
+    backgroundTextStyle: 'dark'
+  }
+  data = {
+    factoryInfo: {},
+    selectedIndex: 0,
+    allowScroll: false,
+    scrollClass: '',
+    orderData: {0: [], 1: [], 2: []},
+    orderParams: {
+      0: {pagestart: 0},
+      1: {pagestart: 0, dealed: 2},
+      2: {pagestart: 0}
+    },
+    disOrder: {0: false, 1: false, 2: false},
+    orderLoad: {0: false, 1: false, 2: false},
+    orderDone: {0: false, 1: false, 2: false},
+    userData: {0: [], 1: [], 2: []},
+    userParams: {
+      0: {pagestart: 0},
+      1: {pagestart: 0, dealed: 2},
+      2: {pagestart: 0}
+    },
+    disUser: {0: false, 1: false, 2: false},
+    userLoad: {0: false, 1: false, 2: false},
+    userDone: {0: false, 1: false, 2: false},
+    saleObject: {
+      0: {todayincome: '0.00', todaypay: '0.00', todaysales: '0.00'},
+      1: {todayincome: '0.00', todaypay: '0.00', todaysales: '0.00'},
+      2: {todayincome: '0.00', todaypay: '0.00', todaysales: '0.00'}
+    },
+    afterSearch: false,
+    keyword: '',
+    selectedUid: {0: 0, 1: 0},
+    managerInfo: {},
+    showModal: false,
+    photoArr: [],
+    postPhoto: '',
+    clickData: null,
+    clickIndex: 0,
+    minDate: '2017-01-01',
+    maxDate: '',
+    dateVal: '',
+    MiniInfo: {},
+    themeObject: {}
+  }
+  refreshPage () {
+    this.selectedIndex = 0
+    this.allowScroll = false
+    this.scrollClass = ''
+    this.orderData = {0: [], 1: [], 2: []}
+    this.orderParams = {
+      0: {pagestart: 0},
+      1: {pagestart: 0, dealed: 2},
+      2: {pagestart: 0}
+    }
+    this.disOrder = {0: false, 1: false, 2: false}
+    this.orderLoad = {0: false, 1: false, 2: false}
+    this.orderDone = {0: false, 1: false, 2: false}
+    this.userData = {0: [], 1: [], 2: []}
+    this.userParams = {
+      0: {pagestart: 0},
+      1: {pagestart: 0, dealed: 2},
+      2: {pagestart: 0}
+    }
+    this.disUser = {0: false, 1: false, 2: false}
+    this.userLoad = {0: false, 1: false, 2: false}
+    this.userDone = {0: false, 1: false, 2: false}
+    this.saleObject = {
+      0: {todayincome: '0.00', todaypay: '0.00', todaysales: '0.00'},
+      1: {todayincome: '0.00', todaypay: '0.00', todaysales: '0.00'},
+      2: {todayincome: '0.00', todaypay: '0.00', todaysales: '0.00'}
+    }
+    this.afterSearch = false
+    this.keyword = ''
+    this.selectedUid = {0: 0, 1: 0}
+    this.searchDate = false
+    this.$apply()
+    this.getUserData()
+  }
+  onPullDownRefresh () {
+    this.refreshPage()
+    wepy.showNavigationBarLoading()
+    setTimeout(function () {
+      wepy.hideNavigationBarLoading()
+      wepy.stopPullDownRefresh()
+    }, 500)
+  }
+  onReachBottom () {
+    if (this.orderLoad[this.selectedIndex]) return false
+    if (!this.orderDone[this.selectedIndex] && this.orderData[this.selectedIndex].length === (this.orderParams[this.selectedIndex].pagestart + 1) * this.limit) {
+      this.orderParams[this.selectedIndex].pagestart++
+      this.getOrderData()
+    }
+  }
+  getUserData () {
+    let curParams = this.userParams[this.selectedIndex]
+    if (this.keyword && this.keyword !== '') {
+      curParams.keyword = this.keyword
+    }
+    if (this.searchDate) {
+      curParams.date = this.dateParam
+    }
+    wepy.request({
+      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/order/getBaoDanUser`,
+      data: {
+        ...curParams,
+        limit: this.limit
+      },
+      method: 'post'
+    }).then(res => {
+      wepy.hideLoading()
+      const data = res.data
+      const retdata = data.data ? data.data : data
+      if (this.keyword && this.keyword !== '') {
+        this.afterSearch = true
+      } else {
+        this.afterSearch = false
+      }
+      if (!curParams.pagestart) {
+        let cursale = this.saleObject[this.selectedIndex]
+        for (let key in cursale) {
+          this.saleObject[this.selectedIndex][key] = data[key]
+        }
+      }
+      if (!this.selectedUid[this.selectedIndex] && (retdata.length || this.userData[this.selectedIndex].length)) {
+        this.selectedUid[this.selectedIndex] = retdata[0].wid
+        retdata[0].checked = true
+        this.getOrderData()
+      }
+      this.userLoad[this.selectedIndex] = false
+      this.disUser[this.selectedIndex] = true
+      this.userData[this.selectedIndex] = this.userData[this.selectedIndex].concat(retdata)
+      let curUserData = this.userData[this.selectedIndex]
+      if (retdata.length < this.limit && curUserData && curUserData > this.limit) {
+        this.userDone[this.selectedIndex] = true
+      } else {
+        this.userDone[this.selectedIndex] = false
+      }
+      if (curUserData.length > 3) {
+        this.scrollClass = 'scroll-view'
+        this.allowScroll = true
+      } else {
+        this.allowScroll = false
+      }
+      this.$apply()
+      if (this.afterSearch && this.backScroll) {
+        wepy.pageScrollTo({scrollTop: this.backScroll})
+        this.backScroll = 0
+        this.$apply()
+      }
+    })
+  }
+  getOrderData () {
+    if (this.orderLoad[this.selectedIndex]) return false
+    this.orderLoad[this.selectedIndex] = true
+    let params = {}
+    let ajaxUrl = `${Config.BokaApi}/${Config[Config.ApiVersion]}/order/getBaoDanList`
+    if (this.selectedIndex === 2) {
+      ajaxUrl = `${Config.BokaApi}/${Config[Config.ApiVersion]}/order/getBaoDanData`
+    } else {
+      if (this.searchDate) {
+        params.date = this.dateParam
+      }
+      params.wid = this.selectedUid[this.selectedIndex]
+    }
+    wepy.request({
+      url: ajaxUrl,
+      data: {
+        ...params,
+        ...this.orderParams[this.selectedIndex],
+        limit: this.limit
+      },
+      method: 'post'
+    }).then(res => {
+      wepy.hideLoading()
+      const data = res.data
+      const retdata = data.data ? data.data : data
+      for (let i = 0; i < retdata.length; i++) {
+        retdata[i].dateline_str = new Time(retdata[i].dateline * 1000).dateFormat('yyyy-MM-dd')
+      }
+      this.orderLoad[this.selectedIndex] = false
+      this.disOrder[this.selectedIndex] = true
+      this.orderData[this.selectedIndex] = this.orderData[this.selectedIndex].concat(retdata)
+      let curOrderData = this.orderData[this.selectedIndex]
+      if (retdata.length < this.limit && curOrderData && curOrderData > this.limit) {
+        this.orderDone[this.selectedIndex] = true
+      } else {
+        this.orderDone[this.selectedIndex] = false
+      }
+      this.$apply()
+    })
+  }
+  getLimitOrderData (count) {
+    let params = {...this.orderParams[this.selectedIndex]}
+    if (this.searchDate) {
+      params.date = this.dateParam
+    }
+    params.wid = this.selectedUid[this.selectedIndex]
+    params.pagestart = this.orderData[this.selectedIndex].length
+    wepy.request({
+      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/order/getBaoDanList`,
+      data: {
+        ...params,
+        limit: count
+      },
+      method: 'post'
+    }).then(res => {
+      wepy.hideLoading()
+      const data = res.data
+      const retdata = data.data ? data.data : data
+      if (retdata.lenght) {
+        for (let i = 0; i < retdata.length; i++) {
+          retdata[i].dateline_str = new Time(retdata[i].dateline * 1000).dateFormat('yyyy-MM-dd')
+        }
+        this.orderData[this.selectedIndex] = this.orderData[this.selectedIndex].concat(retdata)
+        this.disOrder[this.selectedIndex] = true
+      }
+      if (this.orderData[this.selectedIndex].length < this.limit) {
+        this.orderDone[this.selectedIndex] = true
+      }
+      if (!this.orderData[this.selectedIndex].length.length) {
+        this.disOrderList = false
+        this.deleteUserData()
+      }
+      this.$apply()
+    })
+  }
+  handlePageData () {
+    this.globalData = this.$root.$parent.globalData
+    Util.appInit(this.globalData, this)
+    this.userInfo = this.globalData.userInfo
+    this.factoryInfo = this.globalData.FactoryInfo
+    this.MiniInfo = this.globalData.MiniInfo
+    this.getUserData()
+    this.$apply()
+  }
+  onLoad (options) {
+    this.options = options
+    this.limit = Config.Limit
+    let now = new Time()
+    let nowyear = now.year()
+    let nowmonth = now.month()
+    let nowday = now.date()
+    if (nowmonth < 10) {
+      nowmonth = `0${nowmonth}`
+    }
+    if (nowday < 10) {
+      nowday = `0${nowday}`
+    }
+    this.maxDate = `${nowyear}-${nowmonth}-${nowday}`
+    let disyear = `${nowyear}`
+    disyear = disyear.substring(2)
+    this.dateVal = `${disyear}-${nowmonth}-${nowday}`
+    if (this.$parent.globalData.flag.bokaAuth) {
+      this.handlePageData()
+    } else {
+      this.$parent.loadCallback = () => {
+        this.handlePageData()
+      }
+    }
+  }
+  onPageScroll (e) {
+    this.scrollTop = e.scrollTop
+  }
+  afterShoukuan () {
+    if (this.ShoukuanArr && this.ShoukuanArr.length) {
+      let idarr = this.ShoukuanArr
+      for (let i = 0; i < idarr.length; i++) {
+        for (let j = 0; j < this.orderData[this.selectedIndex].length; j++) {
+          if (idarr[i] === this.orderData[this.selectedIndex][j].id) {
+            this.orderData[this.selectedIndex].splice(j, 1)
+            break
+          }
+        }
+      }
+      if (this.isDoneOrder || (this.orderData[this.selectedIndex].length + idarr.length) < this.limit) {
+        if (!this.orderData[this.selectedIndex].length) {
+          this.disOrder[this.selectedIndex] = false
+          this.deleteUserData()
+        }
+      } else {
+        if (!this.orderData[this.selectedIndex].length) {
+          this.disOrder[this.selectedIndex] = false
+        }
+        this.getLimitOrderData(idarr.length)
+      }
+    }
+  }
+  deleteUserData () {
+    for (let j = 0; j < this.userData[this.selectedIndex].length; j++) {
+      if (this.selectedUid[this.selectedIndex] === this.userData[this.selectedIndex][j].wid) {
+        this.userData[this.selectedIndex].splice(j, 1)
+        this.selectedUid[this.selectedIndex] = null
+        break
+      }
+    }
+  }
+  handleOrder (params) {
+    let tip = '确定要取消吗？'
+    if (params.agree) {
+      tip = '确定要收款吗？'
+    }
+    this.ShoukuanArr = [params.id]
+    wepy.showModal({
+      title: tip
+    }).then(res => {
+      if (res.confirm) {
+        wepy.showLoading()
+        wepy.request({
+          url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/order/agreeBaodan`,
+          data: {agree: params.agree, id: params.id},
+          method: 'post'
+        }).then(res => {
+          wepy.hideLoading()
+          const data = res.data
+          wepy.showToast({
+            title: data.error,
+            icon: 'none',
+            duration: Util.delay(data.error)
+          })
+          if (data.flag) {
+            if (params.agree) {
+              let curdata = params.data
+              let curmoney = parseFloat(curdata.money)
+              for (let i = 0; i < this.userData[this.selectedIndex].length; i++) {
+                let curUser = this.userData[this.selectedIndex][i]
+                if (curUser.checked) {
+                  let usermoney = (parseFloat(curUser.money) - curmoney).toFixed(2)
+                  if (usermoney < 0) usermoney = '0.00'
+                  this.userData[this.selectedIndex][i].money = usermoney
+                  break
+                }
+              }
+            }
+            this.afterShoukuan()
+            this.$apply()
+          }
+        })
+      }
+    })
+  }
+  searchUser () {
+    this.disUser[this.selectedIndex] = false
+    this.userLoad[this.selectedIndex] = false
+    this.userDone[this.selectedIndex] = false
+    this.userData[this.selectedIndex] = []
+    this.userParams[this.selectedIndex].pagestart = 0
+    this.disOrder[this.selectedIndex] = false
+    this.orderLoad[this.selectedIndex] = false
+    this.orderDone[this.selectedIndex] = false
+    this.orderData[this.selectedIndex] = []
+    this.orderParams[this.selectedIndex].pagestart = 0
+    this.selectedUid[this.selectedIndex] = null
+    this.$apply()
+    this.getUserData()
+  }
+  clearModal () {
+    this.photoArr = []
+    this.postPhoto = ''
+    this.clickData = null
+    this.clickIndex = 0
+  }
+  methods = {
+    clickTab (e) {
+      this.selectedIndex = parseInt(e.currentTarget.dataset.current)
+      if (this.selectedIndex === 2) {
+        if (!this.orderData[this.selectedIndex].length) {
+          this.getOrderData()
+        }
+      } else {
+        if (!this.userData[this.selectedIndex].length) {
+          this.keyword = ''
+          this.getUserData()
+        }
+      }
+    },
+    setKeyword (e) {
+      this.keyword = e.detail.value
+    },
+    searchKeyword (e) {
+      if (e.detail.value !== '') this.keyword = e.detail.value
+      this.backScroll = this.scrollTop
+      this.searchDate = false
+      this.searchUser()
+    },
+    cancelSearch () {
+      this.searchDate = false
+      this.keyword = ''
+      this.backScroll = this.scrollTop
+      this.searchUser()
+    },
+    clickSearch () {
+      this.searchDate = false
+      this.backScroll = this.scrollTop
+      this.searchUser()
+    },
+    userChange (e) {
+      const value = parseInt(e.detail.value)
+      this.selectedUid[this.selectedIndex] = value
+      for (let i = 0; i < this.userData[this.selectedIndex].length; i++) {
+        let cur = this.userData[this.selectedIndex][i]
+        if (cur.wid === value) {
+          this.userData[this.selectedIndex][i].checked = true
+        } else {
+          delete this.userData[this.selectedIndex][i].checked
+        }
+      }
+      this.disOrder[this.selectedIndex] = false
+      this.orderParams.pagestart = 0
+      this.orderData[this.selectedIndex] = []
+      this.orderLoad[this.selectedIndex] = false
+      this.orderDone[this.selectedIndex] = false
+      this.getOrderData()
+      this.$apply()
+    },
+    cancelOrder (e) {
+      const dataset = e.currentTarget.dataset
+      this.handleOrder({
+        agree: 0,
+        id: dataset.data.id,
+        index: dataset.index
+      })
+    },
+    confirmOrder (e) {
+      const dataset = e.currentTarget.dataset
+      this.handleOrder({
+        agree: 1,
+        id: dataset.data.id,
+        index: dataset.index,
+        data: dataset.data
+      })
+    },
+    clickQrcode () {
+      wepy.previewImage({
+        current: 0,
+        urls: [this.factoryInfo.shoukuanma]
+      })
+    },
+    baodanEvent (item, index) {
+      this.clearModal()
+      this.clickData = item
+      this.clickIndex = parseInt(index)
+      this.showModal = true
+      this.$apply()
+    },
+    uploadPhoto (e) {
+      wepy.chooseImage({
+        count: 1, // 默认9
+        sizeType: ['original', 'compressed'], // 可以指定是原图还是压缩图，默认二者都有
+        sourceType: ['album', 'camera'] // 可以指定来源是相册还是相机，默认二者都有
+      }).then(res => {
+        if (res.tempFiles) {
+          Util.taskData({
+            data: res.tempFiles,
+            handleFunction: (d) => {
+              return (done) => {
+                wepy.showLoading()
+                wepy.uploadFile({
+                  url: `${Config.GxkApi}/api/upload/photo`,
+                  method: 'POST',
+                  name: 'photo',
+                  filePath: d.path
+                }).then(res => {
+                  wepy.hideLoading()
+                  const resdata = JSON.parse(res.data)
+                  if (!resdata.flag) {
+                    wepy.showToast({
+                      title: resdata.error,
+                      icon: 'none',
+                      duration: Util.delay(resdata.error)
+                    })
+                  } else {
+                    let jsonData = JSON.parse(res.data)
+                    this.photoArr.push(jsonData.data)
+                    this.postPhoto = this.photoArr.join(',')
+                    this.$apply()
+                  }
+                  done()
+                })
+              }
+            }
+          })
+        }
+      })
+    },
+    deletePhoto (index) {
+      this.photoArr.splice(index, 1)
+      this.postPhoto = this.photoArr.join(',')
+      this.$apply()
+    },
+    viewBigImg (e) {
+      const dataset = e.currentTarget.dataset
+      wepy.previewImage({
+        current: dataset.photo,
+        urls: this.orderData[this.selectedIndex][dataset.index].photo.split(',')
+      })
+    },
+    submitBaodan () {
+      wepy.showLoading()
+      wepy.request({
+        url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/order/baoDan`,
+        data: {id: this.clickData.id, photo: this.postPhoto},
+        method: 'post'
+      }).then(res => {
+        wepy.hideLoading()
+        const data = res.data
+        wepy.showToast({
+          title: data.error,
+          icon: 'none',
+          duration: Util.delay(data.error)
+        })
+        if (data.flag) {
+          this.orderData[this.selectedIndex][this.clickIndex].dealed = 1
+          this.orderData[this.selectedIndex][this.clickIndex].status = '待确认'
+          this.orderData[this.selectedIndex][this.clickIndex].photo = this.postPhoto
+          this.clearModal()
+          this.showModal = false
+          this.$apply()
+        }
+      })
+    },
+    cancelBaodan () {
+      this.clearModal()
+      this.showModal = false
+      this.$apply()
+    },
+    dateChange (e) {
+      console.log(e.detail)
+      let value = e.detail.value
+      let valArr = value.split('-')
+      let year = valArr[0]
+      let month = valArr[1]
+      let day = valArr[2]
+      let monthStr = month
+      let monthInt = parseInt(month)
+      if (monthInt < 10) {
+        monthStr = `0${monthInt}`
+      }
+      let dayStr = day
+      let dayInt = parseInt(day)
+      if (dayInt < 10) {
+        dayStr = `0${dayInt}`
+      }
+      this.dateParam = year + '-' + monthStr + '-' + dayStr
+      let disyear = `${year}`
+      disyear = disyear.substring(2)
+      this.dateVal = disyear + '-' + monthStr + '-' + dayStr
+      this.searchDate = true
+      this.searchUser()
+    },
+    copyCardno () {
+      wepy.setClipboardData({
+        data: `${this.factoryInfo.newbankcardno}`
+      })
+    },
+    clickMobile (item) {
+      wepy.makePhoneCall({
+        phoneNumber: item.mobile
+      })
+    }
+  }
+}
+</script>

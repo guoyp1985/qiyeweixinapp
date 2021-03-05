@@ -1,0 +1,769 @@
+<style lang="less">
+.cart-fix-top{
+  position:fixed;left:0;right:0;top:0;height:80rpx;z-index:10;
+  background-color:#fff;padding:0 20rpx;box-sizing:border-box;
+}
+.cart-page.iphone{padding-bottom:304rpx;}
+.hidden.cart-page{height:100%;overflow:hidden;}
+.cart-page{
+  padding-top:80rpx;padding-bottom:236rpx;box-sizing: border-box;
+  .list-area{
+    padding:0 20rpx;box-sizing: border-box;position:relative;
+    .list-item{
+      position:relative;width:100%;height:200rpx;box-sizing: border-box;margin-top:20rpx;
+      background-color:#fff;border-radius:10rpx;overflow:hidden;
+      display:flex;justify-content: flex-end;align-items: center;
+      .list-inner{
+        position:absolute;left:0;top:0;bottom:0;right:0;
+        padding:10rpx;z-index:1;background-color:#fff;
+        display:flex;
+      }
+      .ico-cell{
+        width:50rpx;
+      }
+      .pic-cell{
+        width:140rpx;margin-right:10rpx;
+        .pic{
+          position:relative;width:140rpx;height:140rpx;
+          image{width:140rpx;height:140rpx;}
+          .pic-txt{
+            position:absolute;left:0;bottom:0;right:0;
+            padding:10rpx 0;text-align:center;font-size:24rpx;
+            background-color:rgba(0,0,0,0.5);color:#fff;
+          }
+        }
+      }
+      .select{
+        background-color:#eee;display:inline-block;padding:4rpx 10rpx;border-radius:10rpx;
+        font-size:24rpx;max-width:100%;box-sizing: border-box;
+      }
+    }
+    .del{height:100%;width:50px;box-sizing: border-box;}
+  }
+}
+.cart-bottom.iphone{bottom:180rpx;}
+.cart-bottom{
+  position:fixed;left:0;bottom:116rpx;right:0;height:100rpx;z-index:10;
+  background-color:#fff;box-sizing: border-box;padding:0 20rpx;
+  display:flex;justify-content:flex-start;align-items: center;
+  .btn{
+    width:180rpx;height:70rpx;display:flex;justify-content: center;align-items: center;
+    border-radius:60rpx;
+  }
+}
+</style>
+<template>
+  <view class="cart-fix-top flex_left">
+    <view class="flex_cell flex_left color-gray">共{{cartCount}}件商品</view>
+    <view class="pl10 flex_center bold" wx:if="{{cartCount > 0}}" @tap="clickManage">
+      <block wx:if="{{isManage}}">完成</block>
+      <block wx:else>管理</block>
+    </view>
+  </view>
+  <view :class="{'iphone' : isIpx, 'hidden': hiddePage}" class="cart-page">
+    <block wx:if="{{disList}}">
+      <block wx:if="{{!listData.length}}">
+        <view class="flex_empty">你还没有添加任何商品哦~</view>
+        <view class="flex_center">
+          <view @tap="toHome" class="circle-btn w100 flex_center" style="{{themeObject.bgStyle}}">去逛逛</view>
+        </view>
+      </block>
+      <view class="list-area" wx:else>
+        <repeat for="{{listData}}" item="item" index="cindex">
+          <view :class="{'checked': item.checked, 'touch-move-active': item.isTouchMove}" class="list-item" data-index="{{cindex}}" bindtouchstart="touchstart" bindtouchmove="touchmove" bindtouchend="touchend">
+            <view class="list-inner" style="left:-{{item.moveWidth}}px;right:{{item.moveWidth}}px;">
+              <block wx:if="{{item.disabled}}">
+                <view class="ico-cell flex_left">
+                  <view class="app-radio disabled"></view>
+                </view>
+              </block>
+              <block wx:else>
+                <view class="ico-cell flex_left" @tap="clickItem({{item}},{{cindex}})">
+                  <view class="app-radio" wx:if="{{item.checked}}" style="{{themeObject.borderStyle}}">
+                    <view class="checked-ico" style="{{themeObject.bgStyle}}"></view>
+                  </view>
+                  <view class="app-radio" wx:else></view>
+                </view>
+              </block>
+              <view class="pic-cell flex_center" @tap="toProduct({{item}})">
+                <view class="pic">
+                  <image mode="aspectFill" src="{{item.productinfo.photo}}"></image>
+                  <view wx:if="{{!item.moderate}}" class="pic-txt">已下架</view>
+                </view>
+              </view>
+              <view class="flex_cell">
+                <view class="clamp1" @tap="toProduct({{item}})">{{item.productinfo.title}}</view>
+                <block wx:if="{{item.productoptions && item.productoptions.length}}">
+                  <view wx:if="{{item.moderate}}" class="select" data-data="{{item}}" data-index="{{cindex}}" @tap="selectOption">
+                    <view class="flex_left">
+                      <view class="flex_left flex_cell">
+                        <view wx:if="{{!item.selectedOption}}">请重新选择规格</view>
+                        <view wx:else class="clamp1">{{item.optiontitle}}</view>
+                      </view>
+                      <view class="al al-sanjiaoxing font12 ml5"></view>
+                    </view>
+                  </view>
+                  <view wx:else class="flex_left color-gray">{{item.optiontitle}}</view>
+                </block>
+                <view class="flex_left mt5">
+                  <view class="flex_cell" @tap="toProduct({{item}})">
+                    <view class="clamp1" style="{{themeObject.colorStyle}}">￥{{item.productinfo.price}}</view>
+                  </view>
+                  <view class="flex_right" wx:if="{{item.moderate}}">
+                    <block wx:if="{{item.storage}}">
+                      <view class="app-number">
+                        <view
+                          data-data="{{item}}"
+                          data-index="{{cindex}}"
+                          catchtap="subNumber"
+                          :class="{'disabled': item.disabledMin}"
+                          class="cell sub-cell">
+                          <text class="sub al al-sub"></text>
+                        </view>
+                        <view class="cell input-cell">{{item.quantity}}</view>
+                        <view
+                          data-data="{{item}}"
+                          data-index="{{cindex}}"
+                          catchtap="addNumber"
+                          :class="{'disabled': item.disabledMax}"
+                          class="cell plus-cell">
+                          <text class="plus al al-plus"></text>
+                        </view>
+                      </view>
+                    </block>
+                    <view wx:else class="color-gray font12">库存不足</view>
+                  </view>
+                </view>
+              </view>
+            </view>
+            <view class="del flex_center" style="{{themeObject.bgStyle}}" data-data="{{item}}" data-index="{{cindex}}" catchtap="deleteCart">删除</view>
+          </view>
+        </repeat>
+      </view>
+    </block>
+  </view>
+  <view wx:if="{{listData.length}}" :class="{'iphone' : isIpx}" class="cart-bottom b_top_after">
+    <view class="flex_left" @tap="clickAll">
+      <view class="app-radio" wx:if="{{checkedAll}}" style="{{themeObject.borderStyle}}">
+        <view class="checked-ico" style="{{themeObject.bgStyle}}"></view>
+      </view>
+      <view class="app-radio" wx:else></view>
+      <text class="ml5">全选</text>
+    </view>
+    <block wx:if="{{isManage}}">
+      <view class="flex_cell flex_right">
+        <view class="padding10" @tap="clearData">清空购物车</view>
+      </view>
+      <view class="flex_right">
+        <view class="btn" style="{{themeObject.bgStyle}}" @tap="clickDelete">删除</view>
+      </view>
+    </block>
+    <block wx:else>
+      <view class="flex_cell flex_center">
+        <text class="color-gray">不含运费</text>
+        <text class="ml5">合计</text>
+        <text style="{{themeObject.colorStyle}}">￥{{totalPrice}}</text>
+      </view>
+      <view class="flex_right">
+        <view class="btn" wx:if="{{checkedData.length}}" style="{{themeObject.bgStyle}}" @tap="submitCart">结算</view>
+        <view class="btn bg-gray color-white" wx:else >结算</view>
+      </view>
+    </block>
+  </view>
+  <bottomMenu
+    current="shop"
+    :allowNav.sync="afterLoad"
+    :globalData.sync="globalData"
+    :isIpx.sync="isIpx"
+    :themeObject.sync="themeObject">
+  </bottomMenu>
+  <productOptions
+    :selectedOption.sync="selectedOption"
+    :selectedOptionIndex.sync="selectedOptionIndex"
+    :clickProduct.sync="selectedProduct"
+    :themeObject.sync="themeObject"
+    :afterSys.sync="afterSys"
+    :userInfo.sync="userInfo"
+    fromModule="cart">
+  </productOptions>
+</template>
+
+<script>
+import wepy from 'wepy'
+import Util from '@/libs/util'
+import Time from '@/libs/time'
+import Config from '@/config'
+import BottomMenu from '@/components/bottomMenu'
+import ProductOptions from '@/components/store/product-options'
+export default class extends wepy.page {
+  config = {
+    enablePullDownRefresh: true,
+    backgroundTextStyle: 'dark'
+  }
+  components = {
+    bottomMenu: BottomMenu,
+    productOptions: ProductOptions
+  }
+  data = {
+    globalData: {},
+    cartCount: 0,
+    Fid: Config.Fid,
+    isIpx: false,
+    themeObject: {},
+    listData: [],
+    disList: false,
+    checkedAll: false,
+    totalPrice: '0.00',
+    showProductOpt: false,
+    hiddePage: false,
+    selectedProduct: {},
+    selectedProductIndex: 0,
+    selectedOption: {},
+    selectedOptionIndex: 0,
+    checkedData: [],
+    isManage: false,
+    afterLoad: true,
+    isIOS: false,
+    afterSys: true
+  }
+  watch = {
+    listData () {
+      return this.listData
+    }
+  }
+  onPullDownRefresh () {
+    if (this.isLoading || !this.afterLoad || this.isTouchIng) {
+      wepy.stopPullDownRefresh()
+      return false
+    }
+    wepy.showNavigationBarLoading()
+    setTimeout(function () {
+      wepy.hideNavigationBarLoading()
+      wepy.stopPullDownRefresh()
+    }, 500)
+    this.refreshPage()
+  }
+  onReachBottom () {
+    if (this.listData.length === (this.pageStart + 1) * this.limit) {
+      this.pageStart++
+      this.getData()
+    }
+  }
+  refreshPage () {
+    this.isManage = false
+    this.checkedData = []
+    this.totalPrice = '0.00'
+    this.checkedAll = false
+    this.disList = false
+    this.listData = []
+    this.pageStart = 0
+    this.$apply()
+    this.getData()
+  }
+  onPageScroll (e) {
+    this.pageScrollTop = e.scrollTop
+  }
+  getData = function () {
+    if (this.isLoading || !this.afterLoad) return false
+    this.isLoading = true
+    this.afterLoad = false
+    this.$apply()
+    wepy.request({
+      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/cart/cartList`,
+      data: {pagestart: this.pageStart, limit: this.limit},
+      method: 'post'
+    }).then(res => {
+      const data = res.data
+      let retdata = data.data ? data.data : data
+      this.cartCount = data.count
+      for (let i = 0; i < retdata.length; i++) {
+        let curd = retdata[i]
+        retdata[i].dateline_str = new Time(curd.dateline * 1000).dateFormat('yyyy-MM-dd hh:mm')
+        retdata[i].moveWidth = 0
+        retdata[i].options = curd.productoptions
+        if (curd.quantity > curd.storage) {
+          retdata[i].quantity = curd.storage
+        }
+        if (curd.quantity <= 1) {
+          curd.disabledMin = true
+        }
+        if (curd.productoptions && curd.productoptions.length) {
+          let optionsarr = []
+          for (let j = 0; j < curd.productoptions.length; j++) {
+            if (curd.productoptions[j].id === curd.foid) {
+              retdata[i].optionindex = j
+              retdata[i].optiontitle = curd.productoptions[j].title
+              retdata[i].selectedOption = curd.productoptions[j]
+              if (curd.productoptions[j].storage === 1) {
+                curd.inputDisalbed = true
+              }
+              if (curd.quantity >= curd.productoptions[j].storage) {
+                curd.disabledMax = true
+              }
+            }
+            optionsarr.push(curd.productoptions[j].title)
+          }
+          retdata[i].optionsarr = optionsarr
+        } else {
+          if (curd.storage === 1) {
+            curd.inputDisalbed = true
+          }
+          if (curd.quantity >= curd.storage) {
+            curd.disabledMax = true
+          }
+        }
+        if (!curd.moderate || !curd.storage || (curd.productoptions && curd.productoptions.length && (!curd.selectedOption || !curd.foid || curd.foid === ''))) {
+          retdata[i].disabled = true
+        }
+      }
+      this.listData = this.listData.concat(retdata)
+      this.disList = true
+      wepy.stopPullDownRefresh()
+      this.afterLoad = true
+      this.isLoading = false
+      this.$apply()
+    })
+  }
+  handlePageData () {
+    this.globalData = this.$parent.globalData
+    Util.appInit(this.globalData, this)
+    this.userInfo = this.globalData.userInfo
+    if (!this.isLoading && this.afterLoad) {
+      this.refreshPage()
+    }
+  }
+  onLoad (options) {
+    this.options = options
+    this.pageStart = 0
+    this.limit = Config.Limit
+    wepy.hideShareMenu()
+    wepy.getSystemInfo().then(res => {
+      this.systemInfo = res
+      if (res.model.indexOf('iPhone') > -1 || res.system.indexOf('iOS') > -1) {
+        this.isIOS = true
+      } else {
+        this.isIOS = false
+      }
+      if (res.model.substring(0, res.model.indexOf('X')) + 'X' === 'iPhone X') {
+        this.isIpx = true
+      }
+      this.$apply()
+    })
+  }
+  onShow = function (options) {
+    if (this.$parent.globalData.flag.bokaAuth) {
+      this.handlePageData()
+    } else {
+      this.$parent.loadCallback = () => {
+        this.handlePageData()
+      }
+    }
+  }
+  computePrice () {
+    let total = 0
+    for (let i = 0; i < this.listData.length; i++) {
+      let cur = this.listData[i]
+      if (cur.checked) {
+        let curPrice = parseFloat(cur.productinfo.price)
+        total = total + curPrice * cur.quantity
+      }
+    }
+    this.totalPrice = total.toFixed(2)
+    this.$apply()
+  }
+  handleNumber (item, index) {
+    if (item.quantity === 1) {
+      item.disabledMin = true
+    } else if (item.quantity > 1) {
+      delete item.disabledMin
+    }
+    if (item.productoptions && item.productoptions.length) {
+      if (item.quantity >= item.selectedOption.storage) {
+        item.quantity = item.selectedOption.storage
+        item.disabledMax = true
+      } else {
+        delete item.disabledMax
+      }
+    } else {
+      if (item.quantity >= item.storage) {
+        item.quantity = item.storage
+        item.disabledMax = true
+      } else {
+        delete item.disabledMax
+      }
+    }
+    wepy.request({
+      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/cart/update`,
+      data: {id: item.id, quantity: item.quantity, foid: item.foid},
+      method: 'post'
+    }).then(res => {
+      this.updateIng = false
+      const data = res.data
+      if (data.flag) {
+        this.listData[index] = item
+        this.computePrice()
+        this.$apply()
+      } else {
+        wepy.showToast({
+          title: data.error,
+          icon: 'none'
+        })
+      }
+    })
+  }
+  disOptionsArea () {
+    this.backScrollTop = this.pageScrollTop
+    this.hiddePage = true
+  }
+  hideOptionsArea () {
+    this.hiddePage = false
+    this.$apply()
+    wepy.pageScrollTo({
+      scrollTop: this.backScrollTop
+    })
+    this.showProductOpt = false
+    this.$apply()
+  }
+  handleChecked (item, index) {
+    if (item.checked) {
+      this.checkedData.push(item)
+    } else {
+      for (let i = 0; i < this.checkedData.length; i++) {
+        if (this.checkedData[i].id === item.id) {
+          this.checkedData.splice(i, 1)
+          break
+        }
+      }
+    }
+    this.$apply()
+  }
+  handleDelete (ids) {
+    this.submitIng = true
+    wepy.request({
+      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/cart/delete`,
+      data: {id: ids},
+      method: 'post'
+    }).then(res => {
+      this.submitIng = false
+      const data = res.data
+      if (data.flag) {
+        this.cartCount = data.cartcount
+        this.globalData.userInfo.cartcount = data.cartcount
+        this.userInfo.cartcount = data.cartcount
+        this.$parent.globalData = this.globalData
+        for (let i = 0; i < ids.length; i++) {
+          for (let j = 0; j < this.listData.length; j++) {
+            if (this.listData[j].id === ids[i]) {
+              this.listData.splice(j, 1)
+              break
+            }
+          }
+        }
+        for (let i = 0; i < ids.length; i++) {
+          for (let j = 0; j < this.checkedData.length; j++) {
+            if (this.checkedData[j].id === ids[i]) {
+              this.checkedData.splice(j, 1)
+              break
+            }
+          }
+        }
+        this.computePrice()
+        this.$apply()
+      } else {
+        wepy.showToast({
+          title: data.error,
+          icon: 'none'
+        })
+      }
+    })
+  }
+  angle (start, end) {
+    let dX = end.X - start.X
+    let dY = end.Y - start.Y
+    return 360 * Math.atan(dY / dX) / (2 * Math.PI)
+  }
+  methods = {
+    clickItem (item, index) {
+      item.checked = !item.checked
+      this.checkedAll = false
+      this.listData[index] = item
+      this.computePrice()
+      this.handleChecked(item, index)
+    },
+    clickAll () {
+      this.checkedAll = !this.checkedAll
+      this.checkedData = []
+      for (let i = 0; i < this.listData.length; i++) {
+        if (!this.checkedAll || (this.checkedAll && !this.listData[i].disabled)) {
+          this.listData[i].checked = this.checkedAll
+        }
+        if (this.checkedAll && !this.listData[i].disabled) {
+          this.checkedData.push(this.listData[i])
+        }
+      }
+      this.computePrice()
+      this.$apply()
+    },
+    subNumber (e) {
+      const dataset = e.currentTarget.dataset
+      let item = dataset.data
+      let index = dataset.index
+      if (this.updateIng || item.disabledMin) return false
+      this.updateIng = true
+      item.quantity--
+      this.handleNumber(item, index)
+    },
+    addNumber (e) {
+      const dataset = e.currentTarget.dataset
+      let item = dataset.data
+      let index = dataset.index
+      if (this.updateIng || item.disabledMax) return false
+      this.updateIng = true
+      item.quantity++
+      this.handleNumber(item, index)
+    },
+    blurNumber (e) {
+      const dataset = e.currentTarget.dataset
+      let item = dataset.data
+      let index = dataset.index
+      if (this.updateIng) return false
+      let val = e.detail.value
+      let numReg = /^[1-9]\d*$/
+      if (val === '' || isNaN(val) || !numReg.test(val) || parseInt(val) <= 0) {
+        item.quantity = 1
+      } else {
+        item.quantity = parseInt(e.detail.value)
+      }
+      this.handleNumber(item, index)
+    },
+    changeOption (e) {
+      const dataset = e.currentTarget.dataset
+      let item = dataset.data
+      let index = dataset.index
+      let selectIndex = parseInt(e.detail.value)
+      let curOptionData = item.productoptions[selectIndex]
+      item.optionindex = selectIndex
+      item.optiontitle = item.optionsarr[selectIndex]
+      item.foid = curOptionData.id
+      item.productinfo.optiontitle = curOptionData.title
+      item.productinfo.price = curOptionData.price
+      item.selectedOption = curOptionData
+      this.handleNumber(item, index)
+    },
+    closeOptions (e) {
+      this.hideOptionsArea()
+    },
+    viewBigImg (e) {
+      let url = e.currentTarget.dataset.url
+      wepy.previewImage({
+        urls: [url],
+        current: url
+      })
+    },
+    selectOption (e) {
+      const dataset = e.currentTarget.dataset
+      let item = dataset.data
+      let index = dataset.index
+      this.selectedProduct = item
+      this.selectedProductIndex = index
+      if (item.selectedOption) {
+        this.selectedOption = item.selectedOption
+        this.selectedOptionIndex = item.optionindex
+      } else {
+        this.selectedOption = item.productoptions[0]
+        this.selectedOptionIndex = 0
+      }
+      this.disOptionsArea()
+      this.$apply()
+      this.$invoke('productOptions', 'showOptions')
+    },
+    submitCart () {
+      if (this.submitIng) return false
+      if (!this.checkedData.length) {
+        wepy.showToast({
+          title: '请选择商品',
+          icon: 'none'
+        })
+        return false
+      }
+      if (this.checkedData.length > 10) {
+        wepy.showToast({
+          title: '最多可结算10个商品',
+          icon: 'none'
+        })
+        return false
+      }
+      this.submitIng = true
+      let postData = []
+      for (let i = 0; i < this.checkedData.length; i++) {
+        postData.push(this.checkedData[i].id)
+      }
+      let idstr = encodeURIComponent(postData.join(','))
+      this.submitIng = false
+      wepy.navigateTo({url: `/packageC/pages/addCartOrder?cartid=${idstr}`})
+    },
+    clickManage () {
+      this.isManage = !this.isManage
+      this.$apply()
+    },
+    deleteCart (e) {
+      const dataset = e.currentTarget.dataset
+      let ids = [dataset.data.id]
+      this.handleDelete(ids)
+    },
+    clickDelete () {
+      if (this.submitIng) return false
+      if (!this.checkedData.length) {
+        wepy.showToast({
+          title: '请选择商品',
+          icon: 'none'
+        })
+        return false
+      }
+      wepy.showModal({
+        title: '',
+        content: '确定要删除商品吗?'
+      }).then(res => {
+        if (res.confirm) {
+          this.submitIng = true
+          let ids = []
+          for (let i = 0; i < this.checkedData.length; i++) {
+            ids.push(this.checkedData[i].id)
+          }
+          this.handleDelete(ids)
+        }
+      })
+    },
+    clearData () {
+      if (this.submitIng) return false
+      wepy.showModal({
+        title: '',
+        content: '确定要清空购物车吗?'
+      }).then(res => {
+        if (res.confirm) {
+          this.submitIng = true
+          wepy.request({
+            url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/cart/delete`,
+            data: {id: -1},
+            method: 'post'
+          }).then(res => {
+            this.submitIng = false
+            const data = res.data
+            if (data.flag) {
+              this.isManage = false
+              this.cartCount = 0
+              this.globalData.userInfo.cartcount = data.cartcount
+              this.userInfo.cartcount = data.cartcount
+              this.$parent.globalData = this.globalData
+              this.pageStart = 0
+              this.listData = []
+              this.computePrice()
+              this.$apply()
+            } else {
+              wepy.showToast({
+                title: data.error,
+                icon: 'none'
+              })
+            }
+          })
+        }
+      })
+    },
+    toHome () {
+      wepy.reLaunch({url: '/pages/index'})
+    },
+    toProduct (item) {
+      wepy.navigateTo({url: `/${Config.Router.product}?id=${item.fpimportid}&fid=${Config.Fid}&type=fpimport`})
+    },
+    touchstart (e) {
+      this.isTouchIng = true
+      if (e.changedTouches && e.changedTouches[0]) {
+        for (let i = 0; i < this.listData.length; i++) {
+          if (this.listData[i].isTouchMove) {
+            delete this.listData[i].isTouchMove
+          }
+        }
+        this.startX = e.changedTouches[0].clientX
+        this.startY = e.changedTouches[0].clientY
+        this.$apply()
+      }
+    },
+    touchmove (e) {
+      const dataset = e.currentTarget.dataset
+      const index = dataset.index
+      let startX = this.startX
+      // let startY = this.startY
+      let touchMoveX = e.changedTouches[0].clientX
+      // let touchMoveY = e.changedTouches[0].clientY
+      let angle = touchMoveX - startX
+      for (let i = 0; i < this.listData.length; i++) {
+        if (i === index) {
+          let moveWidth = angle
+          this.listData[i].isTouchMove = true
+          if (moveWidth < -50) {
+            moveWidth = 50
+          } else if (moveWidth > 0) {
+            if (this.listData[i].moveWidth - moveWidth > 0) {
+              moveWidth = this.listData[i].moveWidth - moveWidth
+            } else {
+              this.listData[i].isTouchMove = false
+              moveWidth = 0
+            }
+          } else {
+            moveWidth = Math.abs(moveWidth)
+          }
+          this.listData[i].moveWidth = moveWidth
+        } else {
+          this.listData[i].moveWidth = 0
+        }
+      }
+      this.$apply()
+    },
+    touchend (e) {
+      this.isTouchIng = false
+      const dataset = e.currentTarget.dataset
+      const index = dataset.index
+      for (let i = 0; i < this.listData.length; i++) {
+        if (i === index) {
+          if (this.listData[i].moveWidth < 50 && this.listData[i].isTouchMove) {
+            this.listData[i].moveWidth = 50
+          }
+        }
+      }
+      this.$apply()
+    }
+  }
+  events = {
+    updateCartOption () {
+      if (this.updateIng) return
+      this.updateIng = true
+      if (!this.selectedOption || !this.selectedOption.id) {
+        wepy.showToast({
+          title: '请选择商品规格',
+          icon: 'none'
+        })
+        return false
+      }
+      if (this.selectedOption.storage <= 0) {
+        wepy.showToast({
+          title: '该规格商品库存不足',
+          icon: 'none'
+        })
+        return false
+      }
+      this.selectedProduct.productinfo.price = this.selectedOption.price
+      this.selectedProduct.selectedOption = this.selectedOption
+      this.selectedProduct.optionindex = this.selectedOptionIndex
+      this.selectedProduct.optiontitle = this.selectedOption.title
+      this.selectedProduct.foid = this.selectedOption.id
+      this.handleNumber(this.selectedProduct, this.selectedProductIndex)
+      this.$invoke('productOptions', 'closeOptions')
+    },
+    clickOptions (dataset) {
+      this.selectedOption = dataset.data
+      this.selectedOptionIndex = dataset.index
+      this.$apply()
+    }
+  }
+}
+</script>

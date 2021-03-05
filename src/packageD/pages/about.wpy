@@ -1,0 +1,107 @@
+<style lang="less">
+.mark-page.iphone{bottom:68rpx;}
+.mark-page{
+  left:0;right:0;top:0;bottom:0;position:absolute;
+  .page-inner{width:100%;height:100%;}
+  image{width:100%;}
+  .bottom-area{
+    width:100%;height:120rpx;display:block;position:absolute;left:0;bottom:136rpx;right:0;background-color:transparent;
+    .btn{width:80%;height:80rpx;border-radius:40rpx;}
+  }
+  .blank-area{width:100%;height:140rpx;}
+}
+</style>
+<template>
+  <view :class="{'iphone' : isIpx}" class="mark-page">
+    <view class="page-inner columnarea">
+      <block wx:if="{{showContainer}}">
+        <user from="about" :factoryInfo.sync="factoryInfo" :userInfo.sync="userInfo" :globalData.sync="globalData"></user>
+      </block>
+    </view>
+  </view>
+</template>
+<script>
+  import wepy from 'wepy'
+  import Config from '@/config'
+  import Util from '@/libs/util'
+  import User from '@/components/user'
+  export default class Mark extends wepy.page {
+    components = {
+      user: User
+    }
+    data = {
+      options: {},
+      globalData: {},
+      userInfo: {},
+      contentArr: [],
+      Fid: Config.Fid,
+      factoryInfo: {},
+      showContainer: false,
+      systemInfo: {},
+      isIpx: false,
+      themeObject: {}
+    }
+    afterFactoryInfo () {
+      if (this.factoryInfo.content && this.factoryInfo.content !== '') {
+        this.contentArr = JSON.parse(this.factoryInfo.content)
+        this.factoryInfo.contentArr = JSON.parse(this.factoryInfo.content)
+      } else {
+        this.factoryInfo.contentArr = []
+      }
+      this.showContainer = true
+      this.$apply()
+    }
+    handlePageData () {
+      this.globalData = this.$parent.globalData
+      Util.appInit(this.globalData, this)
+      this.userInfo = this.globalData.userInfo
+      this.factoryInfo = this.globalData.FactoryInfo
+      this.afterFactoryInfo()
+      this.$apply()
+    }
+    onLoad (options) {
+      if (options.scene) {
+        let sceneOptions = Util.queryScene(options.scene)
+        options = {...options, ...sceneOptions}
+      }
+      this.options = options
+      this.$apply()
+      wepy.getSystemInfo().then(res => {
+        this.systemInfo = res
+        if (res.model.substring(0, res.model.indexOf('X')) + 'X' === 'iPhone X') {
+          this.isIpx = true
+        }
+        this.$apply()
+      })
+      if (this.$parent.globalData.flag.bokaAuth) {
+        this.handlePageData()
+      } else {
+        this.$parent.loadCallback = () => {
+          this.handlePageData()
+        }
+      }
+    }
+    handleShare () {
+      const lastshareuid = this.options.share_uid
+      let shareurl = `/packageD/pages/about?fid=${this.Fid}&share_uid=${this.userInfo.uid}&share_wid=${this.globalData.Wid}&wid=${this.globalData.Wid}&comefrom=${Config.AppName}`
+      if (lastshareuid) {
+        shareurl = `${shareurl}&lastshareuid=${lastshareuid}`
+      }
+      let backUrl = encodeURIComponent(shareurl)
+      shareurl = `${shareurl}&currentUrl=${backUrl}`
+      this.shareParams = {
+        title: this.factoryInfo.title,
+        imageUrl: 'https://tossharingsales.boka.cn/minigxk/factory/share.png',
+        path: shareurl
+      }
+    }
+    onShareAppMessage (res) {
+      this.handleShare()
+      return this.shareParams
+    }
+    onShareTimeline () {
+      this.handleShare()
+      return this.shareParams
+    }
+  }
+</script>

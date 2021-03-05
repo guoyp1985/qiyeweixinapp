@@ -1,0 +1,262 @@
+<style lang="less">
+.form-item{
+  background-color:#fff;box-sizing: border-box;
+  box-shadow:0px 0px 3px 1px #e4e4e4;border-radius:4rpx;
+  width:100%;min-height:100rpx;display:flex;align-items:center;padding:20rpx;position:relative;
+  margin-top:20rpx;
+  .title-cell{width:145rpx;height:100%;display: flex;align-items: left;justify-content:flex-start;align-items: center;text-align:left;}
+  .input-cell{
+    flex:1;height:100%;display:flex;justify-content: flex-end; align-items: center;position:relative;
+    input{
+      width:100%;padding:0 10rpx;box-sizing: border-box;border-radius:10rpx;
+      color: #333333;text-align:right;
+      justify-content:flex-end;align-items: center;
+    }
+    .input-placeholder{color:rgba(153,153,153,0.65)}
+  }
+}
+.list-page{
+  .scroll_list{
+    .scroll_item{
+      background-color: #fff;
+      display:block;padding:20rpx;box-sizing: border-box;
+    }
+    .pic{
+      width:120rpx;
+      image{width:100rpx;height:100rpx;border-radius:50%;}
+    }
+    .btn_cell{
+      width:140rpx;
+      .btn{
+        border-radius: 20rpx;width:120rpx;height:50rpx;
+      }
+    }
+  }
+}
+</style>
+<template>
+  <view class="container columnarea list-page">
+    <view class="form-item">
+      <view class="title-cell">模块名称</view>
+      <view class="input-cell">
+        <input class="input" placeholder-class="input-placeholder" bindinput="keyupTablename" value="{{moduleInfo.tablename}}" type="text" placeholder="频道名称"></input>
+      </view>
+    </view>
+    <scroll-view scroll-y="true" class="column-content scroll-h">
+      <form class="scroll_item" report-submit="true" bindsubmit="saveEvent" >
+        <view class='scroll_list'>
+          <repeat for="{{moduleInfo.charname}}" item="item" index="index">
+            <view class="flex_cell" data-id="{{index}}">
+              <view class="form-item">
+                <view class="title-cell">字段名</view>
+                <view class="input-cell">
+                  <input class="input" placeholder-class="input-placeholder" bindinput="keyupFormInput" data-name="charname" data-index="{{index}}" value="{{item}}" type="text" placeholder="字段名"></input>
+                </view>
+              </view>
+              <view class="form-item">
+                <view class="title-cell">中文名</view>
+                <view class="input-cell">
+                  <input class="input" placeholder-class="input-placeholder" bindinput="keyupFormInput" data-name="namename" data-index="{{index}}" value="{{moduleInfo.namename[index]}}" type="text" placeholder="中文名"></input>
+                </view>
+              </view>
+              <view class="form-item">
+                <view class="title-cell">数据类型</view>
+                <view class="input-cell">
+                  <text class="al al-select-icon select-icon font20 color-theme" style="{{themeObject.colorStyle}}"></text>
+                  <picker class="title-picker" value="{{moduleInfo.type[index]}}" data-type="type" data-name="type" data-index="{{index}}" range="{{typeObject}}" mode="selector" bindchange="changePicker">
+                    <view class="txt flex_right">{{typeObject[moduleInfo.type[index]]}}</view>
+                  </picker>
+                </view>
+              </view>
+              <view class="form-item">
+                <view class="title-cell">是否必填</view>
+                <view class="input-cell">
+                  <text class="al al-select-icon select-icon font20 color-theme" style="{{themeObject.colorStyle}}"></text>
+                  <picker class="title-picker" value="{{moduleInfo.required[index]}}" data-name="required" data-index="{{index}}" range="{{selectObject}}" mode="selector" bindchange="changePicker">
+                    <view class="txt flex_right">{{selectObject[moduleInfo.required[index]]}}</view>
+                  </picker>
+                </view>
+              </view>
+              <view class="form-item">
+                <view class="title-cell">下拉菜单选项</view>
+                <view class="input-cell">
+                  <input class="input" placeholder-class="input-placeholder" bindinput="keyupFormInput" data-name="listvaluestr" data-index="{{index}}" value="{{moduleInfo.listvaluestr[index]}}" type="text" placeholder="各个选项用,分隔"></input>
+                </view>
+              </view>
+              <view class="form-item">
+                <view class="title-cell">列表显示</view>
+                <view class="input-cell">
+                  <text class="al al-select-icon select-icon font20 color-theme" style="{{themeObject.colorStyle}}"></text>
+                  <picker class="title-picker" value="{{moduleInfo.list[index]}}" data-name="list" data-index="{{index}}" range="{{selectObject}}" mode="selector" bindchange="changePicker">
+                    <view class="txt flex_right">{{selectObject[moduleInfo.list[index]]}}</view>
+                  </picker>
+                </view>
+              </view>
+              <view class="form-item">
+                <view class="title-cell">增加显示</view>
+                <view class="input-cell">
+                  <text class="al al-select-icon select-icon font20 color-theme" style="{{themeObject.colorStyle}}"></text>
+                  <picker class="title-picker" value="{{moduleInfo.add[index]}}" data-name="add" data-index="{{index}}" range="{{selectObject}}" mode="selector" bindchange="changePicker">
+                    <view class="txt flex_right">{{selectObject[moduleInfo.add[index]]}}</view>
+                  </picker>
+                </view>
+              </view>
+              <view class="form-item">
+                <view class="title-cell">查看显示</view>
+                <view class="input-cell">
+                  <text class="al al-select-icon select-icon font20 color-theme" style="{{themeObject.colorStyle}}"></text>
+                  <picker class="title-picker" value="{{moduleInfo.add[index]}}" data-name="view" data-index="{{index}}" range="{{selectObject}}" mode="selector" bindchange="changePicker">
+                    <view class="txt flex_right">{{selectObject[moduleInfo.view[index]]}}</view>
+                  </picker>
+                </view>
+              </view>
+              <view class="flex_center b_top_after pt10 pb10">
+                <block wx:if="{{index}}">
+                  <form class="flex_cell flex_center" data-index="{{index}}" bindsubmit="moveup" report-submit="true">
+                    <button formType="submit" class="flex_center"><text class="al al-orders font20 mr5" style="vertical-align:middle;"></text>上移</button>
+                  </form>
+                </block>
+                <block wx:if="{{index != moduleInfo.charname.length}}">
+                  <form class="flex_cell flex_center" data-index="{{index}}" bindsubmit="movedown" report-submit="true">
+                    <button formType="submit" class="flex_center"><text class="al al-orders font20 mr5" style="vertical-align:middle;"></text>下移</button>
+                  </form>
+                </block>
+              </view>
+            </view>
+          </repeat>
+        </view>
+        <view class="bottom-area flex_center">
+          <!-- <view class="flex_cell h_100 flex_center">
+            <button formType="reset" class="btn-bottom flex_center bg-gray color-white">取消</button>
+          </view> -->
+          <view class="flex_cell h_100 flex_center">
+            <button formType="submit" class="btn-bottom flex_center bg-theme color-white" style="{{themeObject.bgStyle}}">提交</button>
+          </view>
+        </view>
+      </form>
+    </scroll-view>
+  </view>
+</template>
+<script>
+
+import wepy from 'wepy'
+import Config from '@/config'
+import Util from '@/libs/util'
+export default class ModuleList extends wepy.page {
+  data = {
+    options: {},
+    globalData: {},
+    moduleInfo: {},
+    Fid: Config.Fid,
+    userInfo: {},
+    listData: [],
+    postData: {},
+    submitIng: false,
+    disList: false,
+    changekey: ['add', 'charname', 'list', 'edit', 'listvaluestr', 'namename', 'required', 'type', 'view'],
+    selectObject: ['否', '是'],
+    typeObject: ['请选择', '文本框', '单选框', '多选框', '下拉菜单', '文本域', '文件上传', '索引', '时间', '内容', '密码', '分类编号', '选择用户', '站内链接', '从其他模块选择'],
+    pageStart: 0,
+    limit: Config.Limit,
+    type: 'user',
+    themeObject: {}
+  }
+  onLoad (options) {
+    this.options = options
+    if (this.$parent.globalData.flag.bokaAuth) {
+      this.handlePageData()
+    } else {
+      this.$parent.loadCallback = () => {
+        this.handlePageData()
+      }
+    }
+    this.$apply()
+  }
+  handlePageData () {
+    this.globalData = this.$parent.globalData
+    Util.appInit(this.globalData, this)
+    this.userInfo = this.globalData.userInfo
+    wepy.request({
+      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/codemaker/modulePara`,
+      data: {module: this.options.module, fid: this.Fid},
+      method: 'get'
+    }).then(res => {
+      const data = res.data
+      const retdata = data.data ? data.data : data
+      this.moduleInfo = retdata
+      this.$apply()
+    })
+    this.$apply()
+  }
+  methods = {
+    scrollEvent () {
+      if (this.listData.length === (this.pageStart + 1) * this.limit) {
+        this.pageStart++
+        this.getData()
+      }
+    },
+    keyupFormInput (e) {
+      const dataset = e.currentTarget.dataset
+      let curindex = dataset.index
+      this.moduleInfo[dataset.name][curindex] = e.detail.value
+      this.$apply()
+    },
+    moveup (e) {
+      const dataset = e.currentTarget.dataset
+      let curindex = dataset.index
+      let moveindex = curindex - 1
+      for (var i = 0; i < this.changekey.length; i++) {
+        let curvalue = this.moduleInfo[this.changekey[i]][curindex]
+        this.moduleInfo[this.changekey[i]][curindex] = this.moduleInfo[this.changekey[i]][moveindex]
+        this.moduleInfo[this.changekey[i]][moveindex] = curvalue
+      }
+      this.$apply()
+    },
+    movedown (e) {
+      const dataset = e.currentTarget.dataset
+      let curindex = dataset.index
+      let moveindex = curindex + 1
+      for (var i = 0; i < this.changekey.length; i++) {
+        let curvalue = this.moduleInfo[this.changekey[i]][curindex]
+        this.moduleInfo[this.changekey[i]][curindex] = this.moduleInfo[this.changekey[i]][moveindex]
+        this.moduleInfo[this.changekey[i]][moveindex] = curvalue
+      }
+      this.$apply()
+    },
+    changePicker (e) {
+      const dataset = e.currentTarget.dataset
+      let curindex = dataset.index
+      const curVal = e.detail.value
+      this.moduleInfo[dataset.name][curindex] = curVal
+      this.$apply()
+    },
+    saveEvent (e) {
+      if (!this.submitIng) {
+        this.postData['add'] = this.moduleInfo['add']
+        this.postData['charname'] = this.moduleInfo['charname']
+        this.postData['edit'] = this.moduleInfo['edit']
+        this.postData['list'] = this.moduleInfo['list']
+        this.postData['listvalue'] = this.moduleInfo['listvaluestr']
+        this.postData['namename'] = this.moduleInfo['namename']
+        this.postData['required'] = this.moduleInfo['required']
+        this.postData['type'] = this.moduleInfo['type']
+        this.postData['view'] = this.moduleInfo['view']
+        this.postData['moduleChName'] = this.moduleInfo['tablename']
+        this.postData['fid'] = this.Fid
+        this.postData['module'] = this.options.module
+        this.postData['moduleEnName'] = this.options.module
+        wepy.request({
+          url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/codemaker/codemakeradd`,
+          data: this.postData,
+          method: 'post'
+        }).then(res => {
+          // const data = res.data
+          // const retdata = data.data ? data.data : data
+          console.log(res.flag)
+          this.$apply()
+        })
+      }
+    }
+  }
+}
+</script>

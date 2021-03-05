@@ -1,0 +1,832 @@
+<style lang="less">
+@import '../styles/variable.less';
+.cardlist{
+  padding:0rpx 40rpx;
+  .scroll_item{
+    width: 100%;position:relative;color:#fff;
+    display: flex;justify-content: center;align-items: center;
+    margin-top:40rpx;
+  }
+  .scroll_item.grayitem{background-color: #999;}
+  .scroll_item .txt{color:#fff;}
+  .scroll_item.grayitem .txt{color:orange;}
+  .txt-cell{position:relative;padding-top:30rpx;padding-bottom:30rpx;padding-left:20rpx;box-sizing: border-box;}
+  .txt-cell:after{
+    content:"";display:block;
+    border-right:#fff 1px dashed;
+    position: absolute;right: 0;top: 0;bottom:0px;
+    -webkit-transform: scaleX(0.5) translateX(0.5px);
+    transform: scaleX(0.5) translateX(0.5px);
+    -webkit-transform-origin: 0% 0%;
+    transform-origin: 0% 0%;
+  }
+  .scroll_item .ball{
+    position: absolute;
+    right: -28rpx;
+    width: 60rpx;
+    height: 60rpx;
+    background-color: #fff;
+    border-radius: 50%;
+  }
+  .scroll_item .ball-up{top: -30rpx;}
+  .scroll_item .ball-down{bottom: -30rpx;}
+  .scroll_item .pic{width:100rpx;}
+  .scroll_item .pic image{width:80rpx;height:80rpx;border-radius:50%;}
+  .btn-cell{width:180rpx;padding-top:30rpx;padding-bottom:30rpx;box-sizing: border-box;}
+  .btn-cell .al{font-size:100rpx;}
+  .btn-cell .icon-chat{margin-top:8rpx;}
+  .rbtn{display:inline-block;padding:10rpx;border-radius:10rpx;background-color: #fff;}
+  .radio_check .vux-check-icon > view{background-color: #fff;display:inline-block;}
+  .vux-check-icon .circle-icon{width:22px;height:22px;border-radius:50%;display:flex !important;justify-content: center; align-items: center;}
+  .vux-check-icon .circle-icon .dot{width:20rpx;height:20rpx;border-radius:50%;background-color:#eb6b5e;}
+  .vux-check-icon icon{vertical-align:middle;}
+}
+.vux-popup-dialog scroll-view {position:relative;height: calc(~"100% - 44px")}
+.protocal{
+  position: fixed;
+  left: 0;right:0;bottom:0;overflow:hidden;
+  top: 100vh;
+  width: 100vw;
+  background-color: #fff;
+  z-index: 10000;
+  scroll-view{
+    width: 100vw;
+    height: 90vh;
+    text-align: justify;
+    padding: 0 20rpx;
+    box-sizing: border-box;
+    padding-bottom: 130rpx;
+  }
+  .close-btn{
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    right: 0;
+  }
+}
+.add-order{
+  .blank-area{height:120rpx;}
+  .hidden{color: #fff;}
+  .visiable{color: #ccc;}
+  .txt-cell{width:200rpx;}
+  .line{width:100%;height:24rpx;}
+  .weui-cells:before{border-top:none;}
+  .weui-cells:after{border-bottom:none;}
+  .vux-no-group-title{margin-top:0;}
+  .weui-cell{padding:0;}
+  .card-area{
+    .al{font-size:50rpx;font-weight:bold;}
+  }
+  .form-item {
+    position:relative;
+    padding:10px;
+  }
+  .form-item:after {
+    content:"";
+    display:block;
+  	background-color: @list-border-color;
+    height:1px;
+    overflow:hidden;
+  	position: absolute;
+    left: 0;
+    right: 0;
+    bottom:1px;
+  	-webkit-transform: scaleY(0.5) translateY(0.5px);
+  	transform: scaleY(0.5) translateY(0.5px);
+  	-webkit-transform-origin: 0% 0%;
+  	transform-origin: 0% 0%;
+  }
+  .productitem{
+    .pic{
+      width:120rpx;
+      image{width:100rpx;height:100rpx;}
+    }
+  }
+  .box-area{
+    padding:0 20rpx;margin-top:20rpx;
+    .box-item{
+      background-color:#fff;border-radius:10rpx;padding:20rpx;
+      .row-item{position:relative;}
+      .row-item:not(:last-child):after{
+        content:"";display:block;
+      	background-color:#eaeaea;height:1px;overflow:hidden;
+      	position: absolute;left: 0;right: 0;bottom:0px;
+      	-webkit-transform: scaleY(0.5) translateY(0.5px);
+      	transform: scaleY(0.5) translateY(0.5px);
+      	-webkit-transform-origin: 0% 0%;
+      	transform-origin: 0% 0%;
+      }
+      .row-item:not(:first-child){padding-top:20rpx;}
+      .row-item:not(:last-child){padding-bottom:20rpx;}
+    }
+  }
+  .address-ico{
+    width:50rpx;height:50rpx;border-radius:50%;
+    text-align:center;line-height:50rpx;
+    .al{font-size:36rpx;}
+  }
+  .app-photo{width:60rpx;height:60rpx;border-radius:50%;}
+  .product-area{
+    .pic{
+      padding-right:20rpx;
+      image{width:140rpx;height:140rpx;border-radius:10rpx;}
+    }
+  }
+}
+.tip-confirm-modal{
+  .modal-inner{width:80%;}
+  .btn-area{
+    height:100rpx;
+  }
+}
+.protocal .pro-bottom{bottom:130rpx;}
+.page-box-bottom{
+  position: fixed;left: 0;right: 0;bottom: 0;height:100rpx;z-index:10;
+  background-color: #fff;box-shadow: 0px 4rpx 18rpx rgba(0, 0, 0, 0.2);
+  .box-btn{
+    margin-left:20rpx;margin-right:20rpx;padding:10rpx 20rpx;border-radius:60rpx;
+  }
+}
+.page-box-bottom.iphone{bottom:68rpx;}
+</style>
+<template>
+  <view class="add-order font14">
+    <block wx:if="{{sellerUser && sellerUser.uid}}">
+      <view class="box-area">
+        <view class="box-item align_center" style="word-break:break-word;">
+          <text class="color-theme bold" style="{{themeObject.colorStyle}}">{{sellerUser.linkman}}</text>
+          <text class="bold">为您推荐</text></view>
+      </view>
+    </block>
+    <view class="box-area" @tap="showAddress">
+      <view class="box-item">
+        <view class="flex_left">
+          <view class="pr10">
+            <view class="address-ico bg-theme" style="{{themeObject.bgStyle}}">
+              <text class="al al-dizhi2 color-white"></text>
+            </view>
+          </view>
+          <view class="flex_cell flex_cell">
+            <block wx:if="{{selectAddress}}">
+              <view><text class="bold">{{selectAddress.linkman}}</text><text class="ml5">{{selectAddress.telephone}}</text></view>
+              <view class="color-gray">{{selectAddress.fulladdress}}</view>
+            </block>
+            <view wx:else class="color-red">请选择地址</view>
+          </view>
+          <view class="flex_right pl10">
+            <icon class="al al-mjiantou-copy2 font18 color-gray"></icon>
+          </view>
+        </view>
+      </view>
+    </view>
+    <view class="box-area">
+      <view class="box-item">
+        <view class="flex_left">
+            <image class="app-photo" src="{{MiniInfo.photo}}" mode="aspectFill"></image>
+            <text class="ml10">{{MiniInfo.title}}</text>
+        </view>
+        <view class="db-flex mt10 w_100 product-area b_bottom_after pb10">
+          <view class="pic flex_left">
+            <block wx:if="{{product.id}}">
+              <image wx:if="{{curOrder.options && curOrder.options.id && curOrder.options.photo != ''}}" mode="aspectFill" class="v_middle imgcover" src="{{curOrder.options.photo}}"/>
+              <image wx:else mode="aspectFill" class="v_middle imgcover" src="{{product.photo}}"/>
+            </block>
+          </view>
+          <view class="flex_cell">
+            <view class="w_100">
+              <view class="name color-black font15 clamp1">{{product.name}}</view>
+              <view class="mt5 color-gray font12 clamp1" wx:if="{{curOrder.options && curOrder.options.id}}">{{curOrder.options.title}}</view>
+            </view>
+          </view>
+          <view>
+            <view class="align_right bold font16">¥{{product.commonprice}}</view>
+            <view class="align_right color-gray mt5">×{{quantity}}</view>
+          </view>
+        </view>
+        <view class="pt10 flex_right">
+          <text class="color-gray">共{{quantity}}件商品</text>
+          <text class="ml10">小计:</text>
+          <text class="ml10 color-theme" style="{{themeObject.colorStyle}}">¥{{truePrice}}</text>
+        </view>
+      </view>
+    </view>
+    <view class="box-area">
+      <view class="box-item">
+        <view class="row-item flex_left">
+          <view class="flex_left color-gray">购买数量</view>
+          <view class="flex_cell flex_right">
+            <view class="x-number db-in">
+              <block wx:if="{{product.crowdtype == 'bargainbuy'}}">
+                <x-number1 :value.sync="quantity" :min="min" :max="max" @on-change.user="changeNumber"></x-number1>
+              </block>
+              <block wx:else>
+                <x-number2 :value.sync="quantity" :min="min" :max.sync="maxQuantity" @on-change.user="changeNumber"></x-number2>
+              </block>
+            </view>
+          </view>
+        </view>
+        <block wx:if="{{curOrder.allowcard && afterCard}}">
+          <view wx:if="{{cardList.length}}" class="row-item flex_left card-area" @tap.stop="popupCardList">
+            <view class="flex_left color-gray">优惠券</view>
+            <view class="flex_cell flex_right" style="{{themeObject.colorStyle}}" wx:if="{{cardInfo}}">满{{cardInfo.ordermoney}}减{{cardInfo.money}}<text class="al al-mjiantou-copy2"></text></view>
+            <view class="flex_cell flex_right" style="{{themeObject.colorStyle}}" wx:else>请选择<text class="al al-mjiantou-copy2"></text></view>
+          </view>
+          <view wx:else class="row-item flex_left card-area">
+            <view class="flex_left color-gray">优惠券</view>
+            <view class="flex_cell flex_right">无可用</view>
+          </view>
+        </block>
+        <view class="row-item flex_left credit-area" @tap="clickCredit" wx:if="{{useCredit > 0}}">
+          <view class="flex_left flex_cell color-gray">可用{{useCredit}}金币抵扣{{deductMoney}}元</view>
+          <view class="flex_right">
+            <view :class="{'checked': clickedCredit}" class="app-switch" style="{{clickedCredit ? themeObject.bgStyle + themeObject.borderStyle : ''}}">
+              <view class="ico" style="{{clickedCredit ? themeObject.switchShadowStyle : ''}}"></view>
+            </view>
+          </view>
+        </view>
+        <block wx:if="{{disPostageArea}}">
+          <view class="row-item db-flex" wx:if="{{postPostage && postPostage != '' && allowSend}}">
+            <view class="color-gray">运费</view>
+            <view class="flex_cell flex_right">
+              <text wx:if="{{postPostage == 0}}">包邮</text>
+              <text wx:else>￥{{ postPostage }}</text>
+            </view>
+          </view>
+          <view class="row-item color-theme flex_right" style="{{themeObject.colorStyle}}" wx:if="{{!allowSend}}">该地区不在派送范围内</view>
+        </block>
+        <block wx:if="{{saveMoneyMode && userInfo.regwid && userInfo.bindstatus && shengPrice && shengPrice != '' && shengPrice != '0.00'}}">
+          <view class="row-item db-flex">
+            <view class="color-gray">合伙人省</view>
+            <view class="flex_cell flex_right" style="{{themeObject.colorStyle}}">-￥{{shengPrice}}</view>
+          </view>
+        </block>
+        <view class="row-item flex_left" wx:if="{{showRemark && !popupShow}}">
+          <view class="color-gray pr10">备注</view>
+          <view class="flex_cell flex_left">
+            <input class="w_100" bindinput="keyupContent" placeholder="备注" maxlength="30"/>
+          </view>
+        </view>
+      </view>
+    </view>
+    <view class="blank-area"></view>
+  </view>
+  <view wx:if="{{disPostageArea}}" class="page-box-bottom flex_right" :class="{'iphone' : isIpx}">
+    <view><text>合计</text><text class="color-theme" style="{{themeObject.colorStyle}}">￥{{payPrice}}</text></view>
+    <view class="box-btn bg-theme color-white" style="{{themeObject.bgStyle}}" wx:if="{{allowSend}}" @tap="submitOrder">确认订单</view>
+    <view class="box-btn bg-gray color-white" wx:else>该地区无法派送</view>
+  </view>
+  <popup :show.sync="popupShow" @close.user="cancel" height="60%">
+    <popup-header
+      :leftText.sync="closeTxt"
+      @on-click-left.user="cancel"
+      :rightText.sync="confirmTxt"
+      @on-click-right.user="cancel">
+    </popup-header>
+    <scroll-view scroll-y="true">
+      <view class="cardlist">
+        <repeat for="{{cardList}}" item="item" index="index">
+          <block wx:if="{{(cardPrice >= item.ordermoney && cardPrice > item.money) && ((cardPrice - item.money > 0))}}">
+          <!-- <block wx:if="{{selectedCard && selectedCard.id == item.id}}"> -->
+            <view @tap.stop="cardClick({{item}},{{index}})" class="scroll_item radio_check" style="{{themeObject.bgStyle}}">
+              <view class="flex_cell txt-cell" style="overflow:visible">
+                <view class="font20 mb5 clamp1 txt">满{{item.ordermoney}}减{{item.money}}</view>
+                <view class="font12">到期时间 {{item.deadline_str}}</view>
+                <view class="ball ball-up"></view>
+                <view class="ball ball-down"></view>
+              </view>
+              <view class="btn-cell flex_center">
+                <view class="vux-check-icon font14 pl10 color-gray">
+                  <view class="circle-icon">
+                    <icon type="success_no_circle" size="16" color="#eb6b5e" wx:if="{{item.checked}}"></icon>
+                  </view>
+                </view>
+              </view>
+            </view>
+          </block>
+          <block wx:else>
+            <view class="scroll_item radio_check disabled-state" style="{{themeObject.bgStyle}}">
+              <view class="flex_cell txt-cell" style="overflow:visible">
+                <view class="font20 mb5 clamp1 txt">满{{item.ordermoney}}减{{item.money}}</view>
+                <view class="font14 mb5 clamp1 txt">订单金额不满足使用条件</view>
+                <view class="font12">到期时间 {{item.deadline_str}}</view>
+                <view class="ball ball-up"></view>
+                <view class="ball ball-down"></view>
+              </view>
+              <view class="btn-cell flex_center"></view>
+            </view>
+          </block>
+        </repeat>
+      </view>
+    </scroll-view>
+  </popup>
+</template>
+<script>
+  import Util from '@/libs/util'
+  import Time from '@/libs/time'
+  import wepy from 'wepy'
+  import Popup from '@/components/popup'
+  import PopupHeader from '@/components/popup-header'
+  import XNumber from '@/components/x-number'
+  import Config from '@/config'
+
+  export default class AddOrder extends wepy.page {
+    config = {
+      navigationBarTitleText: '确认订单'
+    }
+
+    components = {
+      'x-number1': XNumber,
+      'x-number2': XNumber,
+      'popup': Popup,
+      'popup-header': PopupHeader
+    }
+
+    data = {
+      userInfo: {},
+      postage: null,
+      postPostage: 0,
+      payPrice: '0.00',
+      min: 1,
+      max: 1,
+      maxQuantity: 1,
+      selectAddress: null,
+      product: {},
+      quantity: 1,
+      shopid: 0,
+      cardList: [],
+      popupShow: false,
+      isIpx: false,
+      curOrder: {},
+      cardPrice: '0.00',
+      allowSend: true,
+      disPostageArea: false,
+      sellerUser: null,
+      cardInfo: null,
+      afterCard: false,
+      showRemark: false,
+      MiniInfo: {},
+      truePrice: '0.00',
+      themeObject: {},
+      shengPrice: '0.00',
+      closeTxt: '',
+      confirmTxt: '',
+      clickedCredit: false,
+      useCredit: 0,
+      deductMoney: 0,
+      saveMoneyMode: false
+    }
+
+    ajaxOrder (postData) {
+      postData.postage = this.postPostage
+      if (this.query.ordertype) {
+        postData.ordertype = this.query.ordertype
+      }
+      if (this.query.fromfid) {
+        postData.fromfid = this.query.fromfid
+      }
+      if (this.query.agentfid) {
+        postData.agentfid = this.query.agentfid
+      }
+      if (this.query.liveid) {
+        postData.liveid = this.query.liveid
+      }
+      if (this.selectedCard) {
+        postData.cardid = this.selectedCard.id
+      }
+      if (this.options.clickBuytype) {
+        this.clickBuytype = this.options.clickBuytype
+      }
+      postData.ordertype = this.globalData.SystemParams.OrderType
+      wepy.request({
+        url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/order/addOrder`,
+        data: postData,
+        method: 'POST'
+      }).then(res => {
+        const data = res.data
+        const timeout = Util.delay(data.error)
+        wepy.showToast({
+          title: data.error,
+          icon: 'none',
+          duration: timeout
+        })
+        if (data.flag) {
+          setTimeout(() => {
+            if (this.globalData.SystemParams.OrderType === '10' || this.globalData.SystemParams.OrderType === 10) {
+              wepy.redirectTo({url: `/packageB/pages/paySuccess?orderno=${data.orderno}&ordermoney=${this.payPrice}`})
+            } else {
+              if (data.id) {
+                wepy.redirectTo({url: `/packageB/pages/pay?id=${data.id}&clickBuytype=${this.clickBuytype}`})
+              } else {
+                wepy.redirectTo({url: `/packageB/pages/paySuccess`})
+              }
+            }
+            this.submiting = false
+            this.$apply()
+          }, timeout)
+        } else {
+          this.submiting = false
+        }
+      })
+    }
+    methods = {
+      clickCredit () {
+        this.clickedCredit = !this.clickedCredit
+        this.selectedCard = null
+        this.cardInfo = null
+        this.$apply()
+        this.changeAddress()
+      },
+      keyupContent (e) {
+        this.contentVal = e.detail.value
+      },
+      cancel () {
+        this.popupShow = false
+      },
+      popupCardList () {
+        this.popupShow = true
+      },
+      cardClick (item, index) {
+        for (let i = 0; i < this.cardList.length; i++) {
+          if (this.cardList[i].checked) {
+            this.cardList[i].checked = false
+            break
+          }
+        }
+        let checked = !item.checked
+        if (checked) {
+          this.selectedCard = item
+          let cha = parseFloat(this.orderPrice) - parseFloat(this.postage) - parseFloat(item.money)
+          cha = cha < 0 ? 0 : cha
+          this.payPrice = (cha + parseFloat(this.postage)).toFixed(2)
+        } else {
+          this.selectedCard = null
+          this.payPrice = this.orderPrice.toFixed(2)
+        }
+        this.cardList[index].checked = checked
+        this.cardInfo = this.selectedCard
+        this.$apply()
+      },
+      changeNumber (quantity) {
+        this.truePrice = (parseFloat(this.product.commonprice.replace(/,/g, '')) * parseInt(quantity)).toFixed(2)
+        this.selectedCard = null
+        this.cardInfo = null
+        // for (let i = 0; i < this.cardList.length; i++) {
+        //   if (this.cardList[i].checked) {
+        //     this.cardList[i].checked = false
+        //     break
+        //   }
+        // }
+        if (this.curOrder.sheng && this.curOrder.sheng !== '' && this.curOrder.sheng !== '0.00') {
+          let sheng = parseFloat(this.curOrder.sheng.replace(/,/g, '')) * quantity
+          this.shengPrice = sheng.toFixed(2)
+        }
+        this.handleCredit()
+        this.$apply()
+        this.changeAddress()
+      },
+      showAddress (e) {
+        wepy.navigateTo({url: '/packageB/pages/address?mod=inner'})
+      },
+      submitOrder () {
+        if (!this.allowSend) {
+          wepy.showToast({
+            title: '该地区不在派送范围内',
+            icon: 'none'
+          })
+          return
+        }
+        if (!this.quantity || this.quantity === '0') {
+          wepy.showToast({
+            title: '商品数量不正确,请重新填写',
+            icon: 'none'
+          })
+          return
+        }
+        if (!this.submiting) {
+          let params = {
+            quantity: this.quantity,
+            shopid: this.shopid,
+            content: this.contentVal
+          }
+          if (this.cardid) {
+            params.cardid = this.cardid
+          }
+          if (this.clickedCredit) {
+            params.credit = this.useCredit
+          }
+          if (!this.selectAddress) {
+            wepy.showToast({
+              title: '请选择地址',
+              icon: 'none'
+            })
+            return false
+          }
+          this.submiting = true
+          this.isShowLoading = true
+          params.addressid = this.selectAddress.id
+          this.ajaxOrder(params)
+          this.$apply()
+        }
+      }
+    }
+
+    uploadAddress (address) {
+      const params = {
+        linkman: address.userName,
+        telephone: address.telNumber,
+        address: address.detailInfo,
+        isdefault: 1,
+        province: address.provinceName,
+        city: address.cityName,
+        counties: address.countyName,
+        postalCode: address.postalCode,
+        do: 'add'
+      }
+      wepy.request({
+        url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/address/add`,
+        data: params,
+        method: 'POST'
+      }).then(res => {
+        if (res.data.flag) {
+          const data = res.data.data
+          this.selectAddress = data
+          this.selectAddress.fulladdress = `${data.province}${data.city}${data.counties}${data.address}`
+          this.changeAddress()
+          this.$apply()
+          wepy.showToast({
+            title: '选择成功',
+            icon: 'none'
+          })
+        } else {
+          wepy.showToast({
+            title: '选择地址时出错',
+            icon: 'none'
+          })
+        }
+      })
+    }
+    initCheckedCard () {
+      let haveChecked = false
+      for (let i = 0; i < this.cardList.length; i++) {
+        const item = this.cardList[i]
+        this.cardList[i].deadline_str = new Time(this.cardList[i].deadline * 1000).dateFormat('yyyy-MM-dd hh:mm')
+        this.cardList[i].checked = false
+        if (!haveChecked) {
+          if (this.cardPrice >= item.ordermoney && this.cardPrice > item.money && (this.cardPrice - item.money) > 0) {
+            this.selectedCard = item
+            this.cardList[i].checked = true
+            let postageStr = `${this.postPostage}`
+            let cha = parseFloat(this.orderPrice) - parseFloat(postageStr.replace(/,/g, '')) - parseFloat(this.selectedCard.money)
+            cha = cha < 0 ? 0 : cha
+            this.payPrice = (cha + parseFloat(postageStr.replace(/,/g, ''))).toFixed(2)
+            haveChecked = true
+          }
+        }
+      }
+    }
+    getCanUseCard () {
+      wepy.request({
+        url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/card/canUseCard`,
+        method: 'POST',
+        data: {shopid: this.options.shop_id}
+      }).then(res => {
+        const data = res.data
+        if (data.flag) {
+          this.cardList = data.data
+          this.initCheckedCard()
+        }
+        this.cardInfo = this.selectedCard
+        this.afterCard = true
+        this.$apply()
+      })
+    }
+    handleCredit () {
+      let ocredit = this.quantity * this.curOrder.maxcredits
+      if (this.userInfo.credit < ocredit) {
+        ocredit = this.userInfo.credit
+      }
+      this.useCredit = ocredit
+      this.deductMoney = (ocredit / 100).toFixed(2)
+    }
+    getData () {
+      let params = {}
+      if (this.query.shop_id) {
+        params.shop_id = this.query.shop_id
+      }
+      wepy.request({
+        url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/order/shopShow`,
+        data: params
+      }).then(res => {
+        if (!res) return
+        const data = res.data
+        const retdata = data.data ? data.data : data
+        const order = retdata
+        if (!order) {
+          return false
+        }
+        this.curOrder = order
+        if (this.curOrder.sheng && this.curOrder.sheng !== '' && this.curOrder.sheng !== '0.00') {
+          let sheng = parseFloat(this.curOrder.sheng.replace(/,/g, '')) * this.curOrder.quantity
+          this.shengPrice = sheng.toFixed(2)
+        }
+        let curstorage = this.curOrder.storage
+        if (this.curOrder.activityinfo && curstorage > this.curOrder.activityinfo.everybuy) {
+          curstorage = this.curOrder.activityinfo.everybuy
+        }
+        this.maxQuantity = curstorage
+        this.product = order
+        this.quantity = this.product.quantity
+        this.handleCredit()
+        this.truePrice = (parseFloat(this.product.commonprice.replace(/,/g, '')) * this.quantity).toFixed(2)
+        this.shopid = this.product.id
+        this.postPostage = parseFloat(order.postage.replace(/,/g, '')).toFixed(2)
+        this.postage = parseFloat(order.postage.replace(/,/g, ''))
+        let total1 = parseFloat(order.special.replace(/,/g, '')) * order.quantity
+        if (order.postage) {
+          total1 += parseFloat(order.postage.replace(/,/g, ''))
+        }
+        this.cardPrice = total1
+        this.computePrice()
+        this.getCanUseCard()
+        if (this.isFirst) {
+          this.getAddressList()
+          this.isFirst = false
+        }
+        this.$apply()
+      })
+    }
+    computePrice () {
+      let total = 0
+      if (this.product) {
+        total += parseFloat(this.product.special.replace(/,/g, '')) * this.quantity
+      }
+      this.cardPrice = total
+      if (this.postPostage) {
+        let curpostage = this.postPostage
+        total += parseFloat(curpostage)
+      }
+      this.orderPrice = total
+      if (this.clickedCredit) {
+        this.payPrice = (total - this.deductMoney).toFixed(2)
+      } else {
+        if (this.selectedCard) {
+          let postageStr = `${this.postPostage}`
+          let cha = parseFloat(this.orderPrice) - parseFloat(postageStr.replace(/,/g, '')) - parseFloat(this.selectedCard.money)
+          cha = cha < 0 ? 0 : cha
+          this.payPrice = (cha + parseFloat(postageStr.replace(/,/g, ''))).toFixed(2)
+        } else {
+          this.payPrice = total.toFixed(2)
+        }
+        this.initCheckedCard()
+      }
+      this.cardInfo = this.selectedCard
+      this.afterCard = true
+      this.$apply()
+    }
+    changeAddress () {
+      if (!this.selectAddress || !this.selectAddress.id) return false
+      const selectedProvince = this.selectAddress.province
+      const postageSetting = this.curOrder.postageSetting
+      this.allowSend = true
+      let isset = false
+      this.postPostage = 0
+      let strPostage = `${this.curOrder.postage}`
+      this.postage = parseFloat(strPostage.replace(/,/g, ''))
+      if (postageSetting && postageSetting.length) {
+        for (let i = 0; i < postageSetting.length; i++) {
+          const curSet = postageSetting[i]
+          const curProvince = curSet.province
+          let isTw = false
+          let isAm = false
+          if ((curProvince.indexOf('臺灣') > -1 || curProvince.indexOf('台湾') > -1) && (selectedProvince.indexOf('臺灣') > -1 || selectedProvince.indexOf('台湾') > -1)) {
+            isTw = true
+          } else if ((curProvince.indexOf('澳門') > -1 || curProvince.indexOf('澳门') > -1) && (selectedProvince.indexOf('澳門') > -1 || selectedProvince.indexOf('澳门') > -1)) {
+            isAm = true
+          }
+          if (selectedProvince === curProvince || selectedProvince.indexOf(curProvince) > -1 || curProvince.indexOf(selectedProvince) > -1 || isTw || isAm) {
+            if (curSet.postage !== -1 && curSet.postage !== '-1' && curSet.postage !== '-1.00') {
+              if (curSet.standard === 0) {
+                this.postPostage = parseFloat(curSet.postage.replace(/,/g, '')).toFixed(2)
+              } else {
+                let addcount = curSet.addcount
+                let curp = curSet.postage.replace(/,/g, '')
+                let count = Math.ceil(this.quantity / addcount)
+                this.postPostage = (count * parseFloat(curp)).toFixed(2)
+              }
+              this.allowSend = true
+            } else {
+              this.allowSend = false
+              this.postage = 0
+            }
+            isset = true
+            break
+          }
+        }
+      }
+      if (!isset) {
+        let cpost = `${this.curOrder.postage}`
+        this.postPostage = parseFloat(cpost.replace(/,/g, '')).toFixed(2)
+      }
+      this.disPostageArea = true
+      this.$apply()
+      this.computePrice()
+    }
+    getAddressList () {
+      const address = this.$parent.globalData.address
+      if (address && address.id) {
+        this.selectAddress = address
+        this.changeAddress()
+        this.$apply()
+      } else {
+        wepy.request({
+          url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/address/getList`
+        }).then(res => {
+          if (!res) return
+          const data = res.data
+          const retdata = data.data ? data.data : data
+          if (retdata.length) {
+            this.selectAddress = retdata[0]
+          }
+          this.changeAddress()
+          this.$apply()
+        })
+      }
+    }
+    handleShowData () {
+      this.contentVal = ''
+      this.getAddressList()
+    }
+
+    getRetailer () {
+      if (Config.Wid !== this.globalData.Wid) {
+        wepy.request({
+          url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/retailer/info`,
+          data: {uid: this.globalData.Wid, appid: Config.AppId}
+        }).then(res => {
+          const data = res.data
+          if (data.flag) {
+            this.sellerUser = data.data
+            this.$apply()
+          }
+        })
+      }
+    }
+
+    async onLoad (options) {
+      this.closeTxt = '关闭'
+      this.confirmTxt = '确定'
+      wepy.setNavigationBarTitle({
+        title: '确认订单'
+      })
+      this.query = options
+      this.options = options
+      this.submiting = false
+      this.cardid = null
+      this.isFirst = true
+      this.clickBuytype = ''
+      this.$parent.globalData.address = null
+      if (this.$parent.globalData.flag.bokaAuth) {
+        this.handlePageData()
+      } else {
+        this.$parent.loadCallback = () => {
+          this.handlePageData()
+        }
+      }
+    }
+
+    handlePageData () {
+      this.globalData = this.$parent.globalData
+      Util.appInit(this.globalData, this)
+      this.userInfo = this.globalData.userInfo
+      this.MiniInfo = this.globalData.MiniInfo
+      let orderRemark = this.globalData.SystemParams.OrderRemark
+      this.showRemark = orderRemark ? parseInt(orderRemark) : false
+      let saveMoneyMode = this.globalData.SystemParams.SaveMoneyMode
+      this.saveMoneyMode = saveMoneyMode ? parseInt(saveMoneyMode) : false
+      this.getData()
+      this.getRetailer()
+      wepy.getSystemInfo().then(res => {
+        if (res.model.substring(0, res.model.indexOf('X')) + 'X' === 'iPhone X') {
+          this.isIpx = true
+        }
+        this.$apply()
+      })
+    }
+
+    onShow () {
+      if (this.$parent.globalData.flag.bokaAuth) {
+        this.handleShowData()
+      } else {
+        this.$parent.showCallback = () => {
+          this.handleShowData()
+        }
+      }
+    }
+
+    onUnload () {
+      this.selectedCard = null
+      this.cardInfo = null
+      this.$apply()
+    }
+  }
+</script>

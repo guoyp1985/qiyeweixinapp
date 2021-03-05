@@ -1,0 +1,1447 @@
+<style lang="less">
+.add-channel-page.iphone{bottom:68rpx;}
+.add-channel-page{
+  left:0;right:0;top:0;bottom:0;position:absolute;
+  .page-inner{width:100%;height:100%;}
+  .radio-group{
+    .radio:not(:last-child){padding-right:40rpx;}
+  }
+  .photo-list:after{content:'';display:block;clear:both;}
+  .photo-item{
+    width: 25%;padding:10rpx;float: left;box-sizing: border-box;color:#999;
+    .move-ico{
+      position:absolute;bottom:0;background-color:rgba(0,0,0,0.5);color:#fff;
+      .al{font-weight:bold;}
+    }
+    .move-ico.prev{left:0;}
+    .move-ico.next{right:0;}
+  }
+  .photo-item.add .image-outer{border:rgba(0,0,0,0.2) 2rpx solid;box-sizing: border-box; }
+  .photo-item .al{font-size:40rpx;}
+  .photo-item .close{
+    position:absolute;width:40rpx;height:40rpx;line-height:40rpx;text-align:center;border-radius:50%;
+    right:0;top:-12rpx;right:-12rpx;font-weight:bold;background-color:rgba(0,0,0,0.8);color:#fff;
+  }
+  .form-list{
+    padding:0 20rpx 20rpx;box-sizing: border-box;
+    .form-item{
+      background-color:#fff;box-sizing: border-box;
+      box-shadow:0px 0px 3px 1px #e4e4e4;border-radius:4rpx;
+      width:100%;min-height:100rpx;display:flex;align-items:center;padding:20rpx;position:relative;
+      margin-top:20rpx;
+      .title-cell{width:145rpx;height:100%;display: flex;align-items: left;justify-content:flex-start;align-items: center;text-align:left;}
+      .input-cell{
+        flex:1;height:100%;display:flex;justify-content: flex-end; align-items: center;position:relative;
+        input{
+          width:100%;padding:0 10rpx;box-sizing: border-box;border-radius:10rpx;
+          color: #333333;text-align:right;
+          justify-content:flex-end;align-items: center;
+        }
+        .input-placeholder{color:rgba(153,153,153,0.65)}
+      }
+      .textarea{position:relative;width:100%;min-height:150px;box-sizing:border-box;border:#d9d9d9 1rpx solid;padding:10rpx;box-sizing: border-box;margin-top:10rpx;}
+      .textarea.empty{color:#999;}
+      .select-icon{margin-top:-10rpx;font-size:46rpx;}
+      .title-picker{
+        z-index:1;position:absolute;left:0;top:0;right:0;bottom:0;background-color:transparent;
+        .txt{position:absolute;left:0;top:0;right:0;bottom:0;padding-right:50rpx;}
+      }
+      .checkbox-list{
+        .checkbox{margin:10rpx 0 10rpx 10rpx;display:inline-block;}
+      }
+    }
+  }
+  .btn-add{width:200rpx;height:60rpx;border:#ccc 2rpx solid;border-radius:20rpx;}
+  .banner-list{
+    .banner-item{
+      border:#ccc 2rpx solid;margin-top:20rpx;
+      .banner-title{border-bottom:#ccc 2rpx solid;padding:20rpx;}
+      .banner-con{
+        padding:20rpx;
+        .con-item:not(:last-child) {margin-bottom:20rpx;}
+        .con-item{
+          width:100%;height:60rpx;
+          .title-cell1{width:120rpx;height:100%;}
+          .border-cell{
+            border:#ccc 2rpx solid;height:100%;position:relative;
+            .input{width:100%;height:100%;padding:0 10rpx;box-sizing: border-box;}
+          }
+          .icon-cell{
+            width:60rpx;height:100%;
+          }
+        }
+      }
+      .banner-pic-list{
+        .banner-pic{width:60rpx;height:60rpx;}
+      }
+      .pic{
+        width:80rpx;
+        image{width:70rpx;height:70rpx;}
+      }
+    }
+  }
+  .border-area{
+    width:100%;height:70rpx;border:#ccc 2rpx solid;border-radius:70rpx;
+  }
+  .small-pic{width:60rpx;height:60rpx;}
+  .btn-border{padding:0 10rpx;border-radius:10rpx;border-width:2rpx;border-style:solid;}
+  .blank{height:100rpx;}
+  .blank.iphone{height:180rpx;}
+}
+.modal-panel.choose-modal{
+  .pagemiddle.no-search{top:100rpx;}
+  .scroll_item{
+    .pic{
+      image{width:80rpx;height:80rpx;border-radius:0;}
+    }
+  }
+}
+.add-bottom-area{
+  width:100%;height:100rpx;position:relative;display:block;
+  position:fixed;left:0;right:0;bottom:0;z-index:10;background-color:#fff;
+  .btn-bottom{font-size: 32rpx;width:80%;height:80rpx;border-radius:60rpx;}
+}
+.add-bottom-area.iphone{padding-bottom:68rpx;}
+</style>
+<template>
+  <view class="add-channel-page">
+    <view class="form-list">
+      <view class="form-item">
+        <view class="title-cell">{{language.channelTitle ? language.channelTitle : '频道名称'}}<text class="al al-xing5 font12 color-red"></text></view>
+        <view class="input-cell">
+          <input class="input" placeholder-class="input-placeholder" bindinput="keyupTitle" value="{{viewData.title}}" type="text" placeholder="{{language.channelTitle ? language.channelTitle : '频道名称'}}"></input>
+        </view>
+      </view>
+      <view class="form-item">
+        <view class="w_100">
+          <view class="flex_left b_bottom_after pb10">
+            <text>{{language.channelIco ? language.channelIco : '频道图标'}}</text>
+            <text class="color-gray font12 ml5">({{language.icoSize ? language.icoSize : '图标尺寸'}}: 80*80px)</text>
+          </view>
+          <view class="pt10 pb10">
+            <view class="flex_left b_bottom_after pb10">
+              <view class="flex_left w60">{{language.defaultIco ? language.defaultIco : '默认图标'}}</view>
+              <view class="flex_left flex_cell banner-pic-list">
+                <block wx:if="{{defaultIco && defaultIco != ''}}">
+                  <image mode="aspectFill" class="small-pic" src="{{defaultIco}}" data-url="{{defaultIco}}" bindtap="previewImg"></image>
+                  <view class="btn-border ml10 color-theme" style="{{themeObject.colorStyle}}{{themeObject.borderStyle}}" data-type="default" bindtap="deleteIcon">{{language.delete ? language.delete : '删除'}}</view>
+                </block>
+              </view>
+              <view class="w30 flex_center" data-type="default" bindtap="uploadChannelIco"><text class="al al-zhaoxiangji font18 color-theme"></text></view>
+            </view>
+            <view class="flex_left mt10">
+              <view class="flex_left w60">{{language.checkedIco ? language.checkedIco : '选中图标'}}</view>
+              <view class="flex_left flex_cell banner-pic-list">
+                <block wx:if="{{checkedIco && checkedIco != ''}}">
+                  <image mode="aspectFill" class="small-pic" src="{{checkedIco}}" data-url="{{checkedIco}}" bindtap="previewImg"></image>
+                  <view class="btn-border ml10 color-theme" style="{{themeObject.colorStyle}}{{themeObject.borderStyle}}" data-type="checked" bindtap="deleteIcon">{{language.delete ? language.delete : '删除'}}</view>
+                </block>
+              </view>
+              <view class="w30 flex_center" data-type="checked" bindtap="uploadChannelIco"><text class="al al-zhaoxiangji font18 color-theme" style="{{themeObject.colorStyle}}"></text></view>
+            </view>
+          </view>
+        </view>
+      </view>
+      <view class="form-item" wx:if="{{module == 'channel' || module == '' || module == 'miniprogram'}}">
+        <view class="title-cell" style="width:50%;">{{language.navToOtherApp ? language.navToOtherApp : '跳转至其他小程序'}}</view>
+        <view class="input-cell">
+          <view :class="{'checked': toMini}" class="app-switch" style="{{toMini ? themeObject.bgStyle + themeObject.borderStyle : ''}}" bindtap="changeToMini">
+            <view class="ico" style="{{toMini ? themeObject.switchShadowStyle : ''}}"></view>
+          </view>
+        </view>
+      </view>
+      <block wx:if="{{toMini}}">
+        <view class="form-item">
+          <view class="title-cell">{{language.miniApp ? language.miniApp : '小程序'}}<text class="al al-xing5 font12 color-red"></text></view>
+          <view class="input-cell">
+            <text class="al al-select-icon select-icon font20 color-theme" style="{{themeObject.colorStyle}}"></text>
+            <picker class="title-picker" value="{{selectedAppIndex}}" range-key="title" range="{{appArr}}" mode="selector" bindchange="changeAppPicker">
+              <view class="txt flex_right">{{appArr[selectedAppIndex].title}}</view>
+            </picker>
+          </view>
+        </view>
+        <view class="form-item">
+          <view class="title-cell">{{language.navUrl ? language.navUrl : '跳转地址'}}<text class="al al-xing5 font12 color-red"></text></view>
+          <view class="input-cell">
+            <textarea class="textarea" wx:if="{{toMini}}" placeholder-class="input-placeholder" bindinput="keyupMini" placeholder="{{language.navUrl ? language.navUrl : '跳转地址'}}" maxlength="-1" value="{{appUrl}}"></textarea>
+          </view>
+        </view>
+      </block>
+      <block wx:else>
+        <view class="form-item">
+          <view class="w_100">
+            <view class="flex_left b_bottom_after pb10">{{language.scrollShow ? language.scrollShow : '滚动展示'}}</view>
+            <view class="pt10 pb10">
+              <view class="banner-list">
+                <repeat for="{{bannerData}}" item="item" index="index">
+                  <view class="banner-item">
+                    <view class="banner-title flex_left">
+                      <view class="flex_cell flex_left">{{language.scroll ? language.scroll : '滚动'}} {{index + 1}}</view>
+                      <form class="w60 flex_right color-theme" style="{{themeObject.colorStyle}}" wx:if="{{index > 0}}" data-type="banner" data-move="up" data-index="{{index}}" bindsubmit="moveItem" report-submit="true">
+                        <button class="btn-border" style="{{themeObject.borderStyle}}" form-type="submit">{{language.upMove ? language.upMove : '上移'}}</button>
+                      </form>
+                      <form class="w60 flex_right color-theme" style="{{themeObject.colorStyle}}" wx:if="{{index < bannerData.length - 1}}" data-type="banner" data-move="down" data-index="{{index}}" bindsubmit="moveItem" report-submit="true">
+                        <button class="btn-border" style="{{themeObject.borderStyle}}" form-type="submit">{{language.downMove ? language.downMove : '下移'}}</button>
+                      </form>
+                      <form class="w40 flex_right color-theme" style="{{themeObject.colorStyle}}" data-type="banner" data-index="{{index}}" bindsubmit="deleteItem" report-submit="true">
+                        <button form-type="submit">{{language.delete ? language.delete : '删除'}}</button>
+                      </form>
+                    </view>
+                    <view class="banner-con">
+                      <view class="flex_left mt10 con-item">
+                        <view class="title-cell1 flex_left">{{language.photo ? language.photo : '图片'}}</view>
+                        <view class="border-cell flex_left flex_cell">
+                          <view class="flex_left flex_cell banner-pic-list">
+                            <image mode="aspectFill" class="banner-pic" src="{{item.photo}}" data-url="{{item.photo}}" bindtap="previewImg"></image>
+                          </view>
+                          <view class="icon-cell flex_center" data-index="{{index}}" bindtap="uploadBannerPhoto"><text class="al al-zhaoxiangji font18 color-theme" style="{{themeObject.colorStyle}}"></text></view>
+                        </view>
+                      </view>
+                      <view class="flex_right pb10 font12 color-gray">{{language.photoSize ? language.photoSize : '图片尺寸'}}900*383px</view>
+                      <view class="flex_left con-item">
+                        <view class="title-cell1 flex_left">{{language.setNav ? language.setNav : '设置跳转'}}</view>
+                        <view class="border-cell flex_right flex_cell">
+                          <text class="al al-select-icon select-icon font20 color-theme" style="{{themeObject.colorStyle}}"></text>
+                          <picker class="title-picker" value="{{item.selectedPageIndex}}" range-key="title"  data-index="{{index}}" range="{{item.pageData}}" mode="selector" bindchange="changePicker">
+                            <view class="txt flex_right">{{item.pageData[item.selectedPageIndex].title}}</view>
+                          </picker>
+                        </view>
+                      </view>
+                      <view class="flex_left mt10 con-item" wx:if="{{item.module == 'factorynews'}}" data-index="{{index}}" data-type="banner" bindtap="clickNews">
+                        <view class="title-cell1 flex_left">{{language.appointNews ? language.appointNews : '指定新闻'}}</view>
+                        <view class="flex_cell flex_center">
+                          <block wx:if="{{item.moduleid}}">
+                            <view class="w_100 flex_left">
+                              <view class="pic flex_center">
+                                <image mode="aspectFill" src="{{item.moduledata.photo}}"></image>
+                              </view>
+                              <view class="flex_cell flex_left">
+                                <view class="w_100 clamp1">{{item.moduledata.title}}</view>
+                              </view>
+                            </view>
+                          </block>
+                          <view wx:else class="border-area flex_center">{{language.selectNews ? language.selectNews : '选择新闻'}}</view>
+                        </view>
+                      </view>
+                      <view class="flex_left mt10 con-item" wx:if="{{item.module == 'factoryproduct' || item.module == 'fpimport'}}" data-index="{{index}}" data-type="banner" bindtap="clickProduct">
+                        <view class="title-cell1 flex_left">{{language.appointProduct ? language.appointProduct : '指定商品'}}</view>
+                        <view class="flex_cell flex_center">
+                          <block wx:if="{{item.moduleid}}">
+                            <view class="w_100 flex_left">
+                              <view class="pic flex_center">
+                                <image mode="aspectFill" src="{{item.moduledata.photo}}"></image>
+                              </view>
+                              <view class="flex_cell flex_left">
+                                <view class="w_100 clamp1">{{item.moduledata.title}}</view>
+                              </view>
+                            </view>
+                          </block>
+                          <view wx:else class="border-area flex_center">{{language.selectProduct ? language.selectProduct : '选择商品'}}</view>
+                        </view>
+                      </view>
+                      <view class="flex_left mt10 con-item" wx:if="{{item.module == 'minilive'}}" data-index="{{index}}" data-type="banner" bindtap="clickLive">
+                        <view wx:if="{{sysLanguage == 'zh_CN'}}" class="title-cell1 flex_left">直播間</view>
+                        <view wx:else class="title-cell1 flex_left">直播间</view>
+                        <view class="flex_cell flex_center">
+                          <block wx:if="{{item.moduleid}}">
+                            <view class="w_100 flex_left">
+                              <view class="flex_cell flex_left">
+                                <view class="w_100 clamp1">{{item.moduledata.title}}</view>
+                              </view>
+                            </view>
+                          </block>
+                          <view wx:else class="border-area flex_center"><block wx:if="{{sysLanguage == 'zh_CN'}}">選擇直播間</block><block>选择直播间</block></view>
+                        </view>
+                      </view>
+                    </view>
+                  </view>
+                </repeat>
+              </view>
+              <form class="flex_center pt10 pb10" data-type="banner" bindsubmit="addItem" report-submit="true">
+                <button class="color-theme btn-add flex_center" style="{{themeObject.colorStyle}}" form-type="submit">{{language.addOneItem ? language.addOneItem : '添加一项'}}</button>
+              </form>
+            </view>
+          </view>
+        </view>
+        <view class="form-item" wx:if="{{!viewData || !viewData.id || viewData.module == '' || viewData.module == 'channel'}}">
+          <view class="w_100">
+            <view class="flex_left b_bottom_after">{{language.channelContent ? language.channelContent : '频道内容'}}</view>
+            <view class="pt10 pb10">
+              <view class="banner-list">
+                <repeat for="{{contentData}}" item="item" index="index">
+                  <view class="banner-item">
+                    <view class="banner-title flex_left">
+                      <view class="flex_cell flex_left">{{language.channelContent ? language.channelContent : '频道内容'}} {{index + 1}}</view>
+                      <form class="w60 flex_right color-theme" style="{{themeObject.colorStyle}}" wx:if="{{index > 0}}" data-type="content" data-move="up" data-index="{{index}}" bindsubmit="moveItem" report-submit="true">
+                        <button class="btn-border" style="{{themeObject.borderStyle}}" form-type="submit">{{language.upMove ? language.upMove : '上移'}}</button>
+                      </form>
+                      <form class="w60 flex_right color-theme" style="{{themeObject.colorStyle}}" wx:if="{{index < contentData.length - 1}}" data-type="content" data-move="down" data-index="{{index}}" bindsubmit="moveItem" report-submit="true">
+                        <button class="btn-border" style="{{themeObject.borderStyle}}" form-type="submit">{{language.downMove ? language.downMove : '下移'}}</button>
+                      </form>
+                      <form class="w40 flex_right color-theme" style="{{themeObject.colorStyle}}" data-type="content" data-index="{{index}}" bindsubmit="deleteItem" report-submit="true">
+                        <button form-type="submit">{{language.delete ? language.delete : '删除'}}</button>
+                      </form>
+                    </view>
+                    <view class="banner-con">
+                      <view class="flex_left con-item">
+                        <view class="title-cell1 flex_left">{{language.insertType ? language.insertType : '插入类型'}}</view>
+                        <view class="border-cell flex_right flex_cell">
+                          <text class="al al-select-icon select-icon font20 color-theme" style="{{themeObject.colorStyle}}"></text>
+                          <picker class="title-picker" value="{{item.selectedConIndex}}" range-key="title"  data-index="{{index}}" range="{{item.conData}}" mode="selector" bindchange="changeConPicker">
+                            <view class="txt flex_right">{{item.conData[item.selectedConIndex].title}}</view>
+                          </picker>
+                        </view>
+                      </view>
+                      <view class="flex_left mt10 con-item" wx:if="{{item.conData[item.selectedConIndex].type == 'factorynews'}}" data-index="{{index}}" data-type="content" bindtap="clickNews">
+                        <view class="title-cell1 flex_left">{{language.insertNews ? language.insertNews : '插入新闻'}}</view>
+                        <view class="flex_cell flex_center">
+                          <block wx:if="{{item.moduleid}}">
+                            <view class="w_100 flex_left">
+                              <view class="pic flex_center">
+                                <image mode="aspectFill" src="{{item.moduledata.photo}}"></image>
+                              </view>
+                              <view class="flex_cell flex_left">
+                                <view class="w_100 clamp1">{{item.moduledata.title}}</view>
+                              </view>
+                            </view>
+                          </block>
+                          <view wx:else class="border-area flex_center">{{language.selectNews ? language.selectNews : '选择新闻'}}</view>
+                        </view>
+                      </view>
+                      <view class="flex_left mt10 con-item" wx:elif="{{item.conData[item.selectedConIndex].type == 'factoryproduct' || item.conData[item.selectedConIndex].type == 'fpimport'}}" data-index="{{index}}" data-type="content" bindtap="clickProduct">
+                        <view class="title-cell1 flex_left">{{language.insertProduct ? language.insertProduct : '插入商品'}}</view>
+                        <view class="flex_cell flex_center">
+                          <block wx:if="{{item.moduleid}}">
+                            <view class="w_100 flex_left">
+                              <view class="pic flex_center">
+                                <image mode="aspectFill" src="{{item.moduledata.photo}}"></image>
+                              </view>
+                              <view class="flex_cell flex_left">
+                                <view class="w_100 clamp1">{{item.moduledata.title}}</view>
+                              </view>
+                            </view>
+                          </block>
+                          <view wx:else class="border-area flex_center">{{language.selectProduct ? language.selectProduct : '选择商品'}}</view>
+                        </view>
+                      </view>
+                      <!-- <view class="flex_left mt10 con-item" wx:elif="{{item.conData[item.selectedConIndex].type == 'minilive'}}" data-index="{{index}}" data-type="content" bindtap="clickLive">
+                        <view wx:if="{{sysLanguage == 'zh_CN'}}" class="title-cell1 flex_left">插入直播間</view>
+                        <view wx:else class="title-cell1 flex_left">插入直播间</view>
+                        <view class="flex_cell flex_center">
+                          <block wx:if="{{item.moduleid}}">
+                            <view class="w_100 flex_left">
+                              <view class="pic flex_center">
+                                <image mode="aspectFill" src="{{item.moduledata.photo}}"></image>
+                              </view>
+                              <view class="flex_cell flex_left">
+                                <view class="w_100 clamp1">{{item.moduledata.title}}</view>
+                              </view>
+                            </view>
+                          </block>
+                          <view wx:else class="border-area flex_center"><block wx:if="{{sysLanguage == 'zh_CN'}}">選擇直播間</block><block>选择直播间</block></view>
+                        </view>
+                      </view> -->
+                      <block wx:elif="{{item.conData[item.selectedConIndex].type == ''}}">
+                        <view class="flex_left" wx:if="{{item.conData[item.selectedConIndex].type == '' && !disPanel}}">
+                          <textarea class="textarea" data-index="{{index}}" bindinput="textareaChange" placeholder="{{language.pleaseInputContent ? language.pleaseInputContent : '请输入内容'}}..." maxlength="-1" value="{{item.content}}"></textarea>
+                        </view>
+                        <view class="photo-list mt10">
+                          <repeat for="{{item.photoarr}}" item="photo" index="index1">
+                            <view class="photo-item">
+                              <view class="image-outer">
+                                <view class="imgarea">
+                                  <view class="inner">
+                                    <image mode="aspectFill" src="{{photo}}" data-itemindex="{{index}}" data-index="{{index1}}" bindtap="uploadContentPhoto"></image>
+                                    <view class="close" data-type="content" data-itemindex="{{index}}" data-index="{{index1}}" bindtap="deletePhoto">×</view>
+                                    <view class="move-ico prev" wx:if="{{index1 > 0}}" data-itemindex="{{index}}" data-type="content" data-move="prev" data-index="{{index1}}" bindtap="movePhoto"><text class="al al-qianyi"></text></view>
+                                    <view class="move-ico next" wx:if="{{item.photoarr.length > 1 && index1 < item.photoarr.length - 1}}" data-itemindex="{{index}}" data-type="content" data-move="next" data-index="{{index1}}" bindtap="movePhoto"><text class="al al-houyi"></text></view>
+                                  </view>
+                                </view>
+                              </view>
+                            </view>
+                          </repeat>
+                          <view class="photo-item add flex_center" wx:if="{{item.photoarr.length < maxContentPhoto}}" data-itemindex="{{index}}" bindtap="uploadContentPhoto">
+                            <view class="image-outer">
+                              <view class="imgarea">
+                                <view class="inner">
+                                  <view>
+                                    <view class="al al-shangchuantupian"></view>
+                                    <view class="mt5">{{item.photoarr.length}}/{{maxContentPhoto}}</view>
+                                  </view>
+                                </view>
+                              </view>
+                            </view>
+                          </view>
+                        </view>
+                      </block>
+                    </view>
+                  </view>
+                </repeat>
+              </view>
+              <form class="flex_center pt10 pb10" data-type="content" bindsubmit="addItem" report-submit="true">
+                <button class="color-theme btn-add flex_center" style="{{themeObject.colorStyle}}" form-type="submit">{{language.addOneItem ? language.addOneItem : '添加一项'}}</button>
+              </form>
+            </view>
+          </view>
+        </view>
+      </block>
+    </view>
+    <view :class="{'iphone' : isIpx}" class="blank"></view>
+  </view>
+  <form :class="{'iphone' : isIpx}" class="add-bottom-area" bindsubmit="saveEvent" report-submit="true">
+    <view class="w_100 h_100 flex_center">
+      <button formType="submit" class="btn-bottom flex_center bg-theme color-white" style="{{themeObject.bgStyle}}">{{language.submit ? language.submit : '提交'}}</button>
+    </view>
+  </form>
+  <view class="modal-panel bg-white choose-modal" animation="{{animationPanel}}">
+    <view class="pagetop flex_center b_bottom_after font16 bold" wx:if="{{chooseModule == 'news'}}">{{language.selectNews ? language.selectNews : '选择新闻'}}</view>
+    <view class="pagetop flex_center b_bottom_after font16 bold" wx:elif="{{chooseModule == 'product'}}">{{language.selectProduct ? language.selectProduct : '选择商品'}}</view>
+    <view class="pagetop flex_center b_bottom_after font16 bold" wx:elif="{{chooseModule == 'minilive'}}"><block wx:if="{{sysLanguage == 'zh_CN'}}">選擇直播間</block><block>选择直播间</block></view>
+    <view class="search-area flex_center" wx:if="{{chooseModule != 'minilive'}}">
+      <view class="search-outer flex_left">
+        <view class="flex_cell">
+          <input class="input" bindinput="keyupKeyword" type="text" value="{{searchword}}"/>
+        </view>
+        <view wx:if="{{searchword != ''}}" class="icon-cell flex_center color-gray font12" bindtap="cancelSearch">{{language.cancel ? language.cancel : '取消'}}</view>
+        <view class="icon-cell flex_right" bindtap="searchEvent"><text class="al al-sousuo"></text></view>
+      </view>
+    </view>
+    <view class="pagemiddle {{chooseModule == 'minilive' ? 'no-search' : ''}}">
+      <scroll-view class="w_100 h_100" scroll-y="true" bindscrolltolower="panelScrollEvent">
+        <radio-group class="scroll_list radio-group" wx:if="{{disPanelList}}" bindchange="radioChange">
+          <view wx:if="{{!panelData.length}}" class="flex_empty"><block wx:if="{{isSearch}}">{{language.searchEmtpy ? language.searchEmtpy : '暂无搜索结果'}}</block><block wx:else>{{language.dataEmtpy ? language.dataEmtpy : '暂无数据'}}</block></view>
+          <block wx:else>
+            <repeat for="{{panelData}}" item="item" index="index">
+              <view class="scroll_item">
+                <label class="radio flex_left">
+                  <view class="flex_left icon-cell">
+                    <radio value="{{item.id}}" checked="{{item.checked}}"/>
+                  </view>
+                  <view class="flex_left pic" wx:if="{{item.photo && item.photo != ''}}">
+                    <image src="{{item.photo}}"></image>
+                  </view>
+                  <view class="flex_cell flex_left">
+                    <view class="w_100 clamp1">{{item.title}}</view>
+                  </view>
+                </label>
+              </view>
+            </repeat>
+          </block>
+        </radio-group>
+      </scroll-view>
+    </view>
+    <form class="pagebottom db b_top_after" bindsubmit="submitChoose" bindreset="closePanel" report-submit="true">
+      <view class="w_100 h_100 flex_center">
+        <view class="flex_center flex_cell h_100 b_right_after">
+          <button class="bg-gray w_100 h_100 flex_center color-white font16" form-type="reset">{{language.cancel ? language.cancel : '取消'}}</button>
+        </view>
+        <view class="flex_center flex_cell h_100">
+          <button class="bg-theme w_100 h_100 flex_center color-white font16" form-type="submit" style="{{themeObject.bgStyle}}">{{language.submit ? language.submit : '提交'}}</button>
+        </view>
+      </view>
+    </form>
+  </view>
+</template>
+<script>
+import wepy from 'wepy'
+import Util from '@/libs/util'
+import Config from '@/config'
+export default class extends wepy.page {
+  data = {
+    options: {},
+    globalData: {},
+    userInfo: {},
+    module: 'channel',
+    viewData: {},
+    photoArr: [],
+    submitIng: false,
+    isLoading: false,
+    maxContentPhoto: 19,
+    postData: {},
+    systemInfo: {},
+    moduleArr: [
+      {title: '自定义', module: ''},
+      {title: '商城', module: 'home'},
+      {title: '合伙人', module: 'mark'},
+      {title: '我的', module: 'own'}
+    ],
+    selectedModuleIndex: 0,
+    bannerData: [],
+    pageData: [
+      {title: '无跳转', type: ''},
+      {title: '首页', type: 'link', url: '/pages/home'},
+      {title: '新闻', type: 'link', url: '/packageB/pages/newslist'},
+      {title: '合伙人', type: 'link', url: '/pages/mark'},
+      {title: '我的', type: 'link', url: '/pages/own'},
+      {title: '指定商品', type: 'fpimport'},
+      {title: '指定新闻', type: 'factorynews'},
+      {title: '指定直播间', type: 'minilive'}
+    ],
+    conData: [
+      {title: '自定义内容', type: ''},
+      {title: '插入商品', type: 'fpimport'},
+      {title: '插入新闻', type: 'factorynews'}
+      // {title: '插入直播', type: 'minilive'}
+    ],
+    disNewsList: false,
+    newsData: [],
+    newsPageStart: 0,
+    disProductList: false,
+    productData: [],
+    productPageStart: 0,
+    limit: 20,
+    disPanelList: false,
+    panelData: [],
+    panelPageStart: 0,
+    animationPanel: {},
+    disPanel: false,
+    chooseModule: '',
+    chooseType: '',
+    isLoadingPanel: false,
+    newsObject: {},
+    productObject: {},
+    clickBannerIndex: 0,
+    searchword: '',
+    isSearch: false,
+    afterSearch: false,
+    defaultIco: '',
+    checkedIco: '',
+    contentData: [],
+    clickContentIndex: 0,
+    selectedConIndex: 0,
+    isMoving: false,
+    toMini: false,
+    appUrl: '',
+    appArr: Config.MiniAppArr,
+    selectedAppIndex: 0,
+    isAnimating: false,
+    isIpx: false,
+    themeObject: {},
+    sysLanguage: 'zh',
+    language: {},
+    liveData: [],
+    liveObject: {}
+  }
+  getData () {
+    wepy.request({
+      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/channel/info`,
+      data: {id: this.options.id},
+      method: 'post'
+    }).then(res => {
+      wepy.hideLoading()
+      const data = res.data
+      const retdata = data.data ? data.data : data
+      this.viewData = retdata
+      this.postData.title = this.viewData.title
+      let photostate = retdata.photostate
+      if (photostate && photostate !== '' && photostate !== '0') {
+        let arr = photostate.split(',')
+        this.defaultIco = arr[0]
+        this.checkedIco = arr[1]
+      }
+      if (this.viewData.module === 'miniprogram') {
+        this.toMini = true
+        this.appUrl = this.viewData.miniprogramurl
+      }
+      if (retdata.banner && retdata.banner.length) {
+        this.bannerData = []
+        for (let i = 0; i < retdata.banner.length; i++) {
+          let curb = retdata.banner[i]
+          curb.pageData = this.pageData
+          if (curb.type === '') {
+            curb.selectedPageIndex = 0
+          } else {
+            for (let j = 0; j < this.pageData.length; j++) {
+              let curpd = this.pageData[j]
+              if (curb.type === 'link') {
+                if (curb.url === curpd.url) {
+                  curb.selectedPageIndex = j
+                  break
+                }
+              } else if (curb.type === curpd.type) {
+                curb.selectedPageIndex = j
+                break
+              }
+            }
+          }
+          this.bannerData.push(curb)
+        }
+      }
+      if (retdata.content && retdata.content.length) {
+        this.contentData = []
+        for (let i = 0; i < retdata.content.length; i++) {
+          let curc = retdata.content[i]
+          let cp = {content: curc.content, photoarr: [], conData: this.conData, selectedConIndex: 0, type: ''}
+          if (curc.photo && curc.photo !== '') {
+            cp.photoarr = curc.photo.split(',')
+          }
+          if (curc.moduleid) {
+            cp.moduledata = curc.moduledata
+            cp.moduleid = curc.moduleid
+            if (curc.module === 'factoryproduct') {
+              cp.module = 'fpimport'
+            } else {
+              cp.module = curc.module
+            }
+            if (cp.module === 'factorynews') {
+              cp.selectedConIndex = 2
+            } else if (cp.module === 'factoryproduct' || cp.module === 'fpimport') {
+              cp.selectedConIndex = 1
+            }
+          }
+          this.contentData.push(cp)
+        }
+      }
+      this.$apply()
+    })
+  }
+  onLoad (options) {
+    Util.handleLanguage(this)
+    if (this.sysLanguage === 'zh_CN') {
+      this.moduleArr = [
+        {title: '自定義', module: ''},
+        {title: '商城', module: 'home'},
+        {title: '合夥人', module: 'mark'},
+        {title: '我的', module: 'own'}
+      ]
+      this.pageData = [
+        {title: '無跳轉', type: ''},
+        {title: '首頁', type: 'link', url: '/pages/home'},
+        {title: '新聞', type: 'link', url: '/packageB/pages/newslist'},
+        {title: '合夥人', type: 'link', url: '/pages/mark'},
+        {title: '我的', type: 'link', url: '/pages/own'},
+        {title: '指定商品', type: 'fpimport'},
+        {title: '指定新聞', type: 'factorynews'},
+        {title: '指定直播間', type: 'minilive'}
+      ]
+      this.conData = [
+        {title: '自定義內容', type: ''},
+        {title: '插入商品', type: 'fpimport'},
+        {title: '插入新闻', type: 'factorynews'}
+        // {title: '插入直播間', type: 'minilive'}
+      ]
+    }
+    this.options = options
+    if (options.module) {
+      this.module = options.module
+    }
+    wepy.hideShareMenu()
+    this.$apply()
+    wepy.getSystemInfo().then(res => {
+      this.systemInfo = res
+      if (res.model.substring(0, res.model.indexOf('X')) + 'X' === 'iPhone X') {
+        this.isIpx = true
+      }
+      this.$apply()
+    })
+    if (this.$parent.globalData.flag.bokaAuth) {
+      this.handlePageData()
+    } else {
+      this.$parent.loadCallback = () => {
+        this.handlePageData()
+      }
+    }
+  }
+  handlePageData () {
+    this.globalData = this.$parent.globalData
+    Util.appInit(this.globalData, this)
+    this.userInfo = this.globalData.userInfo
+    if (this.options.id) {
+      this.getData()
+    } else {
+      this.bannerData = [{url: '', photo: '', pageData: this.pageData, selectedPageIndex: 0, type: ''}]
+      this.contentData = [{content: '', photoarr: [], conData: this.conData, selectedConIndex: 0, type: ''}]
+    }
+    this.$apply()
+  }
+  handleAnimation (show) {
+    var animation = wepy.createAnimation({
+      duration: 500,
+      timingFunction: 'linear'
+    })
+    if (show) {
+      animation.top(0).step()
+    } else {
+      animation.top('100%').step()
+    }
+    this.animationPanel = animation.export()
+    setTimeout(() => {
+      this.isAnimating = false
+      this.$apply()
+    }, 500)
+    this.$apply()
+  }
+  getNewsData () {
+    let params = {fid: Config.Fid, pagestart: this.newsPageStart, limit: this.limit, module: 'factorynews'}
+    if (Util.trim(this.searchword) === '') {
+      this.isSearch = false
+      this.afterSearch = false
+    } else {
+      this.isSearch = true
+      params.keyword = this.searchword
+      this.afterSearch = true
+    }
+    this.$apply()
+    wepy.request({
+      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/moduleList`,
+      data: params
+    }).then(res => {
+      wepy.hideLoading()
+      const data = res.data
+      const retdata = data.data ? data.data : data
+      for (let i = 0; i < retdata.length; i++) {
+        retdata[i].checked = false
+        this.newsObject[retdata[i].id] = retdata[i]
+      }
+      this.newsData = this.newsData.concat(retdata)
+      this.panelData = this.newsData
+      this.disPanelList = true
+      this.isLoadingPanel = false
+      this.$apply()
+    })
+  }
+  getProductData () {
+    let params = {fid: Config.Fid, pagestart: this.productPageStart, limit: this.limit}
+    if (Util.trim(this.searchword) === '') {
+      this.isSearch = false
+      this.afterSearch = false
+    } else {
+      this.isSearch = true
+      params.keyword = this.searchword
+      this.afterSearch = true
+    }
+    this.$apply()
+    wepy.request({
+      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/factory/factoryproductList`,
+      data: params,
+      method: 'post'
+    }).then(res => {
+      wepy.hideLoading()
+      const data = res.data
+      const retdata = data.data ? data.data : data
+      for (let i = 0; i < retdata.length; i++) {
+        retdata[i].checked = false
+        this.productObject[retdata[i].id] = retdata[i]
+      }
+      this.productData = this.productData.concat(retdata)
+      this.panelData = this.productData
+      this.disPanelList = true
+      this.isLoadingPanel = false
+      this.$apply()
+    })
+  }
+  getLiveData () {
+    let params = {}
+    if (Util.trim(this.searchword) === '') {
+      this.isSearch = false
+      this.afterSearch = false
+    } else {
+      this.isSearch = true
+      params.keyword = this.searchword
+      this.afterSearch = true
+    }
+    this.$apply()
+    wepy.request({
+      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/minilive/getLiveInfo`,
+      data: params,
+      method: 'post'
+    }).then(res => {
+      wepy.hideLoading()
+      const data = res.data
+      const retdata = data.data ? data.data : data
+      for (let i = 0; i < retdata.length; i++) {
+        let curData = retdata[i]
+        curData.checked = false
+        let customParams = {share_uid: this.userInfo.uid, share_wid: this.globalData.Wid, wid: this.globalData.Wid, liveid: curData.id}
+        let cpstr = encodeURIComponent(JSON.stringify(customParams))
+        retdata[i].title = retdata[i].name
+        retdata[i].navurl = `plugin-private://wx2b03c6e691cd7370/pages/live-player-plugin?room_id=${curData.roomid}&custom_params=${cpstr}`
+        this.liveObject[retdata[i].id] = retdata[i]
+      }
+      this.liveData = retdata
+      this.panelData = this.liveData
+      this.disPanelList = true
+      this.isLoadingPanel = false
+      this.$apply()
+    })
+  }
+  methods = {
+    keyupTitle (e) {
+      this.postData.title = e.detail.value
+      this.$apply()
+    },
+    keyupMini (e) {
+      this.appUrl = e.detail.value
+      this.$apply()
+    },
+    changeModulePicker (e) {
+      this.selectedModuleIndex = e.detail.value
+      this.$apply()
+    },
+    changeAppPicker (e) {
+      this.selectedAppIndex = e.detail.value
+      this.$apply()
+    },
+    changePicker (e) {
+      const dataset = e.currentTarget.dataset
+      const curindex = dataset.index
+      const curpageindex = e.detail.value
+      this.bannerData[curindex].selectedPageIndex = curpageindex
+      const curpage = this.bannerData[curindex].pageData[curpageindex]
+      const curtype = curpage.type
+      this.bannerData[curindex].type = curtype
+      if (!curpage.url) {
+        this.bannerData[curindex].url = ''
+      } else {
+        this.bannerData[curindex].url = curpage.url
+      }
+      this.bannerData[curindex].module = curtype
+      this.bannerData[curindex].moduleid = null
+      this.bannerData[curindex].moduledata = null
+      this.$apply()
+    },
+    changeConPicker (e) {
+      const dataset = e.currentTarget.dataset
+      const curindex = dataset.index
+      const curconindex = e.detail.value
+      this.contentData[curindex].selectedConIndex = curconindex
+      const curpage = this.contentData[curindex].conData[curconindex]
+      const curtype = curpage.type
+      this.contentData[curindex].type = curtype
+      if (curtype !== '') {
+        this.contentData[curindex].module = curtype
+        this.contentData[curindex].moduleid = null
+        this.contentData[curindex].moduledata = null
+      }
+      this.$apply()
+    },
+    saveEvent (e) {
+      if (!this.submitIng) {
+        let photostate = [this.defaultIco, this.checkedIco]
+        if (Util.trim(this.postData.title) === '') {
+          wepy.showToast({
+            title: this.language.pleaseInputChannelContent ? this.language.pleaseInputChannelContent : '请输入频道名称',
+            icon: 'none'
+          })
+          return false
+        }
+        let iscontinue = true
+        let submitData = {...this.postData, photostate: photostate.join(','), fid: Config.Fid, miniprogram: 0}
+        if (this.toMini) {
+          if (Util.trim(this.appUrl) === '') {
+            let toastTip = '请输入小程序跳转地址'
+            if (this.sysLanguage === 'zh_CN') {
+              toastTip = '請輸入小程序跳轉地址'
+            }
+            wepy.showToast({
+              title: toastTip,
+              icon: 'none'
+            })
+            return false
+          }
+          submitData.module = 'miniprogram'
+          submitData.miniprogramurl = this.appUrl
+          submitData.appid = this.appArr[this.selectedAppIndex].appid
+          submitData.miniprogramtitle = this.appArr[this.selectedAppIndex].title
+          if (this.viewData.id) {
+            submitData.banner = this.viewData.banner
+            submitData.content = this.viewData.content
+          } else {
+            submitData.banner = []
+            submitData.content = []
+          }
+        } else {
+          let bData = []
+          for (let i = 0; i < this.bannerData.length; i++) {
+            let curd = this.bannerData[i]
+            if (curd.photo === '') {
+              let toastTip = '请上传滚动图片'
+              if (this.sysLanguage === 'zh_CN') {
+                toastTip = '請上傳滾動圖片'
+              }
+              wepy.showToast({
+                title: toastTip,
+                icon: 'none'
+              })
+              iscontinue = false
+              break
+            } else if ((curd.type === 'factorynews' || curd.type === 'factoryproduct' || curd.type === 'fpimport' || curd.type === 'minilive') && !curd.moduleid) {
+              let tip = this.language.pleaseSelectAppointProduct ? this.language.pleaseSelectAppointProduct : '请选择指定商品'
+              if (curd.type === 'factorynews') {
+                tip = this.language.pleaseSelectAppointNews ? this.language.pleaseSelectAppointNews : '请选择指定新闻'
+              } else {
+                if (this.sysLanguage === 'zh_CN') {
+                  tip = '請選擇指定直播間'
+                } else {
+                  tip = '请选择指定直播间'
+                }
+              }
+              wepy.showToast({
+                title: tip,
+                icon: 'none'
+              })
+              iscontinue = false
+              break
+            } else {
+              let p = {photo: curd.photo, type: curd.type, url: curd.url}
+              if (curd.type === 'factoryproduct') {
+                p.type = 'fpimport'
+              }
+              if (curd.moduleid) {
+                p.moduleid = curd.moduleid
+                if (curd.module === 'factoryproduct') {
+                  p.module = 'fpimport'
+                } else {
+                  p.module = curd.module
+                }
+                p.url = ''
+              } else {
+                p.moduleid = 0
+                p.module = ''
+              }
+              bData.push(p)
+            }
+          }
+          if (!iscontinue) {
+            return false
+          }
+          let cData = []
+          for (let i = 0; i < this.contentData.length; i++) {
+            let curd = this.contentData[i]
+            if ((curd.type === 'factorynews' || curd.type === 'factoryproduct' || curd.type === 'fpimport') && !curd.moduleid) {
+              let tip = this.language.pleaseSelectAppointProduct ? this.language.pleaseSelectAppointProduct : '请选择指定商品'
+              if (curd.type === 'factorynews') {
+                tip = this.language.pleaseSelectAppointNews ? this.language.pleaseSelectAppointNews : '请选择指定新闻'
+              }
+              wepy.showToast({
+                title: tip,
+                icon: 'none'
+              })
+              iscontinue = false
+              break
+            } else {
+              if (curd.type === '' && curd.content === '' && curd.photo === '') {
+              } else {
+                let p = {content: curd.content, photo: curd.photoarr.join(','), type: curd.type, url: ''}
+                if (curd.type === 'factoryproduct') {
+                  p.type = 'fpimport'
+                }
+                if (curd.moduleid) {
+                  p.moduleid = curd.moduleid
+                  if (curd.module === 'factoryproduct') {
+                    p.module = 'fpimport'
+                  } else {
+                    p.module = curd.module
+                  }
+                  p.url = ''
+                } else {
+                  p.moduleid = 0
+                  p.module = ''
+                }
+                cData.push(p)
+              }
+            }
+          }
+          if (!iscontinue) {
+            return false
+          }
+          submitData = {...submitData, banner: bData, content: cData, module: this.module}
+        }
+        this.submitIng = true
+        if (this.options.id) {
+          submitData.id = this.options.id
+          submitData.miniprogram = this.viewData.miniprogram
+          submitData.miniprogramurl = this.viewData.miniprogramurl
+        }
+        wepy.showLoading()
+        wepy.request({
+          url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/channel/addChannel`,
+          data: {...submitData},
+          method: 'post'
+        }).then(res => {
+          const data = res.data
+          wepy.hideLoading()
+          let successTip = this.language.success ? this.language.success : '成功'
+          let error = data.flag ? successTip : data.error
+          const timeout = Util.delay(error)
+          wepy.showToast({
+            title: error,
+            icon: 'none',
+            duration: timeout
+          })
+          if (data.flag) {
+            setTimeout(() => {
+              this.submitIng = false
+              if (this.viewData.id && this.viewData.module !== '' && this.viewData.module !== 'channel') {
+                wepy.navigateBack({delta: 1})
+              } else {
+                wepy.navigateTo({url: `/package/pages/channel?id=${data.data}`})
+              }
+            }, timeout)
+          } else {
+            this.submitIng = false
+          }
+          this.$apply()
+        })
+      }
+    },
+    uploadBannerPhoto (e) {
+      const dataset = e.currentTarget.dataset
+      wepy.chooseImage({
+        count: 1, // 默认9
+        sizeType: ['original', 'compressed'], // 可以指定是原图还是压缩图，默认二者都有
+        sourceType: ['album', 'camera'] // 可以指定来源是相册还是相机，默认二者都有
+      }).then(res => {
+        if (res.tempFiles) {
+          Util.taskData({
+            data: res.tempFiles,
+            handleFunction: (d) => {
+              return (done) => {
+                wepy.showLoading()
+                wepy.uploadFile({
+                  url: `${Config.GxkApi}/api/upload/photo`,
+                  method: 'POST',
+                  name: 'photo',
+                  filePath: d.path
+                }).then(res => {
+                  wepy.hideLoading()
+                  const resdata = JSON.parse(res.data)
+                  if (!resdata.flag) {
+                    wepy.showToast({
+                      title: resdata.error,
+                      icon: 'none',
+                      duration: Util.delay(resdata.error)
+                    })
+                  } else {
+                    let jsonData = JSON.parse(res.data)
+                    this.bannerData[dataset.index].photo = jsonData.data
+                    this.bannerData[dataset.index].photoArr = [jsonData.data]
+                    this.$apply()
+                  }
+                  done()
+                })
+              }
+            }
+          })
+        }
+      })
+    },
+    uploadChannelIco (e) {
+      const dataset = e.currentTarget.dataset
+      const curtype = dataset.type
+      wepy.chooseImage({
+        count: 1, // 默认9
+        sizeType: ['original', 'compressed'], // 可以指定是原图还是压缩图，默认二者都有
+        sourceType: ['album', 'camera'] // 可以指定来源是相册还是相机，默认二者都有
+      }).then(res => {
+        if (res.tempFiles) {
+          Util.taskData({
+            data: res.tempFiles,
+            handleFunction: (d) => {
+              return (done) => {
+                wepy.showLoading()
+                wepy.uploadFile({
+                  url: `${Config.GxkApi}/api/upload/photo`,
+                  method: 'POST',
+                  name: 'photo',
+                  filePath: d.path
+                }).then(res => {
+                  wepy.hideLoading()
+                  const resdata = JSON.parse(res.data)
+                  if (!resdata.flag) {
+                    wepy.showToast({
+                      title: resdata.error,
+                      icon: 'none',
+                      duration: Util.delay(resdata.error)
+                    })
+                  } else {
+                    let jsonData = JSON.parse(res.data)
+                    if (curtype === 'default') {
+                      this.defaultIco = jsonData.data
+                    } else if (curtype === 'checked') {
+                      this.checkedIco = jsonData.data
+                    }
+                    this.$apply()
+                  }
+                  done()
+                })
+              }
+            }
+          })
+        }
+      })
+    },
+    uploadContentPhoto (e) {
+      const dataset = e.currentTarget.dataset
+      const itemindex = dataset.itemindex
+      const photoindex = dataset.index
+      let max = this.maxContentPhoto - this.contentData[itemindex].photoarr.length
+      if (max > 9) {
+        max = 9
+      }
+      wepy.chooseImage({
+        count: max, // 默认9
+        sizeType: ['original', 'compressed'], // 可以指定是原图还是压缩图，默认二者都有
+        sourceType: ['album', 'camera'] // 可以指定来源是相册还是相机，默认二者都有
+      }).then(res => {
+        if (res.tempFiles) {
+          Util.taskData({
+            data: res.tempFiles,
+            handleFunction: (d) => {
+              return (done) => {
+                wepy.showLoading()
+                wepy.uploadFile({
+                  url: `${Config.GxkApi}/api/upload/photo`,
+                  method: 'POST',
+                  name: 'photo',
+                  filePath: d.path
+                }).then(res => {
+                  wepy.hideLoading()
+                  const resdata = JSON.parse(res.data)
+                  if (!resdata.flag) {
+                    wepy.showToast({
+                      title: resdata.error,
+                      icon: 'none',
+                      duration: Util.delay(resdata.error)
+                    })
+                  } else {
+                    let jsonData = JSON.parse(res.data)
+                    if (photoindex !== 'undefined' && photoindex !== undefined) {
+                      this.contentData[itemindex].photoarr.splice(photoindex, 1, jsonData.data)
+                    } else {
+                      if (this.contentData[itemindex].photoarr.length < this.maxContentPhoto) {
+                        this.contentData[itemindex].photoarr.push(jsonData.data)
+                      }
+                    }
+                    this.$apply()
+                  }
+                  done()
+                })
+              }
+            }
+          })
+        }
+      })
+    },
+    deletePhoto (e) {
+      const dataset = e.currentTarget.dataset
+      const itemindex = dataset.itemindex
+      const photoindex = dataset.index
+      this.contentData[itemindex].photoarr.splice(photoindex, 1)
+      this.$apply()
+    },
+    addItem (e) {
+      const dataset = e.currentTarget.dataset
+      const curtype = dataset.type
+      if (curtype === 'banner') {
+        this.bannerData.push({url: '', photo: '', pageData: this.pageData, selectedPageIndex: 0, type: ''})
+      } else if (curtype === 'content') {
+        this.contentData.push({content: '', photoarr: [], conData: this.conData, selectedConIndex: 0, type: ''})
+      }
+    },
+    deleteItem (e) {
+      const dataset = e.currentTarget.dataset
+      const curindex = dataset.index
+      const curtype = dataset.type
+      wepy.showModal({
+        title: '',
+        content: this.language.confirmDelete ? this.language.confirmDelete : '确定要删除吗？'
+      }).then(res => {
+        if (res.confirm) {
+          if (curtype === 'banner') {
+            this.bannerData.splice(curindex, 1)
+          } else if (curtype === 'content') {
+            this.contentData.splice(curindex, 1)
+          }
+          this.$apply()
+        }
+      })
+    },
+    moveItem (e) {
+      if (!this.isMoving) {
+        this.isMoving = true
+        const dataset = e.currentTarget.dataset
+        const curindex = dataset.index
+        const curtype = dataset.type
+        const curmove = dataset.move
+        let moveIndex = curmove === 'up' ? curindex - 1 : curindex + 1
+        if (curtype === 'banner') {
+          let curdata = this.bannerData[curindex]
+          let movedata = this.bannerData[moveIndex]
+          this.bannerData.splice(curindex, 1, movedata)
+          this.bannerData.splice(moveIndex, 1, curdata)
+        } else if (curtype === 'content') {
+          let curdata = this.contentData[curindex]
+          let movedata = this.contentData[moveIndex]
+          this.contentData.splice(curindex, 1, movedata)
+          this.contentData.splice(moveIndex, 1, curdata)
+        }
+        wepy.showToast({
+          title: this.language.success ? this.language.success : '成功',
+          icon: 'none'
+        })
+        this.$apply()
+        setTimeout(() => {
+          this.isMoving = false
+          this.$apply()
+        }, 1500)
+      }
+    },
+    clickNews (e) {
+      if (!this.isAnimating) {
+        this.isAnimating = true
+        this.disPanelList = false
+        const dataset = e.currentTarget.dataset
+        const curtype = dataset.type
+        this.chooseModule = 'news'
+        this.chooseType = curtype
+        if (curtype === 'banner') {
+          this.clickBannerIndex = dataset.index
+        } else {
+          this.clickContentIndex = dataset.index
+        }
+        if (!this.newsData.length) {
+          this.getNewsData()
+        } else {
+          this.panelData = []
+          this.$apply()
+          for (let i = 0; i < this.newsData.length; i++) {
+            if (this.newsData[i].checked) {
+              delete this.newsData[i].checked
+              break
+            }
+          }
+          this.panelData = this.newsData
+          this.disPanelList = true
+        }
+        this.handleAnimation(true)
+        this.$apply()
+      }
+    },
+    clickProduct (e) {
+      if (!this.isAnimating) {
+        this.isAnimating = true
+        this.disPanelList = false
+        const dataset = e.currentTarget.dataset
+        const curtype = dataset.type
+        this.chooseModule = 'product'
+        this.chooseType = curtype
+        if (curtype === 'banner') {
+          this.clickBannerIndex = dataset.index
+        } else {
+          this.clickContentIndex = dataset.index
+        }
+        if (!this.productData.length) {
+          this.getProductData()
+        } else {
+          this.panelData = []
+          this.$apply()
+          for (let i = 0; i < this.productData.length; i++) {
+            if (this.productData[i].checked) {
+              delete this.productData[i].checked
+              break
+            }
+          }
+          this.panelData = this.productData
+          this.disPanelList = true
+        }
+        this.handleAnimation(true)
+        this.$apply()
+      }
+    },
+    clickLive (e) {
+      if (!this.isAnimating) {
+        this.isAnimating = true
+        this.disPanelList = false
+        const dataset = e.currentTarget.dataset
+        const curtype = dataset.type
+        this.chooseModule = 'minilive'
+        this.chooseType = curtype
+        if (curtype === 'banner') {
+          this.clickBannerIndex = dataset.index
+        } else {
+          this.clickContentIndex = dataset.index
+        }
+        if (!this.liveData.length) {
+          this.getLiveData()
+        } else {
+          this.panelData = []
+          this.$apply()
+          for (let i = 0; i < this.liveData.length; i++) {
+            if (this.liveData[i].checked) {
+              delete this.liveData[i].checked
+              break
+            }
+          }
+          this.panelData = this.liveData
+          this.disPanelList = true
+        }
+        this.handleAnimation(true)
+        this.$apply()
+      }
+    },
+    panelScrollEvent (e) {
+      if (!this.isLoadingPanel) {
+        if (this.chooseModule === 'news') {
+          if (this.panelData.length === (this.newsPageStart + 1) * this.limit) {
+            this.newsPageStart++
+            this.isLoadingPanel = true
+            this.getNewsData()
+          }
+        } else if (this.chooseModule === 'product') {
+          if (this.panelData.length === (this.productPageStart + 1) * this.limit) {
+            this.productPageStart++
+            this.isLoadingPanel = true
+            this.getProductData()
+          }
+        }
+      }
+    },
+    keyupKeyword (e) {
+      this.searchword = e.detail.value
+    },
+    searchEvent (e) {
+      this.disPanelList = false
+      this.panelData = []
+      if (this.chooseModule === 'news') {
+        this.newsPageStart = 0
+        this.newsData = []
+        this.$apply()
+        this.getNewsData()
+      } else if (this.chooseModule === 'product') {
+        this.productPageStart = 0
+        this.productData = []
+        this.$apply()
+        this.getProductData()
+      } else if (this.chooseModule === 'minilive') {
+        this.liveData = []
+        this.$apply()
+        this.getLiveData()
+      }
+    },
+    cancelSearch (e) {
+      this.searchword = ''
+      this.$apply()
+      if (this.afterSearch) {
+        this.disPanelList = false
+        this.$apply()
+        this.panelData = []
+        if (this.chooseModule === 'news') {
+          this.newsPageStart = 0
+          this.newsData = []
+          this.$apply()
+          this.getNewsData()
+        } else if (this.chooseModule === 'product') {
+          this.productPageStart = 0
+          this.productData = []
+          this.$apply()
+          this.getProductData()
+        } else if (this.chooseModule === 'minilive') {
+          this.liveData = []
+          this.$apply()
+          this.getLiveData()
+        }
+      }
+    },
+    radioChange (e) {
+      const value = e.detail.value
+      if (this.chooseModule === 'news') {
+        this.chooseData = this.newsObject[value]
+      } else if (this.chooseModule === 'product') {
+        this.chooseData = this.productObject[value]
+      } else if (this.chooseModule === 'minilive') {
+        this.chooseData = this.liveObject[value]
+      }
+      this.$apply()
+    },
+    closePanel (e) {
+      this.chooseData = null
+      this.handleAnimation(false)
+    },
+    submitChoose (e) {
+      let tiptxt = this.language.pleaseSelectData ? this.language.pleaseSelectData : '请选择数据'
+      if (this.chooseModule === 'news') {
+        tiptxt = this.language.pleaseSelectNews ? this.language.pleaseSelectNews : '请选择文章'
+      } else if (this.chooseModule === 'product') {
+        tiptxt = this.language.pleaseSelectProduct ? this.language.pleaseSelectProduct : '请选择商品'
+      } else if (this.chooseModule === 'minilive') {
+        if (this.sysLanguage === 'zh_CN') {
+          tiptxt = '請選擇直播間'
+        } else {
+          tiptxt = '请选择直播间'
+        }
+      }
+      if (!this.chooseData || !this.chooseData.id) {
+        wepy.showToast({
+          title: tiptxt,
+          icon: 'none'
+        })
+        return false
+      }
+      this.handleAnimation(false)
+      if (this.chooseType === 'banner') {
+        this.bannerData[this.clickBannerIndex].moduleid = this.chooseData.id
+        this.bannerData[this.clickBannerIndex].moduledata = this.chooseData
+      } else {
+        this.contentData[this.clickContentIndex].moduleid = this.chooseData.id
+        this.contentData[this.clickContentIndex].moduledata = this.chooseData
+      }
+      this.chooseData = null
+      this.$apply()
+    },
+    previewImg (e) {
+      const url = e.currentTarget.dataset.url
+      wepy.previewImage({
+        current: 0,
+        urls: [url]
+      })
+    },
+    textareaChange (e) {
+      const dataset = e.currentTarget.dataset
+      const curindex = dataset.index
+      this.contentData[curindex].content = e.detail.value
+      this.$apply()
+    },
+    deleteIcon (e) {
+      const dataset = e.currentTarget.dataset
+      const curtype = dataset.type
+      wepy.showModal({
+        title: '',
+        content: this.language.confirmDeleteIco ? this.language.confirmDeleteIco : '确定要删除当前图标吗？'
+      }).then(res => {
+        if (res.confirm) {
+          if (curtype === 'default') {
+            this.defaultIco = ''
+          } else if (curtype === 'checked') {
+            this.checkedIco = ''
+          }
+          this.$apply()
+        }
+      })
+    },
+    changeToMini (e) {
+      this.toMini = !this.toMini
+      this.$apply()
+    },
+    movePhoto (e) {
+      const dataset = e.currentTarget.dataset
+      const itemindex = dataset.itemindex
+      const index = dataset.index
+      const move = dataset.move
+      let moveindex
+      let curphoto = ''
+      let moveimg = ''
+      if (move === 'prev') {
+        moveindex = index - 1
+      } else {
+        moveindex = index + 1
+      }
+      curphoto = this.contentData[itemindex].photoarr[index]
+      moveimg = this.contentData[itemindex].photoarr[moveindex]
+      this.contentData[itemindex].photoarr[index] = moveimg
+      this.contentData[itemindex].photoarr[moveindex] = curphoto
+      this.$apply()
+    }
+  }
+}
+</script>

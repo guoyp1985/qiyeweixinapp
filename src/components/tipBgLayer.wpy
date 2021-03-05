@@ -1,0 +1,77 @@
+<style lang="less">
+.tip-bglayer-modal{
+  .modal-inner{width:80%;background-color:transparent;max-width:860rpx;max-height:1088rpx;}
+  .pic-outer{
+    width:100%;padding-bottom:126.5%;position:relative;max-height:100%;
+    .pic{
+      position:absolute;left:0;top:0;right:0;bottom:0;
+      image{width:100%;height:100%;}
+    }
+  }
+  .top-con{
+    position:absolute;left:0;top:8%;right:0;width:100%;color:#fff;font-weight:bold;font-size:70rpx;
+  }
+  .top-con.small{font-size:40rpx;}
+  .middle-con{
+    position:absolute;left:8%;top:28%;width:84%;height:50%;
+    background-color:#fff;border-radius:10rpx;box-shadow: 0 0 40rpx #e4e8eb;
+    padding:40rpx;box-sizing: border-box;
+  }
+  .bottom-con{
+    position:absolute;left:8%;bottom:5%;width:84%;height:10%;color:#fff;
+    box-shadow:4rpx 4rpx 8rpx 0 rgba(0,0,0,0.2);border-radius:60rpx;
+  }
+}
+</style>
+<template>
+  <view class="auto-modal flex_center tip-bglayer-modal">
+    <view class="modal-inner border-box">
+      <view class="pic-outer">
+        <view class="pic">
+          <image src="https://tossharingsales.boka.cn/images/tip_bg.png"></image>
+        </view>
+      </view>
+      <view class="top-con flex_center small" wx:if="{{title.length > 6}}">{{title}}</view>
+      <view class="top-con flex_center" wx:else>{{title}}</view>
+      <view class="middle-con flex_center">
+        <view class="w_100">{{content}}</view>
+      </view>
+      <view class="bottom-con flex_center" style="{{themeObject.linearBgStyle}}" wx:if="{{buttonTxt && buttonTxt != ''}}" @tap="clickButton">{{buttonTxt}}</view>
+      <form class="close-area flex_center" bindsubmit="closeModal" report-submit="true">
+        <button formType="submit" class="al al-close1"></button>
+      </form>
+    </view>
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy'
+export default class TipBgLayer extends wepy.component {
+  props = {
+    title: {
+      type: String,
+      default: ''
+    },
+    content: {
+      type: String,
+      default: ''
+    },
+    buttonTxt: {
+      type: String,
+      default: ''
+    },
+    themeObject: {
+      type: Object,
+      default: {}
+    }
+  }
+  methods = {
+    closeModal () {
+      this.$emit('closeTipBg')
+    },
+    clickButton () {
+      this.$emit('clickTipBgButton')
+    }
+  }
+}
+</script>

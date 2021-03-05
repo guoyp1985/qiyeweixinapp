@@ -1,0 +1,95 @@
+<style lang="less">
+</style>
+<template>
+  <scroll-view class="column-content" scroll-y="true">
+    <block wx:if="{{factoryInfo.contentArr}}">
+      <view wx:if="{{!factoryInfo.contentArr.length}}" class="flex_empty">
+        <view class="align_center">品牌介绍，正在路上</view>
+      </view>
+      <block wx:else>
+        <repeat for="{{factoryInfo.contentArr}}" key="i" item="item">
+          <view class="padding10" wx:if="{{item.content && item.content != ''}}">
+            <text>{{item.content}}</text>
+          </view>
+          <repeat for="{{item.photoarr}}" key="j" item="photo">
+            <view class="flex_center">
+              <image src="{{photo}}" mode="widthFix" @tap="previewConver({{item.photoarr}},{{j}})"></image>
+            </view>
+          </repeat>
+        </repeat>
+      </block>
+    </block>
+    <view class="blank-area" wx:if="{{(showMark || options.share_uid) && (!userInfo.regwid || !userInfo.bindstatus) && from != 'about'}}"></view>
+  </scroll-view>
+  <form wx:if="{{(showMark || options.share_uid) && (!userInfo.regwid || !userInfo.bindstatus) && from != 'about'}}" class="bottom-area" bindsubmit="toApply" report-submit="true">
+    <view class="w_100 h_100 flex_center">
+      <button class="btn flex_center bg-theme color-white" style="{{themeObject.bgStyle}}" form-type="submit">
+        <block wx:if="{{userInfo.regwid && userInfo.bindstatus}}">我要邀请</block>
+        <block wx:else>
+          <block wx:if="{{AppId == 'wx54598c6692a2dfab'}}">加入绿色联盟</block>
+          <block wx:else>成为合伙人</block>
+        </block>
+      </button>
+    </view>
+  </form>
+</template>
+
+<script>
+import wepy from 'wepy'
+import Config from '@/config'
+export default class User extends wepy.component {
+  props = {
+    options: {
+      type: Object,
+      default: {}
+    },
+    factoryInfo: {
+      type: Object,
+      default: {}
+    },
+    userInfo: {
+      type: Object,
+      default: {}
+    },
+    globalData: {
+      type: Object,
+      default: {}
+    },
+    from: {
+      type: String,
+      default: ''
+    },
+    showMark: {
+      type: Boolean,
+      default: false
+    },
+    themeObject: {
+      type: Object,
+      default: {}
+    }
+  }
+  data = {
+    AppId: Config.AppId
+  }
+  onLoad () {
+  }
+  methods = {
+    previewConver (photos, index) {
+      wepy.previewImage({
+        current: photos[index],
+        urls: photos
+      })
+    },
+    toApply (e) {
+      if (this.userInfo.regwid && this.userInfo.bindstatus) {
+        wepy.navigateTo({url: `/pages/vip`})
+      } else {
+        let minibackurl = encodeURIComponent(`/pages/mark?refresh=1`)
+        let url = `centerSales?fid=${Config.Fid}&uid=${this.userInfo.uid}&censor=${this.globalData.SystemParams.RetailerCensor}&wid=${this.globalData.Wid}&backtype=relaunch`
+        const tourl = encodeURIComponent(url)
+        wepy.navigateTo({url: `/pages/webview?url=${tourl}&minibackurl=${minibackurl}`})
+      }
+    }
+  }
+}
+</script>

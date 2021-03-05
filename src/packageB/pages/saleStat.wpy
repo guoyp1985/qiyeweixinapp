@@ -1,0 +1,395 @@
+<style lang="less">
+.salestat-page{
+  background-color: #f5f9fa;
+  width: 100vw;
+  overflow-x: hidden;
+  .headbg{width: 100vw;}
+    .headbg-out{
+      border-radius: 0 0 10% 10%;
+      background: url('https://tossharingsales.boka.cn/minigxk/myIncomebg.png') no-repeat;background-size: cover;
+    }
+    // .headbg-out:after {
+    //   width: 140%;height: 200px;position: absolute;left: -20%;top:0;content: '';border-radius: 0 0 50% 50%;
+    //   background: url('https://tossharingsales.boka.cn/minigxk/myIncomebg.png') no-repeat;background-size: cover;
+    //   overflow-x: hidden;
+    // }
+  .avatar{
+    margin:0 auto;width:130rpx;height:130rpx;border-radius:50%;border:#fff 6rpx solid;box-sizing: border-box;
+    image{width:100%;height:100%;border-radius:50%;}
+  }
+  .time-out{color:#d7b677;z-index:99;width:60px;border:1px solid #d7b677;border-radius: 15px;}
+  .jiange:after{
+    content: "";
+    position: absolute;
+    display: block;
+    background-color: #976f2e;
+    width: 100%;
+    right: 50%;
+    height: 60%;
+    width: 1px;
+    transform: scaleX(0.2);
+    top: 15px;
+  }
+  .avatar2{
+    width:100rpx;height:100rpx;border-radius:50%;border:#fff 6rpx solid;box-sizing: border-box;
+    image{width:100%;height:100%;border-radius:50%;}
+  }
+  .myIncome{
+    background: linear-gradient(to right, #efd3a2, #dab27e)
+  }
+  .mySale{
+    background: linear-gradient(to right, #555555, #101010);
+    border-top-left-radius: 15px;
+    border-bottom-right-radius: 15px;
+    color:white;
+    padding:10rpx;
+    position: absolute;
+    top: -15px;
+  }
+  .box-sizing{box-sizing: border-box;}
+  .w_50{width: 50%}
+  .color1{color: #976f2e}
+  .color2{color: #999999}
+  .color3{color: #5a4629}
+  .mb40{margin-bottom: 40px;}
+  .bradius{border-radius: 15px;box-shadow: 0rpx 6rpx 0rpx rgba(96,96,96,0.1);}
+  .app-tab .tab-item.active{color:#d7b677}
+  .app-tab .tab-item.active .line{background:#d7b677}
+  .app-tab:after{border-bottom: 1px solid #d7b677;}
+  .backToTop{
+    width:100rpx;
+    height: 100rpx;
+    border-radius: 50%;
+    background-color: #efd3a2;
+    position: fixed;
+    right: 10px;
+    opacity: 0.5;
+    bottom:20rpx;
+  }
+  .flex_column{display: flex;flex-direction: column;justify-content: center;align-items: center;}
+}
+</style>
+<template>
+  <view class="salestat-page">
+    <view class="headbg-out">
+      <view class="headbg">
+        <view class="w_100 flex_right box-sizing pr10" style="height: 60px;">
+          <view class="time-out">
+            <view class="time-inner">
+              <picker mode="date" start="2017-01" end="{{nowdate}}" fields="month" bindchange="dateChange">
+                <view class="align_center">{{month}}月<text class="al al-sanjiaoxing font14"></text></view>
+              </picker>
+            </view>
+          </view>
+       </view>
+        <view class="w_100 flex_column pt10">
+            <view class="avatar mb5">
+              <image mode="aspectFill" src="{{userInfo.avatar}}"/>
+            </view>
+            <view class="flex_center bold" style="color:#d7b677">{{userInfo.linkman}}</view>
+        </view>
+        <view style="height:50px;"></view>
+      </view>
+    </view>
+    <view class="box-sizing" style="width: 90%;margin:-40px auto 20px;">
+      <view class="myIncome box-sizing pt10 bradius">
+        <view class="db-flex" style="padding: 0 15px;">
+          <view class="flex_left">
+            <view class="bold align_center">本月销售总额（元）</view>
+          </view>
+        </view>
+        <view class="db-flex" style="position:relative">
+          <view class="w_50 padding10 jiange">
+            <view class="align_center bold font18 color1 mb5"><span class="font12"></span>￥{{sum_d}}</view>
+            <view class="align_center color3">全部代理</view>
+          </view>
+          <view class="w_50 padding10">
+            <view class="align_center bold font18 color1 mb5"><span class="font12"></span>￥{{sum_c}}</view>
+            <view class="align_center color3">经理团队</view>
+          </view>
+        </view>
+      </view>
+    </view>
+    <view class="app-tab">
+      <view class="tab-item {{selectedIndex == 0 ? 'active' : ''}}" data-current="0" bindtap="clickTab">
+        <text>全部代理</text>
+        <view class="line"></view>
+      </view>
+      <view class="tab-item {{selectedIndex == 1 ? 'active' : ''}}" data-current="1" bindtap="clickTab">
+        <text>经理团队</text>
+        <view class="line"></view>
+      </view>
+    </view>
+    <view wx:if="{{selectedIndex === 0}}">
+      <block wx:if="{{disList1}}">
+        <view wx:if="{{!tabData1.length}}" class="w_100 flex_empty">代理们还未产生销售额</view>
+        <repeat for="{{tabData1}}" index="index" item="item">
+          <view class="db-flex padding10 mb10" style="background:#fff;">
+            <view class="flex_left avatar2 mr5">
+              <image mode="aspectFill" src="{{item.avatar}}"/>
+            </view>
+            <view>
+              <view class="bold">{{item.linkman}}</view>
+              <view>订单数：  <text style="color:#d7b677">{{item.salescount}}</text></view>
+            </view>
+            <view class="flex_cell align_right" style="line-height:50px;">￥{{item.salesmoney}}</view>
+          </view>
+        </repeat>
+        <view class="load-end-area loading" wx:if="{{isLoading1}}"></view>
+        <view class="load-end-area done" wx:elif="{{isDone1}}"></view>
+      </block>
+    </view>
+    <view wx:if="{{selectedIndex === 1}}">
+      <block wx:if="{{disList2}}">
+        <view wx:if="{{!tabData2.length}}" class="w_100 flex_empty">经理团队还未产生销售额</view>
+        <repeat for="{{tabData2}}" index="index" item="item">
+          <view class="db-flex padding10 mb10" style="background:#fff;">
+            <view class="flex_left avatar2 mr5">
+              <image mode="aspectFill" src="{{item.avatar}}"/>
+            </view>
+            <view>
+              <view class="bold">{{item.linkman}}</view>
+              <view>订单数：  <text style="color:#d7b677">{{item.salescount}}</text></view>
+            </view>
+            <view class="flex_cell align_right" style="line-height:50px;">￥{{item.salesmoney}}</view>
+          </view>
+        </repeat>
+        <view class="load-end-area loading" wx:if="{{isLoading2}}"></view>
+        <view class="load-end-area done" wx:elif="{{isDone2}}"></view>
+      </block>
+    </view>
+    <view wx:if="{{pageStart || pageStart2}}" class="backToTop font12 flex_center" bindtap="topPageTop">
+      <text class="al al-huidaodingbu font20"></text>
+    </view>
+  </view>
+</template>
+<script>
+import wepy from 'wepy'
+import Time from '@/libs/time'
+import Config from '@/config'
+import Util from '@/libs/util'
+export default class extends wepy.page {
+  config = {
+    enablePullDownRefresh: true,
+    backgroundTextStyle: 'dark'
+  }
+  data = {
+    options: {},
+    globalData: {},
+    userInfo: {},
+    nowdate: '',
+    year: '',
+    month: '',
+    selectedIndex: 0,
+    disList1: false,
+    disList2: false,
+    tabData1: [],
+    tabData2: [],
+    pageStart: 0,
+    pageStart2: 0,
+    sum_c: '',
+    sum_d: '',
+    monthParam: '',
+    isLoading1: false,
+    isDone1: false,
+    isLoading2: false,
+    isDone2: false,
+    themeObject: {}
+  }
+  initData () {
+    this.disList = false
+    this.pageStart = 0
+    this.tabData1 = []
+  }
+  refreshPage () {
+    if (this.selectedIndex === 0) {
+      this.tabData1 = []
+      this.pageStart = 0
+      this.getData1()
+    }
+    if (this.selectedIndex === 1) {
+      this.pageStart2 = 0
+      this.tabData2 = []
+      this.getData2()
+    }
+  }
+  onPullDownRefresh () {
+    this.refreshPage()
+    wepy.showNavigationBarLoading()
+    setTimeout(() => {
+      wepy.hideNavigationBarLoading()
+      wepy.stopPullDownRefresh()
+    }, 500)
+  }
+  onReachBottom (event) {
+    console.log('进来了')
+    if (this.selectedIndex === 0) {
+      if (this.tabData1.length === (this.pageStart + 1) * this.limit) {
+        this.pageStart++
+        this.isLoading1 = true
+        this.getData1()
+      }
+    }
+    if (this.selectedIndex === 1) {
+      if (this.tabData2.length === (this.pageStart2 + 1) * this.limit) {
+        this.pageStart2++
+        this.isLoading2 = true
+        this.getData2()
+      }
+    }
+  }
+  switchData () {
+    switch (this.selectedIndex) {
+      case 0:
+        if (!this.tabData1.length) {
+          this.pageStart = 0
+          this.getData1()
+        }
+        break
+      case 1:
+        if (!this.tabData2.length) {
+          this.pageStart2 = 0
+          this.getData2()
+        }
+        break
+    }
+  }
+  getData1 () {
+    wepy.request({
+      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/haitun/bStatData`,
+      data: {showtype: 'd', pagestart: this.pageStart, limit: this.limit, month: this.monthParam},
+      method: 'post'
+    }).then(res => {
+      const data = res.data
+      let retdata = data.data ? data.data : data
+      if (data.sum_c && this.pageStart === 0) {
+        this.sum_c = data.sum_c
+      }
+      if (data.sum_d && this.pageStart === 0) {
+        this.sum_d = data.sum_d
+      }
+      this.tabData1 = this.tabData1.concat(retdata)
+      this.isLoading1 = false
+      if (retdata.length < this.limit && this.tabData1.length) {
+        this.isDone1 = true
+      } else {
+        this.isDone1 = false
+      }
+      console.log(this.tabData1)
+      this.disList1 = true
+      this.$apply()
+    })
+  }
+  getData2 () {
+    wepy.request({
+      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/haitun/bStatData`,
+      data: {showtype: 'c', pagestart: this.pageStart2, limit: this.limit, month: this.monthParam},
+      method: 'post'
+    }).then(res => {
+      const data = res.data
+      let retdata = data.data ? data.data : data
+      if (data.sum_c && this.pageStart2 === 0) {
+        this.sum_c = data.sum_c
+      }
+      if (data.sum_d && this.pageStart2 === 0) {
+        this.sum_d = data.sum_d
+      }
+      this.tabData2 = this.tabData2.concat(retdata)
+      this.isLoading2 = false
+      if (retdata.length < this.limit && this.tabData2.length) {
+        this.isDone2 = true
+      } else {
+        this.isDone2 = false
+      }
+      this.disList2 = true
+      this.$apply()
+    })
+  }
+  topPageTop () {
+    wepy.pageScrollTo({
+      scrollTop: 0
+    })
+  }
+  methods = {
+    dateChange (e) {
+      // this.month = e.detail
+      console.log(e.detail)
+      let value = e.detail.value
+      this.year = value.substring(0, 4)
+      this.month = value.substring(value.indexOf('-') + 1)
+      this.monthParam = this.year + '' + this.month
+      // if (this.selectedIndex === 0) { 去掉判断是为了 只要月份修改  两个团队都重新请求数据
+      this.tabData1 = []
+      this.getData1()
+      // }
+      // if (this.selectedIndex === 1) {
+      this.tabData2 = []
+      this.getData2()
+      // }
+      if (this.selectedIndex === 0) {
+        this.disList2 = false
+      }
+      if (this.selectedIndex === 1) {
+        this.disList1 = false
+      }
+    },
+    clickTab (e) {
+      this.selectedIndex = parseInt(e.currentTarget.dataset.current)
+      if (this.selectedIndex === 0) {
+        if (!this.tabData1.length) {
+          this.getData1()
+        }
+      }
+      if (this.selectedIndex === 1) {
+        if (!this.tabData2.length) {
+          this.getData2()
+        }
+      }
+    },
+    switchTab (e) {
+      this.selectedIndex = e.detail.current
+      this.switchData()
+    },
+    scrollEvent () {
+      if (this.selectedIndex === 0) {
+        if (this.tabData1.length === (this.pageStart + 1) * this.limit) {
+          this.pageStart++
+          this.isLoading1 = true
+          this.getData1()
+        }
+      } else {
+        if (this.tabData2.length === (this.pageStart2 + 1) * this.limit) {
+          this.pageStart2++
+          this.isLoading2 = true
+          this.getData2()
+        }
+      }
+    }
+  }
+  handlePageData () {
+    this.globalData = this.$parent.globalData
+    Util.appInit(this.globalData, this)
+    this.userInfo = this.globalData.userInfo
+    this.getData1()
+  }
+  onLoad (options) {
+    this.options = options
+    this.limit = Config.Limit
+    this.nowdate = new Time()
+    this.year = this.nowdate.year()
+    this.month = this.nowdate.month()
+    if (this.month < 10) {
+      this.month = `0${this.month}`
+    }
+    this.nowdate = this.year + '-' + this.month
+    this.monthParam = this.year + '' + this.month
+    if (this.$parent.globalData.flag.bokaAuth) {
+      this.handlePageData()
+    } else {
+      this.$parent.loadCallback = () => {
+        this.handlePageData()
+      }
+    }
+  }
+}
+</script>

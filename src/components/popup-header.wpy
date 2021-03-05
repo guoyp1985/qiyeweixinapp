@@ -1,0 +1,66 @@
+<style lang="less">
+  @import '../styles/variable.less';
+  @import '../styles/1px.less';
+
+  .vux-popup-header {
+    display: flex;
+    height: @popup-header-height;
+    line-height: @popup-header-height;
+    font-size: @popup-header-font-size;
+    background-color: @popup-header-bg-color;
+  }
+  .vux-popup-header-title {
+    flex: 1;
+    text-align: center;
+    color: @popup-header-title-text-color;
+  }
+  .vux-popup-header-left {
+    padding-left: @popup-header-left-text-padding;
+    color: @popup-header-left-text-color;
+  }
+  .vux-popup-header-right {
+    padding-right: @popup-header-right-text-padding;
+    color: @popup-header-right-text-color;
+  }
+  .vux-popup-header.vux-1px-b:after {
+    border-color: #D9D9D9;
+  }
+</style>
+<template>
+  <view class="vux-popup-header" :class="{'vux-1px-b': showBottomBorder}">
+    <view class="vux-popup-header-left" @tap="leftTap">
+      <text>{{ leftText }}</text>
+    </view>
+    <view class="vux-popup-header-title">
+      <text>{{ title }}</text>
+    </view>
+    <view class="vux-popup-header-right" @tap="rightTap">
+      <text>{{ rightText }}</text>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+
+  export default class PopupHeader extends wepy.component {
+    props = {
+      leftText: String,
+      rightText: String,
+      title: String,
+      showBottomBorder: {
+        type: Boolean,
+        default: true
+      }
+    }
+
+    methods = {
+      leftTap () {
+        this.$emit('on-click-left')
+      },
+      rightTap () {
+        this.$emit('on-click-right')
+      }
+    }
+  }
+</script>

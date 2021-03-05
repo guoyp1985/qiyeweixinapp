@@ -1,0 +1,2139 @@
+<style lang="less">
+.hidden.home-page{height:100%;overflow:hidden;}
+.home-page{
+  .top-bg{width:100%;height:240rpx;border-bottom-left-radius:60rpx;border-bottom-right-radius:60rpx;}
+  .banner-outer{margin-top:-200rpx;}
+  .banner-outer.home-recommend{
+    margin-top:20rpx;
+    .news-swiper-outer.recommend{left:0;right:0;}
+    .banner-pic{left:0;right:0;}
+    image{border-radius:0;}
+  }
+  .share-area{
+    width:58rpx;height:90rpx;text-align:center;position:relative;
+    .al{font-size:58rpx;height:58rpx;font-weight:bold;position:absolute;left:0;top:0;right:0;}
+    .al:before{position:absolute;left:0;top:-16rpx;}
+    .txt{font-size:22rpx;margin-top:10rpx;position:absolute;left:0;right:0;bottom:0;text-align:center;}
+  }
+  .app-box-area.empty{margin-bottom:20rpx !important;}
+  .app-box-area.tab .box-inner{border-bottom-left-radius:0;border-bottom-right-radius:0;}
+  .app-box-area.tab.empty .box-inner{border-bottom-left-radius:10rpx;border-bottom-right-radius:10rpx;}
+  .big-product-list{
+    .app-box-area{margin-bottom:20rpx;}
+    .app-box-area:nth-child(1) .box-inner{border-top-left-radius:0;border-top-right-radius:0;}
+  }
+  .product-tmp3{
+    .app-box-area{margin-bottom:20rpx;}
+    .app-box-area:nth-child(1) .box-inner{border-top-left-radius:0;border-top-right-radius:0;}
+  }
+  .product-template2{
+    .scroll_item{padding:20rpx;box-sizing: border-box;position:relative;}
+    .picarea:after{content:'';display:block;padding-top:55.55%;}
+    .picarea{
+      width:100%;position:relative;
+      .pic{
+        position:absolute;left:0;top:0;right:0;bottom:0;
+        background-position: center center;background-repeat: no-repeat;background-size: cover;
+        .lived{background: rgba(0,0,0,0.3);}
+        .live-bg{position:absolute;left:0;top:0;right:0;bottom:0;
+          .checkdetail{padding: 0 30rpx;display: flex;justify-content: center;align-items: center;background: rgba(0,0,0,0.4);border-radius: 15px;color: white;}
+          .startlive{position: absolute;top: 40rpx;right: 0;width: 180rpx;height: 60rpx;background: rgba(0,0,0,0.4);line-height: 60rpx;border-top-left-radius: 15px;border-bottom-left-radius: 15px;
+            .circle{width: 5px;height: 5px;border-radius: 50%;background-color: yellow;}
+          }
+          .views{position: absolute;top: 40rpx;left: 0;width: 180rpx;height: 60rpx;background: rgba(0,0,0,0.4);line-height: 60rpx;border-top-right-radius: 15px;border-bottom-right-radius: 15px;}
+          .ljgk{position: absolute;bottom: 0;width: 100%;background: rgba(0,0,0,0.4);}
+        }
+      }
+      image{width:100%;height:100%;}
+    }
+    .desbox{padding:20rpx 10rpx;box-sizing: border-box;}
+    .txt1{text-align:left;font-size:32rpx;box-sizing: border-box;}
+    .btn{width:160rpx;height:60rpx;border-radius:10rpx;}
+    .fix-box{
+      position:absolute;right:0;top:0;padding:10rpx;background-color:rgba(0,0,0,0.6);color:#fff;z-index:10;
+      border-bottom-left-radius:10rpx;font-size:24rpx;
+      display:flex;justify-content:center;align-items: center;
+      .num{
+        background-color:#fff;width:40rpx;height:30rpx;display:flex;justify-content:center;align-items: center;color:#f64635;
+        border-radius:10rpx;box-sizing: border-box;
+      }
+      .num.big{width:60rpx;}
+      .txt{width:20rpx;height:30rpx;display:flex;justify-content:center;align-items: center;font-weight:bold;}
+    }
+  }
+  .blank-area{width:100%;height:120rpx;}
+  .blank-area.iphone{width:100%;height:240rpx;}
+  .blank-area.share{height:240rpx;}
+  .blank-area.share.iphone{width:100%;height:310rpx;}
+  .vline{position:relative;}
+  .vline .line{
+    content: " ";display: block;position: absolute;
+    width: 6rpx;top: 0rpx;bottom:0rpx;
+    left: -2rpx;background-color: #ff6600;
+  }
+  .fuli-outer{
+    position:relative;width:90%;padding-top:23.408%;overflow:hidden;
+    .pic-outer{
+      position:absolute;left:0;top:0;right:0;bottom:0;width:100%;overflow: hidden;
+    }
+    .fuli-pic{width:100%;}
+  }
+  .box-area{
+    padding:40rpx;box-sizing: border-box;
+    .box-inner{
+      background-color:#fff;box-shadow: 0rpx 4rpx 12rpx rgba(0,0,0,0.1);border-radius:10rpx;
+      padding:40rpx;box-sizing: border-box;color:#FF6699;font-size:32rpx;
+    }
+    .txt{text-align:center;margin-top:10rpx;}
+    .box-btn{
+      display:inline-block;margin:0 auto;border-radius:60rpx;padding:15rpx 40rpx;;
+      text-align:center;color:#fff;font-size:32rpx;
+    }
+  }
+  .app-box-area.live-item{
+    display:block;margin-top:20rpx;
+    .pic-outer:after{content:'';display:block;padding-top:56%;}
+    .pic-outer{
+      position:relative;
+      .pic{
+        position:absolute;left:0;top:0;right:0;bottom:0;
+        image{width:100%;height:100%;border-radius:10rpx;}
+      }
+      .title{
+        position:absolute;left:0;right:0;bottom:0;
+        padding:20rpx;background-color:rgba(0,0,0,0.5);
+        color:#fff;border-bottom-left-radius:10rpx;border-bottom-right-radius:10rpx;
+      }
+    }
+  }
+}
+.fix-user-swiper{
+  position:fixed;left:40rpx;top:100rpx;width:70%;height:80rpx;
+  z-index:100;color:#fff;
+  .swiper-item{
+    width:100%;height:100%;display:flex;justify-content:flex-start;align-items: center;text-align:left;
+    border-radius:60rpx;background-color:rgba(0,0,0,0.5);
+    .pic{
+      width:100rpx;
+      image{width:80rpx;height:80rpx;border-radius:50%;}
+    }
+  }
+}
+.fixed-ico{
+  position:fixed;right:30rpx;bottom:130rpx;display:block;z-index: 999;
+  .inner{position:absolute;;left:0;right:0;bottom:0;top:0;border-radius:50%;}
+}
+.fixed-ico.iphone{bottom:214rpx;}
+.fixed-ico.totop{bottom:130rpx;}
+.fixed-ico.iphone.cart{bottom:214rpx;}
+.fixed-ico.iphone.totop{bottom:214rpx;}
+.fixed-ico.cart.totop{bottom:238rpx;}
+.fixed-ico.iphone.totop.cart{bottom:322rpx;}
+
+.fix-live-area{
+  position:fixed;right:0;bottom:240rpx;
+  border-top-left-radius:60rpx;border-bottom-left-radius:60rpx;
+}
+.fix-live-area.iphone{bottom:308rpx;}
+.card-modal{
+  .avatar{
+    margin:0 auto;width:100rpx;height:100rpx;border-radius:50%;padding:10px 20px 0px;
+    image{width:100%;height:100%;border-radius:50%;}
+  }
+  .pic-left-bottom{
+    position:absolute;bottom:-30rpx;left:0;
+    image{width:140rpx;height:80rpx;}
+  }
+  .pic-right-bottom{
+    position:absolute;bottom:-40rpx;right:-20rpx;
+    image{width:100rpx;height:100rpx;}
+  }
+  .pic-left-top{
+    position:absolute;top:-20rpx;left:40rpx;
+    image{width:60rpx;height:60rpx;}
+  }
+  .pic-right-top{
+    position:absolute;top:-30rpx;right:10rpx;
+    image{width:140rpx;height:160rpx;}
+  }
+}
+.lengthLgThree{height: 60% !important;}
+.yhq-outter{
+  display: flex;text-align:left;
+  width:100%;
+  position:relative;
+  background: linear-gradient(to right, #fc7349, #fc3816);
+
+  // fdf8da
+  .yhq-left{
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+    width: 60%;
+    color: white;
+    border-right: 1px dotted #fdf8da;
+    .money{font-size: 20px;font-weight: bold;margin-left: 10px;}
+  }
+  .yhq-right{
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+    width: 40%;
+    color: white;
+    .ljlq{
+      text-align: center;
+      padding: 2px 5px;
+      border: 1px solid white;
+      font-size: 12px;
+      width: 40px;
+      border-radius: 40px;
+      background-color: white;
+      margin-right: 5px;
+    }
+    .ljlq.empty{border:none;background-color:#ccc;color:#fff;}
+  }
+  .ball{
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background-color: white;
+    border-radius: 50%;
+  }
+  .ball-top{left: 58%;top: -10px;}
+  .ball-bottom{left: 58%;bottom: -10px;}
+  .ball-right{top:40%;right:-10px;}
+  .ball-left{top:40%;left:-10px;}
+  @media screen and (max-width:320px) {
+    .ball-top{left: 57%;}
+    .ball-bottom{left: 57%;}
+  }
+}
+.yhq-view{
+  height: 100%;
+  position: absolute;top: -30%;right: 10px;left: 10px;
+  background-color:white;
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+  box-shadow: 0px -3px 6px rgba(252,42,3,0.4) inset;
+}
+.bottomBtnOut{border-bottom-right-radius: 10px;border-bottom-left-radius: 10px;position: relative;height: 40px;top:70%}
+.bottomBtn{width: 60%;line-height: 40px;border-radius: 45px;background-color: white;position: absolute;top: 20px;left:20%;}
+.resize{height: 92% !important;padding-top: 15px;}
+
+.home-search-outter{
+  width: 100%;height: 100rpx;padding:20rpx;box-sizing:border-box;
+  background-color: white;display: flex;flex-direction: column;align-items: center;justify-content: center;
+  position:fixed;left:0;top:0;right:0;z-index:100;
+  .search-inner{width: 100%;display:flex; align-items: center;background-color: #f2f3f2;border-radius: 45px;height:100%;}
+  .search-input{width: 85%;box-sizing: border-box;font-size:24rpx;padding: 0 20rpx;flex:1;}
+}
+.app-tab.fixed-top{
+  position:fixed;left:0;top:100rpx;right:0;z-index:100;
+  .app-menu .menu-item{height:0;}
+}
+.home-tab.fixed-top{
+  position:fixed;left:0;top:0;right:0;z-index:100;padding:0;
+  .box-inner{border-radius:0;}
+}
+.retailer-modal{
+  .user-avatar{width:200rpx;height:200rpx;border-radius:50%;}
+  .form-list{
+    padding:0 20rpx 20rpx;box-sizing: border-box;
+    .form-item{
+      background-color:#fff;box-sizing: border-box;
+      box-shadow:0px 0px 3px 1px #e4e4e4;border-radius:4rpx;
+      width:100%;min-height:100rpx;display:flex;align-items:center;padding:20rpx;position:relative;
+      margin-top:20rpx;
+      .title-cell{width:145rpx;height:100%;display: flex;align-items: left;justify-content:flex-start;align-items: center;text-align:left;}
+      .input-cell{
+        flex:1;height:100%;display:flex;justify-content: flex-end; align-items: center;position:relative;
+      }
+    }
+  }
+}
+.notice-modal{
+  .top-title{border-top-left-radius:20rpx;border-top-right-radius:20rpx;}
+}
+</style>
+<template>
+  <block wx:if="{{showHomeUser}}">
+    <homeUser
+      :isIOS.sync="isIOS"
+      :sellerUser.sync="sellerUser"
+      :themeObject.sync="themeObject">
+    </homeUser>
+  </block>
+  <block wx:if="{{showHomeRetailer}}">
+    <homeRetailer :isIOS.sync="isIOS" :themeObject.sync="themeObject"></homeRetailer>
+  </block>
+  <view wx:if="{{showHomeUser || showHomeRetailer}}" :class="{'iphone' : isIpx}" class="fixed-ico circle" @tap="clickShare">
+    <button class="inner flex_center" style="{{themeObject.bgStyle}}">
+      <view>
+        <view>分享</view>
+        <view>下单</view>
+      </view>
+    </button>
+  </view>
+  <block wx:if="{{showRetailerModal}}">
+    <sellerInfo :sellerUser.sync="sellerUser" :themeObject.sync="themeObject"></sellerInfo>
+  </block>
+  <block wx:if="{{showContainer}}">
+    <!-- <block wx:if="{{productCount >= 31 && classData.length >= 5}}">
+      <block wx:if="{{showFixed || inputFixed}}">
+        <view class="home-search-outter b_bottom_after">
+          <view class="search-inner">
+            <input class="search-input" type="text" placeholder="请输入商品名称" bindinput="setKeyword" value="{{keyword}}" bindconfirm="searchKeyword" confirm-type="search" />
+            <view wx:if="{{keyword}}" class="flex_center color-gray font12 pl10 pr10" bindtap="cancelSearch">取消</view>
+            <view wx:else class="flex_center color-gray font12 pl10 pr10"><text class="al al-sousuo font20"></text></view>
+          </view>
+        </view>
+        <view class="app-tab fixed-top">
+          <scroll-view scroll-x="true" class="app-menu bg-white " >
+            <repeat for="{{allClass}}" item="item" index="index">
+              <view wx:if="{{item}}" class="menu-item font14 {{selectedIndex == index ? 'active' : ''}}" style="height: 0 !important" data-index="{{index}}" data-data="{{item}}" bindtap="clickTab">
+                <text style="{{selectedIndex == index ? themeObject.colorStyle : ''}}">{{item.title}}</text>
+                <view class="line" style="{{selectedIndex == index ? themeObject.bgStyle : ''}}"></view>
+              </view>
+            </repeat>
+          </scroll-view>
+        </view>
+      </block>
+    </block> -->
+    <block wx:if="{{showFixed || inputFixed}}">
+      <view class="app-box-area tab home-tab fixed-top">
+        <view class="box-inner">
+          <view class="o-tab">
+            <view class="tab-item {{tabIndex == 0 ? 'active' : ''}}" @tap="clickListTab(0)">
+              <view class="tab-inner" style="{{tabIndex == 0 ? themeObject.colorStyle : ''}}">
+                <text>疯狂抢购</text>
+                <view wx:if="{{tabIndex == 0}}" class="line" style="{{themeObject.bgStyle}}"></view>
+              </view>
+            </view>
+            <view class="tab-item {{tabIndex == 1 ? 'active' : ''}}" @tap="clickListTab(1)">
+              <view class="tab-inner" style="{{tabIndex == 1 ? themeObject.colorStyle : ''}}">
+                <text>开团预告</text>
+                <view wx:if="{{tabIndex == 1}}" class="line" style="{{themeObject.bgStyle}}"></view>
+              </view>
+            </view>
+          </view>
+          <block wx:if="{{tabIndex == 0 && disList}}">
+            <view wx:if="{{!products.length || !products[0].length}}" class="flex_center padding20 color-gray">上等好货，敬请期待</view>
+          </block>
+          <block wx:if="{{tabIndex == 1 && disTabList}}">
+            <view wx:if="{{!tabData2.length || !tabData2[0].length}}" class="flex_center padding20 color-gray">暂无预告商品</view>
+          </block>
+        </view>
+      </view>
+    </block>
+    <view :class="{'iphone' : isIpx, 'hidden': hiddePage}" class="font14 home-page">
+      <block wx:if="{{disBanner}}">
+        <view class="top-bg" style="{{themeObject.linearBgStyle}}"></view>
+        <view class="banner-outer">
+          <block wx:if="{{bannerData.length}}">
+            <view class="news-swiper-outer" wx:if="{{bannerData.length > 1}}">
+              <swiper
+                class="news-swiper"
+                autoplay
+                indicator-dots="{{bannerData.length > 1}}"
+                indicator-color="#d0cdd1"
+                indicator-active-color="#ff9900"
+                interval="6000"
+                circular>
+                <repeat for="{{bannerData}}" index="index" item="item">
+                  <swiper-item>
+                    <image mode="aspectFill" src="{{item.photo}}" data-data="{{item}}" bindtap="clickBanner"></image>
+                  </swiper-item>
+                </repeat>
+              </swiper>
+            </view>
+            <view class="banner-pic" wx:else data-data="{{bannerData[0]}}" bindtap="clickBanner">
+              <image mode="aspectFill" src="{{bannerData[0].photo}}"></image>
+            </view>
+          </block>
+          <view class="banner-pic" wx:else bindtap="toMark">
+            <image mode="aspectFill" src="https://tossharingsales.boka.cn/minigxk/factory/banner.png"></image>
+          </view>
+        </view>
+      </block>
+      <!-- <view wx:if="{{showCard}}" class="flex_center" bindtap="toCard">
+        <view class="fuli-outer">
+          <view class="pic-outer">
+            <image class="fuli-pic" mode="widthFix" src="https://tossharingsales.boka.cn/minigxk/factory/fuli1.png"></image>
+          </view>
+        </view>
+      </view> -->
+      <view class="app-box-area mt10" wx:if="{{disBanner && disSeller}}">
+        <view class="box-inner padding10">
+          <view class="flex_left">
+            <view class="pr10 flex_left">
+              <image wx:if="{{sellerUser && sellerUser.uid}}" class="app-avatar1" src="{{sellerUser.avatar}}" />
+              <image wx:else class="app-avatar1" src="{{MiniInfo.photo}}" />
+            </view>
+            <view class="flex_cell flex_left">
+              <view class="w_100">
+                <view class="font18 bold" wx:if="{{sellerUser && sellerUser.uid}}">{{sellerUser.linkman}}</view>
+                <view class="font18 bold" wx:else>{{MiniInfo.title}}</view>
+                <view class="color-gray" wx:if="{{SystemParams.slogan && SystemParams.slogan != ''}}">{{SystemParams.slogan}}</view>
+              </view>
+            </view>
+            <view class="pl20 flex_right b_left_after" wx:if="{{!AllowNavApp && ((userInfo.regwid && userInfo.bindstatus) || userInfo.fid)}}">
+              <view class="circle1 flex_center" @tap="clickShare" style="{{themeObject.bgStyle}}">
+                <view class="share-area">
+                  <view class="al al-zhuanfa"></view>
+                  <view class="txt">分享</view>
+                </view>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+      <block wx:if="{{productCount >= 31 && classData.length >= 5}}">
+        <!-- <block wx:if="{{!showFixed}}"> -->
+          <view :class="{'one': classData.length <= colCount / 2}" class="menu-swiper-outer" wx:if="{{classData.length}}">
+            <swiper
+              class="menu-swiper"
+              indicator-dots="{{showDot}}"
+              indicator-color="#d0cdd1"
+              indicator-active-color="{{themeObject.themeColor}}"
+              interval="6000"
+              circular>
+              <repeat for="{{classDataArr}}" index="index" item="classitem">
+                <swiper-item class="swiper-item">
+                  <repeat for="{{classitem}}" index="index1" item="item">
+                    <view class="inner flex_center {{selectedIndex == (index * colCount + index1) ? 'active' : ''}}" data-col="{{index}}" data-col="{{index}}" data-index="{{index * colCount + index1}}" data-data="{{item}}" bindtap="clickTab">
+                      <view class="w_100">
+                        <view class="pic-outer">
+                          <view class="pic">
+                            <image src="{{item.photo}}"></image>
+                          </view>
+                        </view>
+                        <view class="txt" style="{{selectedIndex == (index * colCount + index1) ? themeObject.colorStyle : ''}}">{{item.title}}</view>
+                      </view>
+                    </view>
+                  </repeat>
+                </swiper-item>
+              </repeat>
+            </swiper>
+          </view>
+        <!-- </block> -->
+      </block>
+      <block wx:if="{{recommendProduct.length}}">
+        <view class="app-box-area mt10">
+          <view class="box-inner padding10">
+            <view class="hot-area">
+              <view class="hot-txt">
+                <text>爆款</text>
+                <text style="{{themeObject.colorStyle}}">推荐</text>
+                <view class="line1">
+                  <view class="ico ico1" style="{{themeObject.bgStyle}}"></view>
+                  <view class="ico ico2" style="{{themeObject.bgStyle}}"></view>
+                  <view class="ico ico3" style="{{themeObject.bgStyle}}"></view>
+                </view>
+                <view class="line2">
+                  <view class="ico ico1" style="{{themeObject.bgStyle}}"></view>
+                  <view class="ico ico2" style="{{themeObject.bgStyle}}"></view>
+                  <view class="ico ico3" style="{{themeObject.bgStyle}}"></view>
+                </view>
+              </view>
+            </view>
+            <view class="banner-outer home-recommend">
+              <view class="news-swiper-outer recommend" wx:if="{{recommendProduct.length > 1}}">
+                <swiper
+                  class="news-swiper"
+                  autoplay
+                  indicator-dots="{{recommendProduct.length > 1}}"
+                  indicator-color="#d0cdd1"
+                  indicator-active-color="#ff9900"
+                  interval="6000"
+                  circular>
+                  <repeat for="{{recommendProduct}}" index="index" item="item">
+                    <swiper-item>
+                      <image mode="aspectFill" wx:if="{{item.recommendphoto && item.recommendphoto != ''}}" src="{{item.recommendphoto}}" data-data="{{item}}" @tap="toProduct"></image>
+                      <image mode="aspectFill" wx:elif="{{item.listphoto && item.listphoto != ''}}" src="{{item.listphoto}}" data-data="{{item}}" @tap="toProduct"></image>
+                      <image mode="aspectFill" wx:else src="{{item.photo}}" data-data="{{item}}" @tap="toProduct"></image>
+                    </swiper-item>
+                  </repeat>
+                </swiper>
+              </view>
+              <view class="banner-pic" wx:else data-data="{{recommendProduct[0]}}" @tap="toProduct">
+                <image mode="aspectFill" wx:if="{{recommendProduct[0].recommendphoto && recommendProduct[0].recommendphoto != ''}}" src="{{recommendProduct[0].recommendphoto}}"></image>
+                <image mode="aspectFill" wx:elif="{{recommendProduct[0].listphoto && recommendProduct[0].listphoto != ''}}" src="{{recommendProduct[0].listphoto}}"></image>
+                <image mode="aspectFill" wx:else src="{{recommendProduct[0].photo}}"></image>
+              </view>
+            </view>
+          </view>
+        </view>
+      </block>
+      <block wx:if="{{factoryInfo && factoryInfo.id}}">
+        <view wx:if="{{disBanner}}" class="app-box-area tab mt10 scroll-tab-area {{(tabIndex == 0 && disList && (!products.length || !products[0].length)) ? 'empty' : ''}} {{(tabIndex == 1 && disTabList && (!tabData2.length || !tabData2[0].length)) ? 'empty' : ''}}">
+          <view class="box-inner">
+            <view class="o-tab">
+              <view class="tab-item {{tabIndex == 0 ? 'active' : ''}}" @tap="clickListTab(0)">
+                <view class="tab-inner" style="{{tabIndex == 0 ? themeObject.colorStyle : ''}}">
+                  <text>疯狂抢购</text>
+                  <view wx:if="{{tabIndex == 0}}" class="line" style="{{themeObject.bgStyle}}"></view>
+                </view>
+              </view>
+              <view class="tab-item {{tabIndex == 1 ? 'active' : ''}}" @tap="clickListTab(1)">
+                <view class="tab-inner" style="{{tabIndex == 1 ? themeObject.colorStyle : ''}}">
+                  <text>开团预告</text>
+                  <view wx:if="{{tabIndex == 1}}" class="line" style="{{themeObject.bgStyle}}"></view>
+                </view>
+              </view>
+            </view>
+            <block wx:if="{{tabIndex == 0 && disList}}">
+              <view wx:if="{{!products.length || !products[0].length}}" class="flex_center padding20 color-gray">上等好货，敬请期待</view>
+            </block>
+            <block wx:if="{{tabIndex == 1 && disTabList}}">
+              <view wx:if="{{!tabData2.length || !tabData2[0].length}}" class="flex_center padding20 color-gray">暂无预告商品</view>
+            </block>
+          </view>
+        </view>
+        <block wx:if="{{tabIndex == 0}}">
+          <block wx:if="{{products.length && products[0].length}}">
+            <view wx:if="{{factoryInfo.shopmodel == '2'}}" class="big-product-list">
+              <repeat for="{{products}}" item="productPage" index="pageindex">
+                <producttmp21
+                  :options.sync="options"
+                  :productData.sync="productPage"
+                  :userInfo.sync="userInfo"
+                  :isAdmin.sync="isAdmin"
+                  :themeObject.sync="themeObject"
+                  :OnlyRetailerBuy.sync="OnlyRetailerBuy"
+                  :afterSys.sync="afterSys"
+                  :pageIndex.sync="pageindex">
+                </producttmp21>
+              </repeat>
+            </view>
+            <view wx:elif="{{factoryInfo.shopmodel == '3'}}" class="product-tmp3">
+              <repeat for="{{products}}" item="productPage" index="pageindex">
+                <producttmp31
+                  :options.sync="options"
+                  :productData.sync="productPage"
+                  :userInfo.sync="userInfo"
+                  :isAdmin.sync="isAdmin"
+                  :themeObject.sync="themeObject"
+                  :OnlyRetailerBuy.sync="OnlyRetailerBuy"
+                  :afterSys.sync="afterSys"
+                  :pageIndex.sync="pageindex">
+                </producttmp31>
+              </repeat>
+            </view>
+            <view wx:else :class="{'squarepic': products.length > 0}" class="productlist">
+              <repeat for="{{products}}" item="productPage" index="pageindex">
+                <producttmp11
+                  :options.sync="options"
+                  :productData.sync="productPage"
+                  :userInfo.sync="userInfo"
+                  :isAdmin.sync="isAdmin"
+                  :themeObject.sync="themeObject"
+                  :OnlyRetailerBuy.sync="OnlyRetailerBuy"
+                  :afterSys.sync="afterSys"
+                  :pageIndex.sync="pageindex">
+                </producttmp11>
+              </repeat>
+            </view>
+            <view class="load-end-area loading" wx:if="{{isLoading}}"></view>
+            <view class="load-end-area done" wx:elif="{{isDone}}"></view>
+          </block>
+        </block>
+        <block wx:if="{{tabIndex == 1}}">
+          <block wx:if="{{tabData2.length && tabData2[0].length}}">
+            <view wx:if="{{factoryInfo.shopmodel == '2'}}" class="big-product-list">
+              <repeat for="{{tabData2}}" item="productPage" index="pageindex">
+                <producttmp22
+                  :options.sync="options"
+                  :productData.sync="productPage"
+                  :userInfo.sync="userInfo"
+                  :isAdmin.sync="isAdmin"
+                  :themeObject.sync="themeObject"
+                  :OnlyRetailerBuy.sync="OnlyRetailerBuy"
+                  :afterSys.sync="afterSys"
+                  tmpType="cron"
+                  :pageIndex.sync="pageindex">
+                </producttmp22>
+              </repeat>
+            </view>
+            <view wx:elif="{{factoryInfo.shopmodel == '3'}}" class="product-tmp3">
+              <repeat for="{{tabData2}}" item="productPage" index="pageindex">
+                <producttmp32
+                  :options.sync="options"
+                  :productData.sync="productPage"
+                  :userInfo.sync="userInfo"
+                  :isAdmin.sync="isAdmin"
+                  :themeObject.sync="themeObject"
+                  :OnlyRetailerBuy.sync="OnlyRetailerBuy"
+                  :afterSys.sync="afterSys"
+                  tmpType="cron"
+                  :pageIndex.sync="pageindex">
+                </producttmp32>
+              </repeat>
+            </view>
+            <view wx:else :class="{'squarepic': tabData2.length > 0}" class="productlist">
+              <repeat for="{{tabData2}}" item="productPage" index="pageindex">
+                <producttmp12
+                  :options.sync="options"
+                  :productData.sync="productPage"
+                  :userInfo.sync="userInfo"
+                  :isAdmin.sync="isAdmin"
+                  :themeObject.sync="themeObject"
+                  :OnlyRetailerBuy.sync="OnlyRetailerBuy"
+                  :afterSys.sync="afterSys"
+                  tmpType="cron"
+                  :pageIndex.sync="pageindex">
+                </producttmp12>
+              </repeat>
+            </view>
+            <view class="load-end-area loading" wx:if="{{isLoadTab}}"></view>
+            <view class="load-end-area done" wx:elif="{{isDoneTab}}"></view>
+          </block>
+        </block>
+        <view :class="{'iphone' : isIpx, 'share': showTop}" class="blank-area"></view>
+      </block>
+    </view>
+    <view :class="{'iphone' : isIpx}" class="fixed-ico circle totop" @tap="topPageTop">
+      <button class="inner flex_center" style="{{themeObject.bgStyle}}">
+        <text class="al al-huidaodingbu font20"></text>
+      </button>
+    </view>
+    <view :class="{'iphone' : isIpx, 'totop': showTop}" class="fixed-ico circle cart" wx:if="{{openCart}}" @tap="toCart">
+      <button class="inner flex_center" style="{{themeObject.bgStyle}}">
+        <text class="al al-cart font20"></text>
+      </button>
+    </view>
+    <view wx:if="{{showTop}}" :class="{'iphone' : isIpx}" class="fixed-ico circle totop" @tap="topPageTop">
+      <button class="inner flex_center" style="{{themeObject.bgStyle}}">
+        <text class="al al-huidaodingbu font20"></text>
+      </button>
+    </view>
+    <swiper class="fix-user-swiper" style="top: {{(productCount >= 31 && classData.length >= 5 || (showFixed || inputFixed)) ? '210rpx' : '100rpx'}}" autoplay="1" vertical="1" circular="1" interval="5000" easing-function="easeInOutCubic" wx:if="{{orderData.length}}">
+      <repeat for="{{orderData}}" item="item" index="index">
+        <swiper-item>
+          <view class="swiper-item">
+            <view class="pic flex_left">
+              <block wx:if="{{item.avatar && item.avatar != ''}}">
+                <image src="{{item.avatar}}"></image>
+              </block>
+              <block wx:else>
+                <image src="https://tossharingsales.boka.cn/images/user.jpg"></image>
+              </block>
+            </view>
+            <view class="flex_cell h_100 flex_left pr10">
+              <view class="clamp1 font12 w_100">购买了{{item.product}}</view>
+            </view>
+          </view>
+        </swiper-item>
+      </repeat>
+    </swiper>
+    <view class="auto-modal flex_center card-modal" wx:if="{{showCardModal && (options.share_uid || showCardModal)}}">
+      <view class="modal-inner border-box" style="width:80%;height:50%;{{themeObject.linearBgStyle}}">
+        <view class="pic-left-bottom">
+          <image mode="aspectFit" src="https://tossharingsales.boka.cn/minigxk/jinbileftbottom.png"/>
+        </view>
+        <view class="pic-right-bottom">
+          <image mode="aspectFit" src="https://tossharingsales.boka.cn/minigxk/jinbirightbottom.png"/>
+        </view>
+        <view class="yhq-view">
+          <view class="pic-left-top">
+            <image mode="aspectFill" src="https://tossharingsales.boka.cn/minigxk/jinbilefttop.png"/>
+          </view>
+          <view class="pic-right-top" >
+            <image mode="aspectFit" src="https://tossharingsales.boka.cn/minigxk/jinbirighttop.png"/>
+          </view>
+          <block wx:if="{{options.share_uid && !userInfo.regwid}}">
+            <view class="avatar">
+              <image mode="aspectFill" src="{{sellerUser.avatar}}"/>
+            </view>
+          </block>
+          <view wx:if="{{options.share_uid && !userInfo.regwid}}" class="flex_center bold mb10 font16" style="{{themeObject.colorStyle}}">{{sellerUser.linkman}}送你的优惠券</view>
+          <view wx:else class="flex_center bold mb10 font16" style="{{themeObject.colorStyle}}height:70px;">恭喜您，获得专属礼包</view>
+          <scroll-view scroll-y bindscrolltolower="handleScrollPage" style="height:65%;">
+            <repeat for="{{cardList}}" item="item" index="index">
+              <form class="db mb10 pr20 pl20" data-data="{{item}}" data-index="{{index}}" @tap="receiveEvent">
+                <button class="yhq-outter" style="{{themeObject.linearBgStyle}}">
+                  <view class="yhq-left pt10 pl10 pb10">
+                      <view class="money">￥{{ item.facemoney }}</view>
+                      <view class="font12" style="margin-left:15px;color:#white;">满{{ item.ordermoney }}元使用</view>
+                  </view>
+                  <view class="yhq-right flex_center">
+                    <view class="padding5 align_center ljlq empty" wx:if="{{!item.leftcount || item.leftcount <= 0}}">已抢光</view>
+                    <view class="padding5 align_center ljlq" style="{{themeObject.colorStyle}}" wx:elif="{{item.isreceived}}">已领取</view>
+                    <view class="padding5 align_center ljlq" style="{{themeObject.colorStyle}}" wx:else>领取</view>
+                  </view>
+                  <view class="ball ball-left"></view>
+                  <view class="ball ball-right"></view>
+                  <view class="ball ball-top"></view>
+                  <view class="ball ball-bottom"></view>
+                </button>
+              </form>
+            </repeat>
+          </scroll-view>
+        </view>
+        <block wx:if="{{afterCard}}">
+          <form wx:if="{{allReceived}}" class="flex_center pt20 pb20 bottomBtnOut" bindsubmit="closeCardModal" report-submit="true">
+            <button formType="submit" class="align_center bold bottomBtn" style="color:#bfc2d1">已抢光</button>
+          </form>
+          <form wx:elif="{{!reciveAll}}" class="flex_center pt20 pb20 bottomBtnOut" @tap="reciveAllCards">
+            <button class="align_center bold bottomBtn" style="{{themeObject.colorStyle}}">全部领取</button>
+          </form>
+          <form wx:else class="flex_center pt20 pb20 bottomBtnOut" bindsubmit="closeCardModal" report-submit="true">
+            <button formType="submit" class="align_center bold bottomBtn" style="color:#bfc2d1">领取成功！马上使用</button>
+          </form>
+        </block>
+        <form class="close-area flex_center" bindsubmit="closeCardModal" report-submit="true">
+          <button formType="submit" class="al al-close1"></button>
+        </form>
+      </view>
+    </view>
+    <view class="auto-modal flex_center notice-modal" wx:if="{{showNoticeModal && noticeData}}">
+      <view class="modal-inner border-box" style="width:80%;">
+        <view class="padding10 flex_center color-white top-title" style="{{themeObject.bgStyle}}">{{noticeData.title}}</view>
+        <view class="pt20 pl10 pr10">{{noticeData.contentArr[0].content}}</view>
+        <view class="pt20 pb20 flex_center">
+          <view class="border-btn color-white pl20 pr20 pt5 pb5 font16" style="{{themeObject.bgStyle}}" @tap="toNotice({{noticeData}})">查看详情</view>
+        </view>
+        <form class="close-area flex_center" bindsubmit="closeNoticeModal" report-submit="true">
+          <button formType="submit" class="al al-close1"></button>
+        </form>
+      </view>
+    </view>
+  </block>
+  <block wx:if="{{showHomeRetailer || showHomeUser || !(AllowNavApp && (!products.length || !products[0].length))}}">
+    <bottomMenu
+      current="home"
+      :allowNav.sync="allowNav"
+      :globalData.sync="globalData"
+      :isIpx.sync="isIpx"
+      :themeObject.sync="themeObject">
+    </bottomMenu>
+  </block>
+  <block wx:if="{{showAuth}}">
+    <auth :pageurl.sync="pageurl" :themeObject.sync="themeObject" :globalData.sync="globalData"></auth>
+  </block>
+  <block wx:if="{{!clickShareProduct}}">
+    <block wx:if="{{tabIndex == 0}}">
+      <share
+        :themeObject.sync="themeObject"
+        :globalData.sync="globalData"
+        :userInfo.sync="userInfo"
+        :wid.sync="Wid"
+        opacity="1"
+        module="home"
+        :photo.sync="homeBgPhoto"
+        pagePath="pages/home">
+      </share>
+    </block>
+    <block wx:else>
+      <share2
+        :themeObject.sync="themeObject"
+        :globalData.sync="globalData"
+        :userInfo.sync="userInfo"
+        :wid.sync="Wid"
+        opacity="1"
+        module="home"
+        :photo.sync="homeBgPhoto"
+        pagePath="pages/home">
+      </share2>
+    </block>
+  </block>
+  <block wx:else>
+    <share1
+      :themeObject.sync="themeObject"
+      :globalData.sync="globalData"
+      :viewData.sync="clickShareProduct"
+      :userInfo.sync="userInfo"
+      opacity="1"
+      :photo.sync="clickSharePhoto"
+      :title.sync="clickTitle"
+      :id.sync="clickProductId"
+      module="factoryproduct">
+    </share1>
+  </block>
+  <productOptions
+    :selectedOption.sync="selectedOption"
+    :selectedOptionIndex.sync="selectedOptionIndex"
+    :clickProduct.sync="clickProduct"
+    :themeObject.sync="themeObject"
+    :afterSys.sync="afterSys"
+    :OnlyRetailerBuy.sync="OnlyRetailerBuy"
+    :userInfo.sync="userInfo">
+  </productOptions>
+  <block wx:if="{{showLive}}">
+    <navigator :class="{'iphone' : isIpx}" class="fix-live-area fix-live-ico" style="{{themeObject.bgStyle}}" url="{{wxLiveData.navurl}}">
+      <view class="ico">
+        <view class="line line1"></view>
+        <view class="line line2"></view>
+        <view class="line line3"></view>
+      </view>
+      <view class="ico-txt">正在直播</view>
+    </navigator>
+  </block>
+  <block wx:if="{{showBuyTip}}">
+    <buyTip :sellerUser.sync="sellerUser" :themeObject.sync="themeObject"></buyTip>
+  </block>
+</template>
+<script>
+import wepy from 'wepy'
+import Config from '@/config'
+import Util from '@/libs/util'
+import Time from '@/libs/time'
+import Auth from '@/components/auth'
+import BottomMenu from '@/components/bottomMenu'
+import Share from '@/components/store/share'
+import Cached from '@/libs/cached'
+import HomeRetailer from '@/components/homeRetailer'
+import HomeUser from '@/components/homeUser'
+import SellerInfo from '@/components/sellerInfo'
+import ProductTmp1 from '@/components/store/product1'
+import ProductTmp2 from '@/components/store/product2'
+import ProductTmp3 from '@/components/store/product3'
+import ProductOptions from '@/components/store/product-options'
+import BuyTip from '@/components/buyTip'
+export default class Home extends wepy.page {
+  config = {
+    enablePullDownRefresh: true,
+    backgroundTextStyle: 'dark'
+  }
+  components = {
+    bottomMenu: BottomMenu,
+    share: Share,
+    share1: Share,
+    share2: Share,
+    auth: Auth,
+    homeRetailer: HomeRetailer,
+    homeUser: HomeUser,
+    sellerInfo: SellerInfo,
+    producttmp11: ProductTmp1,
+    producttmp12: ProductTmp1,
+    producttmp21: ProductTmp2,
+    producttmp22: ProductTmp2,
+    producttmp31: ProductTmp3,
+    producttmp32: ProductTmp3,
+    productOptions: ProductOptions,
+    buyTip: BuyTip
+  }
+  data = {
+    options: {},
+    globalData: {},
+    userInfo: {},
+    factoryInfo: {},
+    channelInfo: {},
+    showContainer: false,
+    showHomeRetailer: false,
+    showHomeUser: false,
+    products: [],
+    Fid: Config.Fid,
+    isLoading: false,
+    isDone: false,
+    disList: false,
+    productCount: -1,
+    classData: [],
+    classDataArr: [],
+    allClass: [],
+    clickClassId: 0,
+    selectedIndex: 0,
+    showDot: false,
+    colCount: 10,
+    bannerData: [],
+    Wid: 0,
+    module: 'default',
+    buyAnimation: {},
+    clickProduct: {},
+    clickProductIndex: 0,
+    selectedOption: {},
+    selectedOptionIndex: 0,
+    genOrder: false,
+    disBanner: false,
+    sellerUser: {},
+    disSeller: false,
+    orderData: [],
+    AdminUids: Config.AdminUids,
+    isAdmin: false,
+    disAdmin: false,
+    isIpx: false,
+    showCard: false,
+    cardList: [],
+    showCardModal: false,
+    showAuth: false,
+    pageurl: '',
+    addShopParams: null,
+    reciveAll: false,
+    afterCard: false,
+    allReceived: false,
+    showFixed: false,
+    keyword: '',
+    inputFixed: false,
+    AppId: Config.AppId,
+    AllowNavApp: Config.AllowNavApp,
+    testRoomId: 0,
+    showTest: false,
+    myPhone: '',
+    clickSharePhoto: '',
+    clickTitle: '',
+    clickProductId: null,
+    clickShareProduct: null,
+    OnlyRetailerBuy: false,
+    afterSys: false,
+    showRetailerModal: false,
+    themeObject: {},
+    SystemParams: {},
+    showTop: false,
+    tabIndex: 0,
+    tabData2: [],
+    isDoneTab: false,
+    isLoadTab: false,
+    disTabList: false,
+    tmpType: 'cron',
+    MiniInfo: {},
+    wxLiveData: [],
+    showLive: false,
+    hiddePage: false,
+    isIOS: false,
+    showBuyTip: false,
+    recommendProduct: [],
+    homeBgPhoto: '',
+    openCart: false,
+    buyIng: false,
+    allowNav: false,
+    showNoticeModal: false,
+    noticeData: null
+  }
+  dateFormat (value) {
+    return new Time(value * 1000).dateFormat('hh:mm')
+  }
+  watch = {
+    cardList (newCardList) {
+      if (this.reciveAll) {
+        for (let i = 0; i < newCardList.length; i++) {
+          newCardList[i].isreceived = 1
+        }
+      }
+    }
+  }
+  refreshPage () {
+    let coms = this.$com
+    if (this.showContainer) {
+      if (!this.loadingComplete) return false
+      this.disList = false
+      this.disTabList = false
+      this.tabData2 = []
+      this.tabPageStart = 0
+      this.isDoneTab = false
+      this.isLoadTab = false
+      this.loadingComplete = true
+      this.loading = false
+      this.pageStart = 0
+      this.products = []
+      this.selectedIndex = 0
+      this.clickClassId = 0
+      this.inputFixed = false
+      this.switchTab()
+      if (this.tabIndex === 0) {
+        this.getLiveInfo()
+      }
+    } else if (this.showHomeRetailer) {
+      let retailerCom = coms.homeRetailer
+      retailerCom.refreshPage()
+    } else if (this.showHomeUser) {
+      let userCom = coms.homeUser
+      userCom.refreshPage()
+    }
+  }
+  onPullDownRefresh () {
+    if (this.isLoading || this.isLoadTab || !this.loadingComplete || !this.afterNewHomePage) return false
+    this.refreshPage()
+    wepy.showNavigationBarLoading()
+    setTimeout(() => {
+      wepy.hideNavigationBarLoading()
+      wepy.stopPullDownRefresh()
+    }, 500)
+  }
+  onReachBottom (event) {
+    let coms = this.$com
+    if (this.showHomeRetailer) {
+      let retailerCom = coms.homeRetailer
+      switch (retailerCom.selectedIndex) {
+        case 0:
+          if (!retailerCom.isLoadingProduct) {
+            if (Array.prototype.concat.apply([], retailerCom.productData).length === (retailerCom.pageStart + 1) * retailerCom.limit) {
+              retailerCom.pageStart++
+              retailerCom.getProductData()
+            }
+          }
+          break
+        case 1:
+          if (!retailerCom.isLoadingUser && !retailerCom.isLoadingOrder) {
+            if (retailerCom.orderData.length === (retailerCom.pageStart2 + 1) * retailerCom.limit) {
+              retailerCom.pageStart2++
+              retailerCom.getOrderData()
+            }
+          }
+          break
+      }
+    } else if (this.showHomeUser) {
+      let userCom = coms.homeUser
+      if (!userCom.isLoadingProduct) {
+        if (Array.prototype.concat.apply([], userCom.productData).length === (userCom.pageStart + 1) * userCom.limit) {
+          userCom.pageStart++
+          userCom.getProductData()
+        }
+      }
+    } else if (this.showContainer) {
+      if (this.isLoading || !this.loadingComplete || !this.afterNewHomePage) return false
+      if (!this.isLoading) {
+        switch (this.tabIndex) {
+          case 0:
+            if (Array.prototype.concat.apply([], this.products).length === (this.pageStart + 1) * this.limit) {
+              this.inputFixed = true
+              this.showTop = true
+              this.pageStart++
+              this.isLoading = true
+              this.getData()
+            }
+            break
+          case 1:
+            if (Array.prototype.concat.apply([], this.tabData2).length === (this.tabPageStart + 1) * this.limit) {
+              this.tabPageStart++
+              this.showTop = true
+              this.isLoadTab = true
+              this.getTabData()
+            }
+            break
+        }
+      }
+    }
+  }
+  onPageScroll (e) {
+    this.pageScrollTop = e.scrollTop
+    if (this.showHomeRetailer) {
+      let coms = this.$com
+      let retailerCom = coms.homeRetailer
+      retailerCom.scrollTop = e.scrollTop
+    } else if (this.showContainer) {
+      // let topnum = 1500
+      // if (this.factoryInfo.shopmodel === 3 || this.factoryInfo.shopmodel === '3') {
+      //   topnum = 1000
+      // }
+      // if (e.scrollTop > topnum) {
+      //   this.setData({
+      //     showTop: true
+      //   })
+      // } else {
+      //   this.setData({
+      //     showTop: false
+      //   })
+      // }
+      let query = wepy.createSelectorQuery()
+      query.select('.scroll-tab-area').boundingClientRect((rect) => {
+        if (rect) {
+          let top = rect.top
+          if (top <= 0) {
+            // this.setData({
+            //   showFixed: true,
+            //   inputFixed: false
+            // })
+            this.showFixed = true
+            this.inputFixed = false
+            this.showTop = true
+          } else {
+            // this.setData({
+            //   showFixed: false,
+            //   inputFixed: false
+            // })
+            this.showFixed = false
+            this.inputFixed = false
+            this.showTop = false
+          }
+          this.$apply()
+        }
+      }).exec()
+    }
+  }
+  topPageTop () {
+    wepy.pageScrollTo({
+      scrollTop: 0
+    })
+    this.showTop = false
+    this.showFixed = false
+    this.inputFixed = false
+    this.$apply()
+  }
+  cutDown (item) {
+    // item.interval = setInterval(() => {
+    item.interval = true
+    let h = parseInt(item.lefthour)
+    let m = parseInt(item.leftminute)
+    let s = parseInt(item.leftsecond)
+    // console.log(`hh:${h}mm:${m}ss:${s}`)
+    if (s > 0) {
+      s--
+      if (s < 10) {
+        item.leftsecond = '0' + s
+      } else {
+        item.leftsecond = s
+      }
+    } else if (m > 0) {
+      m--
+      if (m < 10) {
+        item.leftminute = '0' + m
+      } else {
+        item.leftminute = m
+      }
+      item.leftsecond = '59'
+      s = 59
+    } else if (h > 0) {
+      h--
+      if (h < 10) {
+        item.lefthour = '0' + h
+      } else {
+        item.lefthour = h
+      }
+      item.leftminute = '59'
+      item.leftsecond = '59'
+      m = 59
+      s = 59
+    }
+    if (h === 0 && m === 0 && s === 0) {
+      item.interval = null
+      clearInterval(item.interval)
+    }
+    // this.$apply()
+    // }, 1000)
+  }
+  getData () {
+    if (!this.loadingComplete || !this.afterNewHomePage) return false
+    this.loadingComplete = false
+    let params = {fid: this.Fid, haveoptions: 0, pagestart: this.pageStart, limit: this.limit}
+    params.from = 'home'
+    if (this.clickClassId) {
+      params.classid = this.clickClassId
+    }
+    if (this.keyword) {
+      params.keyword = this.keyword
+    }
+    wepy.showLoading()
+    Cached.queueRequest({
+      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/factory/factoryproductList`,
+      data: params,
+      method: 'post'
+    }, `home.products.${this.clickClassId}`, Config.URT.H,
+    cacheData => {
+      const isCachePaging = cacheData.prevPage >= this.pageStart
+      console.log(cacheData)
+      if (!isCachePaging) {
+        cacheData.prevPage = this.pageStart
+      }
+      return isCachePaging
+    },
+    cacheData => {
+      this.loadingComplete = true
+      console.log(this.products)
+      this.processProducts(cacheData)
+      let dataarr = cacheData.data[this.pageStart] // .slice(this.pageStart * this.limit, (this.pageStart + 1) * this.limit)
+      // this.products = this.products.concat(dataarr)
+      this.products.push(dataarr)
+      if (dataarr.length < this.limit && this.products[0].length) {
+        this.isDone = true
+      } else {
+        this.isDone = false
+      }
+    },
+    res => {
+      this.loadingComplete = true
+      wepy.hideLoading()
+      const data = res.data
+      const retdata = data.data ? data.data : data
+      // this.products = this.products.concat(retdata)
+      this.products.push(retdata)
+      this.processProducts(data)
+      if (retdata.length < this.limit && this.products[0].length) {
+        this.isDone = true
+      } else {
+        this.isDone = false
+      }
+      this.setData({
+        [`products[${this.pageStart}]`]: retdata
+      })
+      return { data: this.products, prevPage: this.pageStart, count: data.count }
+    },
+    error => {
+      this.loadingComplete = true
+      wepy.hideLoading()
+      console.log('商城页面，商品列表请求error')
+      console.log(error)
+    })
+  }
+  getRecommendData () {
+    wepy.request({
+      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/factory/recommendProducts`,
+      data: {fid: this.Fid, pagestart: 0, limit: 3}
+    }).then(res => {
+      const data = res.data
+      let retdata = data.data ? data.data : data
+      this.recommendProduct = retdata
+      this.$apply()
+    })
+  }
+  getTabData () {
+    if (!this.loadingComplete) return false
+    this.loadingComplete = false
+    let params = {
+      cron: 1,
+      fid: this.Fid,
+      haveoptions: 0,
+      pagestart: this.tabPageStart,
+      limit: this.limit
+    }
+    params.from = 'home'
+    if (this.clickClassId) {
+      params.classid = this.clickClassId
+    }
+    if (this.keyword) {
+      params.keyword = this.keyword
+    }
+    wepy.showLoading()
+    wepy.request({
+      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/factory/factoryproductList`,
+      data: params,
+      method: 'post'
+    }).then(res => {
+      this.loadingComplete = true
+      wepy.hideLoading()
+      const data = res.data
+      const retdata = data.data ? data.data : data
+      for (let i = 0; i < retdata.length; i++) {
+        if (retdata[i].onshelftime) {
+          retdata[i].ontime_str = new Time(retdata[i].onshelftime * 1000).dateFormat('yyyy-MM-dd hh:mm')
+        }
+      }
+      this.tabData2.push(retdata)
+      this.loadingComplete = true
+      this.isLoadTab = false
+      this.disTabList = true
+      if (retdata.length < this.limit && this.tabData2[0].length) {
+        this.isDoneTab = true
+      } else {
+        this.isDoneTab = false
+      }
+      this.$apply()
+      this.setData({
+        [`tabData2[${this.tabPageStart}]`]: retdata
+      })
+    })
+  }
+  searChProData () {
+    let params = {fid: this.Fid, haveoptions: 0, pagestart: this.pageStart, limit: this.limit}
+    if (this.clickClassId) {
+      params.classid = this.clickClassId
+    }
+    if (this.keyword) {
+      params.keyword = this.keyword
+    }
+    wepy.showLoading()
+    wepy.request({
+      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/factory/factoryproductList`,
+      data: params,
+      methods: 'post'
+    }).then(res => {
+      this.loadingComplete = true
+      wepy.hideLoading()
+      const data = res.data
+      const retdata = data.data ? data.data : data
+      // this.products = this.products.concat(retdata)
+      this.products.push(retdata)
+      this.processProducts(data)
+      if (retdata.length < this.limit && this.products[0].length) {
+        this.isDone = true
+      } else {
+        this.isDone = false
+      }
+      this.setData({
+        [`products[${this.pageStart}]`]: retdata
+      })
+      return { data: this.products, prevPage: this.pageStart, count: data.count }
+    })
+  }
+  handleTimer () {
+    clearInterval(this.intervalId)
+    this.intervalId = setInterval(() => {
+      for (let j in this.products) {
+        let data = this.products[j]
+        for (let i in data) {
+          // clearInterval(data[i].interval)
+          data[i].showOriprice = false
+          let curOriprice = data[i].oriprice
+          if (curOriprice && curOriprice !== '' && parseFloat(curOriprice.replace(/,/g, '')) > 0) {
+            data[i].showOriprice = true
+          }
+          let offshelftime = data[i].offshelftime
+          if (offshelftime && offshelftime !== '') {
+            let now = parseInt((new Date().getTime()) / 1000)
+            let lefttime = offshelftime - now
+            if (lefttime > 0) {
+              let hour = Math.floor(lefttime / 60 / 60)
+              if (hour < 100) {
+                if (hour < 10) {
+                  hour = `0${hour}`
+                }
+                let minute = Math.floor((lefttime - hour * 60 * 60) / 60)
+                if (minute < 10) {
+                  minute = `0${minute}`
+                }
+                let second = lefttime - hour * 60 * 60 - minute * 60
+                if (second < 10) {
+                  second = `0${second}`
+                }
+                data[i].lefthour = hour
+                data[i].leftminute = minute
+                data[i].leftsecond = second
+                data[i].interval = null
+                data[i]._offshelftime = true
+                this.cutDown(data[i])
+              }
+            }
+          }
+        }
+      }
+      this.setData({
+        products: this.products
+      })
+    }, 1000)
+  }
+  handleProducts (data) {
+    this.homeBgPhoto = this.SystemParams.homeposter
+    this.loadingComplete = true
+    wepy.hideLoading()
+    this.handleTimer()
+    this.loading = false
+    this.isLoading = false
+    this.disList = true
+    this.$apply()
+  }
+  processProducts (pdata) {
+    this.afterProduct = true
+    let data = pdata.data
+    if (this.clickClassId === 0) {
+      this.productCount = pdata.count
+    }
+    this.handleProducts(data)
+    // this.scrollTop = 1
+    if (this.options.gxkfid && parseInt(this.options.gxkfid) === parseInt(this.Fid)) {
+      return wepy.request({
+        url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/miniopen/bindFactoryManager`,
+        data: {appid: Config.AppId, factoryuid: this.userInfo.uid},
+        method: 'post'
+      }).then(res => {
+        if (res) {
+          const data = res.data
+          if (data.flag) {
+            this.userInfo.fid = this.Fid
+            this.$parent.globalData.userInfo = this.userInfo
+            this.$apply()
+          }
+        }
+      })
+    }
+  }
+  onShow () {
+    this.buyIng = false
+    if (this.showContainer) {
+      this.loadingComplete = true
+      this.loading = false
+      if (!this.inOnLoad) {
+        this.showFixed = false
+        this.inputFixed = false
+        if (this.$parent.globalData.flag.bokaAuth) {
+          this.globalData = this.$parent.globalData
+          this.userInfo = this.globalData.userInfo
+          this.getSeller()
+          if (!this.afterProduct) {
+            this.handleTimer()
+          }
+          this.getLiveInfo()
+        } else {
+          this.$parent.showCallback = () => {
+            this.globalData = this.$parent.globalData
+            this.userInfo = this.globalData.userInfo
+            this.getSeller()
+            if (!this.afterProduct) {
+              this.handleTimer()
+            }
+            this.getLiveInfo()
+          }
+        }
+      }
+    } else {
+      let coms = this.$com
+      if (this.showHomeRetailer) {
+        let retailerCom = coms.homeRetailer
+        retailerCom.getRevenue()
+        if (retailerCom.selectedIndex === 1) {
+          retailerCom.initSkTab()
+          retailerCom.getUserData()
+        }
+      }
+    }
+  }
+  onHide () {
+    this.inOnLoad = false
+    this.afterProduct = false
+    clearInterval(this.intervalId)
+  }
+  onUnload () {
+    this.afterProduct = false
+    clearInterval(this.intervalId)
+  }
+  onLoad (options) {
+    this.inOnLoad = true
+    this.pageStart = 0
+    this.pageStart2 = 0
+    this.tabPageStart = 0
+    this.limit = Config.Limit
+    this.submiting = false
+    this.submiting2 = false
+    this.afterProduct = false
+    if (Config.BoboAppIds[Config.AppId]) {
+      this.showTest = true
+    }
+    if (options.scene) {
+      let sceneOptions = Util.queryScene(options.scene)
+      options = {...options, ...sceneOptions}
+    }
+    this.options = options
+    this.pageurl = Util.objectToUrl('/pages/home', this.options)
+    if (this.$parent.globalData.flag.bokaAuth) {
+      this.handlePageData()
+    } else {
+      this.$parent.loadCallback = () => {
+        this.handlePageData()
+      }
+    }
+    wepy.showShareMenu({
+      withShareTicket: true
+    })
+    wepy.getSystemInfo().then(res => {
+      if (res.model.indexOf('iPhone') > -1 || res.system.indexOf('iOS') > -1) {
+        this.isIOS = true
+      } else {
+        this.isIOS = false
+      }
+      if (res.model.substring(0, res.model.indexOf('X')) + 'X' === 'iPhone X') {
+        this.isIpx = true
+      }
+      this.$apply()
+    })
+  }
+  getSeller () {
+    if (Config.Wid !== this.globalData.Wid || (Config.Wid === this.globalData.Wid && !this.showContainer)) {
+      wepy.request({
+        url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/retailer/info`,
+        data: {uid: this.globalData.Wid, appid: Config.AppId}
+      }).then(res => {
+        const data = res.data
+        if (data.flag) {
+          this.sellerUser = data.data
+        }
+        this.disSeller = true
+        this.$apply()
+      })
+    } else {
+      this.disSeller = true
+      this.$apply()
+    }
+  }
+  addShareUser () {
+    let shareParams = Util.getShareParams(this.options)
+    if (shareParams.wid && shareParams.share_uid) {
+      let params = {}
+      if (this.showContainer) {
+        params = {module: 'menumin', moduleid: this.channelInfo.id}
+      } else {
+        params = {module: 'store', moduleid: this.globalData.Wid}
+      }
+      wepy.request({
+        url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/common/shareClick`,
+        data: {...shareParams, ...params},
+        method: 'post'
+      })
+    }
+  }
+  afterHomePage () {
+    this.channelInfo = this.homeData.menudata
+    this.bannerData = this.channelInfo.banner
+    if (this.homeData.notice) {
+      this.noticeData = this.homeData.notice
+      this.noticeData.contentArr = JSON.parse(this.noticeData.content)
+      this.showNoticeModal = true
+    } else {
+      this.noticeData = null
+      this.showNoticeModal = false
+    }
+    if (this.homeData.fpclass.length && this.SystemParams.ShowCategory !== '0' && this.SystemParams.ShowCategory !== 0) {
+      let fpclass = [{id: 0, title: '全部', photo: 'https://tossharingsales.boka.cn/minigxk/allclass.png'}]
+      fpclass = fpclass.concat(this.homeData.fpclass)
+      this.processClasses(fpclass)
+    }
+    this.products = []
+    this.products.push(this.homeData.fpdata)
+    this.productCount = this.homeData.fpcount
+    this.isLoading = false
+    this.afterNewHomePage = true
+    this.allowNav = true
+    if (this.homeData.fpdata.length < this.limit) {
+      this.isDone = true
+    } else {
+      this.isDone = false
+    }
+    this.handleProducts(this.products)
+    this.addShareUser()
+    this.disBanner = true
+    if (!this.orderData.length) {
+      this.getOrders()
+    }
+    // if (this.homeData.haveCard) {
+    //   this.showCard = true
+    // } else {
+    //   this.showCard = false
+    // }
+    this.getRecommendData()
+  }
+  handlePageData () {
+    this.globalData = this.$parent.globalData
+    if (this.globalData.OpenCart) {
+      this.openCart = true
+    }
+    Util.appInit(this.globalData, this)
+    this.userInfo = this.globalData.userInfo
+    this.factoryInfo = this.globalData.FactoryInfo
+    this.MiniInfo = this.globalData.MiniInfo
+    let SystemParams = this.globalData.SystemParams
+    this.SystemParams = SystemParams
+    this.homeBgPhoto = this.SystemParams.homeposter
+    if (SystemParams.OnlyRetailerBuy === '0' || SystemParams.OnlyRetailerBuy === 0) {
+      this.OnlyRetailerBuy = false
+    } else {
+      this.OnlyRetailerBuy = true
+    }
+    this.afterSys = true
+    if (this.options.wid) {
+      if (this.options.scene && (!this.userInfo.regwid || !this.userInfo.bindstatus)) {
+        this.globalData.Wid = this.options.wid
+        this.$parent.globalData.Wid = this.options.wid
+      }
+    }
+    this.Wid = this.globalData.Wid
+    if (SystemParams.OrderType === '10' || SystemParams.OrderType === 10) {
+      this.showContainer = false
+      if (this.userInfo.regwid) {
+        this.showHomeUser = false
+        this.showHomeRetailer = true
+        let coms = this.$com
+        let retailerCom = coms.homeRetailer
+        if (this.options.from === 'pay') {
+          retailerCom.selectedIndex = 1
+          retailerCom.switchTab()
+        }
+        retailerCom.handlePageData()
+      } else {
+        this.showHomeRetailer = false
+        this.showHomeUser = true
+        let coms = this.$com
+        let userCom = coms.homeUser
+        userCom.handlePageData()
+      }
+      this.getSeller()
+      this.addShareUser()
+      this.$apply()
+    } else {
+      this.showHomeUser = false
+      this.showHomeRetailer = false
+      this.showContainer = true
+      if (this.userInfo.fid === this.Fid) {
+        this.isAdmin = true
+      } else if (this.AdminUids[this.Fid]) {
+        let curArr = this.AdminUids[this.Fid]
+        for (let i in curArr) {
+          if (curArr[i] === this.userInfo.regwid) {
+            this.isAdmin = true
+            break
+          }
+        }
+      }
+      this.disAdmin = true
+      this.getSeller()
+      this.getLoadData()
+      // this.getCardList()
+      this.getLiveInfo()
+    }
+  }
+  getLoadData () {
+    if (this.isLoading || this.isLoadTab) return false
+    let starttime = new Date().getTime()
+    Cached.request({
+      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/channel/newhomePage`,
+      data: {fid: this.Fid, appid: Config.AppId}
+    }, 'home.homeData', Config.URT.H,
+    cacheData => {
+      let endtime = new Date().getTime()
+      console.log('首页homepage缓存 耗时', endtime - starttime)
+      this.homeData = cacheData
+      this.afterHomePage()
+    },
+    res => {
+      let endtime = new Date().getTime()
+      console.log('首页homepage请求 耗时', endtime - starttime)
+      const data = res.data
+      if (data.flag) {
+        this.homeData = data
+        this.afterHomePage()
+        // 缓存商品列表
+        console.log(`home.products.${this.clickClassId}`)
+        Cached.setPageQueue(`home.products.${this.clickClassId}`, { data: this.products, prevPage: this.pageStart, count: this.productCount }, Config.URT.H)
+        this.$apply()
+      }
+      return this.homeData
+    })
+  }
+  getOrders () {
+    wepy.request({
+      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/order/simpleOrderList`,
+      data: {fid: this.Fid, pagestart: 0, limit: 20}
+    }).then(res => {
+      const data = res.data
+      let retdata = data.data ? data.data : data
+      if (retdata.length < 10) {
+        this.orderData = []
+      } else {
+        this.orderData = retdata
+      }
+      this.$apply()
+    })
+  }
+  handleScrollPage () {
+    if (this.cardList.length === (this.pageStart2 + 1) * this.limit) {
+      this.pageStart2 ++
+      this.getCardList()
+      this.$apply()
+    }
+  }
+  getCardList () {
+    const showCardFlag = wepy.getStorageSync('showCardFlag')
+    if (showCardFlag) return false
+    wepy.request({
+      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/card/factoryCardList`,
+      data: {fid: this.Fid, pagestart: this.pageStart2, limit: this.limit},
+      method: 'post'
+    }).then(res => {
+      const data = res.data
+      let retdata = data.data ? data.data : data
+      let receivedCount = 0
+      for (let i = 0; i < retdata.length; i++) {
+        if (!retdata[i].leftcount || retdata[i].leftcount <= 0) {
+          receivedCount++
+        }
+      }
+      if ((!this.pageStart2 && receivedCount === retdata.length) || (this.pageStart2 > 0 && receivedCount === retdata.length && this.allReceived)) {
+        this.allReceived = true
+      } else {
+        this.allReceived = false
+      }
+      this.cardList = this.cardList.concat(retdata)
+      if (this.cardList.length > 0) {
+        this.showCardModal = true
+      }
+      this.afterCard = true
+      this.$apply()
+    })
+  }
+  getLiveInfo () {
+    wepy.request({
+      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/minilive/getLiveInfo`,
+      method: 'post'
+    }).then(res => {
+      const data = res.data
+      const retdata = data.data ? data.data : data
+      let isIn = false
+      if (retdata.length) {
+        for (let i = 0; i < retdata.length; i++) {
+          if (retdata[i].live_status === 101) {
+            isIn = true
+            this.showLive = true
+            let curData = retdata[i]
+            let customParams = {share_uid: this.userInfo.uid, share_wid: this.globalData.Wid, wid: this.globalData.Wid, liveid: curData.id}
+            let cpstr = encodeURIComponent(JSON.stringify(customParams))
+            curData.navurl = `plugin-private://wx2b03c6e691cd7370/pages/live-player-plugin?room_id=${curData.roomid}&custom_params=${cpstr}`
+            this.wxLiveData = curData
+            break
+          }
+        }
+      }
+      if (!isIn) {
+        this.showLive = false
+      }
+      this.$apply()
+    })
+  }
+  processClasses (data) {
+    this.classData = data
+    this.classDataArr = []
+    let colcount = this.colCount
+    let len = data.length
+    let col = Math.ceil(len / colcount)
+    if (col > 1) {
+      this.showDot = true
+    } else {
+      this.showDot = false
+      colcount = data.length
+    }
+    for (let i = 0; i < col; i++) {
+      let arr = []
+      for (let j = 0; j < (i + 1) * colcount; j++) {
+        arr.push(data[j + i * colcount])
+      }
+      this.classDataArr.push(arr)
+    }
+    this.allClass = Array.prototype.concat.apply([], this.classDataArr)
+  }
+  handleShare () {
+    const lastshareuid = this.options.share_uid
+    let shareurl = `/pages/home?share_uid=${this.userInfo.uid}&share_wid=${this.globalData.Wid}&wid=${this.globalData.Wid}&comefrom=${Config.AppName}`
+    this.shareParams = {path: shareurl, title: Config.AppName}
+    if (this.clickShareProduct && this.clickProductId) {
+      shareurl = `/${Config.Router.product}?id=${this.clickProductId}&type=fpimport&share_uid=${this.userInfo.uid}&share_wid=${this.globalData.Wid}&wid=${this.globalData.Wid}&comefrom=${Config.AppName}`
+      this.shareParams.title = this.clickShareProduct.title
+      this.shareParams.imageUrl = this.clickSharePhoto
+    } else if (!this.showContainer) {
+      this.shareParams.imageUrl = Config.OrderHomeShare
+    }
+    if (lastshareuid) {
+      shareurl = `${shareurl}&lastshareuid=${lastshareuid}`
+    }
+    if (this.userInfo.regwid && this.userInfo.bindstatus === 1) {
+      shareurl = `${shareurl}&shareuser=self`
+    }
+    let backUrl = encodeURIComponent(shareurl)
+    shareurl = `${shareurl}&currentUrl=${backUrl}`
+    this.shareParams.path = shareurl
+  }
+  onShareAppMessage (res) {
+    this.handleShare()
+    return this.shareParams
+  }
+  onShareTimeline () {
+    this.handleShare()
+    return this.shareParams
+  }
+  async addShop (params) {
+    this.genOrder = true
+    wepy.showLoading()
+    if (this.clickProduct.options && this.clickProduct.options.length && this.selectedOption && this.selectedOption.id) {
+      params.poid = this.selectedOption.id
+    }
+    let postData = {...params, wid: this.globalData.Wid, external: 1, sessionkey: `factory_${this.userInfo.uid}`, gxkuid: this.userInfo.gxkuid, module: 'factoryproduct', fid: this.Fid}
+    const res = await wepy.request({
+      // url: `${Config.GxkApi}/api/order/sessionAddShop`,
+      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/order/addShop`,
+      data: postData,
+      method: 'POST'
+    })
+    const data = res.data
+    wepy.hideLoading()
+    if (data.flag === 1) {
+      // let url = `addOrder?wid=${this.globalData.Wid}&shop_id=${data.data}&fromfid=${this.Fid}`
+      // url = encodeURIComponent(url)
+      // wepy.navigateTo({url: `/pages/webview?url=${url}`})
+      let url = `/pages/addOrder?wid=${this.globalData.Wid}&shop_id=${data.data}&fromfid=${this.Fid}`
+      if (this.clickProduct.agentfid) {
+        url = `${url}&agentfid=${this.clickProduct.agentfid}`
+      }
+      wepy.navigateTo({url: url})
+    } else {
+      wepy.showToast({
+        title: data.error,
+        icon: 'none'
+      })
+      this.buyIng = false
+    }
+    this.genOrder = false
+  }
+  switchTab () {
+    switch (this.tabIndex) {
+      case 0:
+        if (!this.products.length || !this.products[0].length) {
+          this.products = []
+          this.getData()
+        }
+        break
+      case 1:
+        if (!this.tabData2.length || !this.tabData2[0].length) {
+          this.tabData2 = []
+          this.getTabData()
+        }
+        break
+    }
+  }
+  events = {
+    noAuth () {
+      this.showAuth = true
+      this.$apply()
+    },
+    cancelLogin () {
+      this.showAuth = false
+      this.$apply()
+    },
+    afterAuth () {
+      this.globalData = this.$parent.globalData
+      this.userInfo = this.globalData.userInfo
+      this.showAuth = false
+      if (this.showHomeRetailer) {
+        let coms = this.$com
+        let retailerCom = coms.homeRetailer
+        retailerCom.globalData = this.globalData
+        retailerCom.userInfo = this.userInfo
+        retailerCom.addShop(retailerCom.addShopParams)
+      } else if (this.showHomeUser) {
+        let coms = this.$com
+        let userCom = coms.homeUser
+        userCom.globalData = this.globalData
+        userCom.userInfo = this.userInfo
+        userCom.addShop(userCom.addShopParams)
+      } else {
+        this.addShop(this.addShopParams)
+      }
+      this.$apply()
+    },
+    productShare (data) {
+      this.clickShareProduct = data
+      this.clickTitle = data.title
+      this.clickSharePhoto = data.photo.split(',')[0]
+      this.clickProductId = data.id
+      this.$apply()
+      this.$invoke('share1', 'showPopuModal')
+    },
+    retailerBuy () {
+      this.showRetailerModal = true
+      this.$apply()
+    },
+    closeSellerModal () {
+      this.showRetailerModal = false
+      this.$apply()
+    },
+    clickBuy (dataset) {
+      if (this.buyIng) return false
+      this.buyIng = true
+      const curData = dataset.data
+      const curPageIndex = dataset.pageindex
+      const curIndex = dataset.index
+      this.clickProduct = curData
+      this.clickProductIndex = curIndex
+      if (curData.clicked) {
+        if (curData.options && curData.options.length) {
+          this.selectedOption = curData.options[0]
+          this.selectedOptionIndex = 0
+          this.backScrollTop = this.pageScrollTop
+          this.hiddePage = true
+          this.buyIng = false
+          this.$invoke('productOptions', 'showOptions')
+        } else {
+          if (this.userInfo.subscribe === 0) {
+            this.showAuth = true
+            this.addShopParams = {id: curData.moduleid, wid: this.globalData.Wid, flag: 1, quantity: 1}
+            this.buyIng = false
+            this.$apply()
+            return false
+          }
+          let iscontinue = true
+          if (curData.retailerbuy) {
+            if ((!this.userInfo.regwid || !this.userInfo.bindstatus) && (!this.options.share_uid || this.options.shareuser !== 'self')) {
+              iscontinue = false
+              this.showBuyTip = true
+            }
+          }
+          if (!iscontinue) {
+            this.buyIng = false
+            return false
+          }
+          this.addShop({id: curData.moduleid, wid: this.globalData.Wid, flag: 1, quantity: 1})
+          this.$apply()
+        }
+      } else {
+        wepy.request({
+          url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/factory/getFPOptions`,
+          data: {id: curData.moduleid},
+          method: 'post'
+        }).then(res => {
+          const data = res.data
+          if (data.flag) {
+            const retoptions = data.data
+            if (retoptions && retoptions.length) {
+              this.products[curPageIndex][curIndex].options = retoptions
+              this.selectedOption = retoptions[0]
+              this.selectedOptionIndex = 0
+              this.clickProduct.options = retoptions
+              this.backScrollTop = this.pageScrollTop
+              this.hiddePage = true
+              this.buyIng = false
+              this.$invoke('productOptions', 'showOptions')
+            } else {
+              this.products[curPageIndex][curIndex].options = null
+              this.clickProduct.options = null
+              if (this.userInfo.subscribe === 0) {
+                this.showAuth = true
+                this.addShopParams = {id: curData.moduleid, wid: this.globalData.Wid, flag: 1, quantity: 1}
+                this.buyIng = false
+                this.$apply()
+                return false
+              }
+              let iscontinue = true
+              if (curData.retailerbuy) {
+                if ((!this.userInfo.regwid || !this.userInfo.bindstatus) && (!this.options.share_uid || this.options.shareuser !== 'self')) {
+                  iscontinue = false
+                  this.showBuyTip = true
+                }
+              }
+              if (!iscontinue) {
+                this.buyIng = false
+                return false
+              }
+              this.addShop({id: curData.moduleid, wid: this.globalData.Wid, flag: 1, quantity: 1})
+            }
+          } else {
+            this.buyIng = false
+          }
+          this.products[curPageIndex][curIndex].clicked = true
+          this.$apply()
+        })
+      }
+    },
+    closeOptions () {
+      this.buyIng = false
+      this.hiddePage = false
+      this.$apply()
+      wepy.pageScrollTo({
+        scrollTop: this.backScrollTop
+      })
+    },
+    clickOptions (dataset) {
+      this.selectedOption = dataset.data
+      this.selectedOptionIndex = dataset.index
+      this.$apply()
+    },
+    buyOption () {
+      let coms = this.$com
+      if (this.showContainer) {
+        if (this.genOrder || this.buyIng) return
+        this.buyIng = true
+        if (!this.selectedOption || !this.selectedOption.id) {
+          wepy.showToast({
+            title: '请选择商品规格',
+            icon: 'none'
+          })
+          return false
+        }
+        if (this.selectedOption.storage <= 0) {
+          wepy.showToast({
+            title: '该规格商品库存不足',
+            icon: 'none'
+          })
+          return false
+        }
+        this.hiddePage = false
+        this.$apply()
+        wepy.pageScrollTo({
+          scrollTop: this.backScrollTop
+        })
+        this.$invoke('productOptions', 'closeOptions')
+        if (this.userInfo.subscribe === 0) {
+          this.showAuth = true
+          this.addShopParams = {id: this.clickProduct.moduleid, wid: this.globalData.Wid, flag: 1, quantity: 1}
+          this.buyIng = false
+          this.$apply()
+          return false
+        }
+        let iscontinue = true
+        if (this.clickProduct.retailerbuy) {
+          if ((!this.userInfo.regwid || !this.userInfo.bindstatus) && (!this.options.share_uid || this.options.shareuser !== 'self')) {
+            iscontinue = false
+            this.showBuyTip = true
+          }
+        }
+        if (!iscontinue) {
+          this.buyIng = false
+          return false
+        }
+        this.buyIng = true
+        this.addShop({id: this.clickProduct.moduleid, wid: this.globalData.Wid, flag: 1, quantity: 1})
+      } else if (this.showHomeRetailer) {
+        let retailerCom = coms.homeRetailer
+        retailerCom.buyOption()
+      } else if (this.showHomeUser) {
+        let userCom = coms.homeUser
+        userCom.buyOption()
+      }
+    },
+    closeBuyTip () {
+      this.showBuyTip = false
+    }
+  }
+  methods = {
+    toNotice (item) {
+      wepy.navigateTo({url: `/packageD/pages/notice?id=${item.id}`})
+    },
+    toProduct (e) {
+      const data = e.currentTarget.dataset.data
+      wepy.setStorageSync('selectedProduct', data)
+      wepy.navigateTo({url: `/${Config.Router.product}?id=${data.id}&fid=${Config.Fid}&from=home&select=product&type=fpimport`})
+    },
+    setKeyword (e) {
+      this.keyword = e.detail.value
+      this.inputFixed = true
+    },
+    searchKeyword (e) {
+      if (e.detail.value !== '') this.keyword = e.detail.value
+      this.inputFixed = true
+      this.disList = false
+      this.isLoading = false
+      this.isDone = false
+      this.products = []
+      this.pageStart = 0
+      this.$apply()
+      this.searChProData()
+    },
+    cancelSearch () {
+      this.inputFixed = true
+      this.keyword = ''
+      this.disList = false
+      this.isLoading = false
+      this.isDone = false
+      this.products = []
+      this.pageStart = 0
+      this.$apply()
+      this.searChProData()
+    },
+    clickBanner (e) {
+      Util.clickBanner(e, this)
+    },
+    toFactoryProduct (item) {
+      wepy.setStorageSync('selectedProduct', item)
+      wepy.navigateTo({url: `/${Config.Router.product}?id=${item.id}&fid=${this.Fid}&from=home&select=product&type=fpimport`})
+    },
+    toMark () {
+      wepy.redirectTo({url: '/pages/mark'})
+    },
+    clickTab (e) {
+      const dataset = e.currentTarget.dataset
+      this.keyword = ''
+      this.selectedIndex = dataset.index
+      this.clickClassId = dataset.data.id
+      this.isLoading = false
+      if (this.tabIndex === 0) {
+        this.disList = false
+        this.isDone = false
+        this.products = []
+        this.pageStart = 0
+        this.getData()
+      } else {
+        this.disTabList = false
+        this.tabData2 = []
+        this.tabPageStart = 0
+        this.isDoneTab = false
+        this.isLoadTab = false
+        this.getTabData()
+      }
+    },
+    clickShare (e) {
+      this.clickSharePhoto = ''
+      this.clickShareProduct = null
+      this.clickProductId = null
+      this.$apply()
+      if (this.tabIndex === 0) {
+        this.$invoke('share', 'showPopuModal')
+      } else {
+        this.$invoke('share2', 'showPopuModal')
+      }
+    },
+    toCard () {
+      wepy.navigateTo({url: `/packageC/pages/factoryCardList`})
+    },
+    receiveEvent (e) {
+      if (this.submiting) return false
+      const dataset = e.currentTarget.dataset
+      const item = dataset.data
+      const index = dataset.index
+      if (!item.leftcount || item.leftcount <= 0 || parseInt(item.leftcount) <= 0 || item.isreceived) return false
+      this.submiting = true
+      wepy.showLoading()
+      wepy.request({
+        url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/card/getCard`,
+        data: {id: item.id},
+        method: 'post'
+      }).then(res => {
+        wepy.hideLoading()
+        this.submiting = false
+        const data = res.data
+        wepy.showToast({
+          title: data.error,
+          icon: 'none',
+          duration: Util.delay(data.error)
+        })
+        if (data.flag) {
+          // 礼品领取成功通知
+          Util.checkTmpMsg({
+            systeminfo: this.globalData.systemInfo,
+            tmplIds: [this.globalData.Templates.card_receive],
+            callback: () => {
+              this.cardList[index].isreceived = 1
+              this.$apply()
+            }
+          })
+        }
+      })
+    },
+    reciveAllCards (e) {
+      if (this.submiting2) return false
+      this.submiting2 = true
+      wepy.showLoading()
+      wepy.request({
+        url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/card/batchGetCard`,
+        data: {fid: this.Fid},
+        method: 'post'
+      }).then(res => {
+        wepy.hideLoading()
+        this.submiting2 = false
+        const data = res.data
+        if (data.flag) {
+          this.reciveAll = true
+          wepy.setStorageSync('showCardFlag', 1)
+          for (let i = 0; i < this.cardList.length; i++) {
+            this.cardList[i].isreceived = 1
+          }
+        }
+        wepy.showToast({
+          title: data.flag ? '领取成功' : '领取失败',
+          icon: 'none'
+        })
+        this.$apply()
+      })
+    },
+    closeCardModal (e) {
+      this.showCardModal = false
+      wepy.setStorageSync('showCardFlag', 1)
+      this.$apply()
+    },
+    closeNoticeModal () {
+      this.showNoticeModal = false
+    },
+    clickListTab (index) {
+      this.tabIndex = parseInt(index)
+      if (this.tabIndex === 0) {
+        this.homeBgPhoto = this.SystemParams.homeposter
+      } else {
+        this.homeBgPhoto = this.SystemParams.homeposter1
+      }
+      this.$apply()
+      this.switchTab()
+    },
+    toCart () {
+      wepy.navigateTo({url: '/packageC/pages/cart'})
+    }
+  }
+}
+</script>

@@ -1,0 +1,132 @@
+<style lang="less">
+</style>
+<template>
+  <view class="containerarea bg-white"></view>
+</template>
+<script>
+import wepy from 'wepy'
+import Util from '@/libs/util'
+import Config from '@/config'
+export default class Index extends wepy.page {
+  handleNav () {
+    let url = ''
+    if (!this.MenuData.length) {
+      url = '/pages/home'
+    } else {
+      let navData = this.MenuData[0]
+      if (navData.module === 'miniprogram') {
+        wepy.hideLoading()
+        wepy.navigateToMiniProgram({
+          appId: navData.appid,
+          path: navData.miniprogramurl
+        })
+        return false
+      } else {
+        if (navData.type === '0') {
+          let nurl = navData.miniprogramurl
+          if (nurl.indexOf('?') > -1) {
+            nurl = `${nurl}&`
+          } else {
+            nurl = `${nurl}?`
+          }
+          url = `${nurl}cid=${navData.id}`
+        } else {
+          if (navData.module === 'channel') {
+            url = `/${Config.Router.channel}?id=${navData.id}`
+          } else if (navData.module === 'baogao') {
+            if (this.userInfo.fid) {
+              url = `/pages/addModule?module=${navData.module}`
+            } else {
+              url = `/pages/moduleList?module=${navData.module}`
+            }
+          } else {
+            url = `/pages/addModule?module=${navData.module}`
+          }
+        }
+      }
+    }
+    wepy.redirectTo({url: url})
+  }
+  handlePageData () {
+    this.globalData = this.$parent.globalData
+    Util.appInit(this.globalData)
+    this.userInfo = this.globalData.userInfo
+    this.MenuData = this.globalData.MenuData
+    if (this.options.refresh) {
+      if (this.options.regwid && !this.userInfo.regwid) {
+        this.userInfo.regwid = this.options.regwid
+        if (this.globalData.SystemParams.RetailerCensor === '0' || this.globalData.SystemParams.RetailerCensor === 0) {
+          this.userInfo.bindstatus = 1
+          this.Wid = this.options.regwid
+          this.globalData.Wid = this.options.regwid
+        } else {
+          this.userInfo.bindstatus = 0
+        }
+      }
+      this.globalData.userInfo = this.userInfo
+      this.$parent.globalData = this.globalData
+    }
+    this.$apply()
+    if (this.options.scene) {
+      let queryScene = Util.queryScene(this.options.scene)
+      if (queryScene.posterid) {
+        wepy.request({
+          url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/wxa/posterInfo`,
+          data: {id: queryScene.posterid},
+          method: 'post'
+        }).then(res => {
+          const data = res.data
+          if (data.flag) {
+            let sourceurl = data.data.sourceurl
+            let urlQuery = Util.query(sourceurl)
+            let urlWid = urlQuery.wid
+            if (urlWid && (!this.userInfo.regwid || !this.userInfo.bindstatus)) {
+              this.globalData.Wid = urlWid
+              this.$parent.globalData.Wid = urlWid
+            }
+            if (urlQuery.roomid) {
+              if (urlQuery.wid && urlQuery.share_uid) {
+                wepy.request({
+                  url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/common/shareClick`,
+                  data: {wid: urlQuery.wid, share_uid: urlQuery.share_uid, module: 'minilive', moduleid: urlQuery.liveid},
+                  method: 'post'
+                })
+              }
+              let customParams = {share_uid: this.userInfo.uid, share_wid: this.globalData.Wid, wid: this.globalData.Wid, liveid: urlQuery.liveid}
+              let cpstr = encodeURIComponent(JSON.stringify(customParams))
+              wepy.redirectTo({url: `plugin-private://wx2b03c6e691cd7370/pages/live-player-plugin?room_id=${urlQuery.roomid}&custom_params=${cpstr}`})
+            } else {
+              wepy.redirectTo({url: data.data.sourceurl})
+            }
+          } else {
+            wepy.redirectTo({url: Config.HomePage})
+          }
+        })
+      } else {
+        this.handleNav()
+      }
+    } else {
+      this.handleNav()
+    }
+  }
+  onLoad (options) {
+    this.options = options
+    this.globalData = {}
+    this.userInfo = {}
+    this.MenuData = []
+    this.$apply()
+  }
+  onShow () {
+    wepy.showLoading()
+    if (this.$parent.globalData.flag.bokaAuth) {
+      this.handlePageData()
+    } else {
+      this.$parent.loadCallback = () => {
+        this.handlePageData()
+      }
+    }
+  }
+  methods = {
+  }
+}
+</script>

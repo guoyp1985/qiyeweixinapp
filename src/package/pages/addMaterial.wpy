@@ -1,0 +1,343 @@
+<style lang="less">
+.addmaterial{
+  .bg-sucai {
+    width: 100%;
+    padding: 20rpx 40rpx;
+    box-sizing: border-box;
+    background-color: #fff;
+    border-top: 2rpx solid #e5e5e5;
+  }
+  .addsucai {
+    width: 100%;
+    height: 60rpx;
+    color: #fff;
+    text-align: center;
+    border-radius: 40rpx;
+    line-height: 60rpx;
+  }
+  .edit-item{padding:20rpx;box-sizing:border-box;posotion:relative;}
+  .edit-list .edit-item:not(:last-child){border-bottom:#d9d9d9 2rpx solid;}
+  .title-cell{display: flex !important;align-items: right;justify-content:flex-start;flex-flow:row wrap; align-items: center;}
+  .textarea{position:relative;width:100%;min-height:150px;box-sizing:border-box;border:#d9d9d9 1rpx solid;padding:10rpx;box-sizing: border-box;margin-top:10rpx;word-break:break-all;word-wrap:break-word;}
+  .textarea.empty{color:#999;}
+  .big-cell{padding-left:20rpx;box-sizing: border-box;flex:1;}
+  .commodity .details-img{width:100%;padding:20rpx 20rpx;border-bottom:1rpx solid #e5e5e5;}
+  .commodity .details-img .limit{color:#666666;}
+  .commodity .details-img .borimg{color:#BABABA;display:flex;flex-direction:column;width:180rpx;height:180rpx;border:1rpx solid #e5e5e5;margin-left:30rpx;text-align:center;}
+  .commodity .details-img .borimg .downphoto{font-size:30px;color:#BABABA;}
+  .photo-list:after{content:'';display:block;clear:both;}
+  .photo-item{width: 25%;padding:10rpx;float: left;box-sizing: border-box;color:#999;}
+  .photo-item.add .image-outer{border:rgba(0,0,0,0.2) 2rpx solid;box-sizing: border-box; }
+  .photo-item .al{font-size:40rpx;}
+  .photo-item .close{
+    position:absolute;width:40rpx;height:40rpx;line-height:40rpx;text-align:center;border-radius:50%;
+    right:0;top:-12rpx;right:-12rpx;font-weight:bold;background-color:rgba(0,0,0,0.8);color:#fff;
+  }
+  .red-radius{
+    width:120rpx;height:120rpx;background-color:#ea3a3a;border-radius:50%;
+    display:flex !important;justify-content: center; align-items: center;
+  }
+}
+</style>
+<template>
+  <view class="container columnarea addmaterial">
+    <scroll-view class="column-content" scroll-y="true">
+      <view class="commodity edit-list">
+        <view class="edit-item">
+          <view class="title-cell">文字素材</view>
+          <view class="textarea" :class="{empty: (!submitData.title || submitData.title == '')}" bindtap="clickTextarea">
+            <block wx:if="{{!productContent || productContent == ''}}">请输入宣传内容</block>
+            <text wx:else>{{productContent}}</text>
+          </view>
+        </view>
+        <view class="edit-item details-img">
+          <view class="title-cell">详情图像 <text class="limit">(图像宽高不受限制)</text></view>
+          <view class="pt10 pb10">
+            <view class="photo-list">
+              <repeat for="{{contentPhotoArr}}" item="item" index="index">
+                <view class="photo-item">
+                  <view class="image-outer">
+                    <view class="imgarea">
+                      <view class="inner">
+                        <image mode="aspectFill" src="{{item}}"></image>
+                        <view class="close" data-index="{{index}}" bindtap="deletePhoto">×</view>
+                      </view>
+                    </view>
+                  </view>
+                </view>
+              </repeat>
+              <view class="photo-item add flex_center" wx:if="{{contentPhotoArr.length < maxContentPhoto}}" bindtap="uploadPhoto">
+                <view class="image-outer">
+                  <view class="imgarea">
+                    <view class="inner">
+                      <view>
+                        <view class="al al-shangchuantupian"></view>
+                        <view class="mt5">{{contentPhotoArr.length}}/{{maxContentPhoto}}</view>
+                      </view>
+                    </view>
+                  </view>
+                </view>
+              </view>
+            </view>
+          </view>
+        </view>
+        <view class="edit-item flex_left mb10">
+          <view class="title-cell">视频</view>
+          <view class="big-cell flex_left">
+            <view class="red-radius" wx:if="{{video == ''}}" bindtap="uploadVideo">
+              <text class="al al-shipin1 font26 color-white"></text>
+            </view>
+            <view class="photo-list w_100" wx:else>
+              <view class="photo-item add flex_center">
+                <view class="image-outer">
+                  <view class="imgarea">
+                    <view class="inner">
+                        <view class="al al-shipin1 color-black"></view>
+                        <view class="close" bindtap="deleteVideo">×</view>
+                    </view>
+                  </view>
+                </view>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+    </scroll-view>
+    <form class="bg-sucai" bindsubmit="saveEvent" report-submit="true">
+      <button class="addsucai" style="{{themeObject.bgStyle}}" formType="submit">
+        <block wx:if="options.mid">保存</block>
+        <block wx:else>立即发布</block>
+      </button>
+    </form>
+    <view class="modalarea flex_center" wx:if="{{showTextarea}}">
+      <form class="modal" bindsubmit="saveContent" bindreset="closeModal" report-submit="true">
+        <view class="pagetop flex_center b_bottom_after">
+          <view class="clamp1">文字素材</view>
+        </view>
+        <view class="pagemiddle flex_center">
+          <textarea fixed class="textarea" placeholder="请输入宣传内容" name="title" value="{{editContent}}" bindinput="keyupContent" maxlength="200"></textarea>
+        </view>
+        <view class="pagebottom flex_center b_top_after">
+          <view class="flex_cell flex_center">
+            <button class="btn bg-gray02 color-white flex_center" form-type="reset">取消</button>
+          </view>
+          <view class="flex_cell flex_center">
+            <button class="btn bg-theme color-white flex_center" style="{{themeObject.bgStyle}}" form-type="submit">确定</button>
+          </view>
+        </view>
+      </form>
+    </view>
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy'
+import Util from '@/libs/util'
+import Config from '@/config'
+export default class AddMaterial extends wepy.page {
+  data = {
+    query: {},
+    options: {},
+    globalData: {},
+    userInfo: {},
+    photoArr: [],
+    productContent: '',
+    editContent: '',
+    showTextarea: false,
+    maxContentPhoto: 9,
+    contentPhotoArr: [],
+    video: '',
+    modules: 'factoryproduct',
+    submitData: {title: '', contentphoto: '', video: ''},
+    submitIng: false,
+    themeObject: {}
+  }
+  handlePageData () {
+    this.globalData = this.$parent.globalData
+    Util.appInit(this.globalData, this)
+    this.userInfo = this.globalData.userInfo
+    this.$apply()
+    if (this.options.mid) {
+      wepy.request({
+        url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/moduleInfo`,
+        data: {module: 'productmaterial', id: this.options.mid}
+      }).then(res => {
+        let data = res.data
+        if (data.flag) {
+          let retdata = data.data
+          this.productContent = retdata.title
+          if (retdata.contentphoto && retdata.contentphoto !== '') {
+            this.contentPhotoArr = retdata.contentphoto.split(',')
+          }
+          this.video = retdata.video
+          this.$apply()
+        }
+      })
+    }
+  }
+  onLoad (options) {
+    this.options = options
+    this.query = options
+    this.$apply()
+    if (this.$parent.globalData.flag.bokaAuth) {
+      this.handlePageData()
+    } else {
+      this.$parent.loadCallback = () => {
+        this.handlePageData()
+      }
+    }
+  }
+  refresh () {
+    this.contentPhotoArr = []
+    this.video = ''
+    this.productContent = ''
+    this.editContent = ''
+  }
+  methods = {
+    saveEvent (e) {
+      if (!this.submitIng) {
+        let postData = this.submitData
+        postData.title = this.productContent
+        if (this.contentPhotoArr.length > 0) {
+          postData.contentphoto = this.contentPhotoArr.join(',')
+        }
+        postData.video = this.video
+        postData.modules = this.modules
+        postData.pid = this.query.id
+        if (postData.title === '' && postData.contentphoto === '' && postData.video === '') {
+          wepy.showToast({
+            title: '文字图片与视频至少上传一项',
+            icon: 'none'
+          })
+          return false
+        }
+        this.submitIng = true
+        postData.uid = this.userInfo.gxkuid
+        if (this.options.mid) {
+          postData.id = this.options.mid
+        }
+        wepy.request({
+          url: `${Config.GxkApi}/api/add_n/productmaterial`,
+          // url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/add/productmaterial`,
+          data: postData,
+          method: 'post'
+        }).then(res => {
+          let data = res.data
+          if (data.flag === 1) {
+            wepy.showToast({
+              title: '发布成功',
+              icon: 'none'
+            })
+            setTimeout(() => {
+              this.submitIng = false
+              this.refresh()
+              wepy.redirectTo({url: `/package/pages/materialBank?id=${this.query.id}&pid=${this.query.pid}&refresh=1`})
+            }, 1500)
+          }
+          this.$apply()
+        })
+      }
+    },
+    keyupContent (e) {
+      this.editContent = e.detail.value
+    },
+    clickTextarea (e) {
+      this.editContent = this.productContent
+      this.showTextarea = true
+      this.$apply()
+    },
+    saveContent (e) {
+      this.productContent = this.editContent
+      this.showTextarea = false
+      this.$apply()
+    },
+    closeModal (e) {
+      this.showTextarea = false
+    },
+    deletePhoto (e) {
+      const dataset = e.currentTarget.dataset
+      const index = dataset.index
+      this.contentPhotoArr.splice(index, 1)
+    },
+    uploadPhoto (e) {
+      let max = this.maxContentPhoto - this.contentPhotoArr.length
+      if (max > 9) {
+        max = 9
+      }
+      wepy.chooseImage({
+        count: max, // 默认9
+        sizeType: ['original', 'compressed'], // 可以指定是原图还是压缩图，默认二者都有
+        sourceType: ['album', 'camera'] // 可以指定来源是相册还是相机，默认二者都有
+      }).then(res => {
+        if (res.tempFiles) {
+          Util.taskData({
+            data: res.tempFiles,
+            handleFunction: (d) => {
+              return (done) => {
+                wepy.showLoading()
+                wepy.uploadFile({
+                  url: `${Config.GxkApi}/api/upload/photo?token=${this.globalData.miniData.token}`,
+                  method: 'POST',
+                  name: 'photo',
+                  filePath: d.path
+                }).then(res => {
+                  wepy.hideLoading()
+                  const resdata = JSON.parse(res.data)
+                  if (!resdata.flag) {
+                    wepy.showToast({
+                      title: resdata.error,
+                      icon: 'none',
+                      duration: Util.delay(resdata.error)
+                    })
+                  } else {
+                    let jsonData = JSON.parse(res.data)
+                    if (this.contentPhotoArr.length < this.maxContentPhoto) {
+                      this.contentPhotoArr.push(jsonData.data)
+                    }
+                    this.$apply()
+                  }
+                  done()
+                })
+              }
+            }
+          })
+        }
+      })
+    },
+    uploadVideo (e) {
+      wepy.chooseVideo({
+        sourceType: ['album', 'camera'] // 可以指定来源是相册还是相机，默认二者都有
+      }).then(res => {
+        if (res && res.tempFilePath) {
+          wepy.showLoading()
+          return wepy.uploadFile({
+            url: `${Config.GxkApi}/api/upload/photo?token=${this.globalData.miniData.token}`,
+            filePath: res.tempFilePath,
+            name: 'photo',
+            method: 'post'
+          })
+        }
+      }).then(res => {
+        wepy.hideLoading()
+        if (res) {
+          const resdata = JSON.parse(res.data)
+          if (!resdata.flag) {
+            wepy.showToast({
+              title: resdata.error,
+              icon: 'none',
+              duration: Util.delay(resdata.error)
+            })
+          } else {
+            this.video = resdata.data
+            this.$apply()
+          }
+        }
+      })
+    },
+    deleteVideo (e) {
+      this.video = ''
+      this.$apply()
+    }
+  }
+}
+</script>

@@ -1,0 +1,309 @@
+<style lang="less">
+.store-template2{
+  width:100vw;;background-color:#f2f3f2;
+  .color-store{color:#f9382c;}
+  .color-weixi{color:#3cb034;}
+  .color-zx{color:#e47d3a;}
+  // .topbox{
+  //   width:100%;height:90rpx;position:relative;z-index:1;background:#fff;
+  //   .pic-cell{
+  //     width:160rpx;height:100%;padding-right:10rpx;
+  //     image{width:120rpx;height:120rpx;border-radius:50%;margin-top:-60rpx;border:6rpx solid #fff;}
+  //   }
+  //   .icon-cell{width:100rpx;height:100%;}
+  // }
+  .topbox{
+    width:100%;height:120rpx;position:relative;z-index:1;background:#fff;
+    .pic-cell{
+      width:120rpx;height:100%;
+      image{width:90rpx;height:90rpx;border-radius:50%;border:6rpx solid #fff;}
+    }
+    .icon-cell{width:100rpx;height:100%;}
+  }
+  .topbox.empty{
+    height:140rpx;
+  }
+  .product-list{
+    padding:20rpx 20rpx;box-sizing:border-box;background-color:#fff;
+    .list-item{
+      width:100%;padding-bottom:100%;position:relative;display:block;
+      .inner{
+        position:absolute;left:0;top:0;right:0;bottom:0;
+        image{width:100%;height:100%;border-radius:20rpx;}
+      }
+      .txt-area{
+        position:absolute;left:0;bottom:0;right:0;
+        padding:0 20rpx;height:90rpx;font-size:30rpx;
+        box-sizing:border-box;background-color:rgba(0,0,0,0.5);color:white;
+        border-bottom-left-radius:20rpx;border-bottom-right-radius:20rpx;
+      }
+    }
+    .list-item:not(:first-child){margin-top:20rpx;}
+  }
+  .t-icon{
+    position:absolute;
+    left:0;
+    top:10px;
+    border-top-right-radius:20px;
+    border-bottom-right-radius:20px;
+    background-color:#fff;
+    padding:5px 10px 5px 5px;
+    font-size:12px;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 8rpx 2rpx;
+  }
+}
+.template2-bottom{width:100%;height:100rpx;box-sizing:border-box;background-color:#fff;width:100%;border-top:2rpx solid #e5e5e5;}
+</style>
+<template>
+  <view class="column-content store-template2">
+    <view class="topbox flex_left" :class="{'empty': (userInfo.uid != wid && !images.length)}">
+      <view class="pic-cell flex_center">
+        <image src="{{retailerInfo.avatar}}"></image>
+      </view>
+      <view class="flex_cell h_100 flex_left font14">
+        <view class="w_100 clamp1">{{retailerInfo.title}}</view>
+      </view>
+      <form class="icon-cell flex_center" bindsubmit="onShareTap" report-subit="true">
+        <button class="w_100 h_100 flex_center" form-type="submit">
+          <view class="w_100">
+            <view class="al al-iconmoban_huaban font16"></view>
+            <view class="font14">分享</view>
+          </view>
+        </button>
+      </form>
+    </view>
+    <block wx:if="{{productCount >= 31 && classData.length >= 5}}">
+      <view :class="{'one': classDataArr.length == 1}" class="menu-swiper-outer" wx:if="{{classData.length}}">
+        <swiper
+          class="menu-swiper"
+          indicator-dots="{{showDot}}"
+          indicator-color="#d0cdd1"
+          indicator-active-color="#ff9900"
+          interval="6000"
+          circular>
+          <repeat for="{{classDataArr}}" index="index" item="classitem">
+            <swiper-item class="swiper-item">
+              <repeat for="{{classitem}}" index="index1" item="item">
+                <view class="inner flex_center {{selectedIndex == (index * colCount + index1) ? 'active' : ''}}" data-col="{{index}}" data-index="{{index * colCount + index1}}" data-data="{{item}}" bindtap="clickTab">
+                  <view class="w_100">
+                    <view class="pic-outer">
+                      <view class="pic">
+                        <image src="{{item.photo}}"></image>
+                      </view>
+                    </view>
+                    <view class="txt">{{item.title}}</view>
+                  </view>
+                </view>
+              </repeat>
+            </swiper-item>
+          </repeat>
+        </swiper>
+      </view>
+    </block>
+    <view class="mt10" wx:if="{{disProduct}}">
+      <view class="bg-white padding10 b_top_after" wx:if="{{productCount >=0 && !(productCount >= 31 && classData.length >= 6)}}">
+        <view class="pl10 font16 vline border-box">全部商品</view>
+      </view>
+      <view class="b_top_after"></view>
+      <view wx:if="{{!products || !products.length}}" class="flex_empty">暂无商品</view>
+      <view wx:else class="product-list">
+        <repeat for="{{products}}" key="index" item="item">
+          <form class="list-item" data-url="/pages/product?id={{item.id}}&type=fpimport&fid={{Fid}}&select=product" @tap="toProduct({{item}})">
+            <button class="inner" form-type="submit">
+              <image src="{{item.photo}}" mode="aspectFill"></image>
+              <view class="t-icon color-theme" wx:if="{{userInfo.uid == retailerInfo.uid}}">佣金: ￥{{item.levelagent}}</view>
+              <view class="txt-area flex_left">
+                <view class="flex_left" style="width:70%;">
+                  <view class="w_100 clamp1">{{item.title}}</view>
+                </view>
+                <view class="flex_right bold" style="width:30%;">
+                  <view class="w_100 clamp1">￥{{item.price}}</view>
+                </view>
+              </view>
+            </button>
+          </form>
+        </repeat>
+      </view>
+      <view class="load-end-area loading" wx:if="{{isLoading}}"></view>
+      <view class="load-end-area done" wx:elif="{{isDone}}"></view>
+    </view>
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy'
+import Config from '@/config'
+import Product from '@/components/store/product'
+export default class store4 extends wepy.component {
+  components = {
+    'product': Product
+  }
+  props = {
+    globalData: {
+      type: Object,
+      default: {}
+    },
+    height: {
+      type: String,
+      default: '0'
+    },
+    barHeight: {
+      type: String,
+      default: '0'
+    },
+    userInfo: {
+      type: Object,
+      default: {}
+    },
+    retailerInfo: {
+      type: Object,
+      default: {}
+    },
+    wid: {
+      type: Number,
+      default: 0
+    },
+    images: {
+      type: Array,
+      default: []
+    },
+    isLoading: {
+      type: Boolean,
+      default: false
+    },
+    isDone: {
+      type: Boolean,
+      default: false
+    },
+    showDot: {
+      type: Boolean,
+      default: true
+    },
+    disSwiper: {
+      type: Boolean,
+      default: false
+    },
+    isFavorite: {
+      type: Boolean,
+      default: false
+    },
+    showFavorite: {
+      type: Boolean,
+      default: false
+    },
+    showSuggest: {
+      type: Boolean,
+      default: false
+    },
+    suggestData: {
+      type: Array,
+      default: []
+    },
+    FactorySuggest: {
+      type: Boolean,
+      default: false
+    },
+    products: {
+      type: Array,
+      default: []
+    },
+    disProduct: {
+      type: Boolean,
+      default: false
+    },
+    classData: {
+      type: Array,
+      default: []
+    },
+    classDataArr: {
+      type: Array,
+      default: []
+    },
+    selectedIndex: {
+      type: Number,
+      default: 0
+    },
+    productCount: {
+      type: Number,
+      default: -1
+    },
+    isAdmin: {
+      type: Boolean,
+      default: false
+    },
+    colCount: {
+      type: Number,
+      default: 10
+    },
+    themeObject: {
+      type: Object,
+      default: {}
+    },
+    options: {
+      type: Object,
+      default: {}
+    }
+  }
+  data = {
+    Fid: Config.Fid
+  }
+  onLoad () {
+  }
+  methods = {
+    toProduct (data) {
+      wepy.setStorageSync('selectedProduct', data)
+      let params = []
+      if (this.options.share_uid) {
+        params.push(`share_uid=${this.options.share_uid}`)
+      }
+      if (this.options.shareuser) {
+        params.push(`shareuser=${this.options.shareuser}`)
+      }
+      let navurl = `/${Config.Router.product}?id=${data.id}&type=fpimport&fid=${Config.Fid}&select=product`
+      if (params.length) {
+        let pstr = params.join('&')
+        navurl = `${navurl}&${pstr}`
+      }
+      wepy.navigateTo({url: navurl})
+    },
+    setSwiper (e) {
+      this.$emit('setSwiper')
+    },
+    setShow (e) {
+      this.$emit('setShow')
+    },
+    onShareTap (e) {
+      this.$emit('onShareTap')
+    },
+    toChat (e) {
+      this.$emit('toChat')
+    },
+    wetchatContact (e) {
+      this.$emit('wetchatContact')
+    },
+    clickHelp (e) {
+      this.$emit('clickHelp')
+    },
+    clickSuggest (e) {
+      this.$emit('clickSuggest')
+    },
+    toSuggest (e) {
+      const dataset = e.currentTarget.dataset
+      const data = dataset.data
+      this.$emit('toSuggest', data)
+    },
+    formSubmit (e) {
+      const dataset = e.currentTarget.dataset
+      this.$emit('formSubmit', dataset)
+    },
+    toActivity (e) {
+      const dataset = e.currentTarget.dataset
+      this.$emit('toActivity', dataset.data)
+    },
+    clickTab (e) {
+      const dataset = e.currentTarget.dataset
+      this.$emit('clickTab', dataset)
+    }
+  }
+}
+</script>

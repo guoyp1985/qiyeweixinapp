@@ -1,0 +1,414 @@
+<style lang="less">
+.channel-list-page{
+  background-color:#f2f3f2;
+  .scroll_list{
+    .scroll_item{width: 100%;background: #fff;overflow:hidden;margin-bottom:20rpx;}
+    .inner{
+      width:100%;display: flex;justify-content: center;align-items: center;position:relative;
+      padding: 30rpx 20rpx;box-sizing: border-box;
+    }
+  }
+  .bottom-area{
+    width:100%;display:block;height:100rpx;
+  }
+  .top-tip{
+  	color:#fff;font-size:24rpx;width:100%;
+  	padding-left:20rpx;padding-right:20rpx;box-sizing: border-box;height:96rpx;
+  }
+  .btn-border{padding:10rpx 20rpx;;border-radius:30rpx;width:160rpx;box-sizing: border-box;}
+}
+</style>
+<template>
+  <view class="channel-list-page container columnarea">
+    <view class="top-tip flex_center" style="{{themeObject.linearBgStyle}}">提示: 关闭重新打开小程序频道菜单才会生效</view>
+    <view class="app-tab">
+      <view class="tab-item {{selectedIndex == 0 ? 'active' : ''}}" data-current="0" bindtap="clickTab">
+        <text style="{{selectedIndex == 0 ? themeObject.colorStyle : ''}}">频道管理</text>
+        <view class="line" style="{{selectedIndex == 0 ? themeObject.bgStyle : ''}}"></view>
+      </view>
+      <view class="tab-item {{selectedIndex == 1 ? 'active' : ''}}" data-current="1" bindtap="clickTab">
+        <text style="{{selectedIndex == 1 ? themeObject.colorStyle : ''}}">模块管理</text>
+        <view class="line" style="{{selectedIndex == 1 ? themeObject.bgStyle : ''}}"></view>
+      </view>
+    </view>
+    <swiper class="column-content" current="{{selectedIndex}}" duration="300" bindchange="switchTab">
+      <swiper-item>
+        <scroll-view class="h_100" scroll-y="true" bindscrolltolower="scrollEvent">
+          <block wx:if="{{disList1}}">
+            <view wx:if="{{!tabData1.length}}" class="empty_item">暂无数据</view>
+            <view class="scroll_list" wx:else>
+              <repeat for="{{tabData1}}" item="item" index="index">
+                <view class="scroll_item">
+                  <view class="inner">
+                    <view class="flex_cell">
+                      <view class="mb5 clamp1">{{item.title}}</view>
+                    </view>
+                    <view class="w80 flex_right">小程序菜单</view>
+                    <view class="w80 flex_right">
+                      <view :class="{'checked': item.miniprogram}" class="app-switch" style="{{item.miniprogram ? themeObject.bgStyle + themeObject.borderStyle : ''}}" data-data="{{item}}" data-index="{{index}}" bindtap="changeSwitch">
+                        <view class="ico" style="{{item.miniprogram ? themeObject.switchShadowStyle : ''}}"></view>
+                      </view>
+                    </view>
+                  </view>
+                  <view class="flex_center b_top_after pt10 pb10">
+                    <form class="b_right_after flex_cell flex_center" wx:if="{{index > 0}}" data-index="{{index}}" data-data="{{item}}" data-moderate="1" bindsubmit="moveEvent" report-submit="true">
+                      <button formType="submit" class="flex_center"><text class="al al-shengxu font16 mr5"></text>升</button>
+                    </form>
+                    <form class="b_right_after flex_cell flex_center" wx:if="{{index < tabData1.length - 1}}" data-index="{{index}}" data-data="{{item}}" data-moderate="0" bindsubmit="moveEvent" report-submit="true">
+                      <button formType="submit" class="flex_center"><text class="al al-jiangxu font16 mr5"></text>降</button>
+                    </form>
+                    <form class="flex_cell flex_center" data-url="/package/pages/addChannel?id={{item.id}}&module={{item.module}}" bindsubmit="formSubmit" report-submit="true">
+                      <button formType="submit" class="flex_center"><text class="al al-shezhi font20 mr5" style="vertical-align:middle;"></text>频道管理</button>
+                    </form>
+                    <form class="flex_cell flex_center b_left_after color-theme" style="{{themeObject.colorStyle}}" wx:if="{{item.module == '' || item.module == 'channel' || item.module == 'miniprogram'}}" data-index="{{index}}" data-data="{{item}}" bindsubmit="deleteItem" report-submit="true">
+                      <button formType="submit" class="flex_center"><text class="al al-lajitong font20 mr5" style="vertical-align:middle;"></text>删除</button>
+                    </form>
+                  </view>
+                </view>
+              </repeat>
+            </view>
+            <view class="load-end-area loading" wx:if="{{isLoading1}}"></view>
+            <view class="load-end-area done" wx:elif="{{isDone1}}"></view>
+          </block>
+        </scroll-view>
+      </swiper-item>
+      <swiper-item>
+        <scroll-view class="h_100" scroll-y="true" bindscrolltolower="scrollEvent">
+          <block wx:if="{{disList2}}">
+            <view wx:if="{{!tabData2.length}}" class="empty_item">暂无数据</view>
+            <view class="scroll_list" wx:else>
+              <repeat for="{{tabData2}}" item="item" index="index">
+                <view class="scroll_item">
+                  <view class="inner">
+                    <view class="flex_cell">
+                      <view class="clamp1">{{item.value}}({{item.module}})</view>
+                    </view>
+                    <form class="w100 flex_right" wx:if="{{!item.haveimport}}" data-data="{{item}}" data-index="{{index}}" bindsubmit="openEvent" report-submit="true">
+                      <button form-type="submit" class="btn-border bg-theme color-white flex_center" style="{{themeObject.bgStyle}}">开启</button>
+                    </form>
+                  </view>
+                  <view class="flex_center b_top_after pt10 pb10" wx:if="{{item.haveimport}}">
+                    <form class="b_right_after flex_cell flex_center" data-data="{{item}}" bindsubmit="toset" report-submit="true">
+                      <button formType="submit" class="flex_center"><text class="al al-shezhi font16 mr5"></text>设置</button>
+                    </form>
+                    <form class="flex_cell flex_center" data-data="{{item}}" bindsubmit="torecord" report-submit="true">
+                      <button formType="submit" class="flex_center"><text class="al al-orders font20 mr5" style="vertical-align:middle;"></text>记录</button>
+                    </form>
+                  </view>
+                </view>
+              </repeat>
+            </view>
+            <view class="load-end-area loading" wx:if="{{isLoading2}}"></view>
+            <view class="load-end-area done" wx:elif="{{isDone2}}"></view>
+          </block>
+        </scroll-view>
+      </swiper-item>
+    </swiper>
+    <form class="bottom-area" data-url="/package/pages/addChannel" bindsubmit="formSubmit" report-submit="true">
+      <button class="w_100 h_100 flex_center bg-theme color-white font16" style="{{themeObject.bgStyle}}" form-type="submit">增加频道</button>
+    </form>
+  </view>
+</template>
+<script>
+import wepy from 'wepy'
+import Config from '@/config'
+import Util from '@/libs/util'
+const limit = 100
+export default class Channel extends wepy.page {
+  data = {
+    options: {},
+    userInfo: {},
+    globalData: {},
+    tabData1: [],
+    disList1: false,
+    pageStart1: 0,
+    tabData2: [],
+    disList2: false,
+    pageStart2: 0,
+    module: 'channel',
+    isLoading1: false,
+    isLoading2: false,
+    isDone1: false,
+    isDone2: false,
+    isSwitching: false,
+    isMoving: false,
+    selectedIndex: 0,
+    themeObject: {}
+  }
+  getData1 (isone) {
+    let params = {pagestart: this.pageStart1, limit: limit, fid: Config.Fid}
+    if (isone) {
+      params = {pagestart: this.tabData1.length, limit: 1, fid: Config.Fid}
+    }
+    wepy.request({
+      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/codemaker/getChannelList`,
+      data: params
+    }).then(res => {
+      const data = res.data
+      const retdata = data.data ? data.data : data
+      this.tabData1 = this.tabData1.concat(retdata)
+      this.disList1 = true
+      this.isLoading1 = false
+      if (retdata.length < limit && this.tabData1.length) {
+        this.isDone1 = true
+      } else {
+        this.isDone1 = false
+      }
+      this.$apply()
+    })
+  }
+  getData2 (isone) {
+    let params = {pagestart: this.pageStart2, limit: limit, fid: Config.Fid}
+    if (isone) {
+      params = {pagestart: this.tabData2.length, limit: 1, fid: Config.Fid}
+    }
+    wepy.request({
+      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/codemaker/getCodemakerList`,
+      data: params
+    }).then(res => {
+      const data = res.data
+      const retdata = data.data ? data.data : data
+      this.tabData2 = this.tabData2.concat(retdata)
+      this.disList2 = true
+      this.isLoading2 = false
+      if (retdata.length < limit && this.tabData2.length) {
+        this.isDone2 = true
+      } else {
+        this.isDone2 = false
+      }
+      this.$apply()
+    })
+  }
+  handlePageData () {
+    this.globalData = this.$parent.globalData
+    Util.appInit(this.globalData, this)
+    this.userInfo = this.globalData.userInfo
+    this.getData1()
+    this.$apply()
+  }
+  onLoad (options) {
+    this.options = options
+    if (this.$parent.globalData.flag.bokaAuth) {
+      this.handlePageData()
+    } else {
+      this.$parent.loadCallback = () => {
+        this.handlePageData()
+      }
+    }
+    wepy.hideShareMenu()
+    this.$apply()
+  }
+  refreshPage () {
+    this.isSwitching = false
+    this.isMoving = false
+    this.isLoading1 = false
+    this.disList1 = false
+    this.tabData1 = []
+    this.pageStart1 = 0
+    this.getData1()
+    this.$apply()
+  }
+  onPullDownRefresh () {
+    wepy.showNavigationBarLoading()
+    setTimeout(function () {
+      wepy.hideNavigationBarLoading()
+      wepy.stopPullDownRefresh()
+    }, 500)
+    this.refreshPage()
+  }
+  methods = {
+    scrollEvent (e) {
+      if (this.tabData1.length === (this.pageStart1 + 1) * limit) {
+        this.pageStart1++
+        this.isLoading1 = true
+        this.getData1()
+      }
+    },
+    changeSwitch (e) {
+      const dataset = e.currentTarget.dataset
+      const data = dataset.data
+      const index = dataset.index
+      if (!this.isSwitching) {
+        let newval = data.miniprogram ? 0 : 1
+        let opentip = '确定要开启吗？'
+        let closetip = '确定要关闭吗？'
+        let con = newval ? opentip : closetip
+        wepy.showModal({
+          title: '',
+          content: con
+        }).then(res => {
+          if (res.confirm) {
+            this.isSwitching = true
+            wepy.request({
+              url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/codemaker/editChannel`,
+              data: {moderate: newval, type: 'miniprogram', id: data.id, fid: Config.Fid, fromapp: 1},
+              method: 'post'
+            }).then(res => {
+              const data = res.data
+              this.isSwitching = false
+              if (data.flag) {
+                this.tabData1[index].miniprogram = newval
+              } else {
+                wepy.showToast({
+                  title: data.error,
+                  icon: 'none',
+                  duration: Util.delay(data.error)
+                })
+              }
+              this.$apply()
+            })
+          }
+        })
+      }
+    },
+    formSubmit (e) {
+      const dataset = e.currentTarget.dataset
+      wepy.navigateTo({url: dataset.url})
+    },
+    deleteItem (e) {
+      if (!this.isMoving) {
+        const dataset = e.currentTarget.dataset
+        let curData = dataset.data
+        const index = dataset.index
+        wepy.showModal({
+          title: '',
+          content: '确定要删除吗？'
+        }).then(res => {
+          if (res.confirm) {
+            wepy.request({
+              url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/codemaker/deleteChannel`,
+              data: {id: curData.id, fid: Config.Fid},
+              method: 'post'
+            }).then(res => {
+              const data = res.data
+              this.isMoving = false
+              if (data.flag) {
+                this.tabData1.splice(index, 1)
+              } else {
+                wepy.showToast({
+                  title: data.error,
+                  icon: 'none',
+                  duration: Util.delay(data.error)
+                })
+              }
+              this.$apply()
+            })
+          }
+        })
+      }
+    },
+    moveEvent (e) {
+      const dataset = e.currentTarget.dataset
+      let curData = dataset.data
+      const index = dataset.index
+      const moderate = dataset.moderate
+      // 1: 上移  0：下移
+      if (!this.isMoving) {
+        let moveData = {}
+        let moveIndex = index
+        let iscontinue = true
+        if (moderate === '1') {
+          if (index === 0) {
+            iscontinue = false
+          } else {
+            moveIndex = index - 1
+            moveData = this.tabData1[moveIndex]
+          }
+        } else {
+          if (index === this.tabData1.length - 1) {
+            iscontinue = false
+          } else {
+            moveIndex = index + 1
+            moveData = this.tabData1[moveIndex]
+          }
+        }
+        if (!iscontinue) {
+          return false
+        }
+        this.isMoving = true
+        wepy.request({
+          url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/codemaker/editMenu`,
+          data: {moderate: moderate, type: 'miniprogram', id: curData.id, fid: Config.Fid},
+          method: 'post'
+        }).then(res => {
+          const data = res.data
+          this.isMoving = false
+          if (data.flag) {
+            this.tabData1[index] = moveData
+            this.tabData1[moveIndex] = curData
+          } else {
+            wepy.showToast({
+              title: data.error,
+              icon: 'none',
+              duration: Util.delay(data.error)
+            })
+          }
+          this.$apply()
+        })
+      }
+    },
+    clickTab (e) {
+      this.selectedIndex = e.currentTarget.dataset.current
+      this.$apply()
+    },
+    switchTab (e) {
+      this.selectedIndex = e.detail.current
+      console.log(this.selectedIndex)
+      switch (this.selectedIndex) {
+        case 0:
+          if (!this.tabData1.length) {
+            this.getData1()
+          }
+          break
+        case 1:
+          if (!this.tabData2.length) {
+            this.getData2()
+          }
+          break
+      }
+    },
+    openEvent (e) {
+      if (!this.isOpening) {
+        wepy.showModal({
+          title: '',
+          content: '确定要开启吗？'
+        }).then(res => {
+          if (res.confirm) {
+            const dataset = e.currentTarget.dataset
+            let curData = dataset.data
+            const index = dataset.index
+            this.isOpening = true
+            wepy.request({
+              url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/codemaker/copyCodemaker`,
+              data: {module: curData.module, fid: Config.Fid}
+            }).then(res => {
+              const data = res.data
+              this.isOpening = false
+              if (data.flag) {
+                this.tabData2[index].haveimport = 1
+                wepy.clearStorageSync()
+                this.$apply()
+              } else {
+                wepy.showToast({
+                  title: data.error,
+                  icon: 'none',
+                  duration: Util.delay(data.error)
+                })
+              }
+              this.$apply()
+            })
+          }
+        })
+      }
+    },
+    toset (e) {
+      const curdata = e.currentTarget.dataset.data
+      wepy.navigateTo({url: `/packageC/pages/codemaker?module=${curdata.module}&fid=${Config.Fid}}`})
+    },
+    torecord (e) {
+      const curdata = e.currentTarget.dataset.data
+      wepy.navigateTo({url: `/pages/moduleList?module=${curdata.module}&fid=${Config.Fid}}`})
+    }
+  }
+}
+</script>

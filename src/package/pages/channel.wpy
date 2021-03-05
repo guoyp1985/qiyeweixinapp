@@ -1,0 +1,286 @@
+<style lang="less">
+.channel-page.iphone{bottom:68rpx;}
+.channel-page{
+  left:0;right:0;top:0;bottom:0;position:absolute;
+  .page-inner{width:100%;height:100%;}
+  image{width:100%;}
+  .data-item{
+    padding:20rpx;box-sizing:border-box;display:block;
+    .inner{
+      border:#ccc 2rpx solid;padding:20rpx;background-color:#fff;
+    }
+    .title{padding-bottom:20rpx;font-weight: bold;color: #3c3c3c;font-size:32rpx;}
+    .txt{font-size:32rpx;color:#333;padding-top:20rpx;}
+    .pic-area{position:relative;}
+    .pic-area:after{content:"";display:block;padding-top:55%;}
+    .pic{
+      position:absolute;left:0;top:0;right:0;bottom:0;
+      image{width:100%;height:100%;object-fit:cover;}
+    }
+  }
+  .list-item{
+    padding:20rpx;box-sizing:border-box;
+    .item-inner{width:100%;padding-bottom:100%;position:relative;display:block;}
+    .inner{
+      position:absolute;left:0;top:0;right:0;bottom:0;
+      image{width:100%;height:100%;border-radius:20rpx;}
+    }
+    .txt-area{
+      position:absolute;left:0;bottom:0;right:0;
+      padding:0 20rpx;height:90rpx;font-size:30rpx;
+      box-sizing:border-box;background-color:rgba(0,0,0,0.5);color:white;
+      border-bottom-left-radius:20rpx;border-bottom-right-radius:20rpx;
+    }
+  }
+  .blank-area{width:100%;}
+  .blank-area.share{height:120rpx;}
+}
+.fixed-ico{
+  position:fixed;right:30rpx;bottom:130rpx;width:100rpx;height:100rpx;border-radius:50%;display:block;
+  .inner{position:absolute;;left:0;right:0;bottom:0;top:0;border-radius:50%;}
+}
+.fixed-ico.iphone{bottom:198rpx;}
+</style>
+<template>
+  <view :class="{'iphone' : isIpx}" class="channel-page bg-page havemenu">
+    <view class="page-inner columnarea">
+      <scroll-view class="column-content" scroll-y="true">
+        <view class="news-swiper-outer" wx:if="{{bannerData.length}}">
+          <swiper
+            class="news-swiper"
+            autoplay
+            indicator-dots="{{showDot}}"
+            indicator-color="#d0cdd1"
+            indicator-active-color="#ff9900"
+            interval="6000"
+            circular>
+            <repeat for="{{bannerData}}" index="index" item="item">
+              <swiper-item>
+                <image class="imgcover w_100 h_100" mode="aspectFill" src="{{item.photo}}" data-data="{{item}}" bindtap="clickBanner"></image>
+              </swiper-item>
+            </repeat>
+          </swiper>
+        </view>
+        <repeat for="{{viewData.content}}" index="index" item="item">
+          <block wx:if="{{item.moduleid && item.moduledata.id}}">
+            <form class="data-item" wx:if="{{item.module == 'factorynews'}}" data-url="/packageB/pages/news?id={{item.moduledata.id}}&fid={{Fid}}" bindsubmit="formSubmit" report-submit="true">
+              <button class="inner" form-type="submit">
+                <view class="title clamp1 align_left">{{item.moduledata.title}}</view>
+                <view class="pic-area">
+                  <view class="pic">
+                    <image mode="aspectFill" src="{{item.moduledata.photo}}"></image>
+                  </view>
+                </view>
+                <view class="clamp2 txt align_left">{{item.moduledata.summary}}</view>
+              </button>
+            </form>
+            <view class="list-item" wx:elif="{{item.module == 'factoryproduct' || item.module == 'fpimport'}}">
+              <form class="item-inner" data-url="/pages/product?id={{item.moduledata.id}}&fid={{Fid}}&type={{item.module}}" bindsubmit="formSubmit" report-submit="true">
+                <button class="inner" form-type="submit">
+                  <image src="{{item.moduledata.photo}}" mode="aspectFill"></image>
+                  <view class="txt-area flex_left">
+                    <view class="flex_left" style="width:70%;">
+                      <view class="w_100 clamp1">{{item.moduledata.title}}</view>
+                    </view>
+                    <view class="flex_right bold" style="width:30%;">
+                      <view class="w_100 clamp1">￥{{item.moduledata.showprice}}</view>
+                    </view>
+                  </view>
+                </button>
+              </form>
+            </view>
+          </block>
+          <view wx:elif="{{item.content && item.content != ''}}" class="padding10">
+            <text>{{item.content}}</text>
+          </view>
+          <repeat for="{{item.photoarr}}" index="index1" item="photo">
+            <view class="flex_center">
+              <image src="{{photo}}" mode="widthFix" data-url="{{photo}}" bindtap="previewImg"></image>
+            </view>
+          </repeat>
+        </repeat>
+        <view :class="{'iphone' : isIpx, 'share': ((userInfo.regwid && userInfo.bindstatus) || userInfo.fid)}" class="blank-area"></view>
+      </scroll-view>
+    </view>
+  </view>
+  <bottomMenu
+    current="channel"
+    :channel.sync="viewData"
+    :globalData.sync="globalData"
+    :isIpx.sync="isIpx"
+    :themeObject.sync="themeObject">
+  </bottomMenu>
+  <form wx:if="{{(userInfo.regwid && userInfo.bindstatus) || userInfo.fid}}" :class="{'iphone' : isIpx}" class="fixed-ico" bindsubmit="clickShare" report-submit="true">
+    <button class="inner bg-theme color-white flex_center" style="{{themeObject.bgStyle}}" form-type="submit">分享</button>
+  </form>
+  <share :themeObject.sync="themeObject" :globalData.sync="globalData" :userInfo.sync="userInfo" :wid.sync="Wid" opacity="1" module="default" :viewData.sync="viewData"></share>
+</template>
+<script>
+  import wepy from 'wepy'
+  import Config from '@/config'
+  import Util from '@/libs/util'
+  import BottomMenu from '@/components/bottomMenu'
+  import Share from '@/components/store/share'
+  export default class extends wepy.page {
+    components = {
+      bottomMenu: BottomMenu,
+      share: Share
+    }
+    data = {
+      globalData: {},
+      options: {},
+      userInfo: {},
+      viewData: {},
+      loadingComplete: false,
+      contentArr: [],
+      Fid: Config.Fid,
+      factoryInfo: {},
+      showContainer: false,
+      systemInfo: {},
+      showUser: false,
+      showRetailer: false,
+      groupsData: {waitMoney: '0.00'},
+      pageStart: 0,
+      limit: 10,
+      products: [],
+      isLoading: false,
+      disList: false,
+      loadDone: false,
+      bannerData: [],
+      showDot: false,
+      module: 'channel',
+      isIpx: false,
+      themeObject: {}
+    }
+    handlePageData () {
+      this.globalData = this.$parent.globalData
+      Util.appInit(this.globalData, this)
+      this.userInfo = this.globalData.userInfo
+      let shareParams = Util.getShareParams(this.options)
+      let params = {...shareParams, id: this.options.id}
+      if (this.options.wid) {
+        if (this.options.scene && (!this.userInfo.regwid || !this.userInfo.bindstatus)) {
+          this.globalData.Wid = this.options.wid
+          this.$parent.globalData.Wid = this.options.wid
+        }
+      }
+      if (shareParams.wid && shareParams.share_uid) {
+        wepy.request({
+          url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/common/shareClick`,
+          data: {...shareParams, module: 'menumin', moduleid: this.options.id},
+          method: 'post'
+        })
+      }
+      wepy.request({
+        url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/channel/info`,
+        data: params,
+        method: 'post'
+      }).then(res => {
+        wepy.hideLoading()
+        const data = res.data
+        const retdata = data.data ? data.data : data
+        if (retdata.module === 'miniprogram') {
+          // wepy.showModal({
+          //   title: '',
+          //   content: `确定要跳转至${retdata.miniprogramtitle}小程序？`
+          // }).then(res => {
+          //   if (res.cancel) {
+          //     wepy.showLoading()
+          //     wepy.reLaunch({url: '/pages/own'})
+          //   } else {
+          //     wepy.navigateToMiniProgram({
+          //       appId: retdata.appid,
+          //       path: retdata.miniprogramurl
+          //     })
+          //   }
+          // })
+          wepy.navigateToMiniProgram({
+            appId: retdata.appid,
+            path: retdata.miniprogramurl
+          })
+          return false
+        }
+        if (retdata.banner && retdata.banner.length) {
+          this.bannerData = retdata.banner
+          if (this.bannerData.length > 1) {
+            this.showDot = true
+          }
+        }
+        if (retdata.content && retdata.content.length) {
+          for (let i = 0; i < retdata.content.length; i++) {
+            let curphoto = retdata.content[i].photo
+            console.log(curphoto)
+            retdata.content[i].photoarr = []
+            if (curphoto && curphoto !== '') {
+              retdata.content[i].photoarr = curphoto.split(',')
+            }
+          }
+        }
+        this.viewData = retdata
+        this.$apply()
+      })
+    }
+    onLoad (options) {
+      if (options.scene) {
+        let sceneOptions = Util.queryScene(options.scene)
+        options = {...options, ...sceneOptions}
+      }
+      this.options = options
+      this.$apply()
+      wepy.getSystemInfo().then(res => {
+        this.systemInfo = res
+        if (res.model.substring(0, res.model.indexOf('X')) + 'X' === 'iPhone X') {
+          this.isIpx = true
+        }
+        this.$apply()
+      })
+      if (this.$parent.globalData.flag.bokaAuth) {
+        this.handlePageData()
+      } else {
+        this.$parent.loadCallback = () => {
+          this.handlePageData()
+        }
+      }
+    }
+    handleShare () {
+      const lastshareuid = this.options.share_uid
+      let shareurl = `/${Config.Router.channel}?id=${this.options.id}&share_uid=${this.userInfo.uid}&share_wid=${this.globalData.Wid}&wid=${this.globalData.Wid}&comefrom=${Config.AppName}`
+      if (lastshareuid) {
+        shareurl = `${shareurl}&lastshareuid=${lastshareuid}`
+      }
+      let backUrl = encodeURIComponent(shareurl)
+      shareurl = `${shareurl}&currentUrl=${backUrl}`
+      this.shareParams = {
+        title: this.factoryInfo.title,
+        path: shareurl
+      }
+    }
+    onShareAppMessage (res) {
+      this.handleShare()
+      return this.shareParams
+    }
+    onShareTimeline () {
+      this.handleShare()
+      return this.shareParams
+    }
+    methods = {
+      clickBanner (e) {
+        Util.clickBanner(e, this)
+      },
+      previewImg (e) {
+        const url = e.currentTarget.dataset.url
+        wepy.previewImage({
+          current: 0,
+          urls: [url]
+        })
+      },
+      formSubmit (e) {
+        const dataset = e.currentTarget.dataset
+        wepy.navigateTo({url: dataset.url})
+      },
+      clickShare (e) {
+        this.$invoke('share', 'showPopuModal')
+      }
+    }
+  }
+</script>

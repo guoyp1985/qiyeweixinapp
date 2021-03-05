@@ -1,0 +1,683 @@
+<style lang="less">
+  @import 'styles/weui.less';
+  @import 'assets/global.less';
+  @import 'assets/fonts.less';
+
+  page {
+    background-color: #fff;
+  }
+</style>
+<template>
+  <view></view>
+</template>
+<script>
+  import wepy from 'wepy'
+  import 'wepy-async-function'
+  import Config from '@/config'
+  import Util from '@/libs/util'
+  import Log from '@/libs/log'
+  const BokaApi = Config.BokaApi
+  const rExcludeUrls = Config.FilterUrls.map(url => RegExp(url.replace(/\*/g, '.*').replace(/\?/g, '\\?')))
+  export default class extends wepy.app {
+    config = {
+      pages: [
+        'pages/qyshop',
+        'pages/auth',
+        'pages/index',
+        'pages/home',
+        'pages/addModule',
+        'pages/addOrder',
+        'pages/class',
+        'pages/liveList',
+        'pages/mark',
+        'pages/moduleDetail',
+        'pages/moduleList',
+        'pages/own',
+        'pages/product',
+        'pages/shop',
+        'pages/shop1',
+        'pages/sos',
+        'pages/vip',
+        'pages/webview'
+      ],
+      'plugins': {
+        'live-player-plugin': {
+          'version': '1.2.8', // 注意填写该直播组件最新版本号，微信开发者工具调试时可获取最新版本号
+          'provider': 'wx2b03c6e691cd7370' // 必须填该直播组件appid，该示例值即为直播组件appid
+        }
+      },
+      subPackages: [
+        {
+          root: 'package',
+          pages: [
+            'pages/addMaterial',
+            'pages/channel',
+            'pages/channelList',
+            'pages/customerList',
+            'pages/customerView',
+            'pages/functionList',
+            'pages/materialBank'
+          ]
+        },
+        {
+          root: 'packageB',
+          pages: [
+            'pages/address',
+            'pages/income',
+            'pages/incomeList',
+            'pages/newAddress',
+            'pages/news',
+            'pages/newslist',
+            'pages/pay',
+            'pages/paySuccess',
+            'pages/store',
+            'pages/subCommission',
+            'pages/saleStat',
+            'pages/saleStatA',
+            'pages/saleStatC',
+            'pages/saleStatD',
+            'pages/roomApply',
+            'pages/myGroups',
+            'pages/groupMembers'
+          ]
+        },
+        {
+          root: 'packageC',
+          pages: [
+            'pages/addAllPaper',
+            'pages/addCard',
+            'pages/addCartOrder',
+            'pages/addExclusive',
+            'pages/addWelfare',
+            'pages/cart',
+            'pages/codemaker',
+            'pages/commonCard',
+            'pages/factoryCardList',
+            'pages/factoryInfo',
+            'pages/help',
+            'pages/newAddCard',
+            'pages/orders',
+            'pages/paperStats',
+            'pages/report',
+            'pages/tool',
+            'pages/jifenRule'
+          ]
+        },
+        {
+          root: 'packageD',
+          pages: [
+            'pages/about',
+            'pages/buyUserList',
+            'pages/cardList',
+            'pages/chat',
+            'pages/createOrder',
+            'pages/deliverInfo',
+            'pages/factoryIncome',
+            'pages/factoryIncomeList',
+            'pages/helpCenter',
+            'pages/helpDetail',
+            'pages/notice',
+            'pages/noticeList',
+            'pages/orderApplyC',
+            'pages/orderApplyD',
+            'pages/orderDetail',
+            'pages/orders',
+            'pages/retailerOrders',
+            'pages/stat',
+            'pages/taskCenter',
+            'pages/userOrders',
+            'pages/userShare',
+            'pages/userView',
+            'pages/creditList'
+          ]
+        }
+      ],
+      window: {
+        backgroundTextStyle: 'dark',
+        navigationBarBackgroundColor: '#ffffff',
+        navigationBarTextStyle: 'white',
+        onReachBottomDistance: 100
+      },
+      navigateToMiniProgramAppIdList: ['wx52f62bbdcf1ee04f', 'wx1d33c39033d3f785', 'wx018f0c4c2a1ee727', 'wx1b22fe75584085ee', 'wx09be5b81bbd45e69']
+    }
+
+    globalData = {
+      userInfo: null,
+      Wid: Config.Wid,
+      Fid: Config.Fid,
+      FactoryInfo: {},
+      sharedUrl: null,
+      sharedParams: null,
+      preloadData: null,
+      ShareWid: null,
+      MenuData: [],
+      AuthInfo: {},
+      MiniInfo: {},
+      SystemParams: {},
+      Templates: {},
+      giveCredit: false,
+      lastShareInfo: null,
+      isInLaunch: false,
+      flag: {
+        bokaAuth: false, // true后才有miniData
+        auth: false,
+        userLogged: false,
+        gid: null,
+        openGid: null,
+        share_uid: 0
+      },
+      loginData: {},
+      miniData: {
+        expired_at: null,
+        openid: null,
+        refresh_expired_at: null,
+        session_key: null,
+        token: null
+      },
+      unionId: null,
+      shareTickets: [],
+      currentUrl: null,
+      currentParam: {},
+      access: false,
+      inLaunch: false,
+      systemInfo: {},
+      platform: '',
+      barHeight: 80,
+      timeoutCount: 0,
+      navHeight: 0,
+      timLogin: false,
+      timBind: false,
+      timReady: false
+    }
+
+    constructor () {
+      super()
+      this.use('requestfix')
+      this.use('promisify')
+      this.interceptor()
+    }
+
+    async launchDataSync (options) {
+      console.log('进入到了小程序 options')
+      console.log(options)
+      this.globalData.options = options
+      this.globalData.currentUrl = decodeURIComponent(options.query.currentUrl)
+      Log.info(`当前的页面路径 : ${this.globalData.currentUrl}`)
+      await this.getData()
+    }
+
+    async getData () {
+      let user = {}
+      let resWXLogin = null
+      this.globalData.flag.bokaAuth = false
+      let beforetime3 = new Date().getTime()
+      try {
+        resWXLogin = await wepy.login()
+      } catch (e) {
+        console.log('catch到小程序登录报错', e)
+        Log.error(`wx.login错误: ${JSON.stringify(e)}`)
+        wepy.showToast({
+          title: '无网络连接',
+          icon: 'loading',
+          duration: 2000
+        })
+        clearTimeout(this.tid)
+        this.tid = setTimeout(() => {
+          wepy.showToast({
+            title: '网络异常',
+            icon: 'none',
+            duration: 2000
+          })
+        }, 2000)
+      }
+      let aftertime3 = new Date().getTime()
+      console.log('=== wepy.Login执行时间 ===', aftertime3 - beforetime3)
+      let beforetime = new Date().getTime()
+      console.log('执行minLogin前')
+      console.log(this.globalData.options)
+      if (resWXLogin) {
+        let loginParams = {appid: Config.AppId}
+        if (this.globalData.options.query.from === 'miniapp') {
+          loginParams.oldappid = this.globalData.options.query.oldappid
+          loginParams.olduid = this.globalData.options.query.olduid
+        }
+        const resToken = await wepy.request({
+          url: `${BokaApi}/${Config[Config.ApiVersion]}/visitor/miniLogin?code=${resWXLogin.code}`,
+          data: loginParams,
+          method: 'POST'
+        })
+        let aftertime = new Date().getTime()
+        console.log('=== miniopenlogin执行时间 ===', aftertime - beforetime)
+        console.log('---------------------------------')
+        console.log(resToken)
+        if (resToken) {
+          const data = resToken.data
+          if (data.code !== 0) return false
+          const retdata = data.data
+          let user = data.user
+          user.bindstatus = 1
+          this.globalData.miniData = retdata.data
+          this.globalData.loginData = data
+          this.globalData.userInfo = user
+          this.globalData.flag.bokaAuth = true
+          console.log('=== user ===')
+          console.log(user)
+          console.log(`当前用户的uid=${user.uid}`)
+          Log.info(`当前用户的uid=${user.uid}`)
+          if (user.regwid && user.bindstatus) {
+            this.globalData.Wid = user.regwid
+          } else if (user.lastbuywid && !this.globalData.options.query.share_wid) {
+            this.globalData.Wid = user.lastbuywid
+            console.log('app页面 launchData wid赋值lastbuywid', this.globalData.Wid)
+          }
+          console.log('当前用户的wid globalData.Wid')
+          console.log(this.globalData.Wid)
+          if (this.globalData.customParams) {
+            let customParams = this.globalData.customParams
+            if (customParams.wid && customParams.share_uid) {
+              wepy.request({
+                url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/common/shareClick`,
+                data: {wid: customParams.wid, share_uid: customParams.share_uid, module: 'minilive', moduleid: customParams.liveid},
+                method: 'post'
+              })
+            }
+          }
+          if (Config.AllowWxgroups) {
+            this.shareHandle(this.globalData.options)
+          }
+        } else {
+          // do token error info
+        }
+        this.getSettingInfo()
+      }
+      return user
+    }
+    getSettingInfo () {
+      this.globalData.SystemParams = {BackgroundColor: '#ff6a61', TopicColor: '#ff6a61', OnlyRetailerBuy: 0}
+      if (wepy.getStorageSync('version') !== Config.version) {
+        wepy.clearStorageSync()
+      }
+      wepy.setStorageSync('user', this.globalData.userInfo)
+      wepy.setStorageSync('miniData', this.globalData.miniData)
+      wepy.setStorageSync('token', this.globalData.miniData.token)
+      wepy.setStorageSync('version', Config.version)
+      if (this.loadCallback) {
+        this.loadCallback()
+        delete this.loadCallback
+      }
+      if (this.showCallback) {
+        this.showCallback()
+        delete this.showCallback
+      }
+      if (this.loadComponentsCallback) {
+        this.loadComponentsCallback()
+        delete this.loadComponentsCallback
+      }
+      if (this.loadComponentsCallback1) {
+        this.loadComponentsCallback1()
+        delete this.loadComponentsCallback1
+      }
+    }
+    _getSettingInfo () {
+      wepy.request({
+        url: `${BokaApi}/${Config[Config.ApiVersion]}/common/settingInfo`,
+        data: {appid: Config.AppId, fid: Config.Fid}
+      }).then(settingRes => {
+        this.globalData.flag.bokaAuth = true
+        console.log('======settingifno请求结束了======')
+        if (settingRes) {
+          const data = settingRes.data
+          if (data.code === 0) {
+            this.globalData.FactoryInfo = data.factoryinfo
+            let retSyspara = data.syspara
+            let retMenuData = data.menudata
+            if (retSyspara.OrderType === '10' || retSyspara.OrderType === 10) {
+              retMenuData = Config.MenuData
+            } else {
+              for (let i = 0; i < retMenuData.length; i++) {
+                let curd = retMenuData[i]
+                if (curd.photostate && curd.photostate !== '' && curd.photostate !== '0') {
+                  retMenuData[i].ico_arr = curd.photostate.split(',')
+                }
+                if (curd.module === 'shop') {
+                  this.globalData.OpenCart = 1
+                }
+              }
+            }
+            let betaData = []
+            if (data.betamodules) {
+              let retBetaData = data.betamodules
+              for (let i = 0; i < retBetaData.length; i++) {
+                let curBeta = retBetaData[i]
+                if (curBeta.moderate !== 0) {
+                  if (curBeta.testwids && curBeta.testwids !== '') {
+                    let testwids = curBeta.testwids.split(',')
+                    for (let j = 0; j < testwids.length; j++) {
+                      if (this.globalData.userInfo.regwid === parseInt(testwids[j])) {
+                        curBeta.allowtest = true
+                        break
+                      }
+                    }
+                  }
+                  if (curBeta.allowtest) {
+                    betaData.push(curBeta)
+                  }
+                }
+              }
+            }
+            this.globalData.BetaData = betaData
+            this.globalData.Module = retMenuData
+            this.globalData.MenuData = retMenuData
+            this.globalData.AuthInfo = data.miniinfo
+            this.globalData.MiniInfo = data.miniinfo
+            this.globalData.SystemParams = retSyspara
+            this.globalData.Templates = data.templates
+          }
+          if (wepy.getStorageSync('version') !== Config.version || wepy.getStorageSync('sysversion') !== data.syspara.Version) {
+            wepy.clearStorageSync()
+          }
+          wepy.setStorageSync('user', this.globalData.userInfo)
+          wepy.setStorageSync('miniData', this.globalData.miniData)
+          wepy.setStorageSync('token', this.globalData.miniData.token)
+          wepy.setStorageSync('version', Config.version)
+          wepy.setStorageSync('sysversion', data.syspara.Version)
+          if (this.loadCallback) {
+            this.loadCallback()
+            delete this.loadCallback
+          }
+          if (this.showCallback) {
+            this.showCallback()
+            delete this.showCallback
+          }
+          if (this.loadComponentsCallback) {
+            this.loadComponentsCallback()
+            delete this.loadComponentsCallback
+          }
+          if (this.loadComponentsCallback1) {
+            this.loadComponentsCallback1()
+            delete this.loadComponentsCallback1
+          }
+        }
+      })
+    }
+    shareHandle (options) {
+      console.log('in sharehandle')
+      console.log(options)
+      let that = this
+      // 群信息
+      if (options.shareTicket) {
+        let isContinue = true
+        if (isContinue) {
+          console.log('before wepy.getshareinfo')
+          wepy.getShareInfo({
+            shareTicket: options.shareTicket
+          }).then(res => {
+            console.log('after wepy.getshareinfo')
+            console.log(res)
+            let params = {...res, 'session_key': that.globalData.miniData.session_key}
+            if (options.query.share_uid) {
+              params.share_uid = options.query.share_uid
+              params.comefrom = options.query.comefrom
+            }
+            if (options.query.lastshareuid) {
+              params.lastshareuid = options.query.lastshareuid
+            }
+            if (options.query.share_openid) {
+              params.miniopenid = options.query.share_openid
+            }
+            if (options.query.wid) {
+              console.log(options.query)
+              params.wid = options.query.wid
+            }
+            return wepy.request({
+              url: `${BokaApi}/${Config[Config.ApiVersion]}/wxa/groupDecrypt?token=${that.globalData.miniData.token}`,
+              data: params,
+              method: 'post'
+            })
+          }).then(res => {
+            if (res) {
+              let data = res.data
+              console.log('after groupDecrypt')
+              console.log(data)
+              if (data.gid) {
+                that.globalData.flag.gid = data.gid
+                that.globalData.flag.openGid = data.openGid
+                wepy.setStorageSync('openGid', data.openGid)
+                if (that.groupCallback) {
+                  console.log('in app groupcallback')
+                  that.groupCallback()
+                  delete that.groupCallback
+                }
+              }
+            }
+          })
+        }
+      }
+    }
+    handleWid (options) {
+      if (options.query.scene) {
+        let sceneOptions = Util.queryScene(options.query.scene)
+        console.log('app 二维码参数')
+        console.log(sceneOptions)
+        if (sceneOptions.wid) {
+          this.globalData.Wid = parseInt(sceneOptions.wid)
+          this.globalData.ShareWid = parseInt(sceneOptions.wid)
+        }
+      } else if (options.query.share_wid) {
+        this.globalData.Wid = parseInt(options.query.share_wid)
+        this.globalData.ShareWid = parseInt(options.query.share_wid)
+      } else if (options.query.wid) {
+        this.globalData.Wid = parseInt(options.query.wid)
+        this.globalData.ShareWid = parseInt(options.query.wid)
+      }
+    }
+    handleLive (options, callback) {
+      const livePlayer = requirePlugin('live-player-plugin') /* eslint-disable no-undef */
+      console.log('----直播组件----')
+      console.log(livePlayer)
+      if (livePlayer) {
+        livePlayer.getShareParams().then(res => {
+          console.log('====livePlayer.getShareParams()后=====')
+          console.log(res)
+          if (res.custom_params) {
+            let customParams = res.custom_params
+            customParams.roomid = res.room_id
+            this.globalData.customParams = customParams
+            console.log('=====直播间参数=====')
+            console.log(customParams)
+            for (let key in customParams) {
+              options.query[key] = customParams[key]
+            }
+          } else {
+            this.globalData.customParams = null
+          }
+          this.handleWid(options)
+          console.log('===有直播组件的handleOptions后的wid=', this.globalData.Wid)
+          callback && callback()
+        }, res => {
+          console.log('===直播组件失败后===')
+          console.log(res)
+          this.globalData.customParams = null
+          this.handleWid(options)
+          callback && callback()
+        })
+      } else {
+        console.log('---没有直播组件====')
+        this.handleWid(options)
+        console.log('===handleOptions后的wid=', this.globalData.Wid)
+        callback && callback()
+      }
+    }
+    handleNoLive (options, callback) {
+      this.handleWid(options)
+      callback && callback()
+    }
+    async handleOptions (options, callback) {
+      // 有直播组件调用
+      this.handleLive(options, callback)
+      // 无直播组件调用
+      // this.handleNoLive(options, callback)
+    }
+
+    async onLaunch (options) {
+      console.log('进入到了app onLauch方法')
+      console.log(options)
+      this.globalData.isInLaunch = true
+      this.handleOptions(options, () => {
+        console.log('app onLaunch里的wid')
+        console.log(this.globalData.Wid)
+        this.getSystemInfo()
+        this.launchDataSync(options)
+      })
+    }
+
+    onHide () {
+      this.globalData.isInLaunch = false
+    }
+
+    async onShow (options) {
+      console.log('====进入到了app onshow=====')
+      console.log(options)
+      Log.info('====进入到了app onshow=====')
+      if (!this.globalData.isInLaunch) {
+        this.globalData.flag.bokaAuth = false
+        this.handleOptions(options, () => {
+          if (this.globalData.customParams) {
+            for (let key in this.globalData.customParams) {
+              options[key] = this.globalData.customParams[key]
+            }
+          }
+          this.globalData.options = options
+          console.log('=====进入到了app onshow 方法=====')
+          console.log(options)
+          if (options.query.reload || !this.globalData.miniData || !this.globalData.miniData.token) {
+            this.launchDataSync(options)
+          } else {
+            wepy.request({
+              url: `${BokaApi}/${Config[Config.ApiVersion]}/user/show`
+            }).then(res => {
+              if (res) {
+                let retuser = res.data
+                retuser.bindstatus = 1
+                this.globalData.userInfo = retuser
+                console.log(`当前用户的uid=${retuser.uid}`)
+                Log.info(`当前用户的uid=${retuser.uid}`)
+                wepy.setStorageSync('user', this.globalData.userInfo)
+                this.globalData.flag.bokaAuth = true
+                if (retuser.regwid && retuser.bindstatus) {
+                  this.globalData.Wid = retuser.regwid
+                } else if (retuser.lastbuywid && !options.query.share_wid) {
+                  this.globalData.Wid = retuser.lastbuywid
+                  console.log('app页面 async onShow wid赋值lastbuywid', this.globalData.Wid)
+                }
+                console.log('当前用户的wid globalData.Wid')
+                console.log(this.globalData.Wid)
+                if (this.globalData.customParams) {
+                  let customParams = this.globalData.customParams
+                  if (customParams.wid && customParams.share_uid) {
+                    wepy.request({
+                      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/common/shareClick`,
+                      data: {wid: customParams.wid, share_uid: customParams.share_uid, module: 'minilive', moduleid: customParams.liveid},
+                      method: 'post'
+                    })
+                  }
+                }
+                if (Config.AllowWxgroups) {
+                  console.log('=== 输出globaldata ===')
+                  console.log(this.globalData.options)
+                  this.shareHandle(this.globalData.options)
+                }
+                // if (this.loadCallback) {
+                //   this.loadCallback()
+                //   delete this.loadCallback
+                // }
+                // if (this.showCallback) {
+                //   this.showCallback()
+                //   delete this.showCallback
+                // }
+              }
+              this.getSettingInfo()
+            })
+          }
+        })
+      }
+    }
+
+    // 排除全局请求过滤器中的请求url
+    matchExcludeUrl (url) {
+      for (let i = 0; i < rExcludeUrls.length; i++) {
+        if (rExcludeUrls[i].test(url)) {
+          return true
+        }
+      }
+      return false
+    }
+
+    interceptor () {
+      this.intercept('request', {
+        config (req) {
+          console.log('in interceptor')
+          console.log('现在请求的地址是：' + req.url)
+          Log.info(`现在请求的地址是 : ${req.url}`)
+          console.log('this.globalData=', this.globalData)
+          if (this.globalData && this.globalData.miniData) {
+            Log.info(`现在的token是 : ${this.globalData.miniData.token}`)
+          }
+          console.log(req)
+          let header = {
+            ...req.header
+          }
+          if (req.url.indexOf(Config.BokaApi) > -1 && Config.ApiVersion === 'V2') {
+            header.Accept = Config.ApiAccept
+          }
+          let reqToken = (this.globalData && this.globalData.miniData) ? this.globalData.miniData.token : null
+          if (!reqToken) {
+            reqToken = wepy.getStorageSync('token')
+          }
+          header.Authorization = `Bearer ${reqToken}`
+          req.header = header
+          return req
+        },
+        success (res) {
+          return res
+        },
+        fail (res) {
+          console.log(res)
+          Log.error(JSON.stringify(res))
+          clearTimeout(this.tid)
+          this.tid = setTimeout(() => {
+            wepy.showToast({
+              title: '网络异常',
+              icon: 'none',
+              duration: 2000
+            })
+          }, 100)
+          return res
+        },
+        complete (res) {
+          if (res.statusCode === 500) {
+            wepy.clearStorageSync()
+          }
+          if (res.statusCode === 401 || res.statusCode === 404 || res.statusCode >= 500) {
+            wepy.redirectTo({url: `/pages/sos?code=${res.statusCode}`})
+            console.error('after interceptor')
+            console.error(res)
+          } else {
+            console.log('after interceptor')
+            console.log(res)
+            console.log('res.statusCode = ' + res.statusCode)
+          }
+        }
+      })
+    }
+
+    getSystemInfo () {
+      // 获取手机系统信息
+      const info = wepy.getSystemInfoSync()
+      console.log('===获取手机系统信息===')
+      console.log(info)
+      this.globalData.systemInfo = info
+      this.globalData.navHeight = info.statusBarHeight + 46
+    }
+  }
+</script>

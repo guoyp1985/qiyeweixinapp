@@ -1,0 +1,224 @@
+<style lang="less">
+.help-page.iphone{padding-bottom:184rpx;}
+.help-page{
+  padding-top:100rpx;padding-bottom:116rpx;
+  .app-tab{position:fixed;left:0;top:0;right:0;z-index:10;}
+  .scroll_list{
+    .empty_scroll_item{width:100%;height:300rpx;color:#999;display: flex;justify-content: center;align-items: center;}
+    .scroll_item:not(:last-child){margin-bottom: 20rpx;}
+    .scroll_item{
+      display:block;width: 100%;padding: 40rpx 20rpx;box-sizing: border-box;background-color: #fff;
+      .inner{width:100%;display: flex;justify-content: flex-start;align-items: center;position:relative;}
+      .pic{width:160rpx;}
+      .pic image{width:140rpx;height:140rpx;}
+    }
+  }
+  .empty_item image{max-width:100%;width:80%;}
+  .btn-cell{width:180rpx;padding-top:30rpx;padding-bottom:30rpx;box-sizing: border-box;}
+  .btn-cell .al{font-size:130rpx;}
+  .btn-cell .icon-chat{margin-top:8rpx;}
+  .rbtn{display:inline-block;padding:10rpx;border-radius:10rpx;background-color: #fff;}
+  .modalarea .modal{height:700rpx;}
+  .modalarea .radio-group{width:100%;padding:20rpx;box-sizing: border-box;}
+  .modalarea .radio-group .radio:not(:last-child){margin-bottom:20rpx;}
+  .fixed-icon{
+    position: absolute;z-index:10;bottom: 20rpx;right:30rpx;
+    font-size: 80rpx;width:80rpx;height:80rpx;color:#fff;border-radius:50%;
+  }
+  .tag-add{right:20rpx;}
+  .fixed-icon .inner{width:100%;height:100%;}
+  .fixed-icon .al{font-weight:bold;color:#fff;font-size:52rpx;margin-top:-4rpx;}
+  .w120{width:120px;}
+
+}
+</style>
+<template>
+  <view :class="{'iphone' : isIpx}" class="help-page">
+    <view class="app-tab">
+      <view class="tab-item {{selectedIndex == 0 ? 'active' : ''}}" data-current="0" bindtap="clickTab">
+        <text style="{{selectedIndex == 0 ? themeObject.colorStyle : ''}}">文章</text>
+        <view class="line" style="{{selectedIndex == 0 ? themeObject.bgStyle : ''}}"></view>
+      </view>
+      <view class="tab-item {{selectedIndex == 1 ? 'active' : ''}}" data-current="1" bindtap="clickTab">
+        <text style="{{selectedIndex == 1 ? themeObject.colorStyle : ''}}">客服</text>
+        <view class="line" style="{{selectedIndex == 1 ? themeObject.bgStyle : ''}}"></view>
+      </view>
+    </view>
+    <block wx:if="{{selectedIndex == 0}}">
+      <block wx:if="{{disList1}}">
+        <view wx:if="{{!tabData1.length}}" class="nodata">暂无数据</view>
+        <view wx:else >
+          <view class="scroll_list">
+            <repeat for="{{tabData1}}" item="item" index="index">
+              <form class="scroll_item" bindsubmit="toDetail" report-submit="true" data-data="{{item}}">
+                <button class="inner" form-type="submit">
+                  <view class="pic flex_left">
+                    <image mode="aspectFill" src='{{item.photo}}'></image>
+                  </view>
+                  <view class="flex_cell flex_left">
+                    <view class="w_100">
+                      <view class="clamp1 font16 bold">{{item.title}}</view>
+                      <view class="clamp2 color-gray font12 mt10" wx:if="{{item.summary && item.summary != ''}}">{{item.summary}}</view>
+                    </view>
+                  </view>
+                </button>
+              </form>
+            </repeat>
+          </view>
+        </view>
+      </block>
+    </block>
+    <block wx:if="{{selectedIndex == 1}}">
+      <scroll-view scroll-y="true" class="scroll-h">
+        <view class="pt20 pb20 flex_center">
+          <image mode="widthFix" style="width:65%;" src="{{KefuQrcode}}" @tap="previewImage"></image>
+        </view>
+        <view class="flex_center">微信扫一扫，添加您的专属客服</view>
+        <view class="flex_center mt10"><text>微信号: </text><text class="color-theme" style="{{themeObject.colorStyle}}">{{KefuWxNo}}</text></view>
+        <view class="flex_center mt10">温馨提示: 点击图片放大保存到相册微信扫一扫即可添加</view>
+      </scroll-view>
+    </block>
+  </view>
+  <bottomMenu
+    current="help"
+    :globalData.sync="globalData"
+    :isIpx.sync="isIpx"
+    :themeObject.sync="themeObject">
+  </bottomMenu>
+</template>
+
+<script>
+import wepy from 'wepy'
+import Util from '@/libs/util'
+import Time from '@/libs/time'
+import Config from '@/config'
+import BottomMenu from '@/components/bottomMenu'
+export default class extends wepy.page {
+  config = {
+    enablePullDownRefresh: true,
+    backgroundTextStyle: 'dark'
+  }
+  components = {
+    bottomMenu: BottomMenu
+  }
+  data = {
+    options: {},
+    globalData: {},
+    userInfo: null,
+    lastIndex: 0,
+    selectedIndex: 0,
+    disList1: false,
+    tabData1: [],
+    Fid: Config.Fid,
+    KefuQrcode: Config.KefuQrcode,
+    KefuWxNo: Config.KefuWxNo,
+    isIpx: false,
+    themeObject: {}
+  }
+  onPullDownRefresh () {
+    wepy.showNavigationBarLoading()
+    setTimeout(function () {
+      wepy.hideNavigationBarLoading()
+      wepy.stopPullDownRefresh()
+    }, 500)
+    this.refreshPage()
+  }
+  onReachBottom () {
+    if (this.tabData1.length === (this.pageStart1 + 1) * this.limit) {
+      this.pageStart1++
+      this.getData1()
+    }
+  }
+  getData1 = function () {
+    wepy.request({
+      url: `${Config.GxkApi}/api/list_n/knowledge`,
+      data: {noauth: 1, pagestart: this.pageStart1, limit: this.limit},
+      method: 'post'
+    }).then(res => {
+      const data = res.data
+      let retdata = data.data ? data.data : data
+      for (let i = 0; i < retdata.length; i++) {
+        retdata[i].dateline_str = new Time(retdata[i].dateline * 1000).dateFormat('yyyy-MM-dd hh:mm')
+      }
+      this.tabData1 = this.tabData1.concat(retdata)
+      this.disList1 = true
+      wepy.stopPullDownRefresh()
+      this.$apply()
+    })
+  }
+  refreshPage () {
+    this.selectedIndex = 0
+    this.disList1 = false
+    this.tabData1 = []
+    this.pageStart1 = 0
+    this.$apply()
+    this.handlePageData()
+  }
+  switchData () {
+    switch (this.selectedIndex) {
+      case 0:
+        if (!this.tabData1.length) {
+          this.pageStart1 = 0
+          this.getData1()
+        }
+        break
+      case 1:
+        break
+    }
+  }
+  handlePageData () {
+    this.globalData = this.$parent.globalData
+    Util.appInit(this.globalData, this)
+    this.userInfo = this.globalData.userInfo
+    if (this.lastIndex === this.selectedIndex) {
+      this.switchData()
+    }
+    this.$apply()
+  }
+  onLoad (options) {
+    this.options = options
+    this.pageStart1 = 0
+    this.limit = Config.Limit
+    wepy.hideShareMenu()
+    wepy.getSystemInfo().then(res => {
+      this.systemInfo = res
+      if (res.model.substring(0, res.model.indexOf('X')) + 'X' === 'iPhone X') {
+        this.isIpx = true
+      }
+      this.$apply()
+    })
+    this.$apply()
+  }
+  onShow = function (options) {
+    this.pageStart1 = 0
+    if (this.$parent.globalData.flag.bokaAuth) {
+      this.handlePageData()
+    } else {
+      this.$parent.loadCallback = () => {
+        this.handlePageData()
+      }
+    }
+  }
+  methods = {
+    previewImage () {
+      wepy.previewImage({
+        current: this.KefuQrcode,
+        urls: [this.KefuQrcode]
+      })
+    },
+    toDetail (e) {
+      const item = e.currentTarget.dataset.data
+      const url = encodeURIComponent(`train?id=${item.id}`)
+      wepy.navigateTo({url: `/pages/webview?url=${url}&module=knowledge&id=${item.id}`})
+    },
+    clickTab (e) {
+      this.selectedIndex = e.currentTarget.dataset.current
+    },
+    switchTab (e) {
+      this.selectedIndex = e.detail.current
+      this.lastIndex = this.selectedIndex
+      this.switchData()
+    }
+  }
+}
+</script>

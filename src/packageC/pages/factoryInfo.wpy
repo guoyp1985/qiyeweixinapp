@@ -1,0 +1,151 @@
+<style lang="less">
+.mark-page.iphone{bottom:68rpx;}
+.mark-page{
+  image{width:100%;}
+  .bottom-area{
+    width:100%;height:120rpx;display:block;position:absolute;left:0;bottom:136rpx;right:0;background-color:transparent;
+    .btn{width:80%;height:80rpx;border-radius:40rpx;}
+  }
+  .blank-area{width:100%;height:140rpx;}
+  .blank-area.iphone{height:208rpx;}
+}
+</style>
+<template>
+  <view class="mark-page">
+    <view wx:if="{{showContainer}}">
+      <block wx:if="{{factoryInfo.contentArr}}">
+        <view wx:if="{{!factoryInfo.contentArr.length}}" class="flex_empty">
+          <view class="align_center">品牌介绍，正在路上</view>
+        </view>
+        <block wx:else>
+          <repeat for="{{factoryInfo.contentArr}}" index="i" item="item">
+            <view class="padding10" wx:if="{{item.content && item.content != ''}}">
+              <text>{{item.content}}</text>
+            </view>
+            <repeat for="{{item.photoarr}}" index="j" item="photo">
+              <view class="flex_center">
+                <image src="{{photo}}" mode="widthFix" @tap="previewConver({{item.photoarr}},{{j}})"></image>
+              </view>
+            </repeat>
+          </repeat>
+        </block>
+      </block>
+      <view :class="{'iphone' : isIpx}" class="blank-area"></view>
+    </view>
+  </view>
+  <bottomMenu
+    current="factoryInfo"
+    :globalData.sync="globalData"
+    :isIpx.sync="isIpx"
+    :themeObject.sync="themeObject">
+  </bottomMenu>
+</template>
+<script>
+  import wepy from 'wepy'
+  import Config from '@/config'
+  import Util from '@/libs/util'
+  import Cached from '@/libs/cached'
+  import User from '@/components/user'
+  import BottomMenu from '@/components/bottomMenu'
+  export default class Mark extends wepy.page {
+    components = {
+      user: User,
+      bottomMenu: BottomMenu
+    }
+    data = {
+      options: {},
+      globalData: {},
+      userInfo: {},
+      contentArr: [],
+      factoryInfo: {},
+      showContainer: false,
+      systemInfo: {},
+      isIpx: false,
+      themeObject: {}
+    }
+    afterFactoryInfo () {
+      if (this.factoryInfo.content && this.factoryInfo.content !== '') {
+        this.contentArr = JSON.parse(this.factoryInfo.content)
+        this.factoryInfo.contentArr = JSON.parse(this.factoryInfo.content)
+      } else {
+        this.factoryInfo.contentArr = []
+      }
+      this.showContainer = true
+      this.$apply()
+    }
+    handlePageData () {
+      this.globalData = this.$parent.globalData
+      Util.appInit(this.globalData, this)
+      this.userInfo = this.globalData.userInfo
+      Cached.request({
+        url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/factory/info`,
+        data: {fid: Config.Fid}
+      }, 'home.factoryInfo', Config.URT.H,
+      cacheData => {
+        this.factoryInfo = cacheData
+        this.afterFactoryInfo()
+      },
+      res => {
+        const data = res.data
+        if (data.flag) {
+          this.factoryInfo = data.data
+          this.afterFactoryInfo()
+        }
+        this.$apply()
+        return this.factoryInfo
+      })
+    }
+    onLoad (options) {
+      if (options.scene) {
+        let sceneOptions = Util.queryScene(options.scene)
+        options = {...options, ...sceneOptions}
+      }
+      this.options = options
+      this.$apply()
+      wepy.getSystemInfo().then(res => {
+        this.systemInfo = res
+        if (res.model.substring(0, res.model.indexOf('X')) + 'X' === 'iPhone X') {
+          this.isIpx = true
+        }
+        this.$apply()
+      })
+      if (this.$parent.globalData.flag.bokaAuth) {
+        this.handlePageData()
+      } else {
+        this.$parent.loadCallback = () => {
+          this.handlePageData()
+        }
+      }
+    }
+    handleShare () {
+      const lastshareuid = this.options.share_uid
+      let shareurl = `/packageC/pages/factoryInfo?fid=${Config.Fid}&share_uid=${this.userInfo.uid}&share_wid=${this.globalData.Wid}&wid=${this.globalData.Wid}&comefrom=${Config.AppName}`
+      if (lastshareuid) {
+        shareurl = `${shareurl}&lastshareuid=${lastshareuid}`
+      }
+      let backUrl = encodeURIComponent(shareurl)
+      shareurl = `${shareurl}&currentUrl=${backUrl}`
+      this.shareParams = {
+        title: this.factoryInfo.title,
+        imageUrl: 'https://tossharingsales.boka.cn/minigxk/factory/share.png',
+        path: shareurl
+      }
+    }
+    onShareAppMessage (res) {
+      this.handleShare()
+      return this.shareParams
+    }
+    onShareTimeline () {
+      this.handleShare()
+      return this.shareParams
+    }
+    methods = {
+      previewConver (photos, index) {
+        wepy.previewImage({
+          current: photos[index],
+          urls: photos
+        })
+      }
+    }
+  }
+</script>

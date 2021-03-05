@@ -1,0 +1,122 @@
+<style lang="less">
+.income-item-page{
+  .scroll_item:after{display:none;}
+  .scroll_item:not(:last-child){margin-bottom:10px;}
+  .scroll_item{
+    .pic{width:80rpx;}
+    image{width:70rpx;height:70rpx;border-radius:50%;}
+    .date-cell{width:220rpx;}
+    .bg-item{background-color:rgba(245,249,250,0.7);}
+  }
+  .border_bottomAndTop{
+    border-top: 1px solid #eaeaea;
+    border-bottom: 1px solid #eaeaea;
+  }
+}
+</style>
+<template>
+  <view class="scroll_list income-item-page">
+    <repeat for="{{listData}}" item="item" index="index">
+      <view id="{{item.viewId}}" class="scroll_item bg-white mt10 list-shadow">
+        <view class="flex_left padding10">
+          <view class="flex_left pic">
+            <image src="{{item.avatar}}"></image>
+          </view>
+          <view class="flex_cell flex_left">
+            <view class="w_100 clamp1">{{item.buyername}}</view>
+          </view>
+          <view class="flex_right date-cell">
+            <view class="w_100 clamp1 font12 color-gray align_right">{{item.dateline_str}}</view>
+          </view>
+        </view>
+        <view class="padding10 font12 border_bottomAndTop">
+          <view class="db-flex mb5">
+            <view class="flex_left color-gray">佣金类型 </view>
+            <view class="flex_cell align_right color-orange">{{item.content}}</view>
+          </view>
+          <view class="db-flex mb5">
+            <view class="flex_left color-gray">金额 </view>
+            <view class="flex_cell align_right color-orange">{{item.special}}</view>
+          </view>
+          <block wx:if="{{item.incomedetail.xiaoshou}}" >
+            <view class="db-flex mb5">
+              <view class="flex_left color-gray">销售佣金 </view>
+              <view class="flex_cell align_right color-orange">-￥{{item.incomedetail.xiaoshou.money}}【{{item.incomedetail.xiaoshou.linkman}}】</view>
+            </view>
+          </block>
+          <block wx:if="{{item.incomedetail.tuijian}}" >
+            <view class="db-flex mb5">
+              <view class="flex_left color-gray">推荐人佣金 </view>
+              <view class="flex_cell align_right color-orange">-￥{{item.incomedetail.tuijian.money}}【{{item.incomedetail.tuijian.linkman}}】</view>
+            </view>
+          </block>
+          <block wx:if="{{item.carddeduct && item.carddeduct != '0.00'}}">
+            <view class="db-flex mb5">
+              <view class="flex_left color-gray">优惠券抵扣 </view>
+              <view class="flex_cell align_right color-orange">-￥{{ item.carddeduct }}</view>
+            </view>
+          </block>
+          <block wx:if="{{from === 'factory'}}">
+            <view class="db-flex mb5">
+              <view class="flex_left color-gray">手续费 </view>
+              <view class="flex_cell align_right color-orange">-￥{{ item.commission }}</view>
+            </view>
+          </block>
+          <view class="db-flex mb5">
+            <view class="flex_left color-gray">卖家信息</view>
+            <view class="flex_cell align_right">{{item.sellername}}</view>
+          </view>
+          <view class="db-flex mb5">
+            <view class="flex_left color-gray">商品信息</view>
+            <view class="flex_cell align_right">{{item.products}}</view>
+          </view>
+          <view class="db-flex mb5" wx:if="{{item.options && item.options != ''}}">
+            <view class="flex_left color-gray">商品规格</view>
+            <view class="flex_cell align_right">{{item.options}}</view>
+          </view>
+          <view class="db-flex">
+            <view class="flex_left color-gray">订单编号</view>
+            <view class="flex_cell align_right" @tap="onCopy({{item.orderno}})">{{item.orderno}} <text class="color-theme" style="{{themeObject.colorStyle}}" @catchtap="onCopy({{item.orderno}})">复制</text></view>
+          </view>
+        </view>
+        <view class="padding10 db-flex">
+          <view wx:if="{{item.lefttime == -100}}" class="font12 flex_left color-gray">售后中，售后结束后到账</view>
+          <view wx:elif="{{item.lefttime > 0}}" class="font12 flex_left color-gray">约<text class="color-theme" style="{{themeObject.colorStyle}}">日</text>后到账</view>
+          <view class="color-theme flex_cell align_right bold" style="{{themeObject.colorStyle}}">￥{{item.money}}</view>
+        </view>
+      </view>
+    </repeat>
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy'
+export default class CustomerItem extends wepy.component {
+  props = {
+    listData: {
+      type: Array,
+      default: []
+    },
+    from: {
+      type: String,
+      default: ''
+    },
+    themeObject: {
+      type: Object,
+      default: {}
+    }
+  }
+  data = {
+  }
+  onLoad () {
+  }
+  methods = {
+    onCopy (orderno) {
+      console.log(orderno)
+      wepy.setClipboardData({
+        data: orderno
+      })
+    }
+  }
+}
+</script>

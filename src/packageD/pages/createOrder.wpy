@@ -1,0 +1,781 @@
+<style lang="less">
+.order-detail-page{
+  padding-bottom:160rpx;
+  .btn-chat{width:160rpx;padding:10rpx 20rpx;border-radius:60rpx;font-size:24rpx;box-sizing:border-box;}
+  .product-pic{width:120rpx;height:120rpx;border:#f7f7f7 2rpx solid;}
+  .date-cell{width:350rpx;}
+  .btn-list{
+    .btn-item:not(:last-child){margin-right:20rpx;}
+    .btn-item{
+      font-size:24rpx;background-color:#f8f8f8;border:#d8d8d8 2rpx solid;border-radius:10rpx;
+      height:64rpx;padding:0 20rpx;box-sizing: border-box;
+      display:flex;justify-content:center;align-items:center;
+    }
+  }
+  .line-area:after {
+    content: "";display: block;position: absolute;left: 50%;top: 50%;
+    width: 320rpx;height: 2rpx;margin-left: -160rpx;background-color: #000;
+  }
+  .line-area {
+    position: relative;width: 100%;height: 100rpx;text-align: center;
+    .txt {margin: 0 auto;width:180rpx;height:100rpx;position: relative;z-index: 1;font-size:32rpx;background-color:#f5f9fa;}
+  }
+  .pic-list{
+    display:flex;justify-content: flex-start;align-items: center;flex-wrap: wrap;
+    .pic-item:not(:last-child){margin-right:20rpx;}
+    .pic-item{
+      width:220rpx;height:200rpx;margin-bottom:20rpx;
+      image{width:200rpx;height:200rpx;}
+    }
+  }
+}
+.fixed-help{
+  position:fixed;right:30rpx;bottom:40rpx;border-radius:50%;z-index:10;
+  width:100rpx;height:100rpx;line-height:100rpx;text-align:center;
+}
+.txt-wrap{
+  word-break:break-all;
+  word-wrap:break-word;
+}
+.order-canvas{
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background-color: #222;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  canvas{
+    width: 300px;
+    height: 500px;
+    margin: 0 auto;
+  }
+  .btn{
+    width: 100vw;
+    margin-top: 30rpx;
+    text-align: center;
+    button{
+      display: inline-block;
+      height: 80rpx;
+      line-height: 80rpx;
+      border-radius: 10rpx !important;
+      padding: 0 60rpx !important;
+    }
+    .save{
+      margin-left: 20rpx;
+    }
+  }
+}
+.create-order-page{
+  padding-bottom:120rpx;
+}
+.create-bottom{
+  position:fixed;left:0;right:0;bottom:0;height:100rpx;z-index:10;
+  display:flex;justify-content: center;align-items: center;
+  font-size:32rpx;
+}
+.product-modal.active{top:0;}
+.product-modal{
+  position:fixed;left:0;right:0;bottom:0;top:100%;z-index:20;
+  background-color:#fff;
+  .list-area{
+    padding-bottom:120rpx;box-sizing: border-box;
+    .list-item:not(:last-child){border-bottom:#ccc 2rpx solid;}
+    .list-item{padding:20rpx;box-sizing: border-box;}
+    .pic-cell{
+      width:100rpx;
+      .pic{width:80rpx;}
+      image{width:80rpx;height:80rpx;}
+    }
+  }
+  .modal-bottom{
+    position:fixed;left:0;right:0;bottom:0;height:100rpx;z-index:10;
+    display:flex;justify-content: center;align-items: center;
+    font-size:32rpx;
+    .btn{height:100%;}
+  }
+}
+</style>
+<template>
+  <view class="create-order-page">
+    <view class="app-form-list">
+      <!-- <view class="form-item">
+        <view class="title-cell">下单编号</view>
+        <view class="input-cell">
+          <input class="input" placeholder-class="input-placeholder" value="{{orderno}}" placeholder="下单编号"></input>
+        </view>
+      </view> -->
+      <view class="form-item">
+        <view class="title-cell">下单时间</view>
+        <view class="input-cell">
+          <input class="input" placeholder-class="input-placeholder" data-name="orderdate" bindinput="inputChange" value="{{orderdate}}" placeholder="下单时间"></input>
+        </view>
+      </view>
+      <view class="form-item">
+        <view class="title-cell">收货人</view>
+        <view class="input-cell">
+          <input class="input" placeholder-class="input-placeholder" data-name="linkman" bindinput="inputChange" value="{{linkman}}" placeholder="收货人"></input>
+        </view>
+      </view>
+      <view class="form-item">
+        <view class="title-cell">手机号</view>
+        <view class="input-cell">
+          <input class="input" placeholder-class="input-placeholder" data-name="mobile" bindinput="inputChange" value="{{mobile}}" type="number" placeholder="手机号"></input>
+        </view>
+      </view>
+      <view class="form-item">
+        <view class="title-cell">地址</view>
+        <view class="input-cell" @tap="clickAddress">
+          <text wx:if="{{!!addressValue}}">{{addressValue}}</text>
+          <text wx:else class="input-placeholder">请选择地址</text>
+        </view>
+      </view>
+      <view class="form-item flex_center bg-gray" @tap="toProduct">选择商品</view>
+      <view class="form-item">
+        <view class="title-cell">商品图片</view>
+        <view class="input-cell">
+          <view class="app-photo-list align_left bg-white">
+            <block wx:if="{{photo && photo != ''}}">
+              <view class="photoitem">
+                <view class="inner photo imgcover">
+                  <image mode="aspectFill" src="{{photo}}" class="pic" @tap="uploadPhoto" />
+                  <view class="close" @tap="deletePhoto">×</view>
+                </view>
+              </view>
+            </block>
+            <view wx:else class="photoitem add" @tap="uploadPhoto">
+              <view class="inner">
+                <view class="innerlist">
+                  <view class="flex_center h_100">
+                    <view>
+                      <text class="al al-zhaopian"></text>
+                    </view>
+                  </view>
+                </view>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+      <!-- <view class="form-item">
+        <view class="title-cell">商品名称</view>
+        <view class="input-cell">
+          <input class="input" placeholder-class="input-placeholder" value="{{title}}" placeholder="商品名称"></input>
+        </view>
+      </view>
+      <view class="form-item">
+        <view class="title-cell">商品单价</view>
+        <view class="input-cell">
+          <input class="input" placeholder-class="input-placeholder" value="{{price}}" placeholder="商品单价"></input>
+        </view>
+      </view>
+      <view class="form-item">
+        <view class="title-cell">商品规格</view>
+        <view class="input-cell">
+          <input class="input" placeholder-class="input-placeholder" value="{{optiontitle}}" placeholder="商品规格"></input>
+        </view>
+      </view> -->
+      <view class="form-item">
+        <view class="title-cell">下单数量</view>
+        <view class="input-cell">
+          <input class="input" placeholder-class="input-placeholder" data-name="quantity" bindinput="inputChange" value="{{quantity}}" type="tel" placeholder="下单数量"></input>
+        </view>
+      </view>
+      <!-- <view class="form-item">
+        <view class="title-cell">商品总额</view>
+        <view class="input-cell">
+          <input class="input" placeholder-class="input-placeholder" value="{{total}}" placeholder="商品总额"></input>
+        </view>
+      </view> -->
+      <view class="form-item">
+        <view class="title-cell">邮费</view>
+        <view class="input-cell">
+          <input class="input" placeholder-class="input-placeholder" data-name="postage" bindinput="inputChange" value="{{postage}}" placeholder="邮费"></input>
+        </view>
+      </view>
+      <!-- <view class="form-item">
+        <view class="title-cell">合计</view>
+        <view class="input-cell">
+          <input class="input" placeholder-class="input-placeholder" value="{{totalPrice}}" placeholder="合计"></input>
+        </view>
+      </view> -->
+    </view>
+  </view>
+  <view class="create-bottom" style="{{themeObject.bgStyle}}" @tap="createImg">下单回执</view>
+  <block wx:if="{{showCanvas}}">
+    <view class="order-canvas" style="top:0px;" catchtouchmove="onTouchmove">
+      <canvas canvas-id="myOrderCanvas" style="width:{{myCanvasWidth}}px;height:{{myCanvasHeight}}px"></canvas>
+      <view class="btn">
+        <form  report-submit='true' bindsubmit="cancelCanvas">
+          <button class="cancel bg-white" form-type="submit">取消</button>
+        </form>
+        <form  report-submit='true' bindsubmit="saveImgEvent">
+          <button class="save" style="{{themeObject.bgStyle}}" form-type="submit" wx:if="{{saveBtnShow}}" >保存到相册</button>
+        </form>
+      </view>
+    </view>
+  </block>
+  <block wx:if="{{showProductModal}}">
+    <view :class="{'active': showProductModal}" class="product-modal">
+      <scroll-view scroll-y="1" class="list-area" bindscrolltolower="scrollEvent">
+        <repeat for="{{listData}}" item="item" index="index">
+          <view class="list-item flex_left" @tap="clickItem({{item}},{{index}})">
+            <view class="ico-cell flex_left">
+              <view class="app-radio" wx:if="{{item.checked}}" style="{{themeObject.borderStyle}}">
+                <view class="checked-ico" style="{{themeObject.bgStyle}}"></view>
+              </view>
+              <view class="app-radio" wx:else></view>
+            </view>
+            <view class="pic-cell flex_center">
+              <view class="pic">
+                <image mode="aspectFill" src="{{item.photo}}"></image>
+              </view>
+            </view>
+            <view class="flex_cell">
+              <view class="clamp1">{{item.title}}</view>
+            </view>
+          </view>
+        </repeat>
+      </scroll-view>
+      <view class="modal-bottom flex_cell">
+        <view class="flex_cell flex_center btn bg-gray color-white" @tap="cancelProduct">取消</view>
+        <view class="flex_cell flex_center btn color-white" style="{{themeObject.bgStyle}}" @tap="submitProduct">确定</view>
+      </view>
+    </view>
+  </block>
+  <popup-picker :show.sync="showAddress" :columns="columns" :value.sync="area" @on-cancel.user="onCancel" @on-confirm.user="onConfirm"></popup-picker>
+</template>
+<script>
+import wepy from 'wepy'
+import Config from '@/config'
+import Util from '@/libs/util'
+import Time from '@/libs/time'
+import PopupPicker from '@/components/popup-picker'
+export default class extends wepy.page {
+  components = {
+    'popup-picker': PopupPicker
+  }
+  data = {
+    options: {},
+    userInfo: {},
+    orderno: 'GXK2007010004803391',
+    orderdate: '',
+    photo: '',
+    linkman: '',
+    mobile: '',
+    address: '',
+    title: '',
+    price: '',
+    optiontitle: '',
+    quantity: 1,
+    total: '',
+    postage: '',
+    totalPrice: '',
+    showProductModal: false,
+    themeObject: {},
+    showCanvas: false,
+    myCanvasWidth: 0,
+    myCanvasHeight: 0,
+    saveBtnShow: false,
+    listData: [],
+    clickProduct: null,
+    addressValue: null,
+    showAddress: false,
+    columns: 3,
+    area: []
+  }
+  computed = {
+    addressValue () {
+      return this.area.join(' ')
+    }
+  }
+  onLoad (options) {
+    this.options = options
+    this.pageStart = 0
+    this.limit = Config.Limit
+    this.userInfo = {}
+    this.globalData = {}
+    let nowDate = new Date().getTime()
+    this.orderdate = new Time(nowDate).dateFormat('yyyy-MM-dd hh:mm')
+    this.$apply()
+  }
+  onShow () {
+    if (this.$parent.globalData.flag.bokaAuth) {
+      this.handlePageData()
+    } else {
+      this.$parent.loadCallback = () => {
+        this.handlePageData()
+      }
+    }
+  }
+  handlePageData () {
+    this.globalData = this.$parent.globalData
+    this.MiniInfo = this.globalData.MiniInfo
+    Util.appInit(this.globalData, this)
+    this.userInfo = this.globalData.userInfo
+  }
+  getList () {
+    wepy.request({
+      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/factory/factoryproductList`,
+      data: {fid: Config.Fid, pagestart: this.pageStart, limit: this.limit},
+      method: 'post'
+    }).then(res => {
+      const data = res.data
+      if (data.flag) {
+        const retdata = data.data
+        this.listData = this.listData.concat(retdata)
+        this.$apply()
+      }
+    })
+  }
+  methods = {
+    inputChange (e) {
+      const dataset = e.currentTarget.dataset
+      this[dataset.name] = e.detail.value
+    },
+    clickAddress () {
+      this.showAddress = true
+    },
+    onConfirm (val) {
+      this.area = val
+    },
+    onCancel () {
+      this.$broadcast('cancel-broadcast', this.area)
+    },
+    toProduct () {
+      this.showProductModal = true
+      if (!this.listData.length) {
+        this.getList()
+      }
+    },
+    scrollEvent () {
+      if (this.listData.length === (this.pageStart + 1) * this.limit) {
+        this.pageStart++
+        this.getList()
+      }
+    },
+    clickItem (item, index) {
+      this.listData[index].checked = true
+      this.clickProduct = item
+      for (let i = 0; i < this.listData.length; i++) {
+        if (i !== index && this.listData[i].checked) {
+          this.listData[i].checked = false
+          break
+        }
+      }
+    },
+    cancelProduct () {
+      this.showProductModal = false
+    },
+    submitProduct () {
+      if (!this.clickProduct) {
+        wepy.showToast({
+          title: '请选择商品',
+          icon: 'none'
+        })
+        return false
+      }
+      this.title = this.clickProduct.title
+      this.photo = this.clickProduct.photo
+      this.price = this.clickProduct.minprice
+      if (this.clickProduct.options && this.clickProduct.options.length) {
+        let randomIndex = Math.floor(Math.random() * this.clickProduct.options.length)
+        if (randomIndex >= this.clickProduct.options.length) randomIndex = this.clickProduct.options.length - 1
+        let randomOption = this.clickProduct.options[randomIndex]
+        this.price = randomOption.price
+        this.optiontitle = randomOption.title
+        if (randomOption.photo && randomOption.photo !== '') {
+          this.photo = randomOption.photo
+        }
+      }
+      this.postage = this.clickProduct.postage
+      this.showProductModal = false
+      this.total = (parseFloat(this.price.replace(/,/, '')) * parseInt(this.quantity)).toFixed(2)
+      this.totalPrice = (parseFloat(this.price.replace(/,/, '')) * parseInt(this.quantity) + parseFloat(this.postage)).toFixed(2)
+      this.$apply()
+    },
+    uploadPhoto (e) {
+      wepy.chooseImage({
+        count: 1, // 默认9
+        sizeType: ['original', 'compressed'], // 可以指定是原图还是压缩图，默认二者都有
+        sourceType: ['album', 'camera'] // 可以指定来源是相册还是相机，默认二者都有
+      }).then(res => {
+        if (res.tempFiles) {
+          Util.taskData({
+            data: res.tempFiles,
+            handleFunction: (d) => {
+              return (done) => {
+                wepy.showLoading()
+                wepy.uploadFile({
+                  url: `${Config.GxkApi}/api/upload/photo`,
+                  method: 'POST',
+                  name: 'photo',
+                  filePath: d.path
+                }).then(res => {
+                  wepy.hideLoading()
+                  const resdata = JSON.parse(res.data)
+                  if (!resdata.flag) {
+                    wepy.showToast({
+                      title: resdata.error,
+                      icon: 'none',
+                      duration: Util.delay(resdata.error)
+                    })
+                  } else {
+                    let jsonData = JSON.parse(res.data)
+                    this.photo = jsonData.data
+                    this.$apply()
+                  }
+                  done()
+                })
+              }
+            }
+          })
+        }
+      })
+    },
+    deletePhoto (index) {
+      this.photo = ''
+      this.$apply()
+    },
+    viewBigImg (e) {
+      wepy.previewImage({
+        current: this.photo,
+        urls: [this.photo]
+      })
+    },
+    createImg () {
+      // 870 * 1300
+      if (!this.orderdate || this.orderdate === '') {
+        let nowDate = new Date().getTime()
+        this.orderdate = new Time(nowDate).dateFormat('yyyy-MM-dd hh:mm')
+      }
+      let oDate = new Date(this.orderdate.replace(/-/g, '/'))
+      let year = oDate.getFullYear().toString().substr(2)
+      let month = oDate.getMonth() + 1
+      let day = oDate.getDate()
+      if (month < 10) month = '0' + month
+      if (day < 10) day = '0' + day
+      let num = parseInt((Math.random() * 9 + 1) * Math.pow(10, 9), 10)
+      this.orderno = 'GXK' + year + month + day + num
+      let cw = this.globalData.systemInfo.windowWidth * 0.8
+      let ch = cw * 1.494
+      let defaultH = this.globalData.systemInfo.windowHeight * 0.6
+      if (defaultH > 600) defaultH = 600
+      if (ch > defaultH) {
+        ch = defaultH
+        cw = defaultH * 0.6692
+      }
+      cw = cw.toFixed(2)
+      ch = ch.toFixed(2)
+      this.myCanvasWidth = parseInt(cw)
+      this.myCanvasHeight = parseInt(ch)
+      this.showCanvas = true
+      this.$apply()
+      let bgPhoto = 'https://tossharingsales.boka.cn/minigxk/huizhiBg.png'
+      let yzPhoto = 'https://tossharingsales.boka.cn/minigxk/xiadanyinzhang.png'
+      let appLogo = this.MiniInfo.logo.replace(/http:/g, 'https:')
+      let productPhoto = this.photo.replace(/http:/g, 'https:')
+      let miniQrcode = ''
+      wepy.showLoading({
+        title: '生成二维码'
+      }).then(res => {
+        return wepy.downloadFile({
+          url: appLogo
+        })
+      }).then(res => {
+        if (!res.tempFilePath) {
+          return new Promise()
+        }
+        appLogo = res.tempFilePath
+        return wepy.downloadFile({
+          url: bgPhoto
+        })
+      }).then(res => {
+        if (!res.tempFilePath) {
+          return new Promise()
+        }
+        bgPhoto = res.tempFilePath
+        return wepy.downloadFile({
+          url: yzPhoto
+        })
+      }).then(res => {
+        if (!res.tempFilePath) {
+          return new Promise()
+        }
+        yzPhoto = res.tempFilePath
+        return wepy.downloadFile({
+          url: productPhoto
+        })
+      }).then(res => {
+        if (!res.tempFilePath) {
+          return new Promise()
+        }
+        productPhoto = res.tempFilePath
+        return wepy.request({
+          url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/wxa/createPoster`,
+          method: 'POST',
+          data: {
+            appid: Config.AppId,
+            sourceurl: `/${Config.Router.product}?id=${this.clickProduct.id}&type=fpimport&fid=${Config.Fid}&share_uid=${this.userInfo.uid}&wid=${this.globalData.Wid}`,
+            page: 'pages/index'
+          }
+        })
+      }).then(res => {
+        if (res.data.flag === 1) {
+          let retdata = res.data.data
+          retdata = retdata.replace(/http:/g, 'https:')
+          return wepy.downloadFile({
+            url: retdata
+          })
+        }
+      }).then(res => {
+        if (!res.tempFilePath) {
+          return new Promise()
+        }
+        miniQrcode = res.tempFilePath
+        const context = wepy.createCanvasContext('myOrderCanvas')
+        context.save()
+        const _canvasWidth = parseFloat(this.myCanvasWidth)
+        const _canvasHeight = parseFloat(this.myCanvasHeight)
+        // 画背景图
+        context.setFillStyle(this.themeObject.themeColor)
+        context.fillRect(0, 0, _canvasWidth, _canvasHeight)
+        // 头部透明背景870*501
+        context.drawImage(bgPhoto, 0, 0, _canvasWidth, _canvasWidth * 0.5758)
+        // 870*250
+        context.setFillStyle('#ffffff')
+        let topH = _canvasWidth * 0.287
+        context.fillRect(0, topH, _canvasWidth, _canvasHeight - topH)
+
+        let txtLeft = _canvasWidth * 0.0459
+        let topTxtW = _canvasWidth * 0.617
+        context.setFillStyle('#ffffff')
+        context.setTextAlign('left')
+        let size40 = _canvasWidth * 0.0459
+        let size30 = _canvasWidth * 0.0344
+        let size38 = _canvasWidth * 0.0436
+        // 下单回执 左40px 上50px 大小40px
+        let txt1 = '下单回执'
+        let txt1Size = size40
+        context.setFontSize(txt1Size)
+        context.fillText(txt1, txtLeft, _canvasHeight * 0.0384 + txt1Size / 2, topTxtW)
+        let txt2 = '下单编号:'
+        // 下单编号 左40px 上127px 大小30px
+        let txt2Size = size30
+        context.setFontSize(txt2Size)
+        context.fillText(`${txt2}  ${this.orderno}`, txtLeft, _canvasHeight * 0.0976 + txt2Size / 2, topTxtW)
+        let txt3 = '下单时间:'
+        // 下单编号 左40px 上185px 大小30px
+        context.fillText(`${txt3}  ${this.orderdate}`, txtLeft, _canvasHeight * 0.1423 + txt2Size / 2, topTxtW)
+
+        // logo和文字之间空隙20
+        let logoSize = size40
+        let logoW = _canvasWidth * 0.1149
+        let logoR = logoW / 2
+        let logoTxtSpace = _canvasHeight * 0.015 + logoSize / 2
+        let logoTop = (topH - logoW - logoSize - logoTxtSpace) / 2
+        let logoLeft = txtLeft + topTxtW
+        let logoTxtW = _canvasWidth - logoLeft
+        context.save()
+        context.beginPath()
+        context.arc(logoLeft + logoTxtW / 2, logoTop + logoR, logoR, 0, 2 * Math.PI, false)
+        context.clip()
+        context.drawImage(appLogo, logoLeft + logoTxtW / 2 - logoR, logoTop, logoW, logoW)
+        context.restore()
+        context.setFillStyle('#ffffff')
+        context.setTextAlign('center')
+        context.setFontSize(logoSize)
+        context.fillText(this.MiniInfo.title, logoLeft + logoTxtW / 2, logoTop + logoW + logoTxtSpace, logoTxtW)
+
+        let atxtSize = size38
+        let aTxtW = (_canvasWidth - txtLeft) / 2
+        let atxt1 = this.linkman.substr(0, 1)
+        let atxtTop = _canvasHeight * 0.2215 + atxtSize / 2
+        let shouhuoren = '收货人'
+        atxt1 = `${shouhuoren}: ${atxt1}**`
+        let phone = `${this.mobile}`
+        phone = phone.substr(0, 5)
+        atxt1 = `${atxt1}    ${phone}******`
+        context.setFillStyle('#000000')
+        context.setTextAlign('left')
+        context.setFontSize(atxtSize)
+        context.fillText(atxt1, txtLeft, atxtTop, aTxtW)
+
+        atxtTop = atxtTop + atxtSize + _canvasHeight * 0.0230
+        let atxt2 = this.addressValue.substr(0, 3)
+        let dizhi = '地址'
+        atxt2 = `${dizhi}: ${atxt2}******`
+        context.fillText(atxt2, txtLeft, atxtTop, aTxtW)
+
+        atxtTop = atxtTop + _canvasHeight * 0.0392
+        context.beginPath()
+        context.setStrokeStyle('#eeeeee')
+        context.setLineWidth(1)
+        context.moveTo(txtLeft, atxtTop)
+        context.lineTo(_canvasWidth - txtLeft, atxtTop)
+        context.stroke()
+
+        let yzW = _canvasWidth * 0.2246
+        context.drawImage(yzPhoto, _canvasWidth - txtLeft - yzW, atxtTop - size38, yzW, yzW)
+
+        let ptxtSize = size38
+        atxtTop = atxtTop + 1 + _canvasHeight * 0.0392 + size38 / 2
+        context.setTextAlign('left')
+        context.setFontSize(ptxtSize)
+        let ddsp = '订单商品'
+        context.fillText(ddsp, txtLeft, atxtTop, _canvasWidth - txtLeft * 2)
+
+        atxtTop = atxtTop + _canvasHeight * 0.0230
+        let photoW = _canvasWidth * 0.1724
+        context.drawImage(productPhoto, txtLeft, atxtTop, photoW, photoW)
+        let pTxtLeft = _canvasWidth * 0.24
+        let pTxtW = _canvasWidth - pTxtLeft - txtLeft
+        let pNameSize = size30
+        let productName = this.title
+        context.setFontSize(pNameSize)
+        let oneLineCount = Math.floor(pTxtW / pNameSize)
+        let lineNum = Math.ceil(productName.length / oneLineCount)
+        let pnTop = atxtTop + pNameSize / 2
+        for (let i = 0; i < lineNum; i++) {
+          let curstr = productName.substr(i * oneLineCount, oneLineCount)
+          if (i >= 1) {
+            pnTop = pnTop + _canvasHeight * 0.0230
+            curstr = curstr.substr(0, oneLineCount - 3)
+            context.fillText(`${curstr}...`, pTxtLeft, pnTop + pNameSize / 2, pTxtW)
+            break
+          } else {
+            context.fillText(curstr, pTxtLeft, pnTop + pNameSize / 2, pTxtW)
+          }
+        }
+        context.fillText(`￥${this.price}`, pTxtLeft, atxtTop + photoW - pNameSize, pTxtW)
+
+        atxtTop = atxtTop + photoW + _canvasHeight * 0.0230
+        if (this.optiontitle && this.optiontitle !== '') {
+          let oTxtSize = size38
+          atxtTop = atxtTop + oTxtSize / 2
+          context.setFontSize(oTxtSize)
+          let spgg = '商品规格'
+          let ggtxt = `${spgg}: ${this.optiontitle}`
+          let ggW = _canvasWidth - txtLeft * 2
+          let oneLineCount1 = Math.floor(ggW / oTxtSize)
+          let lineNum1 = Math.ceil(ggtxt.length / oneLineCount1)
+          let disLineNum = lineNum1 > 3 ? 3 : lineNum1
+          for (let j = 0; j < disLineNum; j++) {
+            let curstr = ggtxt.substr(j * oneLineCount1, oneLineCount1)
+            if (lineNum1 > 3 && j === 2) {
+              curstr = ggtxt.substr(j * oneLineCount1, oneLineCount1 - 3)
+              curstr = `${curstr}...`
+            }
+            atxtTop = atxtTop + oTxtSize / 2 + _canvasHeight * 0.0230
+            context.fillText(curstr, txtLeft, atxtTop, ggW)
+          }
+        }
+
+        atxtTop = atxtTop + _canvasHeight * 0.0392
+        context.beginPath()
+        context.setStrokeStyle('#eeeeee')
+        context.setLineWidth(1)
+        context.moveTo(txtLeft, atxtTop)
+        context.lineTo(_canvasWidth - txtLeft, atxtTop)
+        context.stroke()
+
+        atxtTop = atxtTop + 1 + _canvasHeight * 0.0392 + size38 / 2
+        let ptxtSize2 = size30
+        let leftTxtW = _canvasWidth * 0.2463
+        let rightTxtW = _canvasWidth - leftTxtW - txtLeft * 2
+        context.setFontSize(ptxtSize2)
+        let spsl = '商品数量'
+        context.fillText(`${spsl}:`, txtLeft, atxtTop, leftTxtW)
+        context.setTextAlign('right')
+        context.fillText(`×${this.quantity}`, _canvasWidth - txtLeft, atxtTop, rightTxtW)
+        atxtTop = atxtTop + _canvasHeight * 0.0230 + ptxtSize2 / 2
+        context.setTextAlign('left')
+        let spze = '商品总额'
+        context.fillText(`${spze}:`, txtLeft, atxtTop, leftTxtW)
+        context.setTextAlign('right')
+        let zonge = (parseFloat(this.price.replace(/,/g, '')) * parseInt(this.quantity)).toFixed(2)
+        context.fillText(zonge, _canvasWidth - txtLeft, atxtTop, rightTxtW)
+        atxtTop = atxtTop + _canvasHeight * 0.0230 + ptxtSize2 / 2
+        context.setTextAlign('left')
+        let yunfei = '运费'
+        context.fillText(`${yunfei}:`, txtLeft, atxtTop, leftTxtW)
+        context.setTextAlign('right')
+        let disPostage = this.postage
+        if (!this.postage || this.postage === '0.00') {
+          disPostage = '包邮'
+        }
+        context.fillText(disPostage, _canvasWidth - txtLeft, atxtTop, rightTxtW)
+
+        atxtTop = atxtTop + _canvasHeight * 0.0392
+        context.beginPath()
+        context.setStrokeStyle('#eeeeee')
+        context.setLineWidth(1)
+        context.moveTo(txtLeft, atxtTop)
+        context.lineTo(_canvasWidth - txtLeft, atxtTop)
+        context.stroke()
+
+        atxtTop = atxtTop + 1 + _canvasHeight * 0.0592
+        let lastRightTxtW = _canvasWidth * 0.3678
+        let lastLeftTxtW = _canvasWidth - lastRightTxtW - txtLeft * 2
+        context.setFontSize(size40)
+        context.setTextAlign('right')
+        let heji = '合计'
+        context.fillText(`${heji}: `, txtLeft + lastLeftTxtW, atxtTop, lastLeftTxtW)
+        context.setTextAlign('right')
+        context.setFillStyle(this.themeObject.themeColor)
+        let disPrice = parseFloat(this.price.replace(/,/g, '')) * this.quantity
+        if (this.postage && this.postage !== '') {
+          let addpostate = this.postage.replace(/,/g, '')
+          addpostate = parseFloat(addpostate)
+          disPrice = disPrice + addpostate
+        }
+        disPrice = disPrice.toFixed(2)
+        context.fillText(`¥${disPrice}`, _canvasWidth - txtLeft, atxtTop, lastRightTxtW)
+
+        let leftH = this.myCanvasHeight - atxtTop - size40
+        atxtTop = atxtTop + size40
+        let codeW = leftH - size40
+        if (codeW % 2 !== 0) {
+          codeW = codeW - 1
+        }
+        let codeR = codeW / 2
+        context.save()
+        context.beginPath()
+        context.arc(_canvasWidth - txtLeft - codeR, atxtTop + codeR, codeR, 0, 2 * Math.PI, false)
+        context.clip()
+        context.drawImage(miniQrcode, _canvasWidth - txtLeft - codeW, atxtTop, codeW, codeW)
+        context.restore()
+
+        context.draw()
+        wepy.hideLoading()
+        this.saveBtnShow = true
+        this.$apply()
+      })
+    },
+    cancelCanvas () {
+      this.showCanvas = false
+    },
+    saveImgEvent () {
+      wepy.canvasToTempFilePath({
+        canvasId: 'myOrderCanvas'
+      }).then(res => {
+        Util.savePhoto({
+          path: res.tempFilePath,
+          callback: () => {
+            wepy.hideLoading()
+            this.showCanvas = false
+            this.saveBtnShow = false
+            this.$apply()
+          }
+        })
+      }, res => {
+        console.log('下载画布图片1失败')
+        console.log(res)
+      })
+    }
+  }
+}
+</script>

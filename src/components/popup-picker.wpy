@@ -1,0 +1,64 @@
+<style>
+</style>
+<template>
+  <popup :show.sync="show" @close.user="popupClose">
+    <popup-header leftText="取消" rightText="确定" @on-click-left.user="cancel" @on-click-right.user="confirm"></popup-header>
+    <x-picker height="150px" :columns="columns" :fixedColumns="fixedColumns" :value.sync="value" @change.user="change"></x-picker>
+  </popup>
+</template>
+<script>
+  import wepy from 'wepy'
+  import Popup from './popup'
+  import PopupHeader from './popup-header'
+  import XPicker from './x-picker/x-picker'
+
+  export default class PopupPicker extends wepy.component {
+    components = {
+      'popup': Popup,
+      'popup-header': PopupHeader,
+      'x-picker': XPicker
+    }
+
+    props = {
+      show: {
+        type: Boolean,
+        default: false,
+        twoWay: true
+      },
+      value: {
+        type: Array,
+        default: []
+        // twoWay: true
+      },
+      columns: {
+        type: Number,
+        default: 0
+      },
+      fixedColumns: {
+        type: Number,
+        default: 0
+      }
+    }
+
+    pickerCancel () {
+      this.$broadcast('show-broadcast', false)
+      this.$emit('on-cancel')
+    }
+
+    methods = {
+      popupClose () {
+        this.pickerCancel()
+      },
+      cancel () {
+        this.pickerCancel()
+      },
+      confirm () {
+        this.$broadcast('show-broadcast', false)
+        this.$emit('on-confirm', this.value)
+      },
+      change (val) {
+        this.$emit('change', val)
+      }
+    }
+  }
+</script>

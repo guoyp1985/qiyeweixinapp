@@ -1,0 +1,180 @@
+<style lang="less">
+.buy-user-list-page{
+  .scroll_list{
+    .scroll_item{
+      background-color: #fff;
+      display:block;padding:20rpx;box-sizing: border-box;
+    }
+    .pic{
+      width:120rpx;
+      image{width:100rpx;height:100rpx;border-radius:50%;}
+    }
+    .btn_cell{
+      width:140rpx;
+      .btn{
+        border-radius: 20rpx;width:120rpx;height:50rpx;
+      }
+    }
+  }
+}
+</style>
+<template>
+  <view class="buy-user-list-page">
+    <block wx:if="{{disList1}}">
+      <view wx:if="{{!tabData1.length}}" class="flex_empty">暂无数据</view>
+      <view class='scroll_list' wx:else>
+        <repeat for="{{tabData1}}" item="item" index="index">
+          <view class="scroll_item">
+            <view class="w_100 flex_left">
+              <view class="pic flex_left" >
+                <image src="{{item.avatar}}"></image>
+              </view>
+              <view class="flex_cell">
+                <view class="align_left clamp1">{{item.linkman}}</view>
+              </view>
+              <view class="btn_cell flex_right">
+                <button class="btn bg-theme color-white flex_center" open-type="share" style="{{themeObject.bgStyle}}">分享</button>
+              </view>
+            </view>
+          </view>
+        </repeat>
+      </view>
+      <block wx:if="{{tabData1.length}}">
+        <view class="load-end-area loading" wx:if="{{isLoading}}"></view>
+        <view class="load-end-area done" wx:elif="{{isDone}}"></view>
+      </block>
+    </block>
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy'
+import Config from '@/config'
+import Time from '@/libs/time'
+import Util from '@/libs/util'
+const BokaApi = Config.BokaApi
+export default class UserShare extends wepy.page {
+  config = {
+    enablePullDownRefresh: true,
+    backgroundTextStyle: 'dark'
+  }
+  data = {
+    userInfo: {},
+    disList1: false,
+    tabData1: [],
+    onAjaxEnd: false,
+    isLoading: false,
+    isDone: false,
+    themeObject: {}
+  }
+  refreshPage () {
+    this.onAjaxEnd = false
+    this.disList1 = false
+    this.tabData1 = []
+    this.pageStart1 = 0
+    this.isLoading = false
+    this.isDone = false
+    this.$apply()
+    this.getData1()
+  }
+  onPullDownRefresh () {
+    if (this.onAjaxEnd) {
+      wepy.showNavigationBarLoading()
+      setTimeout(function () {
+        wepy.hideNavigationBarLoading()
+        wepy.stopPullDownRefresh()
+      }, 500)
+      this.refreshPage()
+    }
+  }
+  onReachBottom () {
+    if (this.tabData1.length === (this.pageStart1 + 1) * this.limit) {
+      this.isLoading = true
+      this.pageStart1++
+      this.getData1()
+    }
+  }
+  getData1 = function () {
+    let params = {pagestart: this.pageStart1, limit: this.limit, fpid: this.options.fpid}
+    wepy.request({
+      url: `${BokaApi}/${Config[Config.ApiVersion]}/factory/mayBuy`,
+      data: params
+    }).then(res => {
+      this.onAjaxEnd = true
+      let data = res.data
+      let retdata = data.data ? data.data : data
+      for (let i = 0; i < retdata.length; i++) {
+        retdata[i].dateStr = new Time(retdata[i].dateline * 1000).dateFormat('yyyy-MM-dd hh:mm')
+      }
+      this.tabData1 = this.tabData1.concat(retdata)
+      if (retdata.length < this.limit && this.tabData1.length) {
+        this.isDone = true
+      } else {
+        this.isDone = false
+      }
+      this.isLoading = false
+      this.disList1 = true
+      this.$apply()
+    })
+  }
+  handlePageData () {
+    this.globalData = this.$parent.globalData
+    Util.appInit(this.globalData, this)
+    this.userInfo = this.globalData.userInfo
+    wepy.request({
+      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/factory/newfpInfo`,
+      data: {id: this.options.id, wid: this.globalData.Wid, type: 'fpimport', fid: Config.Fid}
+    }).then(res => {
+      const data = res.data
+      this.product = data.data
+    })
+    this.getData1()
+    this.$apply()
+  }
+  onLoad (options) {
+    this.options = options
+    this.pageStart1 = 0
+    this.limit = 15
+    if (this.$parent.globalData.flag.bokaAuth) {
+      this.handlePageData()
+    } else {
+      this.$parent.loadCallback = () => {
+        this.handlePageData()
+      }
+    }
+  }
+  handleShare () {
+    const lastshareuid = this.options.share_uid
+    let shareurl = `/${Config.Router.product}?id=${this.options.id}&type=fpimport&module=factoryproduct&share_uid=${this.userInfo.uid}&share_wid=${this.globalData.Wid}&wid=${this.globalData.Wid}&comefrom=${Config.AppName}`
+    if (this.userInfo.regwid && this.userInfo.bindstatus === 1) {
+      shareurl = `${shareurl}&shareuser=self`
+    }
+    if (lastshareuid) {
+      shareurl = `${shareurl}&lastshareuid=${lastshareuid}`
+    }
+    let backUrl = encodeURIComponent(shareurl)
+    shareurl = `${shareurl}&currentUrl=${backUrl}`
+    const imageUrl = this.product.photo.split(',')[0]
+    shareurl = `${shareurl}&title=${this.product.title}&photo=${imageUrl}&price=${this.product.price}&sellingpoint=${this.product.sellingpoint}&activityid=${this.product.activityid}&storage=${this.product.storage}`
+    this.shareParams = {
+      title: this.product.title,
+      imageUrl: imageUrl,
+      path: shareurl
+    }
+  }
+  onShareAppMessage (res) {
+    this.handleShare()
+    return this.shareParams
+  }
+  onShareTimeline () {
+    this.handleShare()
+    return this.shareParams
+  }
+  methods = {
+    toStat (e) {
+      const data = e.currentTarget.dataset.data
+      wepy.navigateTo({url: `/packageD/pages/stat?id=${data.moduleid}&module=${data.module}`})
+    }
+  }
+}
+</script>

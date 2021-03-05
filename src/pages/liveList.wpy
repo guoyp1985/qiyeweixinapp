@@ -1,0 +1,293 @@
+<style lang="less">
+.live-list-page{
+  .app-box-area.live-item{
+    display:block;margin-top:20rpx;
+    .box-inner{padding:20rpx;}
+    .pic-outer:after{content:'';display:block;padding-top:80%;}
+    .pic-outer{
+      position:relative;overflow:hidden;
+      .pic{
+        position:absolute;left:0;top:0;right:0;bottom:0;
+        image{width:100%;height:100%;border-radius:10rpx;}
+      }
+    }
+    .txt{margin-top:-4rpx;}
+    .btn{padding:4rpx 20rpx;border-radius:60rpx;border-width:2rpx;border-style:solid;}
+  }
+  .blank-area{width:100%;height:120rpx;}
+  .blank-area.iphone{width:100%;height:240rpx;}
+  .fix-live-ico{
+    position:absolute;left:0;top:20rpx;z-index:10;
+    padding-left:20rpx;
+    border-top-right-radius:60rpx;border-bottom-right-radius:60rpx;
+  }
+  .animate.fix-live-ico{
+    padding-left:50rpx;
+  }
+}
+</style>
+<template>
+  <view class="live-list-page">
+    <view class="banner-outer mb12" wx:if="{{bannerData.length}}">
+      <view class="news-swiper-outer" wx:if="{{bannerData.length > 1}}">
+        <swiper
+          class="news-swiper"
+          autoplay
+          indicator-dots="{{bannerData.length > 1}}"
+          indicator-color="#d0cdd1"
+          indicator-active-color="{{themeObject.themeColor}}"
+          interval="6000"
+          circular>
+          <repeat for="{{bannerData}}" index="index" item="item">
+            <swiper-item>
+              <image mode="aspectFill" src="{{item.photo}}" data-data="{{item}}" bindtap="clickBanner"></image>
+            </swiper-item>
+          </repeat>
+        </swiper>
+      </view>
+      <view class="banner-pic" wx:else data-data="{{bannerData[0]}}" bindtap="clickBanner">
+        <image mode="aspectFill" src="{{bannerData[0].photo}}"></image>
+      </view>
+    </view>
+    <block wx:if="{{disList}}">
+      <view wx:if="{{!liveData.length}}" class="flex_empty">暂无直播数据</view>
+      <block wx:else>
+        <repeat for="{{liveData}}" item="item" index="index">
+          <view class="app-box-area live-item" url="{{item.navurl}}" @tap="clickLive({{item}})">
+            <view class="box-inner">
+              <view :class="{'animate': item.showAnimate}" class="fix-live-ico" style="{{themeObject.bgStyle}}">
+                <view class="ico" wx:if="{{item.showAnimate}}">
+                  <view class="line line1"></view>
+                  <view class="line line2"></view>
+                  <view class="line line3"></view>
+                </view>
+                <view class="ico-txt">{{statusObject[item.live_status]}}</view>
+              </view>
+              <view class="pic-outer">
+                <view class="pic">
+                  <image mode="aspectFit" src="{{item.share_img}}"></image>
+                </view>
+              </view>
+              <view class="flex_left mt5">
+                <view class="flex_cell flex_left" style="{{themeObject.colorStyle}}">
+                  <text class="al al-video font20"></text>
+                  <text class="txt">{{item.start_str}}</text>
+                </view>
+                <view class="flex_right">
+                  <view class="btn" style="{{themeObject.colorStyle}}{{themeObject.borderStyle}}">进入直播</view>
+                </view>
+                <view class="flex_right pl10">
+                  <view class="btn" style="{{themeObject.colorStyle}}{{themeObject.borderStyle}}" catchtap="createCode({{item}},{{index}})">分享</view>
+                </view>
+              </view>
+            </view>
+          </view>
+        </repeat>
+      </block>
+    </block>
+    <view :class="{'iphone' : isIpx}" class="blank-area"></view>
+  </view>
+  <bottomMenu
+    current="live"
+    :globalData.sync="globalData"
+    :isIpx.sync="isIpx"
+    :themeObject.sync="themeObject"
+    :allowNav.sync="afterLoad">
+  </bottomMenu>
+  <share
+    :themeObject.sync="themeObject"
+    :globalData.sync="globalData"
+    :viewData.sync="shareData"
+    :userInfo.sync="userInfo"
+    opacity="1"
+    :photo.sync="sharePhoto"
+    :module.sync="module">
+  </share>
+
+</template>
+
+<script>
+import wepy from 'wepy'
+import Config from '@/config'
+import Time from '@/libs/time'
+import Util from '@/libs/util'
+import BottomMenu from '@/components/bottomMenu'
+import Share from '@/components/store/share'
+export default class extends wepy.page {
+  config = {
+    enablePullDownRefresh: true,
+    backgroundTextStyle: 'dark'
+  }
+  components = {
+    bottomMenu: BottomMenu,
+    share: Share
+  }
+  data = {
+    userInfo: {},
+    globalData: {},
+    disList: false,
+    liveData: [],
+    isLoading: false,
+    isDone: false,
+    themeObject: {},
+    isIpx: false,
+    afterLoad: true,
+    statusObject: {
+      101: '直播中',
+      102: '未开始',
+      103: '已结束',
+      104: '禁播',
+      105: '暂停中',
+      106: '异常',
+      107: '已过期'
+    },
+    bannerData: [],
+    module: 'live',
+    shareData: {},
+    sharePhoto: ''
+  }
+  refreshPage () {
+    this.disList = false
+    this.liveData = []
+    this.isLoading = false
+    this.isDone = false
+    this.$apply()
+    this.getData()
+  }
+  onPullDownRefresh () {
+    if (this.isLoading) return false
+    this.refreshPage()
+    wepy.showNavigationBarLoading()
+    setTimeout(function () {
+      wepy.hideNavigationBarLoading()
+      wepy.stopPullDownRefresh()
+    }, 500)
+  }
+  getData = function () {
+    if (!this.afterLoad) return false
+    this.afterLoad = false
+    wepy.showLoading()
+    wepy.request({
+      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/minilive/getLiveInfo`,
+      method: 'post'
+    }).then(res => {
+      wepy.hideLoading()
+      this.isLoading = false
+      this.afterLoad = true
+      const data = res.data
+      const retdata = data.data ? data.data : data
+      for (let i = 0; i < retdata.length; i++) {
+        let curData = retdata[i]
+        let customParams = {share_uid: this.userInfo.uid, share_wid: this.globalData.Wid, wid: this.globalData.Wid, liveid: curData.id}
+        let cpstr = encodeURIComponent(JSON.stringify(customParams))
+        retdata[i].navurl = `plugin-private://wx2b03c6e691cd7370/pages/live-player-plugin?room_id=${curData.roomid}&custom_params=${cpstr}`
+        retdata[i].start_str = new Time(curData.start_time * 1000).dateFormat('yyyy-MM-dd hh:mm')
+        if (curData.live_status === 101 || curData.live_status === 105 || curData.live_status === 106) {
+          retdata[i].showAnimate = true
+        }
+      }
+      this.liveData = retdata
+      this.disList = true
+      this.$apply()
+    })
+  }
+  handlePageData () {
+    this.globalData = this.$parent.globalData
+    Util.appInit(this.globalData, this)
+    this.userInfo = this.globalData.userInfo
+    if (!this.liveData.length) {
+      this.getData()
+    }
+    let shareParams = Util.getShareParams(this.options)
+    let params = {...shareParams, fid: Config.Fid, module: 'live'}
+    if (this.options.wid) {
+      if (this.options.scene && (!this.userInfo.regwid || !this.userInfo.bindstatus)) {
+        this.globalData.Wid = this.options.wid
+        this.$parent.globalData.Wid = this.options.wid
+      }
+    }
+    wepy.request({
+      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/channel/info`,
+      data: params,
+      method: 'post'
+    }).then(res => {
+      const data = res.data
+      const retdata = data.data ? data.data : data
+      if (retdata.banner && retdata.banner.length) {
+        this.bannerData = retdata.banner
+      }
+      this.$apply()
+    })
+  }
+  onLoad (options) {
+    this.statusObject[101] = '直播中'
+    this.statusObject[102] = '未开始'
+    this.statusObject[103] = '已结束'
+    this.statusObject[104] = '禁播'
+    this.statusObject[105] = '暂停中'
+    this.statusObject[106] = '异常'
+    this.statusObject[107] = '已过期'
+    this.options = options
+    wepy.getSystemInfo().then(res => {
+      if (res.model.substring(0, res.model.indexOf('X')) + 'X' === 'iPhone X') {
+        this.isIpx = true
+      }
+      this.$apply()
+    })
+    if (this.$parent.globalData.flag.bokaAuth) {
+      this.handlePageData()
+    } else {
+      this.$parent.loadCallback = () => {
+        this.handlePageData()
+      }
+    }
+  }
+  methods = {
+    clickBanner (e) {
+      Util.clickBanner(e, this)
+    },
+    createCode (item, index) {
+      this.shareData = item
+      this.shareIndex = index
+      this.$apply()
+      this.$invoke('share', 'showPopuModal')
+    },
+    clickLive (item) {
+      if (item.live_status === 102) {
+        let tmplIdsArr = [this.globalData.Templates.minilive_notify]
+        // 订阅通知
+        Util.checkTmpMsg({
+          systeminfo: this.globalData.systemInfo,
+          tmplIds: tmplIdsArr,
+          callback: () => {
+            wepy.request({
+              url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/minilive/Subscriber`,
+              data: {id: item.id},
+              method: 'post'
+            })
+            wepy.navigateTo({url: item.navurl})
+          }
+        })
+      } else {
+        wepy.navigateTo({url: item.navurl})
+      }
+    }
+  }
+  events = {
+    afterCreatePoster (photo) {
+      this.shareData.poster = photo
+      wepy.request({
+        url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/minilive/setLivePoster`,
+        data: {fid: Config.Fid, roomid: this.shareData.roomid, photo: photo},
+        method: 'post'
+      }).then(res => {
+        const data = res.data
+        if (data.flag) {
+          this.liveData[this.shareIndex].poster = photo
+        }
+        this.$apply()
+      })
+    }
+  }
+}
+</script>

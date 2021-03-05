@@ -1,0 +1,604 @@
+<style lang="less">
+@import '../../libs/wxParse/wxParse.wxss';
+.news-page{
+  .scroll-area{position:absolute;left:0;top:0;right:0;bottom:100rpx;}
+  .article-view {
+    padding: 10px 15px;background: #ffffff;overflow-x: hidden;
+    image{width:100%;}
+  }
+  .article-info {padding: 10px 0;}
+  .operate-area button {line-height:1.8;height:34px;font-size:18px;padding:0 8px;}
+  .operate-area {text-align: center;margin-top: 20px;}
+  .operate-area button + button {margin-left: 10px;}
+  .operate-area text {vertical-align: middle;font-size: 12px;line-height: 16px;}
+  .reading-info {
+    padding: 20px 0;
+    .right_cell{width:120rpx;}
+  }
+  .article-author {margin-left: 6px;color: #1aad19;}
+  .qrcode-area {padding: 15px;position: relative;vertical-align: middle;background: url(../../assets/images/qrbg.gif);}
+  .qrcode-bg {margin: 0 auto;box-shadow: 1px 0 5px #868181;background-color: #fff;}
+  .qrcode {text-align: center;position: relative;margin: 0 auto;display: block;}
+  .qrcode > image {width: 100%;}
+  .scan-area {width: 50%;position: absolute;left: 0;top: 0;bottom: 0;vertical-align: middle;}
+  .scan-area image {max-width: 100%;height: 100%;vertical-align: middle;display: block;margin:0 auto;}
+  .comment-area {padding: 20px 15px;}
+  .comment-op {text-align: right;color: #1aad19;}
+  #editor-content {overflow: hidden;}
+  .weui-btn_mini {padding: 0 13px;}
+  .news .insertproduct{
+    display:block;padding:5px !important;position:relative;text-indent: 0 !important;
+    color:inherit !important;border:#e3e3e3 1px solid !important;border-radius:5px !important;
+  }
+  .news .insertproduct image{vertical-align: middle !important;}
+  .news .insertproduct .iteminfo{
+    text-align:right;position:absolute;color:#fff;padding-left:10px;padding-right:10px;
+    font-size:12px;
+    bottom: 15px;right: 9px;border-radius: 15px;background-image: linear-gradient(90deg, #f26f12 0%, #fa3f06 99%);
+  }
+  .news .weui-btn_mini{border: 1px solid #1aad19 !important;}
+  .news .weui-btn_plain-primary{border:0px;}
+  .news .weui-btn:after{display: none;}
+  .share-but{position: fixed;right: 20rpx;bottom:300rpx;height: 130rpx;line-height:130rpx;border-radius: 50%;width: 130rpx;text-align: center;font-size: 12px;background-color: #fff !important;box-shadow:0 0 6px 0px #b1b1b1;}
+  .nav-bottom{
+    width:100%;display:flex;box-shadow: 0px 0px 10px 0px #eee;border-top:1rpx solid #eee;background-color:#fff;box-sizing: border-box;position:fixed;bottom: 0;
+    .item{flex:1;height:100%;height:90rpx;}
+    .inner{height:100%;display:flex;justify-content:center;align-items:center;}
+    .item .al{color:#ea3a3a;font-size:40rpx;}
+    .al.share{font-size:34rpx;}
+    .item image{width: 80rpx;height:80rpx;border-radius:50%;}
+  }
+  .nav-bottom.iphone{padding-bottom:68rpx;}
+
+  .insertproduct{
+    display:block;padding:10rpx !important;position:relative;text-indent: 0 !important;
+    color:inherit !important;border:#e3e3e3 2rpx solid !important;border-radius:10rpx !important;
+    .bg{position:absolute;left:0;top:0;right:0;bottom:0;z-index:10;background-color:transparent;}
+  }
+  .insertproduct .iteminfo{
+    text-align:right;position:absolute;color:#fff;padding-left:20rpx;padding-right:20rpx;
+    font-size:24rpx;bottom: 30rpx;right: 36rpx;border-radius:30rpx;background-image: linear-gradient(90deg, #f26f12 0%, #fa3f06 99%);
+  }
+}
+.hbpic-modal{
+  .inner{width:90%;position:relative;}
+  .pic-area{
+    width:70%;
+    .pic{
+      width:100%;position:relative;
+      image{width:100%;}
+      .txt1{
+        width:34%;max-height:100%;position:absolute;left:33%;top:34%;
+        .inner{width:100%;max-height:100%;position:relative;}
+        .inner:after{padding-top:100%;content:"";display:block;}
+        .btn{position:absolute;left:0;top:0;right:0;bottom:0;font-size:50rpx;color:#f95a51;}
+        .btn.disable{color:#999;}
+      }
+      .txt2{position:absolute;left:0;bottom:15%;right:0;text-align:center;color:#F9EA72;font-size:30rpx;letter-spacing: 2rpx;}
+    }
+  }
+}
+.hb-modal{
+  .inner{
+    width:90%;position:relative;
+    .pic-outer{
+      width:100%;padding-bottom:107%;position:relative;
+      .pic{
+        position:absolute;left:0;top:0;right:0;bottom:0;
+        image{width:100%;height:100%;}
+      }
+    }
+  }
+  .top-txt{
+    position:absolute;left:0;top:22%;right:0;width:100%;height:12%;color:#7a2716;font-weight:bold;font-size:30rpx;
+    .big{font-size:40rpx;}
+  }
+  .con-txt{
+    position:absolute;left:0;top:33%;right:0;width:100%;height:29%;color:#7a2716;font-weight:bold;font-size:30rpx;
+    .big{font-size:80rpx;}
+  }
+  .txt-list{
+    position:absolute;left:0;bottom:10%;right:0;display:flex;
+    .item{flex:1;color:#f8edad;box-sizing: border-box;}
+  }
+}
+.retailer-modal{
+  .wechat-pic{
+    position:relative;width:70%;margin:0 auto 0;
+    image{width:100%;max-width:100%;max-height:100%;}
+    .txt1{position:absolute;top:22.5%;right:20%;}
+    .txt2{position:absolute;bottom:3%;left:6%;}
+  }
+  .modal-bottom{
+    width:100%;height:90rpx;
+    button{border-radius: 10rpx;}
+  }
+}
+.iphone-X-container{bottom:0;}
+</style>
+<template>
+  <view class="container news-page" wx:if="{{showContainer}}">
+    <view class="scroll-area" scroll-y="true">
+      <view id="article-content">
+        <view class="article-view">
+          <view class="article-title">
+            <text class="font20">{{article.title}}</text>
+          </view>
+          <view class="article-vice-title">
+            <text class="font14">{{article.vicetitle}}</text>
+          </view>
+          <view class="article-info" style="position:relative;">
+            <text class="article-date color-gray">{{article.dateline}}</text>
+            <text class="article-author">{{article.author}}</text>
+          </view>
+          <!-- <rich-text id="editor-content" class="article-content" nodes="{{article.content}}" type="text"></rich-text> -->
+          <!-- <text id="editor-content" class="article-content">{{article.content}}</text> -->
+          <video class="w_100" wx:if="{{isVideo}}" src="{{article.video}}" autoplay="1" direction="0"></video>
+          <block wx:if="{{article.c_format == 'json'}}">
+            <repeat for="{{article.content}}" item="item" index="index">
+              <view wx:if="{{item.content && item.content != ''}}" class="padding10">
+                <text>{{item.content}}</text>
+              </view>
+              <repeat for="{{item.photo}}" index="index1" item="photo">
+                <view class="flex_center">
+                  <image src="{{photo}}" mode="widthFix" data-url="{{photo}}" bindtap="previewImg"></image>
+                </view>
+              </repeat>
+            </repeat>
+          </block>
+          <block wx:else>
+            <text>{{viewContent}}</text>
+            <import src="../../libs/wxParse/wxParse.wxml"/>
+            <template is="wxParse" data="{{wxParseData:x.nodes}}"/>
+          </block>
+          <view class="reading-info db-flex">
+            <view class="flex_cell">
+              <text class="font14 color-gray">阅读 {{article.views}}</text>
+            </view>
+          </view>
+        </view>
+        <view class="pt20"></view>
+      </view>
+    </view>
+    <view class="nav-bottom reset-button" :class="{'iphone' : isIpx}">
+      <form class="item" bindsubmit="onShareTap" report-submit='true'>
+        <button class="inner" form-type="submit">
+          <view>
+            <view class="al al-fenxiang1 share" open-type="share"></view>
+            <view class="font12">分享</view>
+          </view>
+        </button>
+      </form>
+      <form class="item" bindsubmit="toHome" report-submit="true">
+        <button class="inner" form-type="submit">
+          <view>
+            <view class="al al-zhuye"></view>
+            <view class="font12">首页</view>
+          </view>
+        </button>
+      </form>
+      <form class="item" bindsubmit="toChat" report-submit='true' wx:if="{{ShowChat}}">
+        <button class="inner" form-type="submit">
+          <view>
+            <view class="al al-kefu"></view>
+            <view class="font12">咨询</view>
+          </view>
+        </button>
+      </form>
+    </view>
+  </view>
+  <retailerWechat :userInfo.sync="userInfo" :retailerInfo.sync="retailerInfo" :themeObject.sync="themeObject"></retailerWechat>
+  <sharenews :themeObject.sync="themeObject" :globalData.sync="globalData" :userInfo.sync="userInfo" :retailerInfo.sync="retailerInfo" opacity="1" :photo.sync="photo"  :title.sync="title" :id.sync="newsId" :module.sync="module" :viewData.sync="article"></sharenews>
+  <block wx:if="{{showShareModal}}">
+    <tipButtonLayer
+      tipTxt="文章保存成功"
+      buttonTxt="立即分享"
+      buttonType="share"
+      :themeObject.sync="themeObject">
+    </tipButtonLayer>
+  </block>
+  <block wx:if="{{showAuth}}">
+    <auth :pageurl.sync="pageurl" :themeObject.sync="themeObject" :globalData.sync="globalData"></auth>
+  </block>
+</template>
+<script>
+  import wepy from 'wepy'
+  import WxParse from '@/libs/wxParse/wxParse'
+  import Popup from '@/components/popup'
+  import Time from '@/libs/time'
+  import Util from '@/libs/util'
+  import Shake from '@/libs/shake'
+  import Config from '@/config'
+  import Cached from '@/libs/cached'
+  import ShareNews from '@/components/store/share'
+  import RetailerWechat from '@/components/retailerWechat'
+  import TipButtonLayer from '@/components/tipButtonLayer'
+  import Auth from '@/components/auth'
+  export default class News extends wepy.page {
+    components = {
+      'popup': Popup,
+      'sharenews': ShareNews,
+      retailerWechat: RetailerWechat,
+      tipButtonLayer: TipButtonLayer,
+      'auth': Auth
+    }
+
+    data = {
+      showPopup: false,
+      photo: '',
+      title: '',
+      newsId: null,
+      options: {},
+      globalData: {},
+      module: 'factorynews',
+      query: {},
+      userInfo: {},
+      params: {},
+      AppName: Config.AppName,
+      showContainer: false,
+      replyPopupShow: false,
+      notFavorite: true,
+      reward: { headimgurl: 'https://tossharingsales.boka.cn/images/user.jpg', avatar: 'https://tossharingsales.boka.cn/images/user.jpg', linkman: '', credit: 0 },
+      article: {},
+      retailerInfo: {},
+      WeixinQrcode: Config.WeixinQrcode,
+      isdig: false,
+      photoarr: [],
+      previewerPhotoarr: [],
+      pagestart: 0,
+      limit: Config.Limit,
+      replyData: null,
+      messages: 0,
+      id: null,
+      showModalarea: false,
+      isIpx: false,
+      systemInfo: null,
+      viewContent: '',
+      moneyParams: null,
+      retailerWechat: Config.RetailerWechat,
+      isVideo: false,
+      showShareModal: false,
+      factoryInfo: {},
+      ShowChat: Config.ShowChat,
+      showAuth: false,
+      pageurl: '',
+      themeObject: {}
+    }
+
+    dateFormat (value) {
+      return new Time(value * 1000).dateFormat('yyyy-MM-dd')
+    }
+
+    commentDateFormat (value, item) {
+      return new Time(item.dateline * 1000).format()
+    }
+
+    readingCountFormat (value) {
+      return value > 100000 ? '100000+' : value
+    }
+
+    methods = {
+      onShareTap (e) {
+        this.$invoke('sharenews', 'showPopuModal')
+      },
+      onComplain (e) {
+        const url = `/package/pages/complaint?id=${this.id}&wid=${this.retailerInfo.uid}`
+        wepy.navigateTo({
+          url: url
+        })
+      },
+      previewImage (e) {
+        const url = e.currentTarget.dataset.src
+        wepy.previewImage({
+          urls: [url],
+          current: url
+        })
+      },
+      onRetailerQrcode () {
+        if (!this.retailerInfo.qrcode || this.retailerInfo.qrcode === '') {
+          Util.remindQrcode(this.retailerInfo.uid)
+        }
+        this.$invoke('retailerWechat', 'showModal')
+      },
+      toChat (e) {
+        let touid = this.globalData.Wid
+        if (this.factoryInfo && this.factoryInfo.services && this.factoryInfo.services !== '') {
+          touid = this.factoryInfo.services.split(',')[0]
+        }
+        const url = encodeURIComponent(`chat?uid=${touid}&fromModule=product&fromId=${this.options.id}`)
+        wepy.navigateTo({url: `/pages/webview?url=${url}`})
+      },
+      clickDig () {
+        let url = `${Config.BokaApi}/${Config[Config.ApiVersion]}/user/digs/add`
+        if (this.isdig) {
+          url = `${Config.BokaApi}/${Config[Config.ApiVersion]}/user/digs/delete`
+        }
+        wepy.request({url: url, data: {id: this.query.id, module: this.module}, method: 'POST'})
+        .then(res => {
+          const data = res.data
+          if (data.flag === 1) {
+            if (this.isdig) {
+              this.isdig = false
+              this.article.dig = this.article.dig - 1
+            } else {
+              this.isdig = true
+              this.article.dig = this.article.dig + 1
+            }
+            this.$apply()
+          } else {
+            wepy.showToast({
+              title: data.error,
+              icon: 'none',
+              duration: Util.delay(data.error)
+            })
+          }
+        })
+      },
+      toStore (e) {
+        wepy.reLaunch({url: `/pages/index?wid=${this.globalData.Wid}`})
+      },
+      toHome (e) {
+        wepy.reLaunch({url: `/pages/index`})
+      },
+      previewImg (e) {
+        const url = e.currentTarget.dataset.url
+        wepy.previewImage({
+          current: 0,
+          urls: [url]
+        })
+      }
+    }
+
+    getData () {
+      const id = this.query.id
+      let shareParams = Util.getShareParams(this.options)
+      let infoParams = {...shareParams, id: id, module: this.module}
+      if (this.query.fid) {
+        infoParams.fid = this.query.fid
+      }
+      if (!infoParams.wid) {
+        infoParams.wid = this.globalData.Wid
+      }
+      if (this.inHide) {
+        return false
+      }
+      wepy.request({
+        url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/moduleInfo`,
+        data: infoParams,
+        method: 'POST'
+      }).then(res => {
+        const data = res.data
+        const retdata = data.data ? data.data : data
+        if (retdata && retdata.id) {
+          // retdata.content = retdata.content.replace(/<p /g, '<div ').replace(/<p >/g, '<div>').replace(/<p>/g, '<div>').replace(/< \/p>/g, '</div>').replace(/<\/p>/g, '</div>')
+          // console.log(retdata.content)
+          this.article = retdata
+          this.isVideo = false
+          if (this.article.video && this.article.video !== '' && this.article.video.lastIndexOf('.mp4') > -1) {
+            this.isVideo = true
+          }
+          if (this.article.c_format !== 'json') {
+            this.viewContent = WxParse.wxParse('x', 'html', this.article.content, this, 5)
+          }
+          this.article.dateline = this.dateFormat(this.article.dateline)
+          this.article.views = this.readingCountFormat(this.article.views)
+          this.photo = this.article.photo.split(',')[0]
+          this.title = this.article.title
+          this.newsId = this.article.id
+          if (!this.inHide) {
+            wepy.setNavigationBarTitle({
+              title: this.article.title
+            })
+          }
+          this.reward = this.globalData.userInfo
+          this.params = {uid: this.reward.uid, uploader: this.article.uploader}
+          this.showContainer = true
+          this.$apply()
+          return wepy.request({url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/user/digs/show`, data: {id: id, module: this.module}})
+        }
+      })
+      .then(res => {
+        if (res) {
+          const data = res.data
+          if (data.flag === 1) {
+            this.isdig = true
+          }
+          return wepy.request({url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/user/favorite/show`, data: {id: this.article.id, module: this.module}, method: 'POST'})
+        }
+      })
+      .then(res => {
+        if (res) {
+          if (res.data.flag < 1) {
+            this.notFavorite = true
+          } else {
+            this.notFavorite = false
+          }
+        }
+        this.$apply()
+      })
+    }
+    handleShare () {
+      const lastshareuid = this.options.share_uid
+      let shareurl = `/packageB/pages/news?id=${this.article.id}&share_uid=${this.userInfo.uid}&share_wid=${this.globalData.Wid}&wid=${this.globalData.Wid}&comefrom=${Config.AppName}`
+      if (lastshareuid) {
+        shareurl = `${shareurl}&lastshareuid=${lastshareuid}`
+      }
+      let backUrl = encodeURIComponent(shareurl)
+      shareurl = `${shareurl}&currentUrl=${backUrl}`
+      this.shareParams = {
+        title: this.article.title,
+        imageUrl: this.article.photo.split(',')[0],
+        path: shareurl
+      }
+    }
+    onShareAppMessage (res) {
+      this.handleShare()
+      return this.shareParams
+    }
+    onShareTimeline () {
+      this.handleShare()
+      return this.shareParams
+    }
+    handleContainer () {
+      if (this.options.wid) {
+        if (this.options.scene && (!this.userInfo.regwid || !this.userInfo.bindstatus)) {
+          this.globalData.Wid = this.options.wid
+          this.$parent.globalData.Wid = this.options.wid
+        }
+      }
+      this.$apply()
+      wepy.getSystemInfo().then(res => {
+        this.systemInfo = res
+        if (res.model.substring(0, res.model.indexOf('X')) + 'X' === 'iPhone X') {
+          this.isIpx = true
+        }
+        this.$apply()
+      })
+      if (this.options.share_uid && parseInt(this.options.share_uid) !== this.userInfo.uid) {
+        wepy.request({
+          url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/getUser/${this.options.share_uid}`
+        }).then(res => {
+          const data = res.data
+          const retdata = data.data ? data.data : data
+          if (retdata.regwid && retdata.bindstatus) {
+            this.retailerInfo = retdata
+          } else if (this.userInfo.regwid && this.userInfo.bindstatus) {
+            this.retailerInfo = this.userInfo
+          } else {
+            this.retailerInfo = {}
+          }
+          this.$apply()
+        })
+      } else {
+        if (this.userInfo.regwid && this.userInfo.bindstatus) {
+          this.retailerInfo = this.userInfo
+        } else {
+          this.retailerInfo = {}
+        }
+        this.$apply()
+      }
+      if (Config.ShowChat) {
+        Cached.request({
+          url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/factory/info`,
+          data: {fid: Config.Fid}
+        }, 'home.factoryInfo', Config.URT.H,
+        cacheData => {
+          this.factoryInfo = cacheData
+        },
+        res => {
+          const data = res.data
+          if (data.flag) {
+            this.factoryInfo = data.data
+          }
+          this.$apply()
+          return this.factoryInfo
+        })
+      }
+      this.getData()
+    }
+
+    handlePageData () {
+      this.globalData = this.$parent.globalData
+      Util.appInit(this.globalData, this)
+      this.userInfo = this.globalData.userInfo
+      if (!this.userInfo.subscribe) {
+        this.showContainer = false
+        this.showAuth = true
+        return false
+      }
+      this.showAuth = false
+      this.showContainer = true
+      this.handleContainer()
+    }
+
+    onUnload () {
+      this.inHide = true
+      console.log('页面后退onUnload')
+      wepy.setNavigationBarTitle({
+        title: Config.AppName
+      })
+      wx.offAccelerometerChange() // 取消监听加速度数据事件,如果没有取消监听，退出页面后摇一摇事件会继续执行
+      Shake.closeShakeEvent() // 关闭摇一摇功能
+    }
+    onHide () {
+      this.inHide = true
+      console.log('页面隐藏')
+      wx.offAccelerometerChange() // 取消监听加速度数据事件,如果没有取消监听，退出页面后摇一摇事件会继续执行
+      Shake.closeShakeEvent() // 关闭摇一摇功能
+    }
+
+    onShow () {
+      this.inHide = false
+      Shake.openShakeEvent() // 打开摇一摇功能
+      this.onAccelerometerChange() // 开启摇一摇
+    }
+    onAccelerometerChange() {
+      wx.onAccelerometerChange((acceleration) => {
+        Shake.shake(acceleration, () => {
+          // 摇一摇成功后执行代码
+          wepy.reLaunch({url: '/pages/index'})
+        })
+      })
+    }
+    onLoad (options) {
+      this.inHide = false
+      // 处理通过二维码进入的场景
+      if (options.scene) {
+        let sceneOptions = Util.queryScene(options.scene)
+        options = {...options, ...sceneOptions}
+      }
+      if (options.fid) {
+        this.module = 'factorynews'
+      }
+      if (options.module) {
+        this.module = options.module
+      }
+      this.options = options
+      this.pageurl = Util.objectToUrl('/packageB/pages/home', this.options)
+      this.id = this.options.id
+      this.query = options
+      if (this.options.add) {
+        this.showShareModal = true
+      }
+      if (this.$parent.globalData.flag.bokaAuth) {
+        this.handlePageData()
+      } else {
+        this.$parent.loadCallback = () => {
+          this.handlePageData()
+        }
+      }
+      wepy.showShareMenu({
+        withShareTicket: true
+      })
+    }
+    wxParseImgTap (e) {
+      wepy.previewImage({
+        urls: [e.currentTarget.dataset.src]
+      })
+    }
+    wxParseImgLoad () {}
+    toInsertProduct (e) {
+      const dataset = e.currentTarget.dataset
+      const linkurl = dataset.linkurl
+      if (linkurl && linkurl !== '') {
+        let params = Util.query(linkurl)
+        wepy.navigateTo({url: `/${Config.Router.product}?id=${params.id}&type=fpimport&wid=${params.wid}`})
+      }
+    }
+    events = {
+      closeTipButton () {
+        this.showShareModal = false
+      },
+      cancelLogin () {
+        wepy.navigateTo({url: `/pages/index`})
+      },
+      afterAuth () {
+        this.globalData = this.$parent.globalData
+        this.userInfo = this.globalData.userInfo
+        this.showAuth = false
+        this.$apply()
+        this.handleContainer()
+      }
+    }
+  }
+</script>

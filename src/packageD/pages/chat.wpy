@@ -1,0 +1,64 @@
+<style lang="less">
+.chat-page{
+  width: 100%;display: flex;flex-direction: column;align-items: center;justify-content: center;
+  .btn-searvice{width:300rpx;height:70rpx;border-radius:60rpx;}
+  .btn1{color: #f64635;background-color: #fff;border: 1px solid #f64635;}
+}
+</style>
+<template>
+  <view class="container chat-page bg-white">
+    <view>
+      <image mode="aspectFit" style="width:250px;height:180px;" src="https://tossharingsales.boka.cn/minigxk/kf_concat.png"></image>
+    </view>
+    <view class="bold font18 align_center mt20">订单信息复制成功</view>
+    <view class="mt20" style="width:75%;color:#888;">
+      <view class="align_center">为方便客服查询订单，请进入会话界面后</view>
+      <view class="align_center">长按输入框，将订单信息粘贴并发送给客服</view>
+    </view>
+    <view style="width:60%;margin-top:50px;">
+      <button style="height:80rpx;border:2rpx solid #f64635;" class="btn-searvice bg-theme color-white font16 flex_center w_100" style="{{themeObject.bgStyle}}" open-type="contact" type="default-light" bindcontact="handleContact">马上联系</button>
+    </view>
+    <view class="mt20" style="width:60%;">
+      <view class="btn-searvice btn1 font16 flex_center w_100" style="height:76rpx !important;" bindtap="backToHome">回到首页</view>
+    </view>
+    <view class="font12 align_center" style="width:75%;color:#888;text-decoration: underline;margin-top:25rpx;" bindtap="toOrderList">查看全部订单</view>
+  </view>
+</template>
+<script>
+  import wepy from 'wepy'
+  import Util from '@/libs/util'
+  export default class extends wepy.page {
+    data = {
+      options: {},
+      userInfo: {},
+      globalData: {},
+      themeObject: {}
+    }
+    handlePageData () {
+      this.globalData = this.$parent.globalData
+      Util.appInit(this.globalData, this)
+      this.userInfo = this.globalData.userInfo
+    }
+    onLoad (options) {
+      if (this.$parent.globalData.flag.bokaAuth) {
+        this.handlePageData()
+      } else {
+        this.$parent.loadCallback = () => {
+          this.handlePageData()
+        }
+      }
+    }
+    methods = {
+      handleContact (e) {
+        console.log('客服页面的 handleContact')
+        console.log(e)
+      },
+      backToHome () {
+        wepy.reLaunch({url: `/pages/index`})
+      },
+      toOrderList () {
+        wepy.navigateTo({url: '/packageD/pages/userOrders'})
+      }
+    }
+  }
+</script>

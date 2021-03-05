@@ -1,0 +1,154 @@
+<style lang="less">
+.deliver-top-area{width:100%;position:fixed;left:0;top:0;right:0;height:160rpx;box-sizing: border-box;padding:0 20rpx;color:#fff;z-index:10;}
+.deliver-info-page{
+  padding: 180rpx 40rpx 40rpx;
+  .tl-item:nth-child(1) .left-cell:before{width:30rpx;height:30rpx;right:15rpx;background-color:orange;}
+  .tl-item:nth-child(1) .txt1{color:orange;}
+  .tl-item:nth-child(1) .txt2{color:orange;}
+  .tl-item:nth-child(1) .right-cell{color:orange;}
+  .tl-item{
+    display:flex;
+    .left-cell{position:relative;padding-right:60rpx;padding-bottom:40rpx;}
+    .left-cell:after{
+      content:'';position:absolute;right:27rpx;top:0;bottom:0;
+      width:4rpx;background-color:#bfcadf;
+    }
+    .left-cell:before{
+      content:'';position:absolute;right:20rpx;top:0;
+      width:20rpx;height:20rpx;border-radius:50%;background-color:#bfcadf;z-index:1;
+    }
+    .txt1{font-size:32rpx;text-align:right;font-weight:bold;}
+    .txt2{font-size:24rpx;text-align:right;}
+    .right-cell{padding-bottom:40rpx;font-size:32rpx;}
+  }
+}
+</style>
+<template>
+  <view class="deliver-top-area bg-theme flex_left" style="{{themeObject.linearBgStyle}}">
+    <view class="flex_cell">
+      <view>物流公司：{{ orderData.delivercompanyname }}</view>
+      <view class="mt5">物流单号：{{ orderData.delivercode }}</view>
+    </view>
+    <view class="flex_right">
+      <form class="db w_100 h_100" bindsubmit="toChat" report-submit="true">
+        <button class="flex_right" form-type="submit">
+          <text class="al al-xiaoxi font24"></text><text class="ml5">客服</text>
+        </button>
+      </form>
+    </view>
+  </view>
+  <view class="deliver-info-page">
+    <block wx:if="{{disList}}">
+      <view wx:if="{{!deliverData || !deliverData.length}}" class="flex_empty">暂无物流信息</view>
+      <block wx:else>
+        <repeat for="{{deliverData}}" item="item" index="index">
+          <view class="tl-item">
+            <view class="left-cell">
+              <view class="txt1">{{item.date_str}}</view>
+              <view class="txt2">{{item.time_str}}</view>
+            </view>
+            <view class="right-cell flex_cell">{{ item.content }}</view>
+          </view>
+        </repeat>
+      </block>
+    </block>
+  </view>
+</template>
+<script>
+import wepy from 'wepy'
+import Config from '@/config'
+import Util from '@/libs/util'
+import Time from '@/libs/time'
+export default class extends wepy.page {
+  data = {
+    showContainer: false,
+    disList: false,
+    orderData: {},
+    deliverData: [],
+    themeObject: {}
+  }
+  onLoad (options) {
+    this.options = options
+    this.userInfo = {}
+    this.globalData = {}
+    this.$apply()
+  }
+  onShow () {
+    if (this.$parent.globalData.flag.bokaAuth) {
+      this.handlePageData()
+    } else {
+      this.$parent.loadCallback = () => {
+        this.handlePageData()
+      }
+    }
+  }
+  handlePageData () {
+    this.globalData = this.$parent.globalData
+    Util.appInit(this.globalData, this)
+    this.userInfo = this.globalData.userInfo
+    this.getInfo()
+  }
+  getInfo () {
+    wepy.request({
+      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/order/orderDetail`,
+      data: {id: this.options.id}
+    }).then(res => {
+      wepy.hideLoading()
+      const data = res.data
+      const retdata = data.data ? data.data : data
+      this.orderData = retdata
+      this.showContainer = true
+      this.$apply()
+      return wepy.request({
+        url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/order/deliverInfo`,
+        data: {id: this.options.id}
+      })
+    }).then(res => {
+      const data = res.data
+      const retdata = data.data ? data.data : data
+      for (let i = 0; i < retdata.length; i++) {
+        let curtime = retdata[i].time.replace(/-/g, '/')
+        let curdate = new Date(curtime).getTime()
+        retdata[i].date_str = new Time(curdate).dateFormat('MM-dd')
+        retdata[i].time_str = new Time(curdate).dateFormat('hh:mm')
+      }
+      this.deliverData = retdata
+      this.disList = true
+      this.$apply()
+    })
+  }
+  methods = {
+    toChat (e) {
+      let curOrder = this.orderData
+      let orderProduct = curOrder.orderlist[0]
+      let txt1 = '无'
+      let curSuper = (curOrder.super && curOrder.super !== '') ? curOrder.super : txt1
+      let dateStr = new Time(curOrder.dateline * 1000).dateFormat('yyyy-MM-dd hh:mm')
+      let txt2 = '订单编号'
+      let copyTxt = `${txt2}：${curOrder.orderno}\n`
+      let txt3 = '商品'
+      copyTxt = `${copyTxt}${txt3}：${orderProduct.name}\n`
+      let txt4 = '数量'
+      copyTxt = `${copyTxt}${txt4}：${orderProduct.quantity}\n`
+      let txt5 = '收货人'
+      copyTxt = `${copyTxt}${txt5}：${curOrder.linkman}\n`
+      let txt6 = '电话'
+      copyTxt = `${copyTxt}${txt6}：${curOrder.telephone}\n`
+      let txt7 = '地址'
+      copyTxt = `${copyTxt}${txt7}：${curOrder.address}\n`
+      let txt8 = '合伙人'
+      copyTxt = `${copyTxt}${txt8}：${curOrder.retailer.title}\n`
+      let txt9 = '经理'
+      copyTxt = `${copyTxt}${txt9}：${curSuper}\n`
+      let txt10 = '状态'
+      copyTxt = `${copyTxt}${txt10}：${curOrder.flagstr}\n`
+      let txt11 = '下单时间'
+      copyTxt = `${copyTxt}${txt11}：${dateStr}`
+      wepy.setClipboardData({
+        data: copyTxt
+      })
+      wepy.navigateTo({url: '/packageD/pages/chat'})
+    }
+  }
+}
+</script>

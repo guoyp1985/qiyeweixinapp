@@ -1,0 +1,1316 @@
+<style lang="less">
+.add-module-page.iphone{bottom:68rpx;}
+.add-module-page{
+  left:0;right:0;top:0;bottom:0;position:absolute;
+  .page-inner{width:100%;height:100%;}
+  .radio-group{
+    .radio:not(:last-child){padding-right:40rpx;}
+  }
+  .photo-list:after{content:'';display:block;clear:both;}
+  .photo-item{
+    width: 25%;padding:10rpx;float: left;box-sizing: border-box;color:#999;
+    .move-ico{
+      position:absolute;bottom:0;background-color:rgba(0,0,0,0.5);color:#fff;
+      .al{font-weight:bold;}
+    }
+    .move-ico.prev{left:0;}
+    .move-ico.next{right:0;}
+  }
+  .photo-item.add .image-outer{border:rgba(0,0,0,0.2) 2rpx solid;box-sizing: border-box; }
+  .photo-item .al{font-size:40rpx;}
+  .photo-item .close{
+    position:absolute;width:40rpx;height:40rpx;line-height:40rpx;text-align:center;border-radius:50%;
+    right:0;top:-12rpx;right:-12rpx;font-weight:bold;background-color:rgba(0,0,0,0.8);color:#fff;
+  }
+  .form-list{
+    padding:0 20rpx 20rpx;box-sizing: border-box;
+    .form-item{
+      background-color:#fff;box-sizing: border-box;
+      box-shadow:0px 0px 3px 1px #e4e4e4;border-radius:4rpx;
+      width:100%;min-height:100rpx;display:flex;align-items:center;padding:20rpx;position:relative;
+      margin-top:20rpx;
+      .title-cell{width:145rpx;height:100%;display: flex;align-items: left;justify-content:flex-start;align-items: center;text-align:left;}
+      .input-cell{
+        flex:1;height:100%;display:flex;justify-content: flex-end; align-items: center;position:relative;
+        input{
+          width:100%;padding:0 10rpx;box-sizing: border-box;border-radius:10rpx;
+          color: #333333;text-align:right;
+          justify-content:flex-end;align-items: center;
+        }
+        .input-placeholder{color:rgba(153,153,153,0.65)}
+      }
+      .textarea{position:relative;width:100%;min-height:150px;box-sizing:border-box;border:#d9d9d9 1rpx solid;padding:10rpx;box-sizing: border-box;margin-top:10rpx;}
+      .textarea.empty{color:#999;}
+      .select-icon{margin-top:-10rpx;font-size:46rpx;}
+      .title-picker{
+        z-index:1;position:absolute;left:0;top:0;right:0;bottom:0;background-color:transparent;
+        .txt{position:absolute;left:0;top:0;right:0;bottom:0;padding-right:50rpx;}
+      }
+      .checkbox-list{
+        .checkbox{margin:10rpx 0 10rpx 10rpx;display:inline-block;}
+      }
+    }
+    .btn-add{width:200rpx;height:60rpx;border:#ccc 2rpx solid;border-radius:20rpx;}
+    .banner-list{
+      .banner-item{
+        border:#ccc 2rpx solid;margin-top:20rpx;
+        .banner-title{border-bottom:#ccc 2rpx solid;padding:20rpx;}
+        .banner-con{
+          padding:20rpx;
+          .con-item:not(:last-child) {margin-bottom:20rpx;}
+          .con-item{
+            width:100%;height:60rpx;
+            .title-cell1{width:120rpx;height:100%;}
+            .border-cell{
+              border:#ccc 2rpx solid;height:100%;position:relative;
+              .input{width:100%;height:100%;padding:0 10rpx;box-sizing: border-box;}
+            }
+            .icon-cell{
+              width:60rpx;height:100%;
+            }
+          }
+        }
+        .banner-pic-list{
+          .banner-pic{width:60rpx;height:60rpx;}
+        }
+        .pic{
+          width:80rpx;
+          image{width:70rpx;height:70rpx;}
+        }
+      }
+    }
+    .border-area{
+      width:100%;height:70rpx;border:orange 2rpx solid;border-radius:70rpx;color:orange;
+    }
+    .pic{
+      width:100rpx;
+      image{width:80rpx;height:80rpx;border-radius:50%;}
+    }
+  }
+  .bottom-area{
+    width:100%;height:100rpx;position:relative;
+    .btn-bottom{font-size: 32rpx;width:80%;height:80rpx;border-radius:60rpx;}
+  }
+  .blank-area{width:100%;}
+  .blank-area.share{height:120rpx;}
+}
+.fixed-ico{
+  position:fixed;right:30rpx;bottom:130rpx;width:100rpx;height:100rpx;border-radius:50%;display:block;
+  .inner{position:absolute;;left:0;right:0;bottom:0;top:0;border-radius:50%;}
+}
+.fixed-ico.iphone{bottom:198rpx;}
+</style>
+<template>
+  <view :class="{'iphone' : isIpx}" class="add-module-page havemenu">
+    <view class="page-inner columnarea">
+      <scroll-view scroll-y="true" class="column-content scroll-h">
+        <view class="news-swiper-outer" wx:if="{{bannerData.length}}">
+          <swiper
+            class="news-swiper"
+            autoplay
+            indicator-dots="{{bannerData.length > 1}}"
+            indicator-color="#d0cdd1"
+            indicator-active-color="#ff9900"
+            interval="6000"
+            circular>
+            <repeat for="{{bannerData}}" index="index" item="item">
+              <swiper-item>
+                <image class="imgcover w_100 h_100" mode="aspectFill" src="{{item.photo}}" data-data="{{item}}" bindtap="clickBanner"></image>
+              </swiper-item>
+            </repeat>
+          </swiper>
+        </view>
+        <form wx:if="{{showList}}" bindsubmit="saveEvent" report-submit="true">
+          <view class="form-list">
+            <repeat for="{{moduleInfo.add}}" index="index" item="item">
+              <block wx:if="{{item == 1}}">
+                <block wx:if="{{moduleInfo.type[index] == 1}}">
+                  <view class="form-item">
+                    <view class="title-cell">{{moduleInfo.namename[index]}}<text wx:if="{{moduleInfo.required[index]==1}}" class="al al-xing5 font12 color-red"></text></view>
+                    <view class="input-cell">
+                      <input class="input" placeholder-class="input-placeholder" bindinput="keyupFormInput" data-name="{{moduleInfo.charname[index]}}" data-index="{{index}}" type="text" name="{{moduleInfo.charname[index]}}" placeholder="{{moduleInfo.namename[index]}}"></input>
+                    </view>
+                  </view>
+                </block>
+                <block wx:elif="{{moduleInfo.type[index] == 2}}">
+                  <view class="form-item">
+                    <view class="title-cell">{{moduleInfo.namename[index]}}<text wx:if="{{moduleInfo.required[index]==1}}" class="al al-xing5 font12 color-red"></text></view>
+                    <view class="input-cell">
+                      <radio-group class="radio-group flex_left" data-name="{{moduleInfo.charname[index]}}" data-index="{{index}}" bindchange="radioChange">
+                        <repeat for="{{moduleInfo.listvalue[index]}}" item="item" index="radioindex">
+                          <label class="radio flex_left">
+                            <radio class="dotradio" value="{{item}}" checked="{{item.checked}}"/><text>{{item}}</text>
+                          </label>
+                        </repeat>
+                      </radio-group>
+                    </view>
+                  </view>
+                </block>
+                <block wx:elif="{{moduleInfo.type[index] == 3}}">
+                  <view class="form-item">
+                    <view class="title-cell">{{moduleInfo.namename[index]}}<text wx:if="{{moduleInfo.required[index]==1}}" class="al al-xing5 font12 color-red"></text></view>
+                    <view class="input-cell">
+                      <checkbox-group class="checkbox-list" data-name="{{moduleInfo.charname[index]}}" data-index="{{index}}" bindchange="checkboxChange">
+                        <repeat for="{{moduleInfo.listvalue[index]}}" item="item" index="ckindex">
+                          <label class="checkbox">
+                            <checkbox value="{{item}}"/><text>{{item}}</text>
+                          </label>
+                        </repeat>
+                      </checkbox-group>
+                    </view>
+                  </view>
+                </block>
+                <block wx:elif="{{moduleInfo.type[index] == 4}}">
+                  <view class="form-item">
+                    <view class="title-cell">{{moduleInfo.namename[index]}}<text wx:if="{{moduleInfo.required[index]==1}}" class="al al-xing5 font12 color-red"></text></view>
+                    <view class="input-cell">
+                      <text class="al al-select-icon select-icon font20 color-theme" style="{{themeObject.colorStyle}}"></text>
+                      <picker class="title-picker" value="{{selectObject[moduleInfo.charname[index]]}}" data-name="{{moduleInfo.charname[index]}}" data-index="{{index}}" range="{{moduleInfo.listvalue[index]}}" mode="selector" bindchange="changePicker">
+                        <view class="txt flex_right">{{selectObject[moduleInfo.charname[index]]}}</view>
+                      </picker>
+                    </view>
+                  </view>
+                </block>
+                <block wx:elif="{{moduleInfo.type[index] == 5}}">
+                  <view class="form-item">
+                    <view class="w_100">
+                      <view class="flex_left">{{moduleInfo.namename[index]}}<text wx:if="{{moduleInfo.required[index]==1}}" class="al al-xing5 font12 color-red"></text></view>
+                      <textarea class="textarea" placeholder="{{moduleInfo.namename[index]}}" data-name="{{moduleInfo.charname[index]}}" data-index="{{index}}" bindinput="keyupFormInput" maxlength="-1"></textarea>
+                    </view>
+                  </view>
+                </block>
+                <block wx:elif="{{moduleInfo.type[index] == 6}}">
+                  <view class="form-item">
+                    <view class="w_100">
+                      <view class="flex_left">{{moduleInfo.namename[index]}}<text wx:if="{{moduleInfo.required[index]==1}}" class="al al-xing5 font12 color-red"></text></view>
+                      <view class="pt10 pb10">
+                        <view class="photo-list">
+                          <repeat for="{{contentPhotoArr}}" item="photoitem" index="photoindex">
+                            <view class="photo-item">
+                              <view class="image-outer">
+                                <view class="imgarea">
+                                  <view class="inner">
+                                    <image mode="aspectFill" src="{{photoitem}}"></image>
+                                    <view class="close" data-type="content" data-name="{{moduleInfo.charname[index]}}" data-index="{{photoindex}}" bindtap="deletePhoto">×</view>
+                                  </view>
+                                </view>
+                              </view>
+                            </view>
+                          </repeat>
+                          <view class="photo-item add flex_center" wx:if="{{contentPhotoArr.length < maxContentPhoto}}" data-name="{{moduleInfo.charname[index]}}" data-index="{{index}}" data-type="content" bindtap="uploadPhoto">
+                            <view class="image-outer">
+                              <view class="imgarea">
+                                <view class="inner">
+                                  <view>
+                                    <view class="al al-shangchuantupian"></view>
+                                    <view class="mt5">{{contentPhotoArr.length}}/{{maxContentPhoto}}</view>
+                                  </view>
+                                </view>
+                              </view>
+                            </view>
+                          </view>
+                        </view>
+                      </view>
+                    </view>
+                  </view>
+                </block>
+                <block wx:elif="{{moduleInfo.type[index] == 8}}">
+                  <view class="form-item">
+                    <view class="title-cell">{{moduleInfo.namename[index]}}<text wx:if="{{moduleInfo.required[index]==1}}" class="al al-xing5 font12 color-red"></text></view>
+                    <view class="input-cell">
+                      <text class="al al-select-icon select-icon font20 color-theme" style="{{themeObject.colorStyle}}"></text>
+                      <picker class="title-picker" value="{{dateObject[moduleInfo.charname[index]]}}" data-name="{{moduleInfo.charname[index]}}" data-index="{{index}}" range="{{moduleInfo.listvalue[index]}}" mode="date" data-type="date" bindchange="changePicker">
+                        <view class="txt flex_right">{{dateObject[moduleInfo.charname[index]]}}</view>
+                      </picker>
+                    </view>
+                  </view>
+                </block>
+                <block wx:elif="{{moduleInfo.type[index] == 9}}">
+                  <view class="form-item">
+                    <view class="w_100">
+                      <view class="flex_left pb10 b_bottom_after">{{moduleInfo.namename[index]}}</view>
+                      <view class="pt10 pb10">
+                        <view class="banner-list">
+                          <repeat for="{{contentObject[moduleInfo.charname[index]]}}" item="item" index="cindex">
+                            <view class="banner-item">
+                              <view class="banner-title flex_left">
+                                <view class="flex_cell flex_left">{{moduleInfo.namename[index]}} {{cindex + 1}}</view>
+                                <form class="w60 flex_right color-theme" style="{{themeObject.colorStyle}}" wx:if="{{cindex > 0}}" data-charname="{{moduleInfo.charname[index]}}" data-type="content" data-move="up" data-index="{{cindex}}" bindsubmit="moveItem" report-submit="true">
+                                  <button class="btn-border" form-type="submit">上移</button>
+                                </form>
+                                <form class="w60 flex_right color-theme" style="{{themeObject.colorStyle}}" wx:if="{{cindex < contentObject[moduleInfo.charname[index]].length - 1}}" data-charname="{{moduleInfo.charname[index]}}" data-type="content" data-move="down" data-index="{{cindex}}" bindsubmit="moveItem" report-submit="true">
+                                  <button class="btn-border" form-type="submit">下移</button>
+                                </form>
+                                <form class="w40 flex_right color-theme" style="{{themeObject.colorStyle}}" data-charname="{{moduleInfo.charname[index]}}" data-type="content" data-index="{{cindex}}" bindsubmit="deleteItem" report-submit="true">
+                                  <button form-type="submit">删除</button>
+                                </form>
+                              </view>
+                              <view class="banner-con">
+                                <view class="flex_left con-item">
+                                  <view class="title-cell1 flex_left">插入类型</view>
+                                  <view class="border-cell flex_right flex_cell">
+                                    <text class="al al-select-icon select-icon font20 color-theme" style="{{themeObject.colorStyle}}"></text>
+                                    <picker class="title-picker" value="{{item.selectedConIndex}}" range-key="title" data-charname="{{moduleInfo.charname[index]}}" data-index="{{cindex}}" range="{{item.conData}}" mode="selector" bindchange="changeConPicker">
+                                      <view class="txt flex_right">{{item.conData[item.selectedConIndex].title}}</view>
+                                    </picker>
+                                  </view>
+                                </view>
+                                <view class="flex_left mt10 con-item" wx:if="{{item.conData[item.selectedConIndex].type == 'factorynews'}}" data-charname="{{moduleInfo.charname[index]}}" data-index="{{cindex}}" data-type="content" bindtap="clickNews">
+                                  <view class="title-cell1 flex_left">插入新闻</view>
+                                  <view class="flex_cell flex_center">
+                                    <block wx:if="{{item.moduleid}}">
+                                      <view class="w_100 flex_left">
+                                        <view class="pic flex_center">
+                                          <image mode="aspectFill" src="{{item.moduledata.photo}}"></image>
+                                        </view>
+                                        <view class="flex_cell flex_left">
+                                          <view class="w_100 clamp1">{{item.moduledata.title}}</view>
+                                        </view>
+                                      </view>
+                                    </block>
+                                    <view wx:else class="border-area flex_center">选择新闻</view>
+                                  </view>
+                                </view>
+                                <view class="flex_left mt10 con-item" wx:elif="{{item.conData[item.selectedConIndex].type == 'factoryproduct'}}" data-charname="{{moduleInfo.charname[index]}}" data-index="{{cindex}}" data-type="content" bindtap="clickProduct">
+                                  <view class="title-cell1 flex_left">插入商品</view>
+                                  <view class="flex_cell flex_center">
+                                    <block wx:if="{{item.moduleid}}">
+                                      <view class="w_100 flex_left">
+                                        <view class="pic flex_center">
+                                          <image mode="aspectFill" src="{{item.moduledata.photo}}"></image>
+                                        </view>
+                                        <view class="flex_cell flex_left">
+                                          <view class="w_100 clamp1">{{item.moduledata.title}}</view>
+                                        </view>
+                                      </view>
+                                    </block>
+                                    <view wx:else class="border-area flex_center">选择商品</view>
+                                  </view>
+                                </view>
+                                <block wx:elif="{{item.conData[item.selectedConIndex].type == ''}}">
+                                  <view class="flex_left" wx:if="{{item.conData[item.selectedConIndex].type == '' && !disPanel}}">
+                                    <textarea class="textarea"
+                                      data-charname="{{moduleInfo.charname[index]}}"
+                                      data-index="{{cindex}}"
+                                      bindinput="conTextareaChange"
+                                      placeholder="请输入内容..."
+                                      maxlength="-1"
+                                      value="{{item.content}}">
+                                    </textarea>
+                                  </view>
+                                  <view class="photo-list mt10">
+                                    <repeat for="{{item.photoarr}}" item="photo" index="index1">
+                                      <view class="photo-item">
+                                        <view class="image-outer">
+                                          <view class="imgarea">
+                                            <view class="inner">
+                                              <image mode="aspectFill" src="{{photo}}" data-charname="{{moduleInfo.charname[index]}}" data-itemindex="{{cindex}}" data-index="{{index1}}" bindtap="uploadContentPhoto"></image>
+                                              <view class="close" data-type="content" data-charname="{{moduleInfo.charname[index]}}" data-itemindex="{{cindex}}" data-index="{{index1}}" bindtap="deleteConPhoto">×</view>
+                                              <view class="move-ico prev" wx:if="{{index1 > 0}}" data-itemindex="{{cindex}}" data-charname="{{moduleInfo.charname[index]}}" data-type="content" data-move="prev" data-index="{{index1}}" bindtap="movePhoto"><text class="al al-qianyi"></text></view>
+                                              <view class="move-ico next" wx:if="{{item.photoarr.length > 1 && index1 < item.photoarr.length - 1}}" data-itemindex="{{cindex}}" data-charname="{{moduleInfo.charname[index]}}" data-type="content" data-move="next" data-index="{{index1}}" bindtap="movePhoto"><text class="al al-houyi"></text></view>
+                                            </view>
+                                          </view>
+                                        </view>
+                                      </view>
+                                    </repeat>
+                                    <view class="photo-item add flex_center" wx:if="{{item.photoarr.length < maxContentPhoto1}}" data-charname="{{moduleInfo.charname[index]}}" data-itemindex="{{cindex}}" bindtap="uploadContentPhoto">
+                                      <view class="image-outer">
+                                        <view class="imgarea">
+                                          <view class="inner">
+                                            <view>
+                                              <view class="al al-shangchuantupian"></view>
+                                              <view class="mt5">{{item.photoarr.length}}/{{maxContentPhoto1}}</view>
+                                            </view>
+                                          </view>
+                                        </view>
+                                      </view>
+                                    </view>
+                                  </view>
+                                </block>
+                              </view>
+                            </view>
+                          </repeat>
+                        </view>
+                        <form class="flex_center pt10 pb10" data-name="{{moduleInfo.charname[index]}}" data-index="{{index}}" bindsubmit="addItem" report-submit="true">
+                          <button class="color-theme btn-add flex_center" style="{{themeObject.colorStyle}}" form-type="submit">添加一项</button>
+                        </form>
+                      </view>
+                    </view>
+                  </view>
+                </block>
+                <block wx:elif="{{moduleInfo.type[index] == 12}}">
+                  <view class="form-item">
+                    <view class="title-cell">{{moduleInfo.namename[index]}}<text wx:if="{{moduleInfo.required[index]==1}}" class="al al-xing5 font12 color-red"></text></view>
+                    <view class="input-cell" @tap="chooseUser({{index}})">
+                      <view wx:if="{{!selectUserObject[moduleInfo.charname[index]] || !selectUserObject[moduleInfo.charname[index]].uid}}" class="border-area flex_center" form-type="submit">+ 选择用户</view>
+                      <view wx:else class="w_100 flex_left user-form" form-type="submit">
+                        <view class="pic">
+                          <image src="{{selectUserObject[moduleInfo.charname[index]].avatar}}"></image>
+                        </view>
+                        <view class="flex_cell flex_left">
+                          <view class="w_100 clamp1">{{selectUserObject[moduleInfo.charname[index]].linkman}}</view>
+                        </view>
+                      </view>
+                    </view>
+                  </view>
+                </block>
+                <block wx:else>
+                  <view class="form-item">
+                    <view class="title-cell">{{moduleInfo.namename[index]}}<text wx:if="{{moduleInfo.required[index]==1}}" class="al al-xing5 font12 color-red"></text></view>
+                    <view class="input-cell">
+                      <input class="input" placeholder-class="input-placeholder" bindinput="keyupFormInput" data-name="{{moduleInfo.charname[index]}}" data-index="{{index}}" type="text" name="{{moduleInfo.charname[index]}}" placeholder="{{moduleInfo.namename[index]}}"></input>
+                    </view>
+                  </view>
+                </block>
+              </block>
+            </repeat>
+          </view>
+          <view class="bottom-area flex_center">
+            <view class="flex_cell h_100 flex_center">
+              <button formType="reset" class="btn-bottom flex_center bg-gray color-white">清空</button>
+            </view>
+            <view class="flex_cell h_100 flex_center">
+              <button formType="submit" class="btn-bottom flex_center bg-theme color-white" style="{{themeObject.bgStyle}}">提交</button>
+            </view>
+          </view>
+        </form>
+        <view :class="{'iphone' : isIpx, 'share': ((userInfo.regwid && userInfo.bindstatus) || userInfo.fid)}" class="blank-area"></view>
+      </scroll-view>
+    </view>
+  </view>
+  <block wx:if="{{module && module != ''}}">
+    <bottomMenu
+      :current.sync="module"
+      :globalData.sync="globalData"
+      :isIpx.sync="isIpx"
+      :themeObject.sync="themeObject">
+    </bottomMenu>
+  </block>
+  <form wx:if="{{(userInfo.regwid && userInfo.bindstatus) || userInfo.fid}}" :class="{'iphone' : isIpx}" class="fixed-ico" bindsubmit="clickShare" report-submit="true">
+    <button class="inner bg-theme color-white flex_center" style="{{themeObject.bgStyle}}" form-type="submit">分享</button>
+  </form>
+  <share :themeObject.sync="themeObject" :globalData.sync="globalData" :userInfo.sync="userInfo" :wid.sync="Wid" opacity="1" module="default" :addmodule.sync="module" pagePath="pages/addModule"></share>
+  <view class="modal-panel bg-white user-modal" animation="{{animationUserPanel}}">
+    <view class="pagetop flex_center b_bottom_after font16 bold">选择用户</view>
+    <view class="search-area flex_center">
+      <view class="search-outer flex_left">
+        <view class="flex_cell">
+          <input class="input" bindinput="keyupKeyword" type="text" value="{{searchword}}"/>
+        </view>
+        <view wx:if="{{searchword != ''}}" class="icon-cell flex_center color-gray font12" bindtap="cancelSearch">取消</view>
+        <view class="icon-cell flex_right" bindtap="searchUser"><text class="al al-sousuo"></text></view>
+      </view>
+    </view>
+    <view class="pagemiddle">
+      <scroll-view class="w_100 h_100" scroll-y="true" bindscrolltolower="scrollEvent">
+        <radio-group class="scroll_list radio-group" wx:if="{{disUserList}}" bindchange="radioUserChange">
+          <view wx:if="{{!userData.length}}" class="flex_empty">
+            <block wx:if="{{isSearch}}">暂无搜索结果</block>
+            <block wx:else>暂无客户</block>
+          </view>
+          <block wx:else>
+            <repeat for="{{userData}}" item="item" index="index">
+              <view class="scroll_item">
+                <label class="radio flex_left">
+                  <view class="flex_left icon-cell">
+                    <radio value="{{item.uid ? item.uid : item.uploader}}" checked="{{item.checked}}"/>
+                  </view>
+                  <view class="flex_left pic">
+                    <image src="{{item.avatar}}"></image>
+                  </view>
+                  <view class="flex_center flex_left">
+                    <view class="w_100 clamp1">{{item.linkman}}</view>
+                  </view>
+                </label>
+              </view>
+            </repeat>
+          </block>
+        </radio-group>
+      </scroll-view>
+    </view>
+    <form class="pagebottom db b_top_after" bindsubmit="submitUser" bindreset="closeUserPanel" report-submit="true">
+      <view class="w_100 h_100 flex_center">
+        <view class="flex_center flex_cell h_100 b_right_after">
+          <button class="bg-gray w_100 h_100 flex_center color-white font16" form-type="reset">取消</button>
+        </view>
+        <view class="flex_center flex_cell h_100">
+          <button class="bg-theme w_100 h_100 flex_center color-white font16" style="{{themeObject.bgStyle}}" form-type="submit">提交</button>
+        </view>
+      </view>
+    </form>
+  </view>
+  <view class="modal-panel bg-white choose-modal" animation="{{animationPanel}}">
+    <view class="pagetop flex_center b_bottom_after font16 bold" wx:if="{{chooseModule == 'news'}}">选择新闻</view>
+    <view class="pagetop flex_center b_bottom_after font16 bold" wx:elif="{{chooseModule == 'product'}}">选择商品</view>
+    <view class="search-area flex_center">
+      <view class="search-outer flex_left">
+        <view class="flex_cell">
+          <input class="input" bindinput="keyupPanelKeyword" type="text" value="{{searchword1}}"/>
+        </view>
+        <view wx:if="{{searchword1 != ''}}" class="icon-cell flex_center color-gray font12" bindtap="panelCancelSearch">取消</view>
+        <view class="icon-cell flex_right" bindtap="panelSearchEvent"><text class="al al-sousuo"></text></view>
+      </view>
+    </view>
+    <view class="pagemiddle">
+      <scroll-view class="w_100 h_100" scroll-y="true" bindscrolltolower="panelScrollEvent">
+        <radio-group class="scroll_list radio-group" wx:if="{{disPanelList}}" bindchange="panelRadioChange">
+          <view wx:if="{{!panelData.length}}" class="flex_empty">
+            <block wx:if="{{isSearch1}}">暂无搜索结果</block>
+            <block wx:else>暂无数据</block>
+          </view>
+          <block wx:else>
+            <repeat for="{{panelData}}" item="item" index="index">
+              <view class="scroll_item">
+                <label class="radio flex_left">
+                  <view class="flex_left icon-cell">
+                    <radio value="{{item.id}}" checked="{{item.checked}}"/>
+                  </view>
+                  <view class="flex_left pic">
+                    <image src="{{item.photo}}"></image>
+                  </view>
+                  <view class="flex_cell flex_left">
+                    <view class="w_100 clamp1">{{item.title}}</view>
+                  </view>
+                </label>
+              </view>
+            </repeat>
+          </block>
+        </radio-group>
+      </scroll-view>
+    </view>
+    <form class="pagebottom db b_top_after" bindsubmit="submitChoose" bindreset="closePanel" report-submit="true">
+      <view class="w_100 h_100 flex_center">
+        <view class="flex_center flex_cell h_100 b_right_after">
+          <button class="bg-gray w_100 h_100 flex_center color-white font16" form-type="reset">取消</button>
+        </view>
+        <view class="flex_center flex_cell h_100">
+          <button class="bg-theme w_100 h_100 flex_center color-white font16" style="{{themeObject.bgStyle}}" form-type="submit">提交</button>
+        </view>
+      </view>
+    </form>
+  </view>
+</template>
+<script>
+import wepy from 'wepy'
+import Util from '@/libs/util'
+import Cached from '@/libs/cached'
+import Config from '@/config'
+import BottomMenu from '@/components/bottomMenu'
+import Share from '@/components/store/share'
+export default class AddModule extends wepy.page {
+  config = {
+    enablePullDownRefresh: true,
+    backgroundTextStyle: 'dark'
+  }
+  components = {
+    bottomMenu: BottomMenu,
+    share: Share
+  }
+  data = {
+    globalData: {},
+    userInfo: {},
+    module: '',
+    moduleInfo: {},
+    channelInfo: {},
+    photoArr: [],
+    submitIng: false,
+    isLoading: false,
+    contentPhotoArr: [],
+    maxContentPhoto: 19,
+    postData: {photo: []},
+    showList: false,
+    systemInfo: {},
+    selectObject: {},
+    dateObject: {},
+    bannerData: [],
+    selectUserObject: {},
+    animationUserPanel: {},
+    disUserList: false,
+    userData: [],
+    userObject: {},
+    loadUser: false,
+    searchword: '',
+    isSearch: false,
+    afterSearch: false,
+    clickUser: {},
+    clickIndex: 0,
+    contentObject: {},
+    maxContentPhoto1: 19,
+    insertContType: [
+      {title: '自定义内容', type: ''},
+      {title: '插入商品', type: 'factoryproduct'},
+      {title: '插入新闻', type: 'factorynews'}
+    ],
+    clickContentIndex: 0,
+    clickCharName: '',
+    animationPanel: {},
+    chooseModule: '',
+    chooseType: '',
+    disPanelList: false,
+    isLoadingPanel: false,
+    panelData: [],
+    newsObject: {},
+    productObject: {},
+    searchword1: '',
+    isSearch1: false,
+    afterSearch1: false,
+    newsData: [],
+    disProductList: false,
+    productData: [],
+    isAnimating: false,
+    disPanel: false,
+    isMoving: false,
+    isIpx: false,
+    themeObject: {}
+  }
+  refreshPage () {
+    this.$apply()
+    this.getData()
+  }
+  onPullDownRefresh () {
+    this.refreshPage()
+    wepy.showNavigationBarLoading()
+    setTimeout(() => {
+      wepy.hideNavigationBarLoading()
+      wepy.stopPullDownRefresh()
+    }, 500)
+  }
+  getData () {
+    wepy.request({
+      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/codemaker/modulePara`,
+      data: {module: this.options.module, fid: Config.Fid},
+      method: 'get'
+    }).then(res => {
+      const data = res.data
+      const retdata = data.data ? data.data : data
+      for (let i = 0; i < retdata.type.length; i++) {
+        let charname = retdata.charname[i]
+        let curtype = retdata.type[i]
+        if (curtype === '4') {
+          this.selectObject[retdata.charname[i]] = retdata.listvalue[i][0]
+          this.postData[charname] = retdata.listvalue[i][0]
+        } else if (curtype === '8') {
+          this.dateObject[charname] = ''
+          this.postData[charname] = ''
+        }
+      }
+      this.moduleInfo = retdata
+      this.showList = true
+      this.$apply()
+    })
+  }
+  afterChannelInfo () {
+    let shareParams = Util.getShareParams(this.options)
+    if (shareParams.wid && shareParams.share_uid) {
+      wepy.request({
+        url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/common/shareClick`,
+        data: {...shareParams, module: 'menumin', moduleid: this.channelInfo.id},
+        method: 'post'
+      })
+    }
+  }
+  handlePageData () {
+    this.globalData = this.$parent.globalData
+    Util.appInit(this.globalData, this)
+    this.userInfo = this.globalData.userInfo
+    if (this.options.wid) {
+      if (this.options.scene && (!this.userInfo.regwid || !this.userInfo.bindstatus)) {
+        this.globalData.Wid = this.options.wid
+        this.$parent.globalData.Wid = this.options.wid
+      }
+    }
+    let shareParams = Util.getShareParams(this.options)
+    let params = {...shareParams, fid: Config.Fid, module: this.options.module}
+    if (shareParams.wid && shareParams.share_uid) {
+      wepy.request({
+        url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/common/shareClick`,
+        data: {...shareParams, module: this.options.module, moduleid: shareParams.wid},
+        method: 'post'
+      })
+    }
+    Cached.request({
+      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/channel/info`,
+      data: params,
+      method: 'post'
+    }, `addModule.${this.options.module}.channelInfo`, Config.URT.H,
+    cacheData => {
+      this.channelInfo = cacheData
+      this.bannerData = cacheData.banner
+    },
+    res => {
+      const data = res.data
+      const retdata = data.data ? data.data : data
+      this.channelInfo = retdata
+      if (retdata.banner && retdata.banner.length) {
+        this.bannerData = retdata.banner
+      }
+      this.$apply()
+      return this.channelInfo
+    })
+    this.$apply()
+  }
+  onLoad (options) {
+    this.insertContType[0].title = '自定义内容'
+    this.insertContType[1].title = '插入商品'
+    this.insertContType[2].title = '插入新闻'
+    if (options.scene) {
+      let sceneOptions = Util.queryScene(options.scene)
+      options = {...options, ...sceneOptions}
+    }
+    this.options = options
+    this.module = options.module
+    this.pageStart = 0
+    this.newsPageStart = 0
+    this.productPageStart = 0
+    this.limit = Config.Limit
+    this.$apply()
+    wepy.getSystemInfo().then(res => {
+      this.systemInfo = res
+      if (res.model.substring(0, res.model.indexOf('X')) + 'X' === 'iPhone X') {
+        this.isIpx = true
+      }
+      this.isIpx = true
+      this.$apply()
+    })
+    if (this.$parent.globalData.flag.bokaAuth) {
+      this.handlePageData()
+    } else {
+      this.$parent.loadCallback = () => {
+        this.handlePageData()
+      }
+    }
+  }
+  handleShare () {
+    const lastshareuid = this.options.share_uid
+    let shareurl = `/${Config.Router.addmodule}?fid=${Config.Fid}&module=${this.options.module}&share_uid=${this.userInfo.uid}&share_wid=${this.globalData.Wid}&wid=${this.globalData.Wid}&comefrom=${Config.AppName}`
+    if (lastshareuid) {
+      shareurl = `${shareurl}&lastshareuid=${lastshareuid}`
+    }
+    let backUrl = encodeURIComponent(shareurl)
+    shareurl = `${shareurl}&currentUrl=${backUrl}`
+    this.shareParams = {
+      path: shareurl
+    }
+  }
+  onShareAppMessage (res) {
+    this.handleShare()
+    return this.shareParams
+  }
+  onShareTimeline () {
+    this.handleShare()
+    return this.shareParams
+  }
+  handleAnimation (type, show) {
+    var animation = wepy.createAnimation({
+      duration: 500,
+      timingFunction: 'linear'
+    })
+    if (show) {
+      animation.top(0).step()
+    } else {
+      animation.top('100%').step()
+    }
+    if (type === 'user') {
+      this.animationUserPanel = animation.export()
+    } else {
+      this.animationPanel = animation.export()
+      this.disPanel = show
+    }
+    setTimeout(() => {
+      this.isAnimating = false
+      this.$apply()
+    }, 500)
+    this.$apply()
+  }
+  getUser () {
+    let params = {pagestart: this.pageStart, limit: this.limit, fid: Config.Fid, module: this.module}
+    if (Util.trim(this.searchword) === '') {
+      this.isSearch = false
+      this.afterSearch = false
+    } else {
+      this.isSearch = true
+      params.keyword = this.searchword
+      this.afterSearch = true
+    }
+    this.$apply()
+    wepy.request({
+      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/codemaker/getUser`,
+      data: params,
+      method: 'post'
+    }).then(res => {
+      this.loadUser = false
+      const data = res.data
+      let retdata = data.data ? data.data : data
+      for (let i = 0; i < retdata.length; i++) {
+        let curuid = retdata[i].uid ? retdata[i].uid : retdata[i].uploader
+        this.userObject[curuid] = retdata[i]
+      }
+      this.userData = this.userData.concat(retdata)
+      this.disUserList = true
+      this.$apply()
+    })
+  }
+  getNewsData () {
+    let params = {fid: Config.Fid, pagestart: this.newsPageStart, limit: this.limit, noauth: 1}
+    if (Util.trim(this.searchword1) === '') {
+      this.isSearch1 = false
+      this.afterSearch1 = false
+    } else {
+      this.isSearch1 = true
+      params.keyword = this.searchword1
+      this.afterSearch1 = true
+    }
+    this.$apply()
+    wepy.request({
+      url: `${Config.GxkApi}/api/list_n/factorynews`,
+      data: params
+    }).then(res => {
+      wepy.hideLoading()
+      const data = res.data
+      const retdata = data.data ? data.data : data
+      for (let i = 0; i < retdata.length; i++) {
+        this.newsObject[retdata[i].id] = retdata[i]
+      }
+      this.newsData = this.newsData.concat(retdata)
+      this.panelData = this.newsData
+      this.disPanelList = true
+      this.isLoadingPanel = false
+      this.$apply()
+    })
+  }
+  getProductData () {
+    let params = {fid: Config.Fid, pagestart: this.productPageStart, limit: this.limit}
+    if (Util.trim(this.searchword1) === '') {
+      this.isSearch1 = false
+      this.afterSearch1 = false
+    } else {
+      this.isSearch1 = true
+      params.keyword = this.searchword1
+      this.afterSearch1 = true
+    }
+    this.$apply()
+    wepy.request({
+      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/factory/factoryproductList`,
+      data: params,
+      method: 'post'
+    }).then(res => {
+      wepy.hideLoading()
+      const data = res.data
+      const retdata = data.data ? data.data : data
+      for (let i = 0; i < retdata.length; i++) {
+        this.productObject[retdata[i].id] = retdata[i]
+      }
+      this.productData = this.productData.concat(retdata)
+      this.panelData = this.productData
+      this.disPanelList = true
+      this.isLoadingPanel = false
+      this.$apply()
+    })
+  }
+  methods = {
+    clickBanner (e) {
+      Util.clickBanner(e, this)
+    },
+    keyupFormInput (e) {
+      const dataset = e.currentTarget.dataset
+      this.postData[dataset.name] = e.detail.value
+      this.$apply()
+    },
+    changePicker (e) {
+      const dataset = e.currentTarget.dataset
+      const curindex = dataset.index
+      const curVal = e.detail.value
+      let postVal = curVal
+      if (dataset.type === 'date') {
+        this.dateObject[dataset.name] = curVal
+      } else {
+        this.selectObject[dataset.name] = this.moduleInfo.listvalue[curindex][curVal]
+        postVal = this.moduleInfo.listvalue[curindex][curVal]
+      }
+      this.postData[dataset.name] = postVal
+      this.$apply()
+    },
+    radioChange (e) {
+      const dataset = e.currentTarget.dataset
+      this.postData[dataset.name] = e.detail.value
+      this.$apply()
+    },
+    checkboxChange (e) {
+      const dataset = e.currentTarget.dataset
+      this.postData[dataset.name] = e.detail.value
+      this.$apply()
+    },
+    saveEvent (e) {
+      if (!this.submitIng) {
+        let submitData = this.postData
+        let iscontinue = true
+        for (let key in this.contentObject) {
+          let cData = []
+          for (let i = 0; i < this.contentObject[key].length; i++) {
+            let curd = this.contentObject[key][i]
+            if ((curd.type === 'factorynews' || curd.type === 'factoryproduct') && !curd.moduleid) {
+              let tip = this.pleaseSelectAppointProduct ? this.pleaseSelectAppointProduct : '请选择指定商品'
+              if (curd.type === 'factorynews') {
+                tip = this.pleaseSelectAppointNews ? this.pleaseSelectAppointNews : '请选择指定新闻'
+              }
+              wepy.showToast({
+                title: tip,
+                icon: 'none'
+              })
+              iscontinue = false
+              break
+            } else {
+              if (curd.type === '' && curd.content === '' && curd.photo === '') {
+              } else {
+                let p = {content: curd.content, photo: curd.photoarr.join(','), type: curd.type, url: ''}
+                if (curd.moduleid) {
+                  p.moduleid = curd.moduleid
+                  p.module = curd.module
+                  p.url = ''
+                } else {
+                  p.moduleid = 0
+                  p.module = ''
+                }
+                cData.push(p)
+              }
+            }
+            submitData[key] = cData
+          }
+          if (!iscontinue) {
+            break
+          }
+        }
+        if (!iscontinue) {
+          return false
+        }
+        for (let i = 0; i < this.moduleInfo.add.length; i++) {
+          if (this.moduleInfo.required[i] === '1') {
+            const curCharName = this.moduleInfo.charname[i]
+            if (Util.trim(submitData[curCharName]) === '' || submitData[curCharName] === 'undefined') {
+              const curName = this.moduleInfo.namename[i]
+              wepy.showToast({
+                title: '请完善' + curName + '信息',
+                icon: 'none'
+              })
+              return false
+            }
+          }
+          if (this.moduleInfo.charname[i] === 'frommin') {
+            submitData.frommin = Config.AppId
+          }
+        }
+        this.submitIng = true
+        wepy.showLoading()
+        wepy.request({
+          url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/codemaker/add`,
+          data: {...submitData, fid: Config.Fid, module: this.options.module},
+          method: 'post'
+        }).then(res => {
+          const data = res.data
+          wepy.hideLoading()
+          this.submitIng = false
+          this.$apply()
+          const timeout = Util.delay(data.error)
+          wepy.showToast({
+            title: data.error,
+            icon: 'none',
+            duration: Util.delay(data.error)
+          })
+          if (data.flag) {
+            this.postData = {photo: []}
+            this.$apply()
+            setTimeout(() => {
+              wepy.navigateTo({url: `/pages/moduleList?module=${this.options.module}`})
+            }, timeout)
+          }
+        })
+      }
+    },
+    uploadPhoto (e) {
+      const dataset = e.currentTarget.dataset
+      const type = dataset.type
+      let max = this.maxPhoto - this.photoArr.length
+      if (type === 'content') {
+        max = this.maxContentPhoto - this.contentPhotoArr.length
+      }
+      if (max > 9) {
+        max = 9
+      }
+      wepy.chooseImage({
+        count: max, // 默认9
+        sizeType: ['original', 'compressed'], // 可以指定是原图还是压缩图，默认二者都有
+        sourceType: ['album', 'camera'] // 可以指定来源是相册还是相机，默认二者都有
+      }).then(res => {
+        if (res.tempFiles) {
+          Util.taskData({
+            data: res.tempFiles,
+            handleFunction: (d) => {
+              return (done) => {
+                wepy.showLoading()
+                wepy.uploadFile({
+                  url: `${Config.GxkApi}/api/upload/photo`,
+                  method: 'POST',
+                  name: 'photo',
+                  filePath: d.path
+                }).then(res => {
+                  wepy.hideLoading()
+                  const resdata = JSON.parse(res.data)
+                  if (!resdata.flag) {
+                    wepy.showToast({
+                      title: resdata.error,
+                      icon: 'none',
+                      duration: Util.delay(resdata.error)
+                    })
+                  } else {
+                    let jsonData = JSON.parse(res.data)
+                    if (type === 'content') {
+                      if (this.contentPhotoArr.length < this.maxContentPhoto) {
+                        this.contentPhotoArr.push(jsonData.data)
+                      }
+                    } else {
+                      if (this.photoArr.length < this.maxPhoto) {
+                        this.photoArr.push(jsonData.data)
+                      }
+                    }
+                    let charname = dataset.name
+                    this.postData[charname].push(jsonData.data)
+                    this.$apply()
+                  }
+                  done()
+                })
+              }
+            }
+          })
+        }
+      })
+    },
+    deletePhoto (e) {
+      const dataset = e.currentTarget.dataset
+      const type = dataset.type
+      const index = dataset.index
+      if (type === 'content') {
+        this.contentPhotoArr.splice(index, 1)
+      } else {
+        this.photoArr.splice(index, 1)
+      }
+      this.postData[dataset.name].splice(index, 1)
+      this.$apply()
+    },
+    clickShare (e) {
+      this.$invoke('share', 'showPopuModal')
+    },
+    keyupKeyword (e) {
+      this.searchword = e.detail.value
+    },
+    searchUser (e) {
+      this.disUserList = false
+      this.userData = []
+      this.pageStart = 0
+      this.$apply()
+      this.getUser()
+    },
+    cancelSearch (e) {
+      this.searchword = ''
+      this.$apply()
+      if (this.afterSearch) {
+        this.disUserList = false
+        this.userData = []
+        this.pageStart = 0
+        this.getUser()
+      }
+    },
+    chooseUser (index) {
+      this.clickIndex = index
+      if (!this.isAnimating) {
+        this.isAnimating = true
+        this.handleAnimation('user', true)
+        if (!this.userData.length) {
+          this.getUser()
+        }
+      }
+      this.$apply()
+    },
+    scrollEvent () {
+      if (this.userData.length === (this.pageStart + 1) * this.limit) {
+        this.pageStart++
+        this.getUser()
+      }
+    },
+    radioUserChange (e) {
+      this.clickUser = this.userObject[e.detail.value]
+      this.$apply()
+    },
+    submitUser (e) {
+      let curuid = this.clickUser.uid ? this.clickUser.uid : this.clickUser.uploader
+      this.selectedUser = this.clickUser
+      this.selectedUser.uid = curuid
+      this.selectUserObject[this.moduleInfo.charname[this.clickIndex]] = this.clickUser
+      this.postData[this.moduleInfo.charname[this.clickIndex]] = curuid
+      this.handleAnimation('user', false)
+      this.$apply()
+    },
+    closeUserPanel (e) {
+      this.handleAnimation('user', false)
+    },
+    addItem (e) {
+      const dataset = e.currentTarget.dataset
+      const curName = dataset.name
+      if (!this.contentObject[curName]) {
+        this.contentObject[curName] = []
+      }
+      this.contentObject[curName].push({content: '', photoarr: [], conData: this.insertContType, selectedConIndex: 0, type: ''})
+      this.$apply()
+    },
+    changeConPicker (e) {
+      const dataset = e.currentTarget.dataset
+      const charname = dataset.charname
+      const curindex = dataset.index
+      const curconindex = e.detail.value
+      this.contentObject[charname][curindex].selectedConIndex = curconindex
+      const curpage = this.contentObject[charname][curindex].conData[curconindex]
+      const curtype = curpage.type
+      this.contentObject[charname][curindex].type = curtype
+      if (curtype !== '') {
+        this.contentObject[charname][curindex].module = curtype
+        this.contentObject[charname][curindex].moduleid = null
+        this.contentObject[charname][curindex].moduledata = null
+      }
+      this.$apply()
+    },
+    clickNews (e) {
+      if (!this.isAnimating) {
+        this.isAnimating = true
+        const dataset = e.currentTarget.dataset
+        const curtype = dataset.type
+        this.chooseModule = 'news'
+        this.chooseType = curtype
+        this.clickContentIndex = dataset.index
+        this.clickCharName = dataset.charname
+        if (!this.newsData.length) {
+          this.getNewsData()
+        }
+        this.handleAnimation('panel', true)
+        this.$apply()
+      }
+    },
+    clickProduct (e) {
+      if (!this.isAnimating) {
+        this.isAnimating = true
+        const dataset = e.currentTarget.dataset
+        const curtype = dataset.type
+        this.chooseModule = 'product'
+        this.chooseType = curtype
+        this.clickContentIndex = dataset.index
+        this.clickCharName = dataset.charname
+        if (!this.productData.length) {
+          this.getProductData()
+        }
+        this.handleAnimation('panel', true)
+        this.$apply()
+      }
+    },
+    panelScrollEvent (e) {
+      if (!this.isLoadingPanel) {
+        if (this.chooseModule === 'news') {
+          if (this.panelData.length === (this.newsPageStart + 1) * this.limit) {
+            this.newsPageStart++
+            this.isLoadingPanel = true
+            this.getNewsData()
+          }
+        } else if (this.chooseModule === 'product') {
+          if (this.panelData.length === (this.productPageStart + 1) * this.limit) {
+            this.productPageStart++
+            this.isLoadingPanel = true
+            this.getProductData()
+          }
+        }
+      }
+    },
+    keyupPanelKeyword (e) {
+      this.searchword1 = e.detail.value
+    },
+    panelSearchEvent (e) {
+      this.disPanelList = false
+      this.panelData = []
+      if (this.chooseModule === 'news') {
+        this.newsPageStart = 0
+        this.newsData = []
+        this.$apply()
+        this.getNewsData()
+      } else if (this.chooseModule === 'product') {
+        this.productPageStart = 0
+        this.productData = []
+        this.$apply()
+        this.getProductData()
+      }
+    },
+    panelCancelSearch (e) {
+      this.searchword1 = ''
+      this.$apply()
+      if (this.afterSearch1) {
+        this.disPanelList = false
+        this.$apply()
+        this.panelData = []
+        if (this.chooseModule === 'news') {
+          this.newsPageStart = 0
+          this.newsData = []
+          this.$apply()
+          this.getNewsData()
+        } else if (this.chooseModule === 'product') {
+          this.productPageStart = 0
+          this.productData = []
+          this.$apply()
+          this.getProductData()
+        }
+      }
+    },
+    panelRadioChange (e) {
+      const value = e.detail.value
+      if (this.chooseModule === 'news') {
+        this.chooseData = this.newsObject[value]
+      } else if (this.chooseModule === 'product') {
+        this.chooseData = this.productObject[value]
+      }
+      this.$apply()
+    },
+    closePanel (e) {
+      this.chooseData = null
+      this.handleAnimation('panel', false)
+    },
+    submitChoose (e) {
+      if (!this.chooseData || !this.chooseData.id) {
+        wepy.showToast({
+          title: '请选择数据',
+          icon: 'none'
+        })
+        return false
+      }
+      this.handleAnimation('panel', false)
+      this.contentObject[this.clickCharName][this.clickContentIndex].moduleid = this.chooseData.id
+      this.contentObject[this.clickCharName][this.clickContentIndex].moduledata = this.chooseData
+      this.chooseData = null
+      this.$apply()
+    },
+    conTextareaChange (e) {
+      const dataset = e.currentTarget.dataset
+      this.contentObject[dataset.charname][dataset.index].content = e.detail.value
+      this.$apply()
+    },
+    uploadContentPhoto (e) {
+      const dataset = e.currentTarget.dataset
+      const itemindex = dataset.itemindex
+      const photoindex = dataset.index
+      const charname = dataset.charname
+      let max = this.maxContentPhoto1 - this.contentObject[charname][itemindex].photoarr.length
+      if (max > 9) {
+        max = 9
+      }
+      wepy.chooseImage({
+        count: max, // 默认9
+        sizeType: ['original', 'compressed'], // 可以指定是原图还是压缩图，默认二者都有
+        sourceType: ['album', 'camera'] // 可以指定来源是相册还是相机，默认二者都有
+      }).then(res => {
+        if (res.tempFiles) {
+          Util.taskData({
+            data: res.tempFiles,
+            handleFunction: (d) => {
+              return (done) => {
+                wepy.showLoading()
+                wepy.uploadFile({
+                  url: `${Config.GxkApi}/api/upload/photo`,
+                  method: 'POST',
+                  name: 'photo',
+                  filePath: d.path
+                }).then(res => {
+                  wepy.hideLoading()
+                  const resdata = JSON.parse(res.data)
+                  if (!resdata.flag) {
+                    wepy.showToast({
+                      title: resdata.error,
+                      icon: 'none',
+                      duration: Util.delay(resdata.error)
+                    })
+                  } else {
+                    let jsonData = JSON.parse(res.data)
+                    if (photoindex !== 'undefined' && photoindex !== undefined) {
+                      this.contentObject[charname][itemindex].photoarr.splice(photoindex, 1, jsonData.data)
+                    } else {
+                      if (this.contentObject[charname][itemindex].photoarr.length < this.maxContentPhoto1) {
+                        this.contentObject[charname][itemindex].photoarr.push(jsonData.data)
+                      }
+                    }
+                    this.$apply()
+                  }
+                  done()
+                })
+              }
+            }
+          })
+        }
+      })
+    },
+    deleteConPhoto (e) {
+      const dataset = e.currentTarget.dataset
+      this.contentObject[dataset.charname][dataset.itemindex].photoarr.splice(dataset.index, 1)
+      this.$apply()
+    },
+    moveItem (e) {
+      if (!this.isMoving) {
+        this.isMoving = true
+        const dataset = e.currentTarget.dataset
+        const curindex = dataset.index
+        const curmove = dataset.move
+        const charname = dataset.charname
+        let moveIndex = curmove === 'up' ? curindex - 1 : curindex + 1
+        let curdata = this.contentObject[charname][curindex]
+        let movedata = this.contentObject[charname][moveIndex]
+        this.contentObject[charname].splice(curindex, 1, movedata)
+        this.contentObject[charname].splice(moveIndex, 1, curdata)
+        wepy.showToast({
+          title: '成功',
+          icon: 'none'
+        })
+        this.$apply()
+        setTimeout(() => {
+          this.isMoving = false
+          this.$apply()
+        }, 1500)
+      }
+    },
+    deleteItem (e) {
+      const dataset = e.currentTarget.dataset
+      const curindex = dataset.index
+      const charname = dataset.charname
+      wepy.showModal({
+        title: '',
+        content: '确定要删除吗？'
+      }).then(res => {
+        if (res.confirm) {
+          this.contentObject[charname].splice(curindex, 1)
+          this.$apply()
+        }
+      })
+    },
+    movePhoto (e) {
+      const dataset = e.currentTarget.dataset
+      const itemindex = dataset.itemindex
+      const index = dataset.index
+      const move = dataset.move
+      const charname = dataset.charname
+      let moveindex
+      let curphoto = ''
+      let moveimg = ''
+      if (move === 'prev') {
+        moveindex = index - 1
+      } else {
+        moveindex = index + 1
+      }
+      curphoto = this.contentObject[charname][itemindex].photoarr[index]
+      moveimg = this.contentObject[charname][itemindex].photoarr[moveindex]
+      this.contentObject[charname][itemindex].photoarr[index] = moveimg
+      this.contentObject[charname][itemindex].photoarr[moveindex] = curphoto
+      this.$apply()
+    }
+  }
+}
+</script>

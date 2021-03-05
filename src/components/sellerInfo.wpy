@@ -1,0 +1,85 @@
+<style lang="less">
+.seller-info-modal{
+  .user-avatar{width:200rpx;height:200rpx;border-radius:50%;}
+  .form-list{
+    padding:0 20rpx 20rpx;box-sizing: border-box;
+    .form-item{
+      background-color:#fff;box-sizing: border-box;
+      box-shadow:0px 0px 3px 1px #e4e4e4;border-radius:4rpx;
+      width:100%;min-height:100rpx;display:flex;align-items:center;padding:20rpx;position:relative;
+      margin-top:20rpx;
+      .title-cell{width:145rpx;height:100%;display: flex;align-items: left;justify-content:flex-start;align-items: center;text-align:left;}
+      .input-cell{
+        flex:1;height:100%;display:flex;justify-content: flex-end; align-items: center;position:relative;
+      }
+    }
+  }
+}
+.seller-info-modal.auto-modal{
+  .modal-inner{background-color:#fff !important;}
+}
+</style>
+<template>
+  <view class="auto-modal flex_center seller-info-modal">
+    <view class="modal-inner border-box" style="width:80%;">
+      <view class="align_center font18 bold pb10 b_bottom_after color-theme pt20" style="{{themeObject.colorStyle}}">卖家信息</view>
+      <view class="padding20 flex_center">
+        <image class="user-avatar" src="{{sellerUser.avatar}}"></image>
+      </view>
+      <view class="padding10 flex_center" wx:if="{{!(sellerUser.weixinaccount && sellerUser.weixinaccount != '') && !(sellerUser.mobile && sellerUser.mobile != '')}}">
+        <text class="color-gray">卖家还未设置个人信息</text>
+      </view>
+      <view wx:else class="padding10 form-list">
+        <view class="form-item" wx:if="{{sellerUser.weixinaccount && sellerUser.weixinaccount != ''}}">
+          <view class="title-cell">微信号</view>
+          <view class="input-cell">{{sellerUser.weixinaccount}}</view>
+          <view class="pl10 pr10 color-theme" style="{{themeObject.colorStyle}}" @tap="copyWechat">复制</view>
+        </view>
+        <view class="form-item" wx:if="{{sellerUser.mobile && sellerUser.mobile != ''}}">
+          <view class="title-cell">手机号</view>
+          <view class="input-cell">{{sellerUser.mobile}}</view>
+          <view class="pl10 pr10 color-green" @tap="clickMobile"><text class="al al-dianhua font20"></text></view>
+        </view>
+      </view>
+      <form class="close-area flex_center" bindsubmit="closeEvent" report-submit="true">
+        <button formType="submit" class="al al-close1"></button>
+      </form>
+    </view>
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy'
+import Util from '@/libs/util'
+export default class extends wepy.component {
+  props = {
+    sellerUser: {
+      type: Object,
+      default: {}
+    },
+    themeObject: {
+      type: Object,
+      default: {}
+    }
+  }
+  data = {
+  }
+  onLoad () {
+  }
+  methods = {
+    closeEvent (e) {
+      this.$emit('closeSellerModal')
+    },
+    clickMobile () {
+      wepy.makePhoneCall({
+        phoneNumber: this.sellerUser.mobile
+      })
+    },
+    copyWechat () {
+      wepy.setClipboardData({
+        data: `${this.sellerUser.weixinaccount}`
+      })
+    }
+  }
+}
+</script>

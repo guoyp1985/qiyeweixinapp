@@ -1,0 +1,280 @@
+<style lang="less">
+.sub-commission-page{
+  .scroll_item{padding:20rpx;}
+  .pic{
+    width:140rpx;
+    image{width:120rpx;height:120rpx;border-radius:50%;object-fit: cover;}
+  }
+  .btn{width:120rpx;height:60rpx;border-radius:20rpx;}
+}
+.detail-modal{
+  position:fixed;left:0;top:100%;right:0;bottom:0;background-color:#fff;z-index:10;overflow:hidden;
+  .popup-top{width:100%;height:90rpx;}
+  .popup-middle{position:absolute;left:0;top:90rpx;;right:0;bottom:90rpx;}
+  .popup-bottom{position:absolute;left:0;right:0;bottom:0;height:90rpx;display:block;}
+}
+.detail-modal .table{
+  width:90%;margin:0 auto;position:relative;border:#e3e3e3 2rpx solid;font-size:24rpx;box-sizing: border-box;
+  .tr:not(:last-child){border-bottom:2rpx solid #f2f2f2;}
+  .tr{
+    width:100%;height:90rpx;display:flex !important;align-items: left;justify-content:flex-start;flex-flow:row wrap; align-items: center;
+    .th{height:100%;font-size:32rpx;display:flex !important;justify-content: center; align-items: center;}
+    .th:nth-child(1){width:40%;border-right:2rpx solid #f2f2f2;}
+    .th:nth-child(2){flex:1;background-color:#e4e4e4;font-weight:bold;}
+    .th:nth-child(3){flex:1;background-color:#ECAC4D;font-weight:bold;}
+    .td:nth-child(1){width:40%;border-right:2rpx solid #f2f2f2;padding:0 10rpx;box-sizing: border-box;}
+    .td:nth-child(2){border-right:2rpx solid #f2f2f2;}
+    .td{
+      height:100%;display:flex !important;justify-content: center; align-items: center;
+      .small-td{height:90rpx;display:flex !important;justify-content: center; align-items: center;}
+      .small-td:not(:last-child){border-bottom:2rpx solid #f2f2f2;}
+    }
+  }
+  .tr:nth-child(odd) .td{background-color:#fff;}
+  .tr:nth-child(even) .td{background-color:#eee;}
+}
+.add-bottom-area{
+  width:100%;height:100rpx;position:fixed;left:0;right:0;bottom:0;
+  .btn-bottom{font-size: 32rpx;width:100%;height:100%;}
+}
+.add-bottom-area.iphone{padding-bottom:68rpx;}
+</style>
+<template>
+  <view class="container bg-page sub-commission-page">
+    <block wx:if="{{disList1}}">
+      <view wx:if="{{!tabData1.length}}" class="w_100 h_100 flex_center color-gray">
+        <block wx:if="{{isSearch}}">暂无搜索结果</block>
+        <block wx:else>暂无数据</block>
+      </view>
+      <view wx:else class="scroll_list">
+        <repeat for="{{tabData1}}" item="item" index="index1">
+          <view class="scroll_item bg-white flex_left" data-data="{{item}}" bindtap="toDetail">
+            <view class="pic flex_left">
+              <image src="{{item.avatar}}"/></image>
+            </view>
+            <view class="flex_cell">
+              <view class="clamp1">{{item.linkman}}</view>
+              <view class="color-theme mt5" style="{{themeObject.colorStyle}}">获得奖励: {{$t("RMB")}}{{item.hongbaomoney}}</view>
+            </view>
+            <view class="w80 flex_right">
+              <view class="bg-theme color-white btn flex_center" style="{{themeObject.bgStyle}}">详情</view>
+            </view>
+          </view>
+        </repeat>
+      </view>
+      <view class="load-end-area loading" wx:if="{{isLoading}}"></view>
+      <view class="load-end-area done" wx:elif="{{isDone}}"></view>
+    </block>
+  </view>
+  <view wx:if="{{lasturl && lasturl != ''}}" :class="{'iphone' : isIpx}" class="add-bottom-area" @tap="downloadCommission">
+    <view class="w_100 h_100 flex_center">
+      <button class="btn-bottom flex_center bg-theme color-white" style="{{themeObject.bgStyle}}">查看上月分佣明细</button>
+    </view>
+  </view>
+  <view class="detail-modal" animation="{{modalAnimation}}">
+    <view class="popup-top flex_center">{{clickData.linkman}}</view>
+    <view class="popup-middle font14 flex_center">
+      <view class="w_100">
+        <view class="flex_left color-theme font12 pb10" style="{{themeObject.colorStyle}}width:90%;margin:0 auto;">以下数据不含引流商品</view>
+        <view class="table vip-info">
+          <view class="tr">
+            <view class="td">累计销售额</view>
+            <view class="td flex_cell">{{$t("RMB")}}{{clickData.salesmoney}}</view>
+          </view>
+          <view class="tr">
+            <view class="td">自己订单</view>
+            <view class="td flex_cell">{{clickData.salescount}}单</view>
+          </view>
+          <view class="tr">
+            <view class="td">D1订单数</view>
+            <view class="td flex_cell">{{clickData.pc_count}}单</view>
+          </view>
+          <view class="tr">
+            <view class="td">D2订单数</view>
+            <view class="td flex_cell">{{clickData.pb_count}}单</view>
+          </view>
+          <view class="tr">
+            <view class="td">D3订单数</view>
+            <view class="td flex_cell">{{clickData.pa_count}}单</view>
+          </view>
+          <view class="tr">
+            <view class="td">应获得奖励</view>
+            <view class="td flex_cell">{{$t("RMB")}}{{clickData.hongbaomoney}}</view>
+          </view>
+        </view>
+      </view>
+    </view>
+    <form class="popup-bottom" bindsubmit="closeDetail" report-submit="true">
+      <button class="flex_cell w_100 h_100 flex_center bg-gray color-white" form-type="submit">关闭</button>
+    </form>
+  </view>
+</template>
+
+<script>
+  import Util from '@/libs/util'
+  import Time from '@/libs/time'
+  import Config from '@/config'
+  import wepy from 'wepy'
+  export default class extends wepy.page {
+    data = {
+      options: {},
+      userInfo: {},
+      globalData: {},
+      tabData1: [],
+      disList1: false,
+      limit: Config.Limit,
+      pagestart: 0,
+      Fid: Config.Fid,
+      isLoading: false,
+      isDone: false,
+      disProduct: false,
+      clickData: {},
+      modalAnimation: {},
+      searchword: '',
+      isSearch: false,
+      afterSearch: false,
+      lasturl: '',
+      themeObject: {}
+    }
+    handlePageData () {
+      this.globalData = this.$parent.globalData
+      Util.appInit(this.globalData, this)
+      this.userInfo = this.globalData.userInfo
+      this.$apply()
+      if (!this.tabData1.length) {
+        this.getData()
+      }
+    }
+    getData () {
+      let params = {fid: this.Fid, pagestart: this.pagestart, limit: this.limit, appid: Config.AppId}
+      if (Util.trim(this.searchword) === '') {
+        this.isSearch = false
+        this.afterSearch = false
+      } else {
+        this.isSearch = true
+        params.keyword = this.searchword
+        this.afterSearch = true
+      }
+      wepy.request({
+        url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/haitun/teamStat`,
+        data: params,
+        method: 'post'
+      }).then(res => {
+        const data = res.data
+        const retdata = data.data ? data.data : data
+        if (data.lasturl) {
+          this.lasturl = data.lasturl
+        }
+        for (let i = 0; i < retdata.length; i++) {
+          retdata[i].dateline_str = new Time(retdata[i].dateline * 1000).dateFormat('yyyy-MM-dd hh:mm')
+        }
+        if (retdata.length) {
+          this.tabData1 = this.tabData1.concat(retdata)
+        }
+        this.isLoading = false
+        if (retdata.length < this.limit && this.tabData1.length) {
+          this.isDone = true
+        } else {
+          this.isDone = false
+        }
+        this.disList1 = true
+        this.$apply()
+      })
+    }
+    onLoad (options) {
+      this.options = options
+      if (this.$parent.globalData.flag.bokaAuth) {
+        this.handlePageData()
+      } else {
+        this.$parent.loadCallback = () => {
+          this.handlePageData()
+        }
+      }
+      this.$apply()
+    }
+    handleAnimation (type) {
+      let animation = wepy.createAnimation({
+        timingFunction: 'ease',
+        duration: 500
+      })
+      if (type === 'show') {
+        animation.top('0').step()
+      } else {
+        animation.top('100%').step()
+      }
+      this.modalAnimation = animation.export()
+      this.$apply()
+    }
+    onReachBottom () {
+      if (this.tabData1.length === this.limit * (this.pagestart + 1)) {
+        this.pagestart++
+        this.isLoading = true
+        this.getData()
+      }
+      this.$apply()
+    }
+    methods = {
+      downloadCommission () {
+        wx.downloadFile({
+          url: this.lasturl,
+          success: function (res) {
+            const filePath = res.tempFilePath
+            wx.openDocument({
+              filePath: filePath,
+              success: function (res) {
+                console.log('打开文档成功')
+              }
+            })
+          }
+        })
+      },
+      onProduct (event) {
+        const id = event.currentTarget.dataset.id
+        wepy.navigateTo({
+          url: `/pages/product?id=${id}`
+        })
+      },
+      onClose () {
+        this.retailerQrcodeShow = false
+      },
+      onPreview (event) {
+        const url = event.currentTarget.dataset.url
+        wepy.previewImage({
+          urls: [url],
+          current: url
+        })
+      },
+      toDetail (e) {
+        const dataset = e.currentTarget.dataset
+        this.clickData = dataset.data
+        this.handleAnimation('show')
+        this.$apply()
+      },
+      closeDetail (e) {
+        this.handleAnimation()
+      },
+      keyupKeyword (e) {
+        this.searchword = e.detail.value
+      },
+      searchEvent (e) {
+        this.disList1 = false
+        this.tabData1 = []
+        this.pagestart = 0
+        this.$apply()
+        this.getData()
+      },
+      cancelSearch (e) {
+        this.searchword = ''
+        this.$apply()
+        if (this.afterSearch) {
+          this.disList1 = false
+          this.$apply()
+          this.tabData1 = []
+          this.pagestart = 0
+          this.$apply()
+          this.getData()
+        }
+      }
+    }
+  };
+</script>

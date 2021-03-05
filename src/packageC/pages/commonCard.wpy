@@ -1,0 +1,723 @@
+<style lang="less">
+.common-card-page.haveshare{padding-bottom:120rpx;}
+.common-card-page.haveshare.iphone{padding-bottom:120rpx;}
+.common-card-page{
+  .card-area{
+    width:100%;padding:20rpx;box-sizing:border-box;
+    .card-box{
+      width:100%;background-color:#fff;border-radius:10rpx;box-shadow: 0rpx 4rpx 12rpx rgba(0,0,0,0.1);
+    }
+    .time-list{
+      width:100%;height:150rpx;display:flex;white-space:nowrap;box-shadow: 0rpx 4rpx 12rpx rgba(0,0,0,0.1);box-sizing:border-box;position:relative;
+      border-bottom-left-radius:10rpx;
+      .time-item:nth-child(1){border-top-left-radius:10rpx;border-bottom-left-radius:10rpx;}
+      .time-item{
+        width:150rpx;height:100%;position:relative;
+        display:inline-block;text-align:center;
+      }
+      .inner{
+        width:100%;height:100%;display:flex;justify-content: center;align-items: center;position:relative;
+      }
+      .txt1{text-align:center;width:100%;font-size:30rpx;line-height:1;height:50rpx;display:flex;justify-content:center;align-items:center;}
+      .txt2{text-align:center;width:100%;font-size:30rpx;line-height:1;height:50rpx;display:flex;justify-content:center;align-items:center;}
+      .inner-txt{
+        position:absolute;top:50%;margin-top:-50rpx;width:100%;text-align:center;
+      }
+      .txt-area{width:100%;text-align:center;position:absolute;left:0;top:0;right:0;bottom:0;display:flex;justify-content:center;align-items:center;}
+      .time-item.big{
+        font-size:32rpx;line-height:1;
+        .inner-txt{margin-top:-32rpx;}
+      }
+      .time-item.active{
+        .txt1{font-size:50rpx;font-weight:bold;}
+        .txt2{font-weight:bold;}
+      }
+    }
+    .card-list{
+      width:100%;padding: 0 20rpx;box-sizing:border-box;display:flex;white-space:nowrap;
+      .card-item{
+        width:310rpx;height:230rpx;font-size:30rpx;position:relative;
+        display:inline-block;text-align:center;
+        background-color:#fff;border-radius:10rpx;box-shadow: 0rpx 4rpx 12rpx rgba(0,0,0,0.1);
+        padding:10rpx 10rpx 10rpx 0;
+        margin: 20rpx 10rpx;
+        .card-inner{
+          width:100%;height:100%;display:flex;
+        }
+        .cell-left{
+          flex:1;height:100%;
+          .percent-outer{
+            width:220rpx;margin:0 auto;
+            .percentarea{width:100%;}
+          }
+        }
+        .cell-right{
+          width:70rpx;height:100%;border-top-right-radius:10rpx;border-bottom-right-radius:10rpx;position:relative;overflow:hidden;
+          color:#fff;display:flex;justify-content:center;align-items:center;
+          .txt-area{width:30rpx;font-size:30rpx;word-wrap:break-word;}
+        }
+        .ball{position:absolute;right:55rpx;width:30rpx;height:30rpx;border-radius:50%;background-color:#fff;}
+        .ball1{top:-15rpx;}
+        .ball2{bottom:-15rpx;}
+      }
+    }
+  }
+  .text-suggest{display:flex;flex-direction:row;width:100vw;height:100rpx;padding:0 20rpx;box-sizing:border-box;align-items:center;}
+  .text-suggest .blank{height:1px;flex:1;background-color:#d3d3d3;}
+  .text-suggest text{width:50%;height:100%;line-height:100rpx;text-align:center;}
+  .end-area{width:100%;height:100rpx;color:#ccc;display:flex;align-items:center;justify-content: center;}
+  .btn-area{
+    width:80%;height:90rpx;margin:20rpx auto;font-size:36rpx;
+    display:flex;justify-content:center; align-items:center;
+    color:#fff;
+    border-radius:60rpx;
+  }
+  .box-area{
+    width:100%;position:relative;z-index:1;margin-top:40rpx;
+    padding:0 20rpx;box-sizing: border-box;
+    .box-inner{
+      width:100%;background-color:#fff;border-radius:10rpx;
+      .title{padding:20rpx;font-size:32rpx;box-sizing: border-box;}
+    }
+  }
+  .top-pic{
+    padding:20rpx;box-sizing: border-box;
+    .pic-cell{
+      width:160rpx;height:160rpx;border-radius:50%;box-sizing: border-box;margin-right:10rpx;
+      image{width:100%;height:100%;border-radius:50%;}
+    }
+    .box-txt{
+      border:#ee5357 2rpx solid;color:#ee5357;border-radius:5rpx;margin-left:10rpx;
+      display:flex;justify-content: center;align-items: center;padding:4rpx 10rpx;
+    }
+  }
+  .com-card-list{
+    width:100%;box-sizing:border-box;overflow:hidden;
+    .scroll{
+      height:500rpx;
+    }
+    .lists{padding:0px 20rpx 20rpx;box-sizing:border-box;width:100%;}
+    .yhq_item{
+      width: 100%;position:relative;background-color:#fff;color:#716f76;
+      display: flex;justify-content: center;align-items: center;
+      margin-top:20rpx;
+    }
+    .list-item{box-shadow: 0rpx 4rpx 12rpx rgba(0,0,0,0.1);box-sizing:border-box;}
+    .b-bottom{border-bottom:4rpx dashed #f2f3f2}
+    .percentarea{width:100% !important;height:10rpx !important;background: #f6f6f6 !important;}
+    .inner{height:10rpx !important;background-color:#eb6b5e !important; }
+    .proInfo{box-sizing: border-box;padding:20rpx 40rpx;background-color:#fff;}
+    .hxj{text-decoration: line-through;}
+    .flex_between{display: flex;justify-content: space-between;padding:20rpx 40rpx 0 40rpx;}
+    .yhq_item .txt{color:#fff;}
+    .yhq_item .flex_column{display:flex;flex-direction: column;align-items: center;justify-content: center;}
+    .yhq_item .ball{
+      position: absolute;
+      width: 60rpx;
+      height:60rpx;
+      bottom: -30rpx;
+      background-color: #f2f3f2;
+      border-radius: 50%;
+    }
+    .yhq_item .ball-left{left: -30rpx;}
+    .yhq_item .ball-right{right: -30rpx;}
+    .yhq_item .ball-up{top: -30rpx;}
+    .yhq_item .ball-down{bottom: -30rpx;}
+    .pic{width:160rpx;}
+    .pic image{width:140rpx;height:140rpx;}
+    .rbtn{display:inline-block;padding:5rpx 10rpx;border-radius:100rpx;font-weight: bolder;width:100rpx;text-align: center;color:#fff;}
+    .rbtn.gray{background-color:#ccc;}
+  }
+}
+.order-canvas{
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background-color: #222;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  canvas{
+    width: 300px;
+    height: 500px;
+    margin: 0 auto;
+  }
+  .btn{
+    width: 100vw;
+    margin-top: 30rpx;
+    text-align: center;
+    button{
+      display: inline-block;
+      height: 80rpx;
+      line-height: 80rpx;
+      border-radius: 10rpx !important;
+      padding: 0 60rpx !important;
+    }
+    .save{
+      margin-left: 20rpx;
+    }
+  }
+}
+.card-top-fixed{
+  position:absolute;left:20rpx;top:20rpx;z-index:1;
+  border-top-left-radius:10rpx;border-bottom-left-radius:10rpx;
+  width:150rpx;height:150rpx;text-align:center;
+  font-size:32rpx;line-height:1;
+  .inner{
+    width:100%;height:100%;display:flex;justify-content: center;align-items: center;position:relative;
+  }
+  .inner-txt{
+    position:absolute;top:50%;margin-top:-32rpx;width:100%;text-align:center;
+  }
+  .txt1{text-align:center;width:100%;font-size:30rpx;line-height:1;height:50rpx;display:flex;justify-content:center;align-items:center;}
+  .txt2{text-align:center;width:100%;font-size:30rpx;line-height:1;height:50rpx;display:flex;justify-content:center;align-items:center;}
+}
+.fixed-area.iphone{bottom:90rpx;}
+.fixed-area{
+  position:fixed;right:20rpx;bottom:20rpx;z-index:10;
+  display:flex;justify-content: center;align-items: center;
+  .inner{text-align:center;font-size:24rpx;}
+  .al{height:40rpx;margin-top:-10rpx;}
+  .txt{margin-top:10rpx;}
+}
+</style>
+<template>
+  <button wx:if="{{showShare}}" :class="{'iphone' : isIpx}" class="fixed-area circle" style="{{themeObject.bgStyle}}" open-type="share">
+    <view class="inner">
+      <view class="al al-zhuanfa font20"></view>
+      <view class="txt">分享</view>
+    </view>
+  </button>
+  <view wx:if="{{disComm}}" class="card-top-fixed big" style="{{themeObject.bgStyle}}color:#fff;">
+    <view class="inner">
+      <view class="inner-txt">
+        <view>限时</view>
+        <view>抢券</view>
+      </view>
+    </view>
+  </view>
+  <view :class="{'iphone' : isIpx, 'haveshare': showShare}" class="common-card-page">
+    <view class="card-area" wx:if="{{disComm}}">
+      <view class="card-box">
+        <view wx:if="{{!commCardList.length}}" class="time-list">
+          <view class="time-item big">
+            <view class="inner">
+              <view class="inner-txt"></view>
+            </view>
+          </view>
+          <view class="time-item" style="width:auto;flex:1;">
+            <view class="inner flex_center color-gray">暂无可领取优惠券</view>
+          </view>
+        </view>
+        <scroll-view wx:else scroll-x="1" class="time-list" scroll-into-view="{{toView}}">
+          <view class="time-item big" id="cc--1">
+            <view class="inner">
+              <view class="inner-txt">
+              </view>
+            </view>
+          </view>
+          <repeat for="{{ccArr}}" key="index" item="item">
+            <view id="cc-{{index}}" class="time-item {{selectedIndex == index ? 'active' : ''}}" @tap="clickTab({{index}})">
+              <view class="inner">
+                <!-- <view class="inner-txt" style="{{selectedIndex == index ? themeObject.colorStyle : ''}}">
+                  <view class="txt1">{{item}}</view>
+                  <view class="txt2" data-time="{{ccObject[item].time}}" wx:if="{{nowCc.time == ccObject[item].time}}">
+                       <block wx:if="{{ccObject[item].leftcount == 0}}">已抢完</block>
+                       <block wx:else>疯抢中</block>
+                  </view>
+                  <view class="txt2" wx:if="{{nowCc.time < ccObject[item].time}}">即将开始</view>
+                  <view class="txt2" wx:if="{{nowCc.time > ccObject[item].time}}">
+                    <block wx:if="{{ccObject[item].leftcount > 0}}">疯抢中</block>
+                    <block wx:else>已结束</block>
+                  </view>
+                </view> -->
+                <view class="txt-area" style="{{selectedIndex == index ? themeObject.colorStyle : ''}}">
+                  <view class="txt1">{{item}}</view>
+                </view>
+              </view>
+            </view>
+          </repeat>
+        </scroll-view>
+        <scroll-view scroll-x="1" class="card-list" wx:if="{{commCardList.length}}">
+          <repeat for="{{commCardList}}" key="index" item="item">
+            <view class="card-item" wx:if="{{item.changci == ccArr[selectedIndex]}}" @tap="clickCard({{item}}, {{index}})">
+              <view class="card-inner">
+                <view class="cell-left flex_center">
+                  <view class="w_100">
+                    <view class="align_center">
+                      <text class="font15" style="{{themeObject.colorStyle}}">￥</text>
+                      <text class="font30 bold" style="{{themeObject.colorStyle}}">{{item.facemoney}}</text>
+                    </view>
+                    <view style="color:{{lightTheme}};">{{item.time_str}} 开抢</view>
+                    <view style="{{themeObject.colorStyle}}">满{{item.ordermoney}}元可用</view>
+                    <view class="percent-outer mt5">
+                      <view class="percentarea flex_left" style="background-color:{{lightTheme}};">
+                        <view class="inner" style="width:{{item.yiling / item.totalcount * 100}}%;{{themeObject.bgStyle}}"></view>
+                        <view class="txt font12 flex_center">已抢 {{item.yiling_percent}} %</view>
+                      </view>
+                    </view>
+                  </view>
+                </view>
+                <view class="cell-right" style="{{themeObject.bgStyle}}">
+                  <block wx:if="{{nowCc.time >= ccObject[item.changci].time}}">
+                    <block wx:if="{{item.leftcount > 0}}">
+                      <view class="txt-area" wx:if="{{nowCc.now < item.endtime * 1000}}">
+                        <view class="txt">立</view>
+                        <view class="txt">即</view>
+                        <view class="txt">领</view>
+                        <view class="txt">取</view>
+                      </view>
+                      <view class="txt-area" wx:else>
+                        <view class="txt">已</view>
+                        <view class="txt">结</view>
+                        <view class="txt">束</view>
+                      </view>
+                    </block>
+                    <view class="txt-area" wx:else>
+                      <view class="txt">已</view>
+                      <view class="txt">抢</view>
+                      <view class="txt">完</view>
+                    </view>
+                  </block>
+                  <block wx:if="{{nowCc.time < ccObject[item.changci].time}}">
+                    <view class="txt-area">
+                      <view class="txt">即</view>
+                      <view class="txt">将</view>
+                      <view class="txt">开</view>
+                      <view class="txt">始</view>
+                    </view>
+                  </block>
+                </view>
+              </view>
+              <view class="ball ball1"></view>
+              <view class="ball ball2"></view>
+            </view>
+          </repeat>
+        </scroll-view>
+      </view>
+    </view>
+    <block wx:if="{{tabData2.length}}">
+      <view class="text-suggest">
+        <view class="blank"></view>
+        <text>为你推荐</text>
+        <view class="blank"></view>
+      </view>
+      <view class="scroll_list com-card-list">
+        <repeat for="{{tabData2}}" item="item" index="index">
+          <view class="lists">
+            <view class="list-item">
+              <view class="yhq_item">
+                <view class="flex_cell b-bottom" style="overflow:visible">
+                  <view class="flex_left pt10 pl20 pr20">
+                    <view class="flex_cell flex_left font18">
+                      <text style="font-weight:bold;{{themeObject.colorStyle}}">¥ {{item.facemoney}}</text><text class="color-gray3 font16 ml5"> (满{{item.ordermoney}}元可用)</text>
+                    </view>
+                    <view class="flex_right">
+                      <view wx:if="{{item.isreceive}}" class="rbtn gray">已领取</view>
+                      <view wx:elif="{{!item.leftcount || item.leftcount <= 0}}" class="rbtn gray">已抢光</view>
+                      <view wx:else class="rbtn" style="{{themeObject.bgStyle}}" @tap="receiveEvent({{item}},{{index}})">领取</view>
+                    </view>
+                  </view>
+                  <view style="padding:5px 20px;">{{item.starttime_str}} 至 {{item.endtime_str}}</view>
+                  <view class="flex_left">
+                    <view class="ball ball-left"></view>
+                    <view class="ball ball-right"></view>
+                  </view>
+                </view>
+              </view>
+              <view class="w_100 proInfo">
+                <view class="db-flex" @tap="toProduct({{item}})">
+                  <view class="pic">
+                    <image mode="aspectFill" src="{{item.photo}}" lazy-load></image>
+                  </view>
+                  <view class="flex_cell">
+                    <view class="clamp1 font16">{{item.producttitle}}</view>
+                    <view class="hxj">¥ {{item.productprice}}</view>
+                    <view class="font16" style="{{themeObject.colorStyle}}" wx:if="{{item.discountprice != 0 && item.discountprice != '0.00'}}">领券后 <text style="font-weight:bold">¥ {{item.discountprice}}</text> </view>
+                  </view>
+                </view>
+                <view class="w_100 pt10 flex_center">
+                  <view class="flex_cell flex_left">
+                    <view class="percentarea v_middle">
+                      <view class="inner" style="{{themeObject.bgStyle}}width:{{(item.totalcount - item.leftcount) / item.totalcount * 100}}%"></view>  <!-- 这里的width需要计算百分比 -->
+                    </view>
+                  </view>
+                  <view class="w100 flex_center">
+                    <view class="w_100 align_center clamp1 font12" style="{{themeObject.colorStyle}}" wx:if="{{!item.leftcount || item.leftcount <= 0}}">已抢光</view>
+                    <view class="w_100 align_center clamp1 font12" wx:else>仅剩<span style="{{themeObject.colorStyle}}">{{item.leftcount}}</span>张</view>
+                  </view>
+                </view>
+              </view>
+            </view>
+          </view>
+        </repeat>
+        <view class="load-end-area loading" wx:if="{{isLoading1}}"></view>
+        <view class="load-end-area done" wx:elif="{{isDone1}}"></view>
+      </view>
+    </block>
+    <block wx:if="{{disProduct}}">
+      <view class="products pb10" wx:if="{{productData.length}}">
+        <view class="text-suggest">
+          <view class="blank"></view>
+          <text>你或许还喜欢这些宝贝</text>
+          <view class="blank"></view>
+        </view>
+        <view class="productlist squarepic">
+          <repeat for="{{productData}}" key="index" item="item">
+            <product :options.sync="options" :item="item" :globalData.sync="globalData" navType="reLaunch"></product>
+          </repeat>
+        </view>
+        <view class="load-end-area loading" wx:if="{{isLoading}}"></view>
+        <view class="load-end-area done" wx:elif="{{isDone}}"></view>
+      </view>
+    </block>
+  </view>
+</template>
+<script>
+  import Product from '@/components/store/product'
+  import Util from '@/libs/util'
+  import Time from '@/libs/time'
+  import Config from '@/config'
+  import wepy from 'wepy'
+  export default class extends wepy.page {
+    config = {
+      enablePullDownRefresh: true,
+      backgroundTextStyle: 'dark'
+    }
+    components = {
+      product: Product
+    }
+    data = {
+      options: {},
+      userInfo: {},
+      globalData: {},
+      productData: [],
+      wid: 0,
+      isLoading: false,
+      isDone: false,
+      disProduct: false,
+      themeObject: {},
+      lightTheme: '',
+      ccArr: [],
+      ccObject: {},
+      commCardList: [],
+      selectedIndex: 0,
+      nowCc: {},
+      toView: '',
+      tabData2: [],
+      isIng: false,
+      isIpx: false,
+      showShare: false,
+      disComm: false,
+      isLoading1: false,
+      isDone1: false
+    }
+    onPullDownRefresh () {
+      if (this.isLoad1 || this.isLoad2 || this.isLoad3) return false
+      this.refreshPage()
+      wepy.showNavigationBarLoading()
+      setTimeout(() => {
+        wepy.hideNavigationBarLoading()
+        wepy.stopPullDownRefresh()
+      }, 500)
+    }
+    refreshPage () {
+      this.setNowDate()
+      this.commCardList = []
+      this.pagestart = 0
+      this.disProduct = false
+      this.productData = []
+      this.pageStart2 = 0
+      this.tabData2 = []
+      this.getCommList()
+      this.getData2()
+    }
+    setNowDate () {
+      let now = new Date().getTime()
+      let nowH = new Time(now).dateFormat('hh')
+      this.nowCc = {time: parseInt(nowH), now: now}
+      this.$apply()
+    }
+    handlePageData () {
+      this.globalData = this.$parent.globalData
+      this.MiniInfo = this.globalData.MiniInfo
+      Util.appInit(this.globalData, this)
+      this.lightTheme = Util.colorRgb(this.themeObject.themeColor, 0.4)
+      this.userInfo = this.globalData.userInfo
+      this.wid = this.globalData.Wid
+      if (this.userInfo.regwid && this.userInfo.bindstatus) {
+        this.showShare = true
+        wepy.showShareMenu()
+      } else {
+        this.showShare = false
+        wepy.hideShareMenu()
+      }
+      this.getCommList()
+      this.getData2()
+      this.$apply()
+    }
+    getCommList () {
+      this.isLoad1 = true
+      wepy.request({
+        url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/card/commonCardList`,
+        data: {fid: Config.Fid},
+        method: 'post'
+      }).then(res => {
+        this.isLoad1 = false
+        const data = res.data
+        let retdata = data.data
+        let cc = data.changci
+        this.setNowDate()
+        for (let i = 0; i < cc.length; i++) {
+          this.ccObject[cc[i]] = {time: parseInt(cc[i]), leftcount: 0}
+          if (this.nowCc.time === parseInt(cc[i])) {
+            this.selectedIndex = i
+          } else {
+            if (i < cc.length - 1) {
+              if (this.nowCc.time > parseInt(cc[i]) && this.nowCc.time < parseInt(cc[i + 1])) {
+                this.selectedIndex = i
+              }
+            } else {
+              if (this.nowCc.time > parseInt(cc[i])) {
+                this.selectedIndex = i
+              }
+            }
+          }
+        }
+        this.toView = `cc-${this.selectedIndex - 1}`
+        for (let i = 0; i < retdata.length; i++) {
+          retdata[i].time_str = new Time(retdata[i].starttime * 1000).dateFormat('hh:mm')
+          retdata[i].yiling_percent = parseInt(retdata[i].yiling / retdata[i].totalcount * 100)
+          this.ccObject[retdata[i].changci].leftcount += retdata[i].leftcount
+        }
+        this.ccArr = cc
+        this.commCardList = retdata
+        this.disComm = true
+        this.$apply()
+      })
+    }
+    getData2 () {
+      this.isLoad2 = true
+      wepy.request({
+        url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/card/factoryCardList`,
+        data: {fid: Config.Fid, pagestart: this.pageStart2, limit: this.limit},
+        method: 'post'
+      }).then(res => {
+        this.isLoad2 = false
+        const data = res.data
+        let retdata = data.data ? data.data : data
+        for (let i = 0; i < retdata.length; i++) {
+          retdata[i].starttime_str = new Time(retdata[i].starttime * 1000).dateFormat('yyyy-MM-dd hh:mm')
+          retdata[i].endtime_str = new Time(retdata[i].endtime * 1000).dateFormat('yyyy-MM-dd hh:mm')
+          retdata[i].leftcount = parseInt(retdata[i].leftcount)
+        }
+        this.tabData2 = this.tabData2.concat(retdata)
+        this.isLoading1 = false
+        if (retdata.length < this.limit && this.tabData2.length) {
+          this.isDone1 = true
+        } else {
+          this.isDone1 = false
+        }
+        if (!this.tabData2.length) {
+          this.getProduct()
+        } else {
+          this.disProduct = false
+        }
+        this.$apply()
+      })
+    }
+    getProduct () {
+      this.isLoad3 = true
+      wepy.request({
+        url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/factory/factoryproductList`,
+        data: {fid: Config.Fid, pagestart: this.pagestart, limit: this.limit},
+        method: 'post'
+      }).then(res => {
+        this.isLoad3 = false
+        const data = res.data
+        const retdata = data.data ? data.data : data
+        if (retdata.length) {
+          this.productData = this.productData.concat(retdata)
+        }
+        this.isLoading = false
+        if (retdata.length < this.limit && this.productData.length) {
+          this.isDone = true
+        } else {
+          this.isDone = false
+        }
+        this.disProduct = true
+        this.$apply()
+      })
+    }
+    onLoad (options) {
+      wepy.hideShareMenu()
+      this.options = options
+      this.limit = Config.Limit
+      this.pagestart = 0
+      this.pageStart2 = 0
+      this.isLoad1 = false
+      this.isLoad2 = false
+      this.isLoad3 = false
+      if (this.$parent.globalData.flag.bokaAuth) {
+        this.handlePageData()
+      } else {
+        this.$parent.loadCallback = () => {
+          this.handlePageData()
+        }
+      }
+      wepy.getSystemInfo().then(res => {
+        if (res.model.substring(0, res.model.indexOf('X')) + 'X' === 'iPhone X') {
+          this.isIpx = true
+        }
+        this.$apply()
+      })
+      this.$apply()
+    }
+    onShow () {
+      this.setNowDate()
+    }
+    handleShare () {
+      const lastshareuid = this.options.share_uid
+      let shareurl = `/packageC/pages/commonCard?share_uid=${this.userInfo.uid}&share_wid=${this.globalData.Wid}&wid=${this.globalData.Wid}&comefrom=${Config.AppName}&shareuser=self`
+      if (lastshareuid) {
+        shareurl = `${shareurl}&lastshareuid=${lastshareuid}`
+      }
+      let backUrl = encodeURIComponent(shareurl)
+      shareurl = `${shareurl}&currentUrl=${backUrl}&from=pay`
+      this.shareParams = {
+        title: `${this.userInfo.linkman}送你的专属福利，赶快领取`,
+        path: shareurl
+      }
+    }
+    onShareAppMessage (res) {
+      if (this.userInfo.regwid && this.userInfo.bindstatus) {
+        this.handleShare()
+        return this.shareParams
+      }
+    }
+    onShareTimeline () {
+      if (this.userInfo.regwid && this.userInfo.bindstatus) {
+        this.handleShare()
+        return this.shareParams
+      }
+    }
+    onReachBottom () {
+      if (this.disProduct) {
+        if (this.productData.length === this.limit * (this.pagestart + 1)) {
+          this.pagestart++
+          this.isLoading = true
+          this.getProduct()
+        }
+      } else {
+        if (this.tabData2.length === (this.pageStart2 + 1) * this.limit) {
+          this.pageStart2++
+          this.isLoading1 = true
+          this.getData2()
+        }
+      }
+    }
+    methods = {
+      clickTab (index) {
+        this.selectedIndex = parseInt(index)
+      },
+      clickCard (item, index) {
+        this.setNowDate()
+        if (this.isIng) return false
+        if (this.nowCc.time >= this.ccObject[item.changci].time && item.leftcount > 0) {
+          this.isIng = true
+          wepy.showLoading()
+          wepy.request({
+            url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/card/getCard`,
+            data: {id: item.id},
+            method: 'post'
+          }).then(res => {
+            wepy.hideLoading()
+            this.isIng = false
+            const data = res.data
+            if (data.flag) {
+              wepy.showToast({
+                title: data.error,
+                icon: 'none'
+              })
+              // 礼品领取成功通知
+              Util.checkTmpMsg({
+                systeminfo: this.globalData.systemInfo,
+                tmplIds: [this.globalData.Templates.card_receive],
+                callback: () => {
+                  // item.yiling = item.yiling + 1
+                  // item.leftcount = item.leftcount - 1
+                  // item.yiling_percent = parseInt(item.yiling / item.totalcount * 100)
+                  // this.commCardList[index] = item
+                  // this.ccObject[item.changci].leftcount -= 1
+                  // this.$apply()
+                }
+              })
+            } else {
+              wepy.showToast({
+                title: data.error,
+                icon: 'none'
+              })
+            }
+            this.$apply()
+          })
+        }
+      },
+      onProduct (event) {
+        const id = event.currentTarget.dataset.id
+        wepy.navigateTo({
+          url: `/pages/product?id=${id}`
+        })
+      },
+      onPreview (event) {
+        const url = event.currentTarget.dataset.url
+        wepy.previewImage({
+          urls: [url],
+          current: url
+        })
+      },
+      getMoreData () {
+        if (this.tabData2.length === (this.pageStart2 + 1) * this.limit) {
+          this.pageStart2++
+          this.getData2()
+        }
+      },
+      toProduct (item) {
+        wepy.navigateTo({url: `/${Config.Router.factoryproduct}?id=${item.fpid}&type=card`})
+      },
+      receiveEvent (item, index) {
+        if (this.isIng) return false
+        this.isIng = true
+        wepy.showLoading()
+        wepy.request({
+          url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/card/getCard`,
+          data: {id: item.id},
+          method: 'post'
+        }).then(res => {
+          wepy.hideLoading()
+          this.isIng = false
+          const data = res.data
+          wepy.showToast({
+            title: data.error,
+            icon: 'none',
+            duration: Util.delay(data.error)
+          })
+          if (data.flag) {
+            // 礼品领取成功通知
+            Util.checkTmpMsg({
+              systeminfo: this.globalData.systemInfo,
+              tmplIds: [this.globalData.Templates.card_receive],
+              callback: () => {
+                this.tabData2[index].leftcount = this.tabData2[index].leftcount - 1
+                this.tabData2[index].isreceive = 1
+                this.$apply()
+              }
+            })
+          }
+        })
+      }
+    }
+  };
+</script>

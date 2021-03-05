@@ -1,0 +1,653 @@
+<style lang="less">
+page{overflow-x:hidden;}
+.materialbank{
+  width:100%;position:relative;z-index:1;
+  .tlitem{border-bottom:1px solid #e5e5e5;}
+  .pofang{
+    width:80rpx;height:80rpx;background-color:rgba(0,0,0,0.3);border-radius:50%;color:#fff;
+    .al{margin-left:10rpx;margin-top:6rpx;color:#fff;}
+  }
+  .inner-sp{width:180rpx;height:180rpx;background-color:#333;}
+  .blank-area{width:100%;height:120rpx;}
+  .blank-area.iphone{width:100%;height:240rpx;}
+  .btn-ricon{width:140rpx;height:50rpx;border-radius:40rpx;}
+}
+.videoarea{
+  position:absolute;left:0;top:0;right:0;bottom:0;z-index:9999;background-color:#000;color:#fff;
+  .btn-area{
+    position:absolute;left:0;top:0;right:0;height:100rpx;
+    .btn-item:not(:last-child){margin-right:20rpx;}
+    .btn-item{
+      width:120rpx;height:60rpx;background-color:#232323;color:#fff;border-radius:20rpx;position:relative;
+      button{position:absolute;left:0;top:0;right:0;bottom:0;}
+    }
+  }
+  .video-inner{
+    position:absolute;left:0;top:100rpx;right:0;bottom:0;
+    video{position: absolute;width: 100%;height: 100%;}
+  }
+  .play-video{position:absolute;left:0;top:0;right:0;bottom:0;background-color:#000;color:#fff;z-index:10;}
+  .close-icon{position:absolute;left:50%;top:30rpx;width:120rpx;height:60rpx;margin-left:-60rpx;background-color:rgba(0,0,0,0.3);color:#fff;border-radius:20rpx;}
+}
+.bg-sucai.iphone{padding-bottom:70rpx;}
+.bg-sucai {
+  width: 100%;
+  padding: 20rpx 40rpx;
+  box-sizing: border-box;
+  background-color: #fff;
+  border-top: 2rpx solid #e5e5e5;
+  position: fixed;
+  bottom: 0;box-sizing: border-box;
+  z-index:10;
+  .addsucai {
+    width: 100%;
+    height: 60rpx;
+    color: #fff;
+    text-align: center;
+    border-radius: 40rpx;
+    line-height: 60rpx;
+  }
+}
+</style>
+<template>
+  <view class="materialbank" wx:if="{{pageShow}}">
+    <block wx:if="{{disList}}">
+      <view class="font14 align_center" style="margin-top:50%;" wx:if="{{!materData || !materData.length || materData == ''}}">此商品暂无素材数据</view>
+      <view wx:else>
+        <repeat for="{{materData}}" index="index" item="item">
+          <view class="timelinelist">
+            <view class="tlitem">
+              <view class="avatar">
+                <!-- <image src="{{item.uploaderavatar}}"></image> -->
+                <image src="{{MiniInfo.photo}}" mode="aspectFill"></image>
+              </view>
+              <view class="con">
+                <view class="flex_left">
+                  <!-- <view class="txt no_bold">{{item.uploadername}}</view> -->
+                  <view class="txt no_bold">{{MiniInfo.title}}</view>
+                  <view class="font12" data-item="{{item}}" data-index="{{index}}" bindtap="copyTxt" wx:if="{{item.title !== ''}}" style="margin-left:auto;color:rgb(124, 120, 120);">
+                    <text class="al al-fuzhi font14" style="vertical-align:middle;"></text>复制
+                  </view>
+                </view>
+                <text class="font14" style="word-break:break-all;">{{item.title}}</text>
+                <view class="piclist" wx:if="{{item.photoarr}}">
+                  <repeat for="{{item.photoarr}}" index="index1" item="photo">
+                    <view class="picitem more">
+                      <view class="inner">
+                        <image mode="aspectFill" src="{{photo}}" @tap="previewConver({{item}},{{index1}})"></image>
+                      </view>
+                    </view>
+                  </repeat>
+                  <view wx:if="{{item.video && item.video != ''}}">
+                    <view class="picitem" data-data="{{item}}" data-index="{{index}}" bindtap="onVideoTap">
+                      <view class="inner-sp flex_center mt5" style="border:2rpx solid #e5e5e5;">
+                        <text class="al al-bofang color-white"></text>
+                      </view>
+                    </view>
+                  </view>
+                </view>
+                <view class="datetxt flex_left">
+                  <view class="font12">{{item.dateline_str}}</view>
+                  <view class="flex_right flex_cell">
+                    <view bindtap="toEdit" data-item="{{item}}" data-index="{{index}}" class="ricon flex_center" wx:if="{{userInfo.isadmin}}">编辑</view>
+                    <view bindtap="delScai" data-item="{{item}}" data-index="{{index}}" class="ricon flex_center" wx:if="{{item.uploader == userInfo.gxkuid || item.fid == userInfo.fid}}">删除</view>
+                    <view bindtap="downPhoto" data-item="{{item}}" data-index="{{index}}" class="btn-ricon bg-theme color-white ml10 flex_center" style="{{themeObject.bgStyle}}" wx:if="{{item.contentphoto && item.contentphoto != ''}}">下载素材</view>
+                  </view>
+                </view>
+              </view>
+            </view>
+          </view>
+        </repeat>
+      </view>
+      <view class="load-end-area loading" wx:if="{{isLoading}}"></view>
+      <view class="load-end-area done" wx:elif="{{isDone}}"></view>
+    </block>
+    <view :class="{'iphone' : isIpx}" class="blank-area"></view>
+  </view>
+  <form :class="{'iphone' : isIpx}" class="bg-sucai" bindsubmit="toAdd" report-submit="true">
+    <button class="addsucai" style="{{themeObject.bgStyle}}" formType="submit">发布素材</button>
+  </form>
+  <view class="videoarea" wx:if="{{videoShow}}" style="top:0px;">
+    <view class="btn-area flex_center">
+      <form class="btn-item" bindsubmit="saveVideo" report-submit="true">
+        <button class="flex_center" form-type="submit">保存</button>
+      </form>
+      <form class="btn-item" bindsubmit="stopPlay" report-submit="true">
+        <button class="flex_center" form-type="submit">关闭</button>
+      </form>
+    </view>
+    <view class="video-inner">
+      <video src="{{video}}" autoplay="1" direction="0"></video>
+    </view>
+  </view>
+  <!-- <canvas canvas-id="myCanvas" style="width:{{myCanvasWidth}}px;height:{{myCanvasHeight}}px;position:absolute;left:400%;"></canvas> -->
+  <share
+    :themeObject.sync="themeObject"
+    :globalData.sync="globalData"
+    :userInfo.sync="userInfo"
+    opacity="1"
+    module="material1"
+    :photo.sync="canvasPhoto"
+    :id.sync="productId"
+    :pagePath.sync="pagePath">
+  </share>
+</template>
+
+<script>
+import wepy from 'wepy'
+import Util from '@/libs/util'
+import Config from '@/config'
+import Time from '@/libs/time'
+import Share from '@/components/store/share'
+export default class materialBank extends wepy.page {
+  config = {
+    enablePullDownRefresh: true,
+    backgroundTextStyle: 'dark'
+  }
+  components = {
+    share: Share
+  }
+  data = {
+    query: {},
+    options: {},
+    globalData: {},
+    userInfo: {},
+    materData: [],
+    photoArr: [],
+    videoShow: false,
+    video: '',
+    pageShow: false,
+    pagestart: 0,
+    isLoading: false,
+    isDone: false,
+    isInOnLoad: false,
+    disList: false,
+    isIpx: false,
+    myCanvasWidth: 0,
+    myCanvasHeight: 0,
+    themeObject: {},
+    module: 'factoryproduct',
+    pagePath: '',
+    canvasPhoto: '',
+    productId: 0,
+    showCanvas: false,
+    MiniInfo: {}
+  }
+  onReachBottom (event) {
+    if (this.materData.length === (this.pagestart + 1) * this.limit) {
+      this.pagestart++
+      this.isLoading = true
+      this.getData()
+    }
+    this.$apply()
+  }
+  handleProductData () {
+    wepy.request({
+      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/factory/newfpInfo`,
+      data: {id: this.options.pid, type: 'fpimport', wid: this.globalData.Wid}
+    }).then(res => {
+      const data = res.data
+      if (data.flag) {
+        this.viewData = data.data
+      }
+      this.getData()
+    })
+  }
+  handlePageData () {
+    this.globalData = this.$parent.globalData
+    this.MiniInfo = this.globalData.MiniInfo
+    Util.appInit(this.globalData, this)
+    this.userInfo = this.globalData.userInfo
+    this.$apply()
+    this.refreshPage()
+    this.handleProductData()
+    this.$apply()
+  }
+  getData () {
+    wepy.request({
+      url: `${Config.GxkApi}/api/list_n/productmaterial`,
+      data: {pid: this.query.id, pagestart: this.pagestart, limit: this.limit, noauth: 1}
+    }).then(res => {
+      const data = res.data
+      let retdata = data.data ? data.data : data
+      for (var i = 0; i < retdata.length; i++) {
+        let photoarr = []
+        let photo = retdata[i].contentphoto
+        retdata[i].playvideo = false
+        retdata[i].dateline_str = new Time(retdata[i].dateline * 1000).dateFormat('yyyy-MM-dd hh:mm')
+        if (photo && Util.trim(photo)) {
+          photoarr = photo.split(',')
+        }
+        retdata[i].photoarr = photoarr
+        if (retdata[i].title && retdata[i].title !== '') {
+          retdata[i].title = retdata[i].title.replace(/<br \/>/g, '\n').replace(/<br\/>/g, '\n').replace(/<br>/g, '\n')
+        }
+      }
+      this.materData = this.materData.concat(retdata)
+      this.disList = true
+      this.pageShow = true
+      this.isLoading = false
+      if (retdata.length < this.limit && this.materData.length) {
+        this.isDone = true
+      } else {
+        this.isDone = false
+      }
+      this.$apply()
+    })
+  }
+  setCanvas () {
+    wepy.getSystemInfo().then(res => {
+      this.systemInfo = res
+      let cw = this.systemInfo.windowWidth * 0.8
+      let ch = cw * 1.555
+      let defaultH = this.systemInfo.windowHeight * 0.6
+      if (defaultH > 600) defaultH = 600
+      if (ch > defaultH) {
+        ch = defaultH
+        cw = defaultH * 0.64
+      }
+      cw = cw.toFixed(2)
+      ch = ch.toFixed(2)
+      this.myCanvasWidth = parseInt(cw)
+      this.myCanvasHeight = parseInt(ch)
+      this.$apply()
+    })
+  }
+  onLoad (options) {
+    this.limit = Config.Limit
+    this.setCanvas()
+    this.options = options
+    this.query = options
+    this.$apply()
+    if (this.$parent.globalData.flag.bokaAuth) {
+      this.isInOnLoad = true
+      this.handlePageData()
+    } else {
+      this.$parent.loadCallback = () => {
+        this.isInOnLoad = true
+        this.handlePageData()
+      }
+    }
+    wepy.getSystemInfo().then(res => {
+      this.systemInfo = res
+      if (res.model.substring(0, res.model.indexOf('X')) + 'X' === 'iPhone X') {
+        this.isIpx = true
+      }
+      this.$apply()
+    })
+  }
+  onShow () {
+    if (!this.isInOnLoad && this.options.refresh) {
+      this.disList = false
+      this.$apply()
+      this.pagestart = 0
+      this.materData = []
+      this.getData()
+    }
+  }
+  onHide () {
+    this.isInOnLoad = false
+  }
+  refreshPage () {
+    this.disList = false
+    this.$apply()
+    this.materData = []
+    this.pagestart = 0
+  }
+  onPullDownRefresh () {
+    wepy.showNavigationBarLoading()
+    setTimeout(function () {
+      wepy.hideNavigationBarLoading()
+      wepy.stopPullDownRefresh()
+    }, 500)
+    this.refreshPage()
+    this.getData()
+  }
+  downloadConPhoto (contentphoto) {
+    wepy.showLoading()
+    Util.taskData({
+      data: contentphoto.split(','),
+      callback: () => {
+        wepy.hideLoading()
+        wepy.showToast({
+          title: '保存成功！从相册中查看素材图片！',
+          icon: 'none',
+          duration: 1500
+        })
+      },
+      handleFunction: (photo) => {
+        return (done) => {
+          let photoFile = photo.replace(/http:/g, 'https:')
+          wepy.downloadFile({
+            url: photoFile
+          }).then(res => {
+            wepy.hideLoading()
+            if (!res.tempFilePath) {
+              return new Promise()
+            }
+            Util.savePhoto({
+              path: res.tempFilePath,
+              showTip: false,
+              callback: () => {
+                done()
+              },
+              saveError: () => {
+                wepy.hideLoading()
+              },
+              photoError: () => {
+                done()
+              }
+            })
+          })
+        }
+      }
+    })
+  }
+  ceateQrcode () {
+    let optionalPage = Config.Router.product
+    let photo = this.viewData.photo.split(',')[0].replace(/http:/g, 'https:')
+    let avatar = this.userInfo.avatar.replace(/http:/g, 'https:')
+    let queryArr = []
+    wepy.downloadFile({
+      url: avatar
+    }).then(res => {
+      if (!res.tempFilePath) {
+        return new Promise()
+      }
+      this.avatarPhoto = res.tempFilePath
+      return wepy.downloadFile({
+        url: photo
+      })
+    }).then(res => {
+      if (!res.tempFilePath) {
+        return new Promise()
+      }
+      this.bgPhoto = res.tempFilePath
+      queryArr = [`id=${this.options.pid}`, `share_uid=${this.userInfo.uid}`, `wid=${this.globalData.Wid}`, 'type=fpimport']
+      let sourceurl = `/${optionalPage}`
+      if (queryArr.length) {
+        let querystr = queryArr.join('&')
+        sourceurl = `${sourceurl}?${querystr}`
+      }
+      return wepy.request({
+        url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/wxa/createPoster`,
+        method: 'POST',
+        data: {
+          appid: Config.AppId,
+          sourceurl: sourceurl,
+          page: 'pages/index'
+        }
+      })
+    }).then(res => {
+      if (res.data.flag === 1) {
+        let retdata = res.data.data
+        retdata = retdata.replace(/http:/g, 'https:')
+        return wepy.downloadFile({
+          url: retdata
+        })
+      }
+    }).then(res => {
+      if (!res.tempFilePath) {
+        return new Promise()
+      }
+      this.miniQrcode = res.tempFilePath
+      this.createImage()
+    })
+  }
+  createImage () {
+    const context = wepy.createCanvasContext('myCanvas')
+    context.save()
+    const _canvasWidth = parseFloat(this.myCanvasWidth)
+    const _canvasHeight = parseFloat(this.myCanvasHeight)
+    const bgPhoto = this.bgPhoto
+    const tips = '向你推荐一款好产品，快来瞧瞧～'
+    const avatarPhoto = this.avatarPhoto
+    const miniQrcode = this.miniQrcode
+    let userName = this.userInfo.linkman
+    if (this.userInfo.subscribe === 0) {
+      if (this.userInfo.province === '') {
+        userName = '未知地区用户'
+      } else {
+        let txt = '地区用户'
+        userName = `${this.userInfo.province}${txt}`
+      }
+    }
+    let fontSize = Math.ceil(14 / 320 * _canvasWidth)
+    // 画背景图
+    context.setFillStyle('#ffffff')
+    context.fillRect(0, 0, _canvasWidth, _canvasHeight)
+
+    let _avatarW1 = _canvasWidth * 0.15
+    let _avatarR1 = _avatarW1 / 2
+    let _avatarLeft = _canvasWidth * 0.041
+    let _avatarTop = _canvasHeight * 0.033
+    let txtFontSize1 = fontSize - 2
+    let mt1 = parseInt((_avatarW1 - txtFontSize1 - 10) / 2)
+    let txtTop1 = _avatarTop + ((_avatarW1 - fontSize - txtFontSize1 - mt1) / 2) - 3
+    let txtTop2 = txtTop1 + fontSize + txtFontSize1 + mt1
+    context.save()
+    context.beginPath()
+    context.arc(_avatarLeft + _avatarR1, _avatarTop + _avatarR1, _avatarR1, 0, 2 * Math.PI, false)
+    context.clip()
+    context.drawImage(avatarPhoto, _avatarLeft, _avatarTop, _avatarW1, _avatarW1)
+    context.restore()
+
+    context.font = `bold ${fontSize}px`
+    context.setFontSize(fontSize)
+    context.setFillStyle('#000000')
+    context.setTextAlign('left')
+    context.fillText(`${userName}`, _canvasWidth * 0.23, _avatarTop + txtTop1)
+
+    context.setFontSize(txtFontSize1)
+    context.setFillStyle('#8a8a8a')
+    context.setTextAlign('left')
+    context.fillText(tips, _canvasWidth * 0.23, txtTop2)
+
+    let borderW = _canvasWidth * 0.01
+    let photoW = _canvasWidth - borderW * 2
+    let photoTop = _canvasHeight * 0.16
+    context.setFillStyle(this.themeObject.themeColor)
+    context.fillRect(0, photoTop - borderW, _canvasWidth, _canvasWidth)
+    // context.drawImage(bgPhoto, _canvasWidth * 0.03, _canvasHeight * 0.19, photoW, photoW)
+    context.drawImage(bgPhoto, borderW, photoTop, photoW, photoW)
+
+    let marginLeft = parseInt(_canvasWidth * 0.03)
+    let disWidth = _canvasWidth * 0.65
+    let txt = `${this.viewData.title}`
+    // 每行最多显示文字个数
+    let maxLen = Math.floor(disWidth / fontSize)
+    let txtMarginTop = _canvasHeight * 0.86 + borderW
+    let disTxt = txt
+    if (txt.length > maxLen) {
+      disTxt = txt.substr(0, maxLen - 2)
+      disTxt = `${disTxt}...`
+    }
+    context.font = `bold ${fontSize}px`
+    context.setFontSize(fontSize)
+    context.setFillStyle('#000000')
+    context.setTextAlign('left')
+    context.fillText(`${disTxt}`, marginLeft, txtMarginTop, _canvasWidth - marginLeft * 2)
+
+    let txtFontSize = fontSize - 2
+    if (this.module === 'product' || this.module === 'factoryproduct' || (this.module === 'store' && this.retailerInfo.content && this.retailerInfo.content !== '')) {
+      let selltxt = null
+      if (this.module === 'product' || this.module === 'factoryproduct') {
+        let priceW = photoW * 0.4
+        let priceH = priceW * 0.25 + borderW
+        let priceLeft = borderW
+        let priceTop = photoTop + photoW - priceH + borderW / 2
+        context.setFillStyle(this.themeObject.themeColor)
+        context.fillRect(priceLeft, priceTop, priceW, priceH)
+        context.font = `bold ${fontSize}px`
+        context.setFontSize(fontSize)
+        context.setFillStyle('#ffffff')
+        context.setTextAlign('left')
+        context.fillText(`￥`, priceLeft, priceTop + priceH - fontSize / 2 - borderW * 1.5, priceW)
+        context.font = `bold ${fontSize}px`
+        context.setFontSize(fontSize + 2)
+        context.setFillStyle('#ffffff')
+        context.setTextAlign('left')
+        let disPrice = this.viewData.price
+        if (this.viewData.minprice && this.viewData.minprice !== '') {
+          disPrice = this.viewData.minprice
+        }
+        context.fillText(`${disPrice}`, priceLeft + fontSize, priceTop + priceH - fontSize / 2 - borderW * 1.5, priceW)
+        if (this.viewData && this.viewData.sellingpoint) {
+          selltxt = this.viewData.sellingpoint
+        }
+      } else {
+        selltxt = this.retailerInfo.content
+      }
+      if (selltxt && selltxt !== '') {
+        // 每行最多显示文字个数
+        let maxLen1 = Math.floor(disWidth / txtFontSize)
+        // 共显示多少行
+        let maxCount1 = Math.ceil(selltxt.length / maxLen1)
+        for (let i = 0; i < maxCount1; i++) {
+          context.setFontSize(txtFontSize)
+          context.setFillStyle(this.themeObject.themeColor)
+          context.setTextAlign('left')
+          let disFacTxt = selltxt.substr(i * maxLen1, maxLen1)
+          if (maxCount1 >= 3 && i === 1) {
+            disFacTxt = txt.substr(i * maxLen1, maxLen1 - 2)
+            disFacTxt = `${disTxt}...`
+            context.fillText(`${disFacTxt}`, marginLeft, txtMarginTop + fontSize + 5 + fontSize * i, disWidth)
+            break
+          } else {
+            context.fillText(`${disFacTxt}`, marginLeft, txtMarginTop + fontSize + 5 + fontSize * i, disWidth)
+          }
+        }
+      }
+    }
+    let qrcodeW = parseInt(_canvasWidth * 0.3)
+    let qrcodeTop = photoTop + photoW + borderW * 3
+    let bottomH = _canvasHeight - qrcodeTop
+    if (qrcodeW > bottomH) {
+      qrcodeW = bottomH
+    }
+    // 画二维码
+    context.drawImage(miniQrcode, _canvasWidth - marginLeft - qrcodeW, qrcodeTop, qrcodeW, qrcodeW)
+
+    context.draw()
+    setTimeout(() => {
+      wepy.canvasToTempFilePath({
+        canvasId: 'myCanvas'
+      }).then(res => {
+        Util.savePhoto({
+          path: res.tempFilePath
+        })
+      })
+    }, 200)
+  }
+  methods = {
+    saveVideo (e) {
+      const url = this.video.replace(/http:/g, 'https:')
+      wepy.downloadFile({
+        url: url
+      }).then(res => {
+        if (!res.tempFilePath) {
+          return new Promise()
+        }
+        Util.saveVideo({
+          path: res.tempFilePath
+        })
+      })
+    },
+    stopPlay (e) {
+      this.videoShow = false
+    },
+    onVideoTap (e) {
+      const index = e.currentTarget.dataset.index
+      this.video = this.materData[index].video
+      this.videoShow = true
+      this.$apply()
+    },
+    copyTxt (e) {
+      const dataset = e.currentTarget.dataset
+      const item = dataset.item
+      wepy.setClipboardData({
+        data: item.title
+      })
+    },
+    previewConver (item, index1) {
+      wepy.previewImage({
+        current: item.photoarr[index1],
+        urls: item.photoarr
+      })
+    },
+    toAdd (e) {
+      wepy.navigateTo({url: `/package/pages/addMaterial?id=${this.query.id}&pid=${this.query.pid}`})
+    },
+    toEdit (e) {
+      const item = e.currentTarget.dataset.item
+      wepy.navigateTo({url: `/package/pages/addMaterial?id=${this.query.id}&pid=${this.query.pid}&mid=${item.id}`})
+    },
+    delScai (e) {
+      const index = e.currentTarget.dataset.index
+      const item = e.currentTarget.dataset.item
+      wepy.showModal({
+        title: '',
+        content: '确定删除吗？'
+      }).then(res => {
+        if (res.confirm) {
+          wepy.request({
+            url: `${Config.GxkApi}/api/team/materialdelete`,
+            data: {id: item.id, gxkuid: this.userInfo.gxkuid},
+            method: 'post'
+          }).then(res => {
+            const data = res.data
+            if (data.flag === 1) {
+              this.materData.splice(index, 1)
+              wepy.showToast({
+                title: '删除成功',
+                icon: 'none'
+              })
+            } else {
+              wepy.showToast({
+                title: data.error,
+                icon: 'none',
+                duration: Util.delay(data.error)
+              })
+            }
+            this.$apply()
+          })
+        }
+      })
+    },
+    downPhoto (e) {
+      const dataset = e.currentTarget.dataset
+      const item = dataset.item
+      let contentphoto = item.contentphoto
+      this.showCanvas = true
+      wepy.showModal({
+        title: '',
+        content: '确定保存所有素材到相册中吗？'
+      }).then(res => {
+        if (res.confirm) {
+          this.downloadConPhoto(contentphoto)
+          let curVideo = item.video
+          if (curVideo && curVideo !== '') {
+            curVideo = curVideo.replace(/http:/g, 'https:')
+            wepy.downloadFile({
+              url: curVideo
+            }).then(res => {
+              if (!res.tempFilePath) {
+                return new Promise()
+              }
+              Util.saveVideo({
+                path: res.tempFilePath
+              })
+            })
+          }
+          // this.ceateQrcode()
+          this.canvasPhoto = this.viewData.photo.split(',')[0]
+          this.pagePath = Config.Router.product
+          this.productId = this.viewData.id
+          this.$apply()
+          this.$invoke('share', 'onCodeTap')
+        }
+      })
+    }
+  }
+}
+</script>

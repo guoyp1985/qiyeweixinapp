@@ -1,0 +1,328 @@
+/*
+* @description: 群群推验证页面
+* @auther: simon
+* @created_date: 2019-1-5
+*/
+
+<style lang="less">
+.roomapply-page{
+  padding:40rpx;
+  .top-content{
+    width:100%;background-color:#fff;border:1px solid #e5e5e5;border-radius:5px;
+    padding:10px 15px;box-sizing:border-box;box-shadow: 0 0 5px 2px #e0e0e0;
+  }
+  .litem{
+    width:10px;height:30px;border:1px solid #e5e5e5;border-radius:20px;background-color:#fff;
+    position:absolute;bottom:-20px;
+  }
+}
+.rgba09red{background-color:#FB5657 !important;}
+.btnin{
+  .inputs{
+    border:1px solid #C3C3C3;height:31px;padding-left:10px;
+    .weui-cell{padding:0;width:100%;height:100%;}
+  }
+  input{outline:none;width:100%;height:100%;}
+  .btn{
+    width:60px;height:33px;text-align:center;line-height:33px;color:#fff;background-color:#FB5657;border:0;
+    margin-left:-1px;
+  }
+}
+.weui-cell__primary{
+  display: flex !important;
+  justify-content: flex-start;
+  flex-flow: row wrap;
+  align-items: center;
+  text-align: left;
+}
+.weui-cell__hd{width: 0em !important;}
+.weui-icon-circle{font-size:16px !important;}
+.weui-icon-success{font-size:16px !important;}
+#room-apply {
+  // background-color:#F2F2F2;
+}
+#room-apply .protocal-area {
+  padding: 20px 0 16px 0;
+  text-align: center;
+}
+#room-apply .submit-button {
+  background-color: #EA3A3A;
+  line-height: 45px;
+  text-align: center;
+}
+#room-apply .step {
+  padding: 20px 15px;box-sizing:border-box;margin-top:10px;
+}
+#room-apply .step .step-item {
+  position: relative;
+  height: 70px;
+}
+#room-apply .step .step-item .step-item-tail {
+  position: absolute;
+  left: 20px;
+  top: 30px;
+  width: 1px;
+  height: 30px;
+  background-color: #EA3A3A;
+}
+#room-apply .step-item-title {
+  color: #EA3A3A;
+  width: 60px;
+}
+#room-apply .flex_around {
+  display: flex;
+  justify-content: space-around;
+  height: 46px;
+  align-items: center;
+
+}
+#room-apply .btn-tab {
+  .btn-tab-item {
+    border: 1px solid #666;
+    text-align: center;
+    padding: 3px 20px;
+    border-radius: 5px;
+    color: #666;
+  }
+  .btn-tab-item.active{color:#EA3A3A;border:1px solid #EA3A3A;}
+}
+</style>
+<template>
+  <view id="room-apply" class="roomapply-page">
+    <!-- <view class="s-bottom submit-button color-white" @tap="submitHandle">
+      <text>提交验证</text>
+    </view> -->
+    <view class="top-content">
+      <view class="color-red font16 align_center">微信群轻松管理技巧</view>
+      <view class="font14 mt10 color-gray2" style="line-height:25px;">将你的微信群按照以下提示添加到小程序中，添加完成后，机器人客服会帮助您对微信群进行管理，例如：发送小程序当前出售商品的素材，以及群内用户销售排行榜哦^_^</view>
+    </view>
+    <view class="flex_center" style="position:relative;width:85%;margin:0 auto;">
+      <view class="litem" style="left:50px;"></view>
+      <view class="litem" style="right:50px;"></view>
+    </view>
+    <view class="step top-content">
+      <view class="step-item">
+        <view class="step-item-info db-flex">
+          <view class="step-item-title">第一步:</view>
+          <view class="flex_cell color-gray2">
+            <text>添加官方客服微信</text>
+            <text class="color-red" @tap="wxContact"> 马上添加 ></text>
+          </view>
+        </view>
+        <view class="step-item-tail"></view>
+      </view>
+      <view class="step-item">
+        <view class="step-item-info db-flex">
+          <view class="step-item-title">第二步:</view>
+          <view class="flex_cell color-gray2">
+            <text >拉官方客服进入微信群</text>
+          </view>
+        </view>
+        <view class="step-item-tail"></view>
+      </view>
+      <view class="step-item">
+        <view class="step-item-info db-flex">
+          <view class="step-item-title">第三步:</view>
+          <view class="flex_cell color-gray2">
+            <text>客服向你发送密钥后，返回此页面输入验证密钥。如未收到任何信息请在群内发任意信息后再试。</text>
+          </view>
+        </view>
+        <view class="step-item-tail" style="height:80px !important;"></view>
+      </view>
+      <view class="flex_right btnin pt10 pb10">
+        <view class="inputs flex_left">
+          <input type="text" value="{{crypto}}" bindinput="setCrypto" placeholder="请输入密钥"></input>
+        </view>
+        <view @tap="submitHandle" class="btn">验证</view>
+      </view>
+      <view class="step-item">
+        <view class="step-item-info db-flex">
+          <view class="step-item-title">第四步</view>
+          <view class="flex_cell color-gray2">
+            <text>选择微信群标签</text>
+          </view>
+        </view>
+        <view class="flex_around btn-tab">
+          <view class="btn-tab-item {{selectedIndex == 3 ? 'active' : '' }}" data-current="3" @tap="clickTab">代理群</view>
+          <view class="btn-tab-item {{selectedIndex == 2 ? 'active' : '' }}" data-current="2" @tap="clickTab">经理群</view>
+        </view>
+      </view>
+    </view>
+    <!-- <view v-transfer-dom>
+      <x-dialog v-model="showDialog" hide-on-blur :dialog-style="{width: '100%', height: '50%', 'background-color': '#ffffff'}">
+        <view style="text-align:center;padding-top:10px;" @tap="showDialog = false">
+          <view style="font-size:14px;text-align:left;padding:10px 20px;overflow-y: scroll;height:400px;">
+            <h4 style="text-align:center;">群群推服务协议</h4>
+            <p style="text-indent:28px;">通过使用群群推服务，您明确同意使用群群推服务协议，由您自行承担全部风险。共销客不保证您在群群推上看到内容的准确性、真实性或完整性。</p>
+            <p style="text-indent:28px;">您特此确认已知晓本协议适用于群群推提供的所有内容和服务。在任何情况下，共销客不对您因使用或无法使用群群推服务而导致的任何直接或间接损害承担责任，包括但不限于您对群群推服务获得的任何信息产生依赖导致的错误、删除、服务延迟或任何其他故障。虽然群群推已竭尽全力确保平台显示的内容是正确的，但共销客对信息准确性作出保证，并“原样”提供所有信息。在法律允许的最大范围内，共销客的合作伙伴和关联公司，相关第三方，员工，承包商以及参与群群推运营的人员，对您或任何第三方因群群推上销售的产品而导致的任何损失或损害，不承担任何责任和义务。这包括（但不限于）因疏忽而导致的任何损失或损害。</p>
+            <p style="text-indent:28px;">群群推仅为您提供群价值的参考建议并非完全精准信息！</p>
+          </view>
+          <x-icon type="ios-close-outline" style="fill:red;"></x-icon>
+        </view>
+      </x-dialog>
+    </view> -->
+    <view class="auto-modal flex_center" wx:if="{{showKefuQrcode}}">
+      <view class="modal-inner border-box">
+          <view class="pt20 pb20 flex_center">
+            <image mode="widthFix" style="width:65%;" src="{{QQTQrcode}}" @tap="previewImage"></image>
+          </view>
+          <view class="flex_center pr20 pl20 pb20">
+            <text>温馨提示: 点击图片放大保存到相册微信扫一扫即可添加</text>
+          </view>
+          <form class="close-area flex_center" bindsubmit="closeCardModal" report-submit="true">
+            <button formType="submit" class="al al-close1"></button>
+          </form>
+        </view>
+      </view>
+    <view class="font12 color-red4 align_center mt10">注意：请勿将官方客服踢出微信群，否则影响微信群接收订单！</view>
+  </view>
+</template>
+<script>
+import wepy from 'wepy'
+import Util from '@/libs/util'
+import Config from '@/config'
+export default class RoomApply extends wepy.page {
+  config = {
+    enablePullDownRefresh: true,
+    navigationBarBackgroundColor: '#f64635',
+    backgroundTextStyle: 'dark'
+  }
+  components = {
+  }
+  data = {
+    query: {},
+    loginUser: {},
+    rgbred: 'rgba09red',
+    crypto: '',
+    isAccept: false,
+    isSubmiting: false,
+    showDialog: false,
+    wxCardShow: false,
+    qrcode: '',
+    isFirst: false,
+    showHb: false,
+    selectedIndex: 0,
+    QQTQrcode: Config.QQTQrcode,
+    showKefuQrcode: false,
+    gruopId: '',
+    themeObject: {}
+  }
+  handlePageData () {
+    this.globalData = this.$parent.globalData
+    Util.appInit(this.globalData, this)
+    this.userInfo = this.globalData.userInfo
+  }
+  onLoad (options) {
+    this.options = options
+    if (this.$parent.globalData.flag.bokaAuth) {
+      this.handlePageData()
+    } else {
+      this.$parent.loadCallback = () => {
+        this.handlePageData()
+      }
+    }
+  }
+  methods = {
+    initData () {
+      this.isFirst = false
+      this.showHb = false
+    },
+    closeFirstHb () {
+      this.isFirst = false
+      this.showHb = false
+      this.afterAdd()
+    },
+    showProtocol () {
+      this.showDialog = true
+    },
+    afterAdd () {
+      // let params = this.$util.handleAppParams(this.query, {})
+      // this.$router.push({path: '/roomList', query: params})
+    },
+    reset () {
+      this.crypto = ''
+      this.isAccept = false
+    },
+    clickTab (e) {
+      this.selectedIndex = parseInt(e.currentTarget.dataset.current)
+      // wepy.showLoading()
+      // wepy.request({
+      //   url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/groups/setGroupsType`,
+      //   data: {type: this.selectedIndex, id: this.gruopId},
+      //   method: 'post'
+      // }).then(res => {
+      //   wepy.hideLoading()
+      //   const data = res.data
+      //   if (data.flag) {
+      //     wepy.showToast({
+      //       title: data.error,
+      //       icon: 'none',
+      //       duration: Util.delay(data.error)
+      //     })
+      //     wepy.navigateTo({
+      //       url: `/packageB/pages/myGroups`
+      //     })
+      //   } else {
+      //     wepy.showToast({
+      //       title: '请先验证群',
+      //       icon: 'none',
+      //       duration: Util.delay(data.error)
+      //     })
+      //   }
+      // })
+    },
+    wxContact () {
+      this.showKefuQrcode = true
+    },
+    closeCardModal () {
+      this.showKefuQrcode = false
+    },
+    previewImage () {
+      wepy.previewImage({
+        current: this.QQTQrcode,
+        urls: [this.QQTQrcode]
+      })
+    },
+    setCrypto (e) {
+      this.crypto = e.detail.value
+    },
+    submitHandle () {
+      console.log(this.crypto)
+      if (!this.crypto) {
+        wepy.showToast({
+          title: '请输入密钥',
+          icon: 'none'
+        })
+        return false
+      }
+      if (!this.selectedIndex) {
+        wepy.showToast({
+          title: '请选择群标签',
+          icon: 'none'
+        })
+        return false
+      }
+      wepy.showLoading()
+      wepy.request({
+        url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/groups/addGroup`,
+        data: {crypto: this.crypto, fid: Config.Fid, type: this.selectedIndex},
+        method: 'post'
+      }).then(res => {
+        wepy.hideLoading()
+        const data = res.data
+        this.gruopId = data.data
+        wepy.showToast({
+          title: data.error,
+          icon: 'none',
+          duration: Util.delay(data.error)
+        })
+        if (data.flag) {
+          wepy.navigateTo({
+            url: `/packageB/pages/myGroups`
+          })
+        }
+      })
+    }
+  }
+}
+</script>

@@ -1,0 +1,374 @@
+<style lang="less">
+.gmembers{
+  .toparea{
+    width: 100%;height:156rpx;font-size: 28rpx;
+    .data_item{
+        width: 100%;
+        background: #ffffff;
+        padding: 30rpx 20rpx;
+        box-sizing: border-box;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border: 1px solid #e4e4e4;
+    }
+    .data_item .pic{width:100rpx;height:100rpx;border-radius:15rpx;}
+    .data_item .pic .al{font-size:70rpx;}
+  }
+  .data_txt{flex: 1;margin:0 20rpx;overflow: hidden;}
+  .txt_name{
+      font-size: 28rpx;
+      display: block;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      line-height:60rpx;
+  }
+  .mem_records{width: 100%;}
+  .mem_txt{width: 100%;padding: 0 20rpx;box-sizing: border-box;height:80rpx;}
+  .mem_data{width: 100%;}
+  .mem_item{
+    width: 100%;border: 1px solid #e4e4e4;background: #ffffff;margin-bottom: 10rpx;
+    .inner_item{
+      width:100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 30rpx 20rpx;
+      box-sizing: border-box;
+    }
+    .btn_cell{
+      width:120rpx;
+      .btn{
+        width:100rpx;height:50rpx;background-color:#ea3a3a;border-radius:50rpx;
+        .al{color:#fff;font-size:40rpx;}
+      }
+    }
+  }
+  .pic_radius{width: 86rpx;height: 86rpx;}
+  .pic_radius image{width:86rpx;height:86rpx;border-radius: 50%;}
+  .detail_card{
+    background-color:#fff;
+    .detailInfo{
+      display:flex;padding:20rpx;box-sizing:border-box;flex-wrap: wrap;
+      .txt-item{width:50%;box-sizing:border-box;line-height:50rpx;}
+      .txt-item:nth-child(odd){padding-right:10rpx;}
+      .txt-item:nth-child(even){padding-left:10rpx;}
+    }
+  }
+  .icon-phone{width:35rpx;height:35rpx;background-color:red;color:#fff;border-radius:10rpx;text-align:center;line-height:35rpx;margin-top:7rpx;}
+  .bottom-area{
+    width:100%;height:90rpx;
+  }
+}
+</style>
+<template>
+  <view class="container columnarea gmembers" wx:if="{{disInfo}}">
+    <view class="toparea b_bottom_after">
+      <view class='data_item' wx:if="{{groupInfo}}">
+        <view class="pic flex_left">
+          <text class="al al-qun" style="{{themeObject.colorStyle}}"></text>
+        </view>
+        <view class='data_txt'>
+          <view class="w_100 clamp1"><open-data type="groupName" open-gid="{{groupInfo.openGId}}"></open-data></view>
+          <view class="mt5">我的群内客户: {{memberCount}}人</view>
+        </view>
+      </view>
+    </view>
+    <view class="app-tab">
+      <view class="tab-item {{selectedIndex == 0 ? 'active' : ''}}" data-current="0" bindtap="clickTab">
+        <text style="{{selectedIndex == 0 ? themeObject.colorStyle : ''}}">群内客户</text>
+        <view class="line" style="{{selectedIndex == 0 ? themeObject.bgStyle : ''}}"></view>
+      </view>
+    </view>
+    <scroll-view class="column-content" scroll-y="1" style="height: 100%;" bindscrolltolower="scrollEvent" scroll-into-view="{{toView}}">
+      <view class="mem_records" wx:if="{{disList}}">
+        <view class='mem_data'>
+          <view class="scroll_list">
+            <repeat for="{{membersList}}" index="index" item="item">
+              <view id="{{item.viewId}}" class="mem_item">
+                <view class="inner_item">
+                  <view class="pic_radius" data-data="{{item}}" data-index="{{index}}" bindtap="expandEvent">
+                    <image src="{{item.avatar}}" lazy-load></image>
+                  </view>
+                  <view class="data_txt" data-data="{{item}}" data-index="{{index}}" bindtap="expandEvent">
+                    <view class="w_100 clamp1">{{item.linkman}}</view>
+                  </view>
+                  <form class="btn_cell flex_center" data-data="{{item}}" data-index="{{index}}" bindsubmit="expandEvent" report-submit="true">
+                    <button class="bg-theme color-white btn flex_center" style="{{themeObject.bgStyle}}" formType="submit"><text class="al al-asmkticon0165"></text></button>
+                  </form>
+                </view>
+                <view wx:if="{{item.checked}}" class="detail_card b_top_after">
+                  <view class="detailInfo w_100 color-gray b_bottom_after" data-data="{{item}}" data-index="{{index}}" bindtap="expandEvent">
+                    <view class="txt-item">性别: {{userData[item.uid].sex_str}}</view>
+                    <view class="txt-item flex_table" wx:if="{{userData[item.uid].mobile && userData[item.uid].mobile != ''}}">
+                      手机号: {{userData[item.uid].mobile}}<view class="icon-phone ml5" data-data="{{item}}" bindtap="toPhone"><text class="al al-dianhua font16"></text></view>
+                    </view>
+                    <view class="txt-item">地区: {{userData[item.uid].country}} {{userData[item.uid].province}} {{userData[item.uid].city}}</view>
+                    <view class="txt-item">影响力: <text class="color-red4">{{userData[item.uid].yingxiangli}}</text></view>
+                  </view>
+                </view>
+              </view>
+            </repeat>
+          </view>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+</template>
+<script>
+import wepy from 'wepy'
+import Config from '@/config'
+import Util from '@/libs/util'
+import Time from '@/libs/time'
+export default class GroupMembers extends wepy.page {
+  config = {
+    enablePullDownRefresh: true,
+    backgroundTextStyle: 'dark'
+  }
+  data = {
+    options: {},
+    globalData: {},
+    userInfo: {},
+    membersList: [],
+    memberCount: 0,
+    groupInfo: null,
+    disInfo: false,
+    disList: false,
+    userData: {},
+    userView: {},
+    toView: '',
+    selectedIndex: 0,
+    lastIndex: 0,
+    themeObject: {}
+  }
+  initData () {
+    this.disList = false
+    this.pageStart = 0
+    this.membersList = []
+  }
+  getData () {
+    wepy.request({
+      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/wxa/info?module=wxgroups&id=${this.id}`,
+      method: 'post'
+    }).then(res => {
+      let data = res.data.data
+      if (data) {
+        this.groupInfo = data
+        this.disInfo = true
+        this.$apply()
+      }
+    })
+  }
+  onLoad (options) {
+    this.options = options
+    this.pageStart = 0
+    this.pageStart2 = 0
+    this.limit = Config.Limit
+    if (options.id) {
+      this.id = options.id
+    }
+  }
+  handlePageData () {
+    this.globalData = this.$parent.globalData
+    Util.appInit(this.globalData, this)
+    this.userInfo = this.globalData.userInfo
+    if (this.id) {
+      this.getData()
+      this.getMembersList()
+    }
+    this.$apply()
+  }
+  onShow = function () {
+    this.initData()
+    if (this.$parent.globalData.flag.bokaAuth) {
+      this.handlePageData()
+    } else {
+      this.$parent.loadCallback = () => {
+        this.handlePageData()
+      }
+    }
+  }
+  getMembersList () {
+    wepy.request({
+      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/wxa/list?module=meetingmembers`,
+      method: 'post',
+      data: {id: this.id, wid: this.userInfo.gxkuid, pagestart: this.pageStart, limit: this.limit}
+    }).then(res => {
+      const data = res.data
+      let retdata = data.data ? data.data : data
+      for (let i = 0; i < retdata.length; i++) {
+        retdata[i].viewId = `member-view-${retdata[i].id}`
+      }
+      this.memberCount = data.count + 1
+      this.membersList = this.membersList.concat(retdata)
+      this.disList = true
+      this.$apply()
+    })
+  }
+  methods = {
+    scrollEvent () {
+      if (this.membersList.length === (this.pageStart + 1) * this.limit) {
+        this.pageStart++
+        this.getMembersList()
+      }
+    },
+    toPhoneme (e) {
+      const data = e.currentTarget.dataset.data
+      const number = data.mobile
+      wepy.makePhoneCall({
+        phoneNumber: number
+      }).then(res => {
+        console.log(number)
+      })
+    },
+    toPhone (e) {
+      const data = e.currentTarget.dataset.data
+      const uid = data.uid
+      const number = this.userData[uid].mobile
+      wepy.makePhoneCall({
+        phoneNumber: number
+      }).then(res => {
+        console.log(number)
+      })
+    },
+    toMemberView (e) {
+      const uid = e.currentTarget.dataset.uid
+      if (!uid) {
+        wepy.showToast({
+          title: '系统暂未收集到该用户的资料',
+          icon: 'none'
+        })
+      } else {
+        let tourl = encodeURIComponent(`membersView?uid=${uid}`)
+        wepy.navigateTo({url: `/pages/webview?url=${tourl}`})
+      }
+    },
+    toMember (e) {
+      const data = e.currentTarget.dataset.data
+      const uid = data.uid
+      let tourl = encodeURIComponent(`membersView?uid=${uid}`)
+      wepy.navigateTo({url: `/pages/webview?url=${tourl}`})
+    },
+    toChat (e) {
+      const curdata = e.currentTarget.dataset.data
+      const url = encodeURIComponent(`chat?uid=${curdata.uid}&fromModule=retailer&fromId=${curdata.uid}`)
+      wepy.navigateTo({url: `/pages/webview?url=${url}`})
+    },
+    toTimeline (e) {
+      const curdata = e.currentTarget.dataset.data
+      const url = encodeURIComponent(`timeline?uid=${curdata.uid}`)
+      wepy.navigateTo({url: `/pages/webview?url=${url}`})
+    },
+    toPriority (e) {
+      const curdata = e.currentTarget.dataset.data
+      wepy.showLoading()
+      wepy.request({
+        url: `${Config.BokaApi}/api/retailer/sellerAction`,
+        data: {action: 'stickcustomer', customeruid: curdata.uid},
+        method: 'post'
+      }).then(res => {
+        wepy.hideLoading()
+        const data = res.data
+        let error = data.error
+        if (data.flag) {
+          if (curdata.priority) {
+            error = '已在客户列表中取消置顶'
+          } else {
+            error = '已在客户列表中置顶成功'
+          }
+        }
+        const timeout = Util.delay(error)
+        wepy.showToast({
+          title: error,
+          icon: 'none',
+          duration: timeout
+        })
+        setTimeout(() => {
+          if (data.flag) {
+            this.userData[curdata.uid].priority = !this.userData[curdata.uid].priority
+            this.$apply()
+          }
+        }, timeout)
+      })
+    },
+    viewUser (e) {
+      const dataset = e.currentTarget.dataset
+      const url = encodeURIComponent(`membersView?uid=${dataset.data.uid}`)
+      wepy.navigateTo({url: `/pages/webview?url=${url}`})
+    },
+    expandUser () {
+      let curuid = this.userInfo.uid
+      if (!this.userView.uid) {
+        wepy.request({
+          url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/retailer/customerView?customeruid=${curuid}`
+        }).then(res => {
+          const data = res.data
+          let retdata = data.data ? data.data : data
+          retdata.dateline_str = new Time(retdata.dateline * 1000).dateFormat('yyyy-MM-dd')
+          let sex = '未知'
+          if (retdata.sex === 1) {
+            sex = '男'
+          } else if (retdata.sex === 2) {
+            sex = '女'
+          }
+          retdata.sex_str = sex
+          this.userView = retdata
+          this.$apply()
+        })
+      }
+      if (this.userInfo.checked) {
+        this.userInfo.checked = false
+      } else {
+        this.userInfo.checked = true
+        for (let i = 0; i < this.membersList.length; i++) {
+          if (this.membersList[i].checked) {
+            this.membersList[i].checked = false
+            break
+          }
+        }
+      }
+    },
+    expandEvent (e) {
+      const dataset = e.currentTarget.dataset
+      const itemData = dataset.data
+      const index = dataset.index
+      let curList = this.membersList
+      for (let i = 0; i < curList.length; i++) {
+        if (curList[i].checked && i !== index) {
+          this.membersList[i].checked = false
+          break
+        }
+      }
+      if (itemData.checked) {
+        this.membersList[index].checked = false
+      } else {
+        this.userInfo.checked = false
+        if (this.userData[itemData.uid]) {
+          this.membersList[index].checked = true
+          this.toView = this.membersList[index].viewId
+        } else {
+          wepy.request({
+            url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/retailer/customerView?customeruid=${itemData.uid}`
+          }).then(res => {
+            const data = res.data
+            let retdata = data.data ? data.data : data
+            retdata.dateline_str = new Time(retdata.dateline * 1000).dateFormat('yyyy-MM-dd')
+            let sex = '未知'
+            if (retdata.sex === 1) {
+              sex = '男'
+            } else if (retdata.sex === 2) {
+              sex = '女'
+            }
+            retdata.sex_str = sex
+            this.userData[itemData.uid] = retdata
+            this.membersList[index].checked = true
+            this.toView = this.membersList[index].viewId
+            this.$apply()
+          })
+        }
+      }
+    }
+  }
+}
+</script>

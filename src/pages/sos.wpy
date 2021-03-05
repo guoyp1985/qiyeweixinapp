@@ -1,0 +1,117 @@
+<style lang="less">
+.sos-page{
+  .txt-area{
+    width:100%;
+    .pic{
+      margin-bottom:60rpx;
+      image{width:60%;max-width:100%;}
+    }
+    .txt{color:#666;padding:0 20rpx;margin-top:20rpx;text-align:center;font-size:36rpx;}
+  }
+  .btn-outer{
+    margin-top:60rpx;
+    .btn{width:60%;height:80rpx;border-radius:60rpx;margin:0 auto;font-size:32rpx;}
+    .btn1{border:#f64635 2rpx solid;color:#f64635;}
+    .btn2{background-color:#f64635;color:#fff;}
+  }
+  .button-hover{background-color:#FEA9A4 !important;color:#fff !important;border-color:#FEA9A4 !important;}
+}
+</style>
+<template>
+  <view class="sos-page container flex_center bg-white">
+    <view class="txt-area">
+      <block wx:if="{{options.code}}">
+        <block wx:if="{{options.code == 401}}">
+          <view class="pic flex_center">
+            <image mode="widthFix" src="https://tossharingsales.boka.cn/minigxk/sos/sos3.png"></image>
+          </view>
+          <view class="txt">糟糕，微信大大暂时失去记忆</view>
+          <view class="txt">请稍后再试吧</view>
+        </block>
+        <block wx:elif="{{options.code == 404}}">
+          <view class="pic flex_center">
+            <image mode="widthFix" src="https://tossharingsales.boka.cn/minigxk/sos/sos2.png"></image>
+          </view>
+          <view class="txt">抱歉！我找不到回家的路了</view>
+          <view class="txt">请容我想一想</view>
+        </block>
+        <block wx:elif="{{options.code >= 500}}">
+          <view class="pic flex_center">
+            <image mode="widthFix" src="https://tossharingsales.boka.cn/minigxk/sos/sos1.png"></image>
+          </view>
+          <view class="txt">服务有些短路，容我排查一下</view>
+          <view class="txt">请耐心等待^_^</view>
+        </block>
+      </block>
+      <block wx:elif="{{options.type}}">
+        <view class="pic flex_center">
+          <image mode="widthFix" src="https://tossharingsales.boka.cn/minigxk/sos/sos4.png"></image>
+        </view>
+        <view class="txt">正在排队中...</view>
+        <view class="txt">请刷新或返回首页试试</view>
+      </block>
+      <form class="db btn-outer" bindsubmit="toBack" report-submit="true">
+        <button class="btn flex_center btn1" hover-class="button-hover" style="border-color:{{themeObject.themeColor}};color:{{themeObject.themeColor}};" form-type="submit">刷新试试</button>
+      </form>
+      <form class="db btn-outer" bindsubmit="toHome" report-submit="true">
+        <button class="btn flex_center btn2" hover-class="button-hover" style="{{themeObject.bgStyle}}" form-type="submit">返回首页</button>
+      </form>
+    </view>
+  </view>
+</template>
+<script>
+  import wepy from 'wepy'
+  import Config from '@/config'
+  import Util from '@/libs/util'
+  export default class Mark extends wepy.page {
+    components = {
+    }
+    data = {
+      options: {},
+      themeObject: {}
+    }
+    handlePageData () {
+      this.globalData = this.$parent.globalData
+      Util.appInit(this.globalData, this)
+      this.userInfo = this.globalData.userInfo
+    }
+    onLoad (options) {
+      this.options = options
+      this.allPages = []
+      if (this.$parent.globalData.flag.bokaAuth) {
+        this.handlePageData()
+      } else {
+        this.$parent.loadCallback = () => {
+          this.handlePageData()
+        }
+      }
+      this.$apply()
+    }
+    onShow () {
+      this.allPages = this.getCurrentPages()
+    }
+    methods = {
+      async toBack (e) {
+        if (!this.clicked) {
+          this.clicked = true
+          await this.$parent.getData()
+          let navurl = Config.HomePage
+          if (this.allPages.length > 1) {
+            let prevPage = this.allPages[this.allPages.length - 2]
+            navurl = Util.objectToUrl(`/${prevPage.route}`, {...prevPage.options, reload: 1})
+          }
+          wepy.reLaunch({url: navurl})
+          this.clicked = false
+        }
+      },
+      async toHome (e) {
+        if (!this.clicked) {
+          this.clicked = true
+          await this.$parent.getData()
+          wepy.reLaunch({url: `${Config.HomePage}?reload=1`})
+          this.clicked = false
+        }
+      }
+    }
+  }
+</script>

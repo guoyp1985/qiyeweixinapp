@@ -1,0 +1,324 @@
+<style lang="less">
+@import '../../styles/variable.less';
+.paypage{
+  .inner{
+    height:180px;font-size:35px;font-weight:bold;
+    border-bottom:@list-border-color 1px solid;
+  }
+  .btn-pay{
+    background-color:#1AAD19;color:#fff;
+    border-radius: 5px;
+    font-size: 16px;
+    width: 100%;
+    padding-top:10px;
+    padding-bottom:10px;
+  }
+}
+</style>
+<template>
+  <view wx:if="{{showSos}}" class="container paypage columnarea">
+    <view class="column-content flex_center font16">{{sosText}}</view>
+  </view>
+  <view wx:if="{{showContainer}}" class="container columnarea paypage">
+    <view class="column-content">
+      <view class="container bg-white">
+        <view class="flex_center inner">
+          <view>¥{{payPrice}}</view>
+      	</view>
+        <view class="padding10 b_bottom_after font16">
+          <view class="t-table">
+            <view class="t-cell align_left">收款方: </view>
+            <view class="t-cell align_right">{{receivables}}</view>
+          </view>
+        </view>
+        <view class="padding20">
+          <form @tap="toPay">
+            <button class="btn-pay" disabled="{{disabled}}">微信安全支付</button>
+          </form>
+        </view>
+        <view wx:if="{{showTimeArea && !showTxt && !disabled}}" class="flex_center color-theme" style="{{themeObject.colorStyle}}">
+          <block wx:if="{{leftObject.lefthour != 0 && leftObject.lefthour != '00'}}">
+            <text>{{leftObject.lefthour}}</text>
+            <text>:</text>
+          </block>
+          <text>{{leftObject.leftminute}}</text>
+          <text>:</text>
+          <text>{{leftObject.leftsecond}}</text>
+          <text>后订单将自动取消</text>
+        </view>
+        <view wx:if="{{showTxt}}" class="flex_center color-theme" style="{{themeObject.colorStyle}}">订单超时，请重新下单</view>
+      </view>
+    </view>
+  </view>
+</template>
+<script>
+  import wepy from 'wepy'
+  import Config from '@/config'
+  import Util from '@/libs/util'
+  export default class Pay extends wepy.page {
+    config = {
+      navigationBarTitleText: '微信安全支付'
+    }
+    data = {
+      showSos: false,
+      sosText: '订单不存在',
+      showContainer: false,
+      options: {},
+      userInfo: {},
+      globalData: {},
+      payPrice: '0.00',
+      receivables: '',
+      payParams: null,
+      disabled: false,
+      showPay: false,
+      timerInterval: null,
+      maxTime: 1,
+      showTxt: false,
+      leftObject: {},
+      showTimeArea: false,
+      isIng: false,
+      inLoad: false,
+      themeObject: {}
+    }
+    afterPay () {
+      setTimeout(() => {
+        this.isIng = false
+        if (this.options.weburl) {
+          let backurl = `/pages/webview?url=${this.options.weburl}`
+          if (this.this.webquery) {
+            let webquery = decodeURIComponent(this.options.webquery)
+            backurl = `${backurl}&${webquery}&webquery=${this.options.webquery}`
+          }
+          wepy.navigateTo({url: backurl})
+        } else if (this.options.backurl) {
+          const backurl = decodeURIComponent(this.options.backurl)
+          if (this.options.backtype === 'relaunch') {
+            wepy.reLaunch({url: backurl})
+          } else if (this.options.backtype === 'navigate') {
+            wepy.navigateTo({url: backurl})
+          } else if (this.options.backtype === 'redirect') {
+            wepy.redirectTo({url: backurl})
+          } else {
+            wepy.redirectTo({url: `${backurl}`})
+          }
+        } else {
+          wepy.navigateTo({url: `./paySuccess?orderid=${this.options.id}`})
+        }
+      }, 1800)
+    }
+    payEvent () {
+      if (this.isIng) return false
+      this.isIng = true
+      const params = this.payParams
+      wepy.requestPayment({
+        timeStamp: params.timeStamp,
+        nonceStr: params.nonceStr,
+        package: params.package,
+        signType: 'MD5',
+        paySign: params.paySign
+      }).then(res => {
+        clearInterval(this.timerInterval)
+        this.leftObject = {lefthour: 0, leftminute: 0, leftsecond: '59'}
+        this.showTimeArea = false
+        this.showTxt = false
+        this.$apply()
+        wepy.showToast({
+          title: '支付成功',
+          icon: 'success',
+          duration: 2000
+        })
+        let tmplIdsArr = [this.globalData.Templates.order_pay, this.globalData.Templates.order_delivery]
+        if (this.options.clickBuytype) {
+          tmplIdsArr.push(this.globalData.Templates.groupbuy_success)
+        }
+        // 订单支付成功通知、订单发货通知、咨询回复通知
+        Util.checkTmpMsg({
+          systeminfo: this.globalData.systemInfo,
+          tmplIds: tmplIdsArr,
+          callback: () => {
+            this.afterPay()
+          }
+        })
+      }, res => {
+        this.isIng = false
+        wepy.showToast({
+          title: '支付失败',
+          icon: 'none'
+        })
+      })
+    }
+    methods = {
+      toPay (e) {
+        this.payEvent()
+      }
+    }
+
+    initPay () {
+      let params = {orderid: this.options.id, from: Config.AppId}
+      if (this.options.module) {
+        params.module = this.options.module
+      }
+      wepy.request({
+        url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/order/unify`,
+        data: params
+      })
+      .then(res => {
+        const data = res.data
+        if (data.flag) {
+          this.disabled = false
+          this.payPrice = data.money
+          this.receivables = data.weixinname
+          this.payParams = data.data
+          if (this.inLoad) {
+            this.payEvent()
+          }
+        } else {
+          this.disabled = true
+          wepy.showToast({
+            title: data.error.return_msg || data.error,
+            icon: 'none'
+          })
+        }
+        this.$apply()
+      })
+    }
+
+    cutDown (item) {
+      this.timerInterval = setInterval(() => {
+        let h = parseInt(item.lefthour)
+        let m = parseInt(item.leftminute)
+        let s = parseInt(item.leftsecond)
+        if (s > 0) {
+          s--
+          if (s < 10) {
+            item.leftsecond = '0' + s
+          } else {
+            item.leftsecond = s
+          }
+        } else if (m > 0) {
+          m--
+          if (m < 10) {
+            item.leftminute = '0' + m
+          } else {
+            item.leftminute = m
+          }
+          item.leftsecond = '59'
+        } else if (h > 0) {
+          h--
+          if (h < 10) {
+            item.lefthour = '0' + h
+          } else {
+            item.lefthour = h
+          }
+          item.leftminute = '59'
+          item.leftsecond = '59'
+        }
+        if (h === 0 && m === 0 && s === 0) {
+          this.disabled = true
+          this.showTxt = true
+        }
+        this.$apply()
+      }, 1000)
+    }
+
+    handlePageData () {
+      this.globalData = this.$parent.globalData
+      Util.appInit(this.globalData, this)
+      this.userInfo = this.globalData.userInfo
+      let ShopCancelTime = 1
+      if (this.globalData.SystemParams.ShopCancelTime) {
+        ShopCancelTime = parseInt(this.globalData.SystemParams.ShopCancelTime)
+      }
+      this.maxTime = ShopCancelTime * 60
+      let hour = Math.floor(ShopCancelTime / 60)
+      console.log('小时', hour)
+      let hourstr = hour
+      let minute = 0
+      let minutestr = ''
+      if (hour > 0 && ShopCancelTime % 60 === 0) {
+        hour = hour - 1 <= 0 ? 0 : hour - 1
+        hourstr = hour
+        minutestr = '59'
+      } else {
+        minute = (ShopCancelTime - hour * 60) % 60
+        if (minute > 0) {
+          minute = minute - 1
+        }
+        console.log('分钟', minute)
+        minutestr = minute
+        if (minute < 10) {
+          minutestr = `0${minute}`
+        }
+      }
+      if (hour < 10) {
+        hourstr = `0${hour}`
+      }
+      this.leftObject = {lefthour: hourstr, leftminute: minutestr, leftsecond: '60'}
+      console.log('剩余时间', this.leftObject)
+      this.cutDown(this.leftObject)
+      this.showTimeArea = true
+      this.initPay()
+      this.inLoad = true
+    }
+
+    initData () {
+      clearInterval(this.timerInterval)
+      this.disabled = true
+      this.leftObject = {lefthour: 0, leftminute: 0, leftsecond: '59'}
+      this.showTimeArea = false
+      this.$apply()
+    }
+
+    onLoad (options) {
+      wepy.setNavigationBarTitle({
+        title: '微信安全支付'
+      })
+      this.sosText = '订单不存在'
+      this.options = options
+      this.inLoad = true
+      if (!options.id) {
+        this.showSos = true
+        this.showContainer = false
+        this.$apply()
+        return
+      }
+      this.showContainer = true
+      this.$apply()
+      this.initData()
+      if (this.$parent.globalData.flag.bokaAuth) {
+        this.handlePageData()
+      } else {
+        this.$parent.loadCallback = () => {
+          this.handlePageData()
+        }
+      }
+    }
+    handleShowData () {
+      if (!this.inLoad) {
+        this.initPay()
+      }
+    }
+    onShow () {
+      console.log('============进入到了支付的onShow=============')
+      if (this.$parent.globalData.flag.bokaAuth) {
+        this.handleShowData()
+      } else {
+        this.$parent.showCallback = () => {
+          this.handleShowData()
+        }
+      }
+    }
+
+    onUnload () {
+      console.log('============进入到了支付的onUnload=============')
+      this.inLoad = false
+      this.initData()
+    }
+
+    onHide () {
+      console.log('============进入到了支付的onHide=============')
+      this.inLoad = false
+      // this.initData()
+    }
+  }
+</script>

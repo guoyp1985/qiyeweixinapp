@@ -1,0 +1,245 @@
+<style lang="less">
+.report-page{
+  background-color:#fff;
+  .bottom-area{
+    width:100%;height:100rpx;position:relative;display:block;
+    .btn-bottom{font-size: 32rpx;position:absolute;left:0rpx;top:0;right:0rpx;bottom:0rpx;}
+  }
+  .data-item{
+    padding-top:20rpx;padding-bottom:20rpx;box-sizing:border-box;display:block;
+    .inner{
+      border:#ccc 2rpx solid;padding:20rpx;background-color:#fff;
+    }
+    .title{padding-bottom:20rpx;font-weight: bold;color: #3c3c3c;font-size:32rpx;}
+    .txt{font-size:32rpx;color:#333;padding-top:20rpx;}
+    .pic-area{position:relative;}
+    .pic-area:after{content:"";display:block;padding-top:55%;}
+    .pic{
+      position:absolute;left:0;top:0;right:0;bottom:0;
+      image{width:100%;height:100%;object-fit:cover;}
+    }
+  }
+  .list-item{
+    padding-top:20rpx;padding-bottom:20rpx;box-sizing:border-box;
+    .item-inner{width:100%;padding-bottom:100%;position:relative;display:block;}
+    .inner{
+      position:absolute;left:0;top:0;right:0;bottom:0;
+      image{width:100%;height:100%;border-radius:20rpx;}
+    }
+    .txt-area{
+      position:absolute;left:0;bottom:0;right:0;
+      padding:0 20rpx;height:90rpx;font-size:30rpx;
+      box-sizing:border-box;background-color:rgba(0,0,0,0.5);color:white;
+      border-bottom-left-radius:20rpx;border-bottom-right-radius:20rpx;
+    }
+  }
+  .con-area{
+    width:100%;
+    image{width:100%;}
+  }
+}
+</style>
+<template>
+  <view class="container columnarea report-page">
+    <scroll-view scroll-y="true" class="column-content scroll-h">
+      <view wx:if="{{showList}}" class="padding10">
+        <view class="font20">{{viewData.title}}</view>
+        <view class="color-gray" wx:if="{{viewData.dateline}}">{{viewData.dateline_str}}</view>
+        <repeat for="{{moduleInfo.add}}" key="index" item="item">
+          <block wx:if="{{item == 1}}">
+            <view class="db" wx:if="{{moduleInfo.type[index] == 9}}">
+              <repeat for="{{viewData[moduleInfo.charname[index]]}}" index="index" item="item">
+                <block wx:if="{{item.moduleid && item.moduledata.id}}">
+                  <form class="data-item" wx:if="{{item.module == 'factorynews'}}" data-url="/packageB/pages/news?id={{item.moduledata.id}}&fid={{Fid}}" bindsubmit="formSubmit" report-submit="true">
+                    <button class="inner" form-type="submit">
+                      <view class="title clamp1 align_left">{{item.moduledata.title}}</view>
+                      <view class="pic-area">
+                        <view class="pic">
+                          <image mode="aspectFill" src="{{item.moduledata.photo}}"></image>
+                        </view>
+                      </view>
+                      <view class="clamp2 txt align_left">{{item.moduledata.summary}}</view>
+                    </button>
+                  </form>
+                  <view class="list-item" wx:elif="{{item.module == 'factoryproduct'}}">
+                    <form class="item-inner" data-url="/pages/product?id={{item.moduledata.id}}&fid={{Fid}}" bindsubmit="formSubmit" report-submit="true">
+                      <button class="inner" form-type="submit">
+                        <image src="{{item.moduledata.photo}}" mode="aspectFill"></image>
+                        <view class="txt-area flex_left">
+                          <view class="flex_left" style="width:70%;">
+                            <view class="w_100 clamp1">{{item.moduledata.title}}</view>
+                          </view>
+                          <view class="flex_right bold" style="width:30%;">
+                            <view class="w_100 clamp1">￥{{item.moduledata.price}}</view>
+                          </view>
+                        </view>
+                      </button>
+                    </form>
+                  </view>
+                </block>
+                <view wx:else class="con-area">
+                  <view wx:if="{{item.content && item.content != ''}}" class="padding10">
+                    <text>{{item.content}}</text>
+                  </view>
+                  <repeat for="{{item.photoarr}}" index="index1" item="photo">
+                    <view class="flex_center">
+                      <image src="{{photo}}" mode="widthFix" data-url="{{photo}}" bindtap="previewImg"></image>
+                    </view>
+                  </repeat>
+                </view>
+              </repeat>
+            </view>
+          </block>
+        </repeat>
+      </view>
+    </scroll-view>
+  </view>
+</template>
+<script>
+import wepy from 'wepy'
+import Util from '@/libs/util'
+import Time from '@/libs/time'
+import Config from '@/config'
+export default class extends wepy.page {
+  config = {
+    enablePullDownRefresh: true,
+    backgroundTextStyle: 'dark'
+  }
+  data = {
+    options: {},
+    userInfo: {},
+    moduleInfo: {},
+    photoArr: [],
+    Fid: Config.Fid,
+    showTextarea: false,
+    submitIng: false,
+    isLoading: false,
+    contentPhotoArr: [],
+    maxContentPhoto: 19,
+    inputvalue: '',
+    selectedIndex: 0,
+    postData: {photo: []},
+    clickIndex: 0,
+    showList: false,
+    systemInfo: {},
+    viewData: {},
+    themeObject: {}
+  }
+  refreshPage () {
+    this.$apply()
+    this.getData()
+  }
+  onPullDownRefresh () {
+    this.refreshPage()
+    wepy.showNavigationBarLoading()
+    setTimeout(() => {
+      wepy.hideNavigationBarLoading()
+      wepy.stopPullDownRefresh()
+    }, 500)
+  }
+  getData () {
+    wepy.request({
+      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/codemaker/modulePara`,
+      data: {module: this.options.module, fid: this.Fid},
+      method: 'get'
+    }).then(res => {
+      const data = res.data
+      const retdata = data.data ? data.data : data
+      this.moduleInfo = retdata
+      this.showList = true
+      this.$apply()
+      return wepy.request({
+        url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/codemaker/info`,
+        data: {module: this.options.module, id: this.options.id},
+        method: 'get'
+      })
+    }).then(res => {
+      const data = res.data
+      let retdata = data.data ? data.data : data
+      if (retdata.dateline) {
+        retdata.dateline_str = new Time(retdata.dateline * 1000).dateFormat('yyyy-MM-dd hh:mm')
+      }
+      for (let key in retdata) {
+        if (key === 'photo') {
+          retdata.photoArr = retdata.photo.split(',')
+        }
+      }
+      for (let i in this.moduleInfo.type) {
+        if (parseInt(this.moduleInfo.type[i]) === 9) {
+          let charname = this.moduleInfo.charname[i]
+          let curcon = retdata[charname]
+          if (curcon && curcon.length) {
+            for (let j in curcon) {
+              let conitem = curcon[j]
+              if (conitem.photo && conitem.photo !== '') {
+                retdata[charname][j].photoarr = conitem.photo.split(',')
+              }
+            }
+          }
+        }
+      }
+      this.viewData = retdata
+      this.showList = true
+      this.$apply()
+    })
+  }
+  handlePageData () {
+    this.globalData = this.$parent.globalData
+    Util.appInit(this.globalData, this)
+    this.userInfo = this.globalData.userInfo
+    this.getData()
+    this.$apply()
+  }
+  onLoad (options) {
+    this.options = options
+    if (this.$parent.globalData.flag.bokaAuth) {
+      this.handlePageData()
+    } else {
+      this.$parent.loadCallback = () => {
+        this.handlePageData()
+      }
+    }
+  }
+  handleShare () {
+    const lastshareuid = this.options.share_uid
+    let shareurl = `/packageC/pages/report?id=${this.options.id}&module=${this.options.module}&share_uid=${this.userInfo.uid}&share_wid=${this.globalData.Wid}&wid=${this.globalData.Wid}&comefrom=${Config.AppName}`
+    if (lastshareuid) {
+      shareurl = `${shareurl}&lastshareuid=${lastshareuid}`
+    }
+    let backUrl = encodeURIComponent(shareurl)
+    shareurl = `${shareurl}&currentUrl=${backUrl}`
+    this.shareParams = {
+      title: this.viewData.title,
+      path: shareurl
+    }
+  }
+  onShareAppMessage (res) {
+    this.handleShare()
+    return this.shareParams
+  }
+  onShareTimeline () {
+    this.handleShare()
+    return this.shareParams
+  }
+  methods = {
+    viewBigImage (e) {
+      let url = e.currentTarget.dataset.url
+      wepy.previewImage({
+        urls: this.viewData.photoArr,
+        current: url
+      })
+    },
+    previewImg (e) {
+      const url = e.currentTarget.dataset.url
+      wepy.previewImage({
+        current: 0,
+        urls: [url]
+      })
+    },
+    formSubmit (e) {
+      const dataset = e.currentTarget.dataset
+      wepy.navigateTo({url: dataset.url})
+    }
+  }
+}
+</script>

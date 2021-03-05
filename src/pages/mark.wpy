@@ -1,0 +1,992 @@
+<style lang="less">
+.fixed-hb{
+  position:fixed;right:20rpx;bottom:126rpx;z-index:10;
+  .al{font-size:60rpx;}
+}
+.fixed-hb.iphone{bottom:194rpx;}
+.mark-page.iphone{
+  bottom:68rpx;
+  .bottom-area{bottom:220rpx;}
+}
+.mark-page{
+  left:0;right:0;top:0;bottom:0;position:absolute;
+  .page-inner{width:100%;height:100%;position:relative;}
+  image{width:100%;}
+  .bottom-area{
+    width:100%;height:120rpx;display:block;position:fixed;left:0;bottom:136rpx;right:0;background-color:transparent;
+    .btn{width:80%;height:80rpx;border-radius:40rpx;box-shadow: rgba(0, 0, 0, 0.1) 0 0 8rpx 2rpx;}
+  }
+  .blank-area{width:100%;height:40rpx;}
+  .blank-area.iphone{width:100%;height:108rpx;}
+}
+.xinfeng-modal{
+  position:fixed;left:0;top:0;right:0;bottom:0;background-color:rgba(0,0,0,0.6);
+  display:flex;justify-content:center;align-items:center;z-index:10;
+  .modal-inner{width:90%;position:relative;}
+  .modal-inner:after{content:'';padding-top:106%;display:block;}
+  .inner{position:absolute;left:0;top:0;right:0;bottom:0;}
+  .bg1{
+      border-radius:60rpx;overflow:hidden;
+      position:absolute;left:0;top:11%;right:0;bottom:0;
+  }
+  .bg2{
+      position:absolute;top:10%;right:0;height:45%;
+      border-radius:50%;
+      width: 170%;left: -35%;height: 45%;
+      z-index:2;
+  }
+  .bg3{position:absolute;left:0;top:41%;right:0;bottom:0;z-index:1;border-bottom-left-radius:60rpx;border-bottom-right-radius:60rpx;}
+  .top-bg{
+      position:relative;width:100%;height:55%;border-bottom-style:solid;border-bottom-width:4rpx;
+      border-bottom-left-radius:50%;border-bottom-right-radius:50%;
+      position: relative;overflow: hidden;
+  }
+  .bg4{
+      width:87%;height:100%;background:linear-gradient(#fff,#fdf6ea);z-index:2;position:relative;margin:0 auto;
+      border-top-left-radius:60rpx;border-top-right-radius:60rpx;
+  }
+  .bg5{width:100%;height:20%;z-index:1;position:absolute;left:0;right:0;top:55%;border-bottom-left-radius: 50%;border-bottom-right-radius: 50%;}
+  .top-box{
+    width:57%;position:absolute;left:21.5%;top:-20rpx;z-index:3;
+    .box{width:100%;height:100rpx;color:#fff;font-size:40rpx;font-weight:bold;border-bottom-left-radius:60rpx;border-bottom-right-radius:60rpx;z-index:2;position:relative;}
+    .ico{position:absolute;top:0;width:0;height:0;z-index:1;}
+    .ico1{left:-18rpx;border-bottom-width:20rpx;border-bottom-style:solid;border-left:20rpx solid transparent;}
+    .ico2{right:-18rpx;width: 0;border-bottom-width:20rpx;border-bottom-style:solid;border-right:20rpx solid transparent;}
+  }
+  .top-txt{position:absolute;left:0;top:17%;right:0;z-index:2;}
+  .big-txt{font-size:80rpx;font-weight:bold;text-align:center;}
+  .btn{color:#fff;width:62%;height:80rpx;border-radius:30rpx;margin-top:40rpx;margin:0 auto;font-size:36rpx;}
+  .txt-area{
+    position:absolute;left:4%;top:56%;right:4%;text-align:left;color:#fff;z-index:2;
+  }
+  .close-area{position:absolute;left:0;bottom:-120rpx;right:0;height:100rpx;}
+  .close-area .al{font-weight:bold;font-size:70rpx;color:#fff;}
+}
+</style>
+<template>
+  <view :class="{'iphone' : isIpx}" class="mark-page havemenu">
+    <view class="page-inner columnarea">
+      <block wx:if="{{showContainer}}">
+        <block wx:if="{{showUser}}">
+          <user
+            :options.sync="options"
+            :factoryInfo.sync="factoryInfo"
+            :userInfo.sync="userInfo"
+            :globalData.sync="globalData"
+            :showMark.sync="showMark"
+            :themeObject.sync="themeObject">
+          </user>
+        </block>
+        <block wx:if="{{showRetailer}}">
+          <retailer
+            :specialChannelInfo.sync="specialChannelInfo"
+            :hbMoney.sync="hbMoney"
+            :globalData.sync="globalData"
+            :userInfo.sync="userInfo"
+            :bannerData.sync="bannerData"
+            :markData.sync="markData"
+            :listData.sync="products"
+            :disList.sync="disList"
+            :isLoading.sync="isLoading"
+            :isDone.sync="isDone"
+            :isIpx.sync="isIpx"
+            :themeObject.sync="themeObject"
+            :tabIndex.sync="tabIndex"
+            :disTabList.sync="disTabList"
+            :tabData2.sync="tabData2"
+            :isLoading2.sync="isLoading2"
+            :isDone2.sync="isDone2"
+            :taskIndex.sync="taskIndex"
+            :taskData.sync="taskData"
+            :disTask.sync="disTask"
+            :taskData2.sync="taskData2"
+            :disTask2.sync="disTask2"
+            :saveMoneyMode.sync="saveMoneyMode">
+          </retailer>
+        </block>
+      </block>
+    </view>
+  </view>
+  <bottomMenu
+    current="mark"
+    :allowNav.sync="allowNav"
+    :globalData.sync="globalData"
+    :isIpx.sync="isIpx"
+    :themeObject.sync="themeObject">
+  </bottomMenu>
+  <share
+    :themeObject.sync="themeObject"
+    :globalData.sync="globalData"
+    :viewData.sync="clickProduct"
+    :userInfo.sync="userInfo"
+    opacity="1"
+    :photo.sync="clickPhoto"
+    :title.sync="clickTitle"
+    :id.sync="clickProductId"
+    :module.sync="module">
+  </share>
+  <view class="xinfeng-modal" wx:if="{{showJifen}}">
+    <view class="modal-inner">
+        <view class="inner">
+          <view class="bg1" style="{{themeObject.bgStyle}}"></view>
+          <!-- <view class="bg2" style="{{themeObject.bgStyle}}"></view> -->
+          <view class="bg3" style="background-color:{{lightTheme}};"></view>
+          <view class="top-bg" style="border-bottom-color:{{themeObject.themeColor}};">
+              <view class="bg4"></view>
+              <view class="bg5"></view>
+          </view>
+          <view class="top-box">
+            <view class="box flex_center" style="background-color:{{lightTheme}};">
+              <view>当前积分为</view>
+            </view>
+            <view class="ico ico1" style="border-bottom-color:{{themeObject.themeColor}};"></view>
+            <view class="ico ico2" style="border-bottom-color:{{themeObject.themeColor}};"></view>
+          </view>
+          <view class="top-txt">
+            <view class="big-txt" style="{{themeObject.colorStyle}}">{{userInfo.retailerinfo.jifen}}</view>
+            <view class="btn flex_center" style="{{themeObject.bgStyle}}">超过{{exceed}}的合伙人</view>
+          </view>
+          <view class="txt-area">
+            <view class="bold font16 flex_left"><text class="al al-bangzhu font16"></text><text class="ml5">积分有何作用？</text></view>
+            <view class="font14">积分越高，分享商品获得的佣金越高，每提升1积分商品佣金都会有所增长哦！</view>
+            <view class="bold font16 mt10 flex_left"><text class="al al-bangzhu font16"></text><text class="ml5">如何提升积分？</text></view>
+            <view class="font14">完成任务就可以获得积分奖励，所以每天一定要记得做任务哦！</view>
+          </view>
+          <view class="close-area flex_center" @tap="closeJfModal">
+            <view class="al al-close1"></view>
+          </view>
+        </view>
+    </view>
+  </view>
+  <view wx:if="{{showPhotoTask}}" class="auto-modal refund-modal flex_center">
+    <view class="modal-inner border-box" style="width:80%;">
+      <view class="align_center font18 bold pb10 b_bottom_after color-theme pt20" style="{{themeObject.colorStyle}}">拍照上传</view>
+      <view class="app-photo-list align_left bg-white">
+        <repeat for="{{taskPhotoArr}}" item="photo" index="index">
+          <view class="photoitem">
+            <view class="inner photo imgcover">
+              <image mode="aspectFill" src="{{photo}}" class="pic" data-type="update" data-index="{{index}}" @tap="uploadPhoto" />
+              <view class="close" @tap="deletePhoto(index)">×</view>
+            </view>
+          </view>
+        </repeat>
+        <view wx:if="{{taskPhotoArr.length < maxnum}}" class="photoitem add" @tap="uploadPhoto">
+          <view class="inner">
+            <view class="innerlist">
+              <view class="flex_center h_100">
+                <view>
+                  <text class="al al-zhaopian"></text>
+                  <view><text>{{ taskPhotoArr.length }}</text><text class="ml5 mr5">/</text><text>{{ maxnum }}</text></view>
+                </view>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+      <view class="db b_top_after" style="height:50px;">
+        <view class="w_100 h_100 flex_center">
+          <view class="flex_cell flex_center h_100 b_right_after" @tap="closeTaskPhoto">取消</view>
+          <view class="flex_cell flex_center h_100 color-orange" @tap="submitTaskPhoto">提交</view>
+        </view>
+      </view>
+    </view>
+  </view>
+  <canvas style="position: absolute;top: -1000px; left: -1000px; width: 875px; height: 700px; background: #fff;" canvas-id="photoCanvas"></canvas>
+  <navigator wx:if="{{showRetailer && haveTask}}" class="fixed-hb" url="/packageD/pages/taskCenter">
+    <view class="circle1 flex_center" style="{{themeObject.bgStyle}}">
+      <view class="al al-hongbao3 color-white"></view>
+    </view>
+  </navigator>
+</template>
+<script>
+  import wepy from 'wepy'
+  import Config from '@/config'
+  import Util from '@/libs/util'
+  import Time from '@/libs/time'
+  import Cached from '@/libs/cached'
+  import User from '@/components/user'
+  import Retailer from '@/components/retailer'
+  import BottomMenu from '@/components/bottomMenu'
+  import Share from '@/components/store/share'
+  export default class Mark extends wepy.page {
+    config = {
+      enablePullDownRefresh: true,
+      backgroundTextStyle: 'dark'
+    }
+    components = {
+      user: User,
+      retailer: Retailer,
+      bottomMenu: BottomMenu,
+      share: Share
+    }
+    data = {
+      options: {},
+      globalData: {},
+      userInfo: {},
+      channelInfo: {},
+      loadingComplete: false,
+      contentArr: [],
+      factoryInfo: {},
+      showContainer: true,
+      systemInfo: {},
+      showUser: false,
+      showRetailer: false,
+      products: [],
+      isLoading: false,
+      disList: false,
+      isDone: false,
+      bannerData: [],
+      markData: [],
+      hbMoney: '0.00',
+      inAjax: false,
+      isFirst: true,
+      isIpx: false,
+      isFactoryCommission: Config.CommissionFactory[Config.AppId],
+      shareModule: 'default',
+      clickProduct: null,
+      clickTitle: '',
+      clickPhoto: '',
+      clickProductId: null,
+      module: 'factoryproduct',
+      showMark: false,
+      specialChannelInfo: {},
+      tabIndex: 0,
+      disTabList: false,
+      tabData2: [],
+      isLoading2: false,
+      isDone2: false,
+      themeObject: {},
+      allowNav: false,
+      taskIndex: 0,
+      taskData: [],
+      taskData2: [],
+      disTask: false,
+      disTask2: false,
+      showJifen: false,
+      lightTheme: '',
+      showPhotoTask: false,
+      taskPhotoArr: [],
+      maxnum: 9,
+      exceed: '',
+      haveTask: false,
+      saveMoneyMode: false
+    }
+    refreshPage () {
+      this.userInfo = {}
+      this.disTask = false
+      this.taskData = []
+      this.loadingComplete = false
+      this.factoryInfo = {}
+      this.pageStart = 0
+      this.products = []
+      this.isLoading = false
+      this.disList = false
+      this.isDone = false
+      this.bannerData = []
+      this.markData = []
+      this.inAjax = false
+      this.isFirst = true
+      this.tabIndex = 0
+      this.disTabList = false
+      this.pageStart2 = 0
+      this.tabData2 = []
+      this.isLoading2 = false
+      this.isDone2 = false
+      this.$apply()
+      this.handlePageData()
+    }
+    onPullDownRefresh () {
+      this.refreshPage()
+      wepy.showNavigationBarLoading()
+      setTimeout(() => {
+        wepy.hideNavigationBarLoading()
+        wepy.stopPullDownRefresh()
+      }, 500)
+    }
+    onReachBottom () {
+      if (this.isLoading || this.isLoading2 || this.isFactoryCommission) return false
+      switch (this.tabIndex) {
+        case 0:
+          if (this.products.length === (this.pageStart + 1) * this.limit) {
+            this.pageStart++
+            this.isLoading = true
+            this.getData()
+          }
+          break
+        case 1:
+          // if (this.tabData2.length === (this.pageStart2 + 1) * this.limit) {
+          //   this.pageStart2++
+          //   this.isLoading2 = true
+          //   this.getNewsData()
+          // }
+          break
+      }
+    }
+    processProducts (retdata) {
+      if (this.isFirst) {
+        this.products = []
+        this.isFirst = false
+        this.allowNav = true
+      }
+      this.isLoading = false
+      this.disList = true
+    }
+    getData () {
+      if (this.inAjax) return false
+      this.inAjax = true
+      Cached.pagingRequest({
+        url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/factory/factoryproductList`,
+        data: {fid: Config.Fid, pagestart: this.pageStart, limit: this.limit, showcustomers: 1},
+        method: 'post'
+      }, 'mark.products', Config.URT.H,
+      cacheData => {
+        const isCachePaging = cacheData.prevPage >= this.pageStart
+        console.log(cacheData)
+        if (!isCachePaging) {
+          cacheData.prevPage = this.pageStart
+        }
+        return isCachePaging
+      },
+      cacheData => {
+        this.inAjax = false
+        wepy.hideLoading()
+        this.processProducts(cacheData.data)
+        let dataarr = cacheData.data.slice(this.pageStart * this.limit, (this.pageStart + 1) * this.limit)
+        this.products = this.products.concat(dataarr)
+        if (dataarr.length < this.limit && this.products.length) {
+          this.isDone = true
+        } else {
+          this.isDone = false
+        }
+      },
+      res => {
+        this.inAjax = false
+        this.loadingComplete = true
+        wepy.hideLoading()
+        const data = res.data
+        const retdata = data.data ? data.data : data
+        this.processProducts(retdata)
+        this.products = this.products.concat(retdata)
+        if (retdata.length < this.limit && this.products.length) {
+          this.isDone = true
+        } else {
+          this.isDone = false
+        }
+        this.$apply()
+        return { data: this.products, prevPage: this.pageStart }
+      },
+      error => {
+        wepy.hideLoading()
+        console.log('合伙人页面，商品列表请求error')
+        console.log(error)
+      })
+    }
+    getNewsData () {
+      if (this.inAjax) return false
+      this.inAjax = true
+      wepy.request({
+        url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/moduleList`,
+        data: {pagestart: this.pageStart2, limit: 1, module: 'factorynews', fid: Config.Fid}
+      }).then(res => {
+        this.inAjax = false
+        this.loadingComplete = true
+        this.isLoading2 = false
+        wepy.hideLoading()
+        let data = res.data
+        let retdata = data.data ? data.data : data
+        for (let i = 0; i < retdata.length; i++) {
+          retdata[i].dateline_str = new Time(retdata[i].dateline * 1000).dateFormat('yyyy-MM-dd hh:mm')
+        }
+        this.tabData2 = this.tabData2.concat(retdata)
+        if (retdata.length < this.limit && this.tabData2.length) {
+          this.isDone2 = true
+        } else {
+          this.isDone2 = false
+        }
+        this.disTabList = true
+        this.$apply()
+      })
+    }
+    afterFactoryInfo () {
+      if (this.factoryInfo.content && this.factoryInfo.content !== '') {
+        this.contentArr = JSON.parse(this.factoryInfo.content)
+        this.factoryInfo.contentArr = JSON.parse(this.factoryInfo.content)
+      } else {
+        this.factoryInfo.contentArr = []
+      }
+      this.showContainer = true
+    }
+    getFactoryInfo () {
+      this.globalData = this.$parent.globalData
+      this.userInfo = this.globalData.userInfo
+      this.factoryInfo = this.globalData.FactoryInfo
+      this.afterFactoryInfo()
+    }
+    afterSetting () {
+      if (!this.specialChannelInfo || !this.specialChannelInfo.id) {
+        for (let i = 0; i < this.markData.length; i++) {
+          if (this.markData[i].skey === 'businessschool') {
+            // 共销汇和海囤生活做处理
+            if ((Config.AppId === 'wx72131ab2cb77663d' || Config.AppId === 'wx93366404c4cbc761') && Config.SpecialChannelId) {
+              wepy.request({
+                url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/channel/info`,
+                data: {id: Config.SpecialChannelId},
+                method: 'post'
+              }).then(res => {
+                const data = res.data
+                const retdata = data.data ? data.data : data
+                this.specialChannelInfo = retdata
+                this.$apply()
+              })
+            }
+            break
+          }
+        }
+      }
+    }
+    handleRetailer () {
+      Cached.request({
+        url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/factory/controlsettingList`,
+        data: {fid: Config.Fid, type: 'friends'},
+        method: 'post'
+      }, 'mark.settings', Config.URT.H,
+      cacheData => {
+        this.markData = cacheData
+        this.afterSetting()
+      },
+      res => {
+        const data = res.data
+        let retdata = data.data ? data.data : data
+        this.markData = []
+        for (let i = 0; i < retdata.length; i++) {
+          if (retdata[i].moderate) {
+            this.markData.push(retdata[i])
+          }
+        }
+        this.afterSetting()
+        this.$apply()
+        return this.markData
+      })
+      if (!this.products.length && !this.inAjax) {
+        wepy.showLoading()
+        this.getData()
+      } else {
+        this.allowNav = true
+      }
+      if (this.userInfo.retaileridentity === 'D') {
+        Cached.request({
+          url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/haitun/teamStat`,
+          data: {appid: Config.AppId, fid: Config.Fid, uid: this.userInfo.uid},
+          method: 'post'
+        }, 'mark.hbMoney', Config.URT.H,
+        cacheData => {
+          this.hbMoney = cacheData
+        },
+        res => {
+          const data = res.data
+          if (data.flag) {
+            this.hbMoney = data.data.hongbaomoney
+            this.$apply()
+          }
+          return this.hbMoney
+        })
+      }
+      this.getTask()
+    }
+    afterGetUser () {
+      let shareParams = Util.getShareParams(this.options)
+      if (shareParams.wid && shareParams.share_uid) {
+        wepy.request({
+          url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/common/shareClick`,
+          data: {...shareParams, module: 'menumin', moduleid: this.channelInfo.id},
+          method: 'post'
+        })
+      }
+      if (this.userInfo.regwid && this.userInfo.bindstatus) {
+        this.showUser = false
+        this.showRetailer = true
+        this.showContainer = true
+        this.handleRetailer()
+      } else {
+        this.showUser = true
+        this.showRetailer = false
+        this.getFactoryInfo()
+        this.allowNav = true
+      }
+    }
+    handlePageData () {
+      if (this.options.share_wid) {
+        this.$parent.globalData.ShareWid = parseInt(this.options.share_wid)
+      }
+      this.globalData = this.$parent.globalData
+      let saveMoneyMode = this.globalData.SystemParams.SaveMoneyMode
+      this.saveMoneyMode = saveMoneyMode ? parseInt(saveMoneyMode) : false
+      Util.appInit(this.globalData, this)
+      this.lightTheme = Util.colorHex(Util.colorRgb(this.themeObject.themeColor, 0.8))
+      console.log('获取了当前小程序的主题色')
+      console.log(this.themeObject)
+      this.userInfo = this.globalData.userInfo
+      if (this.globalData.SystemParams.RetailerApply === 1 || this.globalData.SystemParams.RetailerApply === '1') {
+        this.showMark = true
+      } else {
+        this.showMark = false
+      }
+      if (!this.options.refresh && this.options.wid) {
+        if (this.options.scene && (!this.userInfo.regwid || !this.userInfo.bindstatus)) {
+          this.globalData.Wid = this.options.wid
+          this.$parent.globalData.Wid = this.options.wid
+        }
+      }
+      let shareParams = Util.getShareParams(this.options)
+      let params = {...shareParams, fid: Config.Fid, module: 'mark'}
+      Cached.request({
+        url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/channel/info`,
+        data: params,
+        method: 'post'
+      }, 'mark.channelInfo', Config.URT.H,
+      cacheData => {
+        this.channelInfo = cacheData
+        this.bannerData = cacheData.banner
+        this.afterGetUser()
+      },
+      res => {
+        const data = res.data
+        const retdata = data.data ? data.data : data
+        this.channelInfo = retdata
+        if (retdata.banner && retdata.banner.length) {
+          this.bannerData = retdata.banner
+        }
+        this.afterGetUser()
+        this.$apply()
+        return this.channelInfo
+      })
+    }
+    onLoad (options) {
+      wepy.hideShareMenu()
+      this.pageStart = 0
+      this.pageStart2 = 0
+      this.limit = Config.Limit
+      this.isFirst = true
+      this.isIng = false
+      this.products = []
+      if (options.scene) {
+        let sceneOptions = Util.queryScene(options.scene)
+        options = {...options, ...sceneOptions}
+      }
+      this.options = options
+      this.pageurl = Util.objectToUrl('/pages/mark', this.options)
+      wepy.getSystemInfo().then(res => {
+        this.systemInfo = res
+        if (res.model.substring(0, res.model.indexOf('X')) + 'X' === 'iPhone X') {
+          this.isIpx = true
+        }
+        this.$apply()
+      })
+      if (this.$parent.globalData.flag.bokaAuth) {
+        this.handlePageData()
+      } else {
+        this.$parent.loadCallback = () => {
+          this.handlePageData()
+        }
+      }
+    }
+    handleShowData () {
+      if (this.options.refresh) {
+        wepy.request({
+          url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/user/show`
+        }).then(res => {
+          const retuser = res.data
+          this.userInfo = retuser
+          this.globalData.userInfo = retuser
+          if (retuser.regwid && retuser.bindstatus) {
+            this.Wid = retuser.regwid
+            this.globalData.Wid = retuser.regwid
+            this.showUser = false
+            this.showRetailer = true
+            this.showContainer = true
+            this.handleRetailer()
+          }
+          this.$parent.globalData = this.globalData
+          this.$apply()
+        })
+      }
+    }
+    onShow () {
+      if (this.$parent.globalData.flag.bokaAuth) {
+        this.handleShowData()
+      } else {
+        this.$parent.showCallback = () => {
+          this.handleShowData()
+        }
+      }
+    }
+    async handleShare () {
+      if (!this.afterProductShare && this.clickProduct && this.clickProductId) {
+        const lastshareuid = this.options.share_uid
+        let shareurl = ''
+        if (this.module === 'factorynews') {
+          shareurl = `/${Config.Router.factorynews}?id=${this.clickProductId}&fid=${Config.Fid}&share_uid=${this.userInfo.uid}&share_wid=${this.globalData.Wid}&wid=${this.globalData.Wid}&comefrom=${Config.AppName}`
+        } else {
+          shareurl = `/${Config.Router.product}?id=${this.clickProductId}&type=fpimport&share_uid=${this.userInfo.uid}&share_wid=${this.globalData.Wid}&wid=${this.globalData.Wid}&comefrom=${Config.AppName}`
+        }
+        shareurl = `${shareurl}&shareuser=self`
+        let shareTitle = this.clickTitle
+        let sharePhoto = this.clickPhoto
+        if (lastshareuid) {
+          shareurl = `${shareurl}&lastshareuid=${lastshareuid}`
+        }
+        let backUrl = encodeURIComponent(shareurl)
+        shareurl = `${shareurl}&currentUrl=${backUrl}`
+        if (this.module !== 'factorynews') {
+          sharePhoto = await this.drawShareImg(sharePhoto)
+        }
+        this.shareParams = {
+          title: shareTitle,
+          path: shareurl,
+          imageUrl: sharePhoto
+        }
+      }
+    }
+    async onShareAppMessage (res) {
+      if (!this.afterProductShare && this.clickProduct && this.clickProductId) {
+        await this.handleShare()
+        this.clickProduct = null
+        return this.shareParams
+      }
+    }
+    async onShareTimeline () {
+      if (!this.afterProductShare && this.clickProduct && this.clickProductId) {
+        await this.handleShare()
+        this.clickProduct = null
+        return this.shareParams
+      }
+    }
+    async drawShareImg (imgUrl) {
+      let canvasW = 210
+      let canvasH = 168
+      return new Promise((resolve) => {
+        wx.getImageInfo({
+          src: imgUrl, // 原图路径
+          success: (res) => {
+            let ctx = wx.createCanvasContext('photoCanvas')
+            let imgW = res.width
+            let imgH = res.height
+            let rawRateW = Number(imgW / canvasW).toFixed(2)
+            let rawRateH = Number(imgH / canvasH).toFixed(2)
+            let sx = 0
+            let sy = 0
+            let dx = 0
+            let dy = 0
+            let sWidth = 0
+            let sHeight = 0
+            let dWidth = canvasW
+            let dHeight = canvasH
+            let rCentralPointX = imgW / 2
+            let rCentralPointY = imgH / 2
+            if ((rawRateW >= 1 && rawRateH >= 1) || (rawRateW <= 1 && rawRateH <= 1)) { // 常规比例(按x方向比例缩放)
+              sWidth = Math.floor(canvasW * rawRateW)
+              sHeight = Math.floor(canvasH * rawRateW)
+              let sHalfWidth = sWidth / 2
+              let sHalfHeight = sHeight / 2
+              sx = rCentralPointX - sHalfWidth
+              sy = rCentralPointY - sHalfHeight
+              sy = sy > 0 ? sy : 0
+            } else if (rawRateW <= 1 && rawRateH >= 1) { // 纵向长条状
+              sWidth = imgW
+              sHeight = Math.floor(imgH * 4 / 5)
+              let sHalfWidth = sWidth / 2
+              let sHalfHeight = sHeight / 2
+              sx = rCentralPointX - sHalfWidth
+              sy = rCentralPointY - sHalfHeight
+              sy = sy > 0 ? sy : 0
+            } else if (rawRateW >= 1 && rawRateH <= 1) { // 横向长条状
+              sHeight = imgH
+              sWidth = Math.floor(imgH * 5 / 4)
+              let sHalfWidth = sWidth / 2
+              let sHalfHeight = sHeight / 2
+              sx = rCentralPointX - sHalfWidth
+              sy = rCentralPointY - sHalfHeight
+              sy = sy > 0 ? sy : 0
+            }
+            ctx.fillStyle = '#fff'
+            ctx.fillRect(0, 0, canvasW, canvasH)
+            // 宽度从中间向两边填充
+            ctx.drawImage(res.path, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight)
+            let txtH = canvasH * 0.18
+            let txtTop = canvasH * 0.82
+            let txtLeftW = canvasW * 0.5
+            let txtLeft = canvasW * 0.02
+            let r = txtH * 0.2
+            ctx.beginPath()
+            ctx.setStrokeStyle(this.themeObject.themeColor)
+            ctx.setLineWidth(4)
+            ctx.moveTo(0, txtTop)
+            ctx.lineTo(txtLeftW - 2 * r, txtTop)
+            ctx.arcTo(txtLeftW - r, txtTop, txtLeftW, txtTop + r, 2 * r) // 创建弧
+            ctx.lineTo(txtLeftW + r, canvasH) // 创建垂直线
+            ctx.lineTo(0, canvasH)
+            ctx.stroke()
+            ctx.setFillStyle(this.themeObject.themeColor)
+            ctx.fill()
+            ctx.closePath()
+            ctx.save()
+            ctx.restore()
+
+            let txtSize = 12
+            let txtSize1 = 14
+            let txtW = txtSize
+            ctx.font = `bold ${txtSize}px`
+            ctx.setFontSize(txtSize)
+            ctx.setFillStyle('#ffffff')
+            ctx.setTextAlign('left')
+            ctx.fillText('￥', txtLeft, txtTop + txtH / 2 + txtSize1 / 3.5, txtW)
+            ctx.save()
+            ctx.restore()
+            ctx.font = `bold ${txtSize1}px`
+            ctx.setFontSize(txtSize1)
+            ctx.setFillStyle('#ffffff')
+            ctx.setTextAlign('left')
+            let disprice = this.clickProduct.price
+            if (this.clickProduct.minprice && this.clickProduct.maxprice && this.clickProduct.minprice !== '' && this.clickProduct.maxprice !== '' && this.clickProduct.minprice !== this.clickProduct.maxprice) {
+              disprice = `${this.clickProduct.minprice}-${this.clickProduct.maxprice}`
+            } else if (this.clickProduct.minprice && this.clickProduct.minprice !== '') {
+              disprice = this.clickProduct.minprice
+            }
+            ctx.fillText(disprice, txtLeft + txtW, txtTop + txtH / 2 + txtSize1 / 3, canvasW - txtW - txtLeft * 2)
+            ctx.save()
+            ctx.restore()
+            ctx.draw(false, () => {
+              wx.canvasToTempFilePath({
+                width: canvasW,
+                height: canvasH,
+                destWidth: 750, // 标准的iphone6尺寸的两倍，生成高清图
+                destHeight: 600,
+                canvasId: 'photoCanvas',
+                fileType: 'jpg',  // 注意jpg默认背景为透明
+                success: (res) => {
+                  // 设置分享图片路径
+                  console.log('=====promise 返回的图片路径=======')
+                  console.log(res.tempFilePath)
+                  resolve(res.tempFilePath)
+                }
+              })
+            })
+          }
+        })
+      })
+    }
+    switchTab () {
+      switch (this.tabIndex) {
+        case 0:
+          if (!this.products.length) {
+            this.getData()
+          }
+          break
+        case 1:
+          if (!this.tabData2.length) {
+            this.getNewsData()
+          }
+          break
+      }
+    }
+    getTask () {
+      wepy.request({
+        url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/Task/getDailyTask`,
+        method: 'post'
+      }).then(res => {
+        const data = res.data
+        if (data.flag) {
+          this.taskData = data.data
+          this.exceed = data.exceed
+          this.userInfo.retailerinfo.jifen = data.jifen
+          this.globalData.userInfo = this.userInfo
+          this.$parent.globalData = this.globalData
+          this.disTask = true
+          this.haveTask = data.havetask
+          this.$apply()
+        }
+      })
+    }
+    getTaskData2 () {
+      wepy.request({
+        url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/Task/getList`,
+        method: 'post'
+      }).then(res => {
+        const data = res.data
+        if (data.flag) {
+          this.taskData2 = data.data
+          this.disTask2 = true
+          this.$apply()
+        }
+      })
+    }
+    methods = {
+      closeJfModal () {
+        this.showJifen = false
+      },
+      uploadPhoto (e) {
+        const dataset = e.currentTarget.dataset
+        const curType = dataset.type
+        const index = dataset.index
+        let imgcount = this.maxnum - this.taskPhotoArr.length
+        wepy.chooseImage({
+          count: imgcount, // 默认9
+          sizeType: ['original', 'compressed'], // 可以指定是原图还是压缩图，默认二者都有
+          sourceType: ['album', 'camera'] // 可以指定来源是相册还是相机，默认二者都有
+        }).then(res => {
+          if (res.tempFiles) {
+            Util.taskData({
+              data: res.tempFiles,
+              handleFunction: (d) => {
+                return (done) => {
+                  wepy.showLoading()
+                  wepy.uploadFile({
+                    url: `${Config.GxkApi}/api/upload/photo`,
+                    method: 'POST',
+                    name: 'photo',
+                    filePath: d.path
+                  }).then(res => {
+                    wepy.hideLoading()
+                    const resdata = JSON.parse(res.data)
+                    if (!resdata.flag) {
+                      wepy.showToast({
+                        title: resdata.error,
+                        icon: 'none',
+                        duration: Util.delay(resdata.error)
+                      })
+                    } else {
+                      let jsonData = JSON.parse(res.data)
+                      if (curType === 'update') {
+                        this.taskPhotoArr.splice(index, 1, jsonData.data)
+                      } else {
+                        this.taskPhotoArr.push(jsonData.data)
+                      }
+                      this.$apply()
+                    }
+                    done()
+                  })
+                }
+              }
+            })
+          }
+        })
+      },
+      deletePhoto (index) {
+        this.taskPhotoArr.splice(index, 1)
+        this.$apply()
+      },
+      closeTaskPhoto () {
+        this.showPhotoTask = false
+      },
+      submitTaskPhoto () {
+        if (this.isIng) return false
+        if (!this.taskPhotoArr.length) {
+          wepy.showToast({
+            title: '请上传图片',
+            icon: 'none'
+          })
+          return false
+        }
+        let postPhoto = this.taskPhotoArr.join(',')
+        this.isIng = true
+        wepy.showLoading()
+        wepy.request({
+          url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/Task/recordTask`,
+          data: {id: this.clickTaskData.id, photo: postPhoto},
+          method: 'post'
+        }).then(res => {
+          this.isIng = false
+          wepy.hideLoading()
+          const data = res.data
+          wepy.showToast({
+            title: data.error,
+            icon: 'none',
+            duration: Util.delay(data.error)
+          })
+          if (data.flag) {
+            this.showPhotoTask = false
+            this.clickTaskData.isbutton = false
+            this.clickTaskData.buttontitle = '待审核'
+            this.clickTaskData.desc = ''
+            this.taskData2[this.clickTaskIndex] = this.clickTaskData
+            this.$apply()
+          }
+        })
+      }
+    }
+    events = {
+      clickShare (data) {
+        this.module = 'factoryproduct'
+        this.clickProduct = data
+        this.clickTitle = data.title
+        this.clickPhoto = data.photo.split(',')[0]
+        this.clickProductId = data.id
+        this.$apply()
+        this.$invoke('share', 'showPopuModal')
+      },
+      clickShareNews (data) {
+        this.module = 'factorynews'
+        this.clickProduct = data
+        this.clickTitle = data.title
+        this.clickPhoto = data.photo.split(',')[0]
+        this.clickProductId = data.id
+        this.$apply()
+        this.$invoke('share', 'showPopuModal')
+      },
+      clickListTab (index) {
+        this.tabIndex = parseInt(index)
+        this.switchTab()
+      },
+      updateJifen (jifen, index) {
+        this.taskData[index].jindu = 1
+        this.taskData[index].finished = 1
+        this.taskData[index].isbutton = 0
+        this.taskData[index].buttontitle = '已完成'
+        this.userInfo.retailerinfo.jifen = jifen
+        this.globalData.userInfo = this.userInfo
+        this.$parent.globalData = this.globalData
+        this.$apply()
+      },
+      updateSaleJifen (item, index, jifen, type) {
+        if (type === 'daily') {
+          this.taskData[index].finished = 1
+          this.taskData[index].isbutton = 0
+          this.taskData[index].buttontitle = '已完成'
+        } else {
+          this.taskData2[index].finished = 1
+          this.taskData2[index].isbutton = 0
+          this.taskData2[index].buttontitle = '已完成'
+        }
+        this.userInfo.retailerinfo.jifen = jifen
+        this.globalData.userInfo = this.userInfo
+        this.$parent.globalData = this.globalData
+        this.$apply()
+      },
+      clickJifen () {
+        // this.showJifen = true
+        wepy.navigateTo({url: '/packageC/pages/jifenRule'})
+      },
+      clickTaskTab (index) {
+        this.taskIndex = parseInt(index)
+        switch (this.taskIndex) {
+          case 0:
+            if (!this.taskData.length) {
+              this.getTask()
+            }
+            break
+          case 1:
+            if (!this.taskData2.length) {
+              this.getTaskData2()
+            }
+            break
+        }
+      },
+      clickPhotoTask (item, index) {
+        this.clickTaskData = item
+        this.clickTaskIndex = index
+        this.taskPhotoArr = []
+        this.showPhotoTask = true
+      }
+    }
+  }
+</script>

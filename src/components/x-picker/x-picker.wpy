@@ -1,0 +1,183 @@
+<style lang="less">
+  .pick-item-view {
+    line-height: 40px;
+    text-align: center;
+    font-size: 14px;
+  }
+</style>
+<template>
+  <picker-view indicator-style="height: 40px;" style="width: 100%; height: {{height}};" value="{{pickerValue}}" @change="change">
+    <repeat for="{{currentData}}" key="m" item="items">
+      <picker-view-column>
+        <repeat for="{{items}}" key="n" item="item">
+          <view class="pick-item-view">{{item.name}}</view>
+        </repeat>
+      </picker-view-column>
+    </repeat>
+  </picker-view>
+</template>
+<script>
+  import wepy from 'wepy'
+  import Manager from './chain'
+  import name2value from '../../filters/name2value'
+  import value2name from '../../filters/value2name'
+  import ChinaAddressV4Data from '../../assets/china_address_v4'
+  export default class XPicker extends wepy.component {
+    props = {
+      // list: {
+      //   type: Array,
+      //   default: []
+      // },
+      value: {
+        type: Array,
+        default: [],
+        twoWay: true
+      },
+      height: {
+        type: String,
+        default: '50px'
+      },
+      columns: {
+        type: Number,
+        default: 0
+      },
+      fixedColumns: {
+        type: Number,
+        default: 0
+      }
+    }
+
+    data = {
+      list: [],
+      currentValue: [],
+      rawValue: [],
+      currentData: [],
+      pickerValue: []
+    }
+
+    watch = {
+      currentValue (val, oldVal) {
+        this.chainRender(val, oldVal)
+        const rawValue = this.getValue(val)
+        // this.value = rawValue
+        const rawName = this.getName(rawValue)
+        this.value = rawName
+        this.$emit('change', rawValue)
+      }
+    }
+
+    methods = {
+      change (e) {
+        this.currentValue = e.detail.value
+      }
+    }
+
+    events = {
+      'cancel-broadcast': val => {
+        if (val.length) {
+          this.rawValue = name2value(val, this.list).split(' ')
+          this.currentData = this.store.getColumns(this.rawValue)
+          this.pickerValue = this.getIndex(this.rawValue)
+          this.currentValue = []
+          // this.$apply()
+          this.currentValue = this.pickerValue
+          this.$apply()
+        }
+      }
+    }
+
+    getValue (val) {
+      const data = []
+      for (let i = 0; i < val.length; i++) {
+        data.push(this.currentData[i][val[i]].value)
+      }
+      return data
+    }
+
+    getName (val) {
+      return value2name(val, this.list).split(' ')
+    }
+
+    chainRender (val, oldVal) {
+      console.log(`${val}, ${oldVal}`)
+      if (!oldVal.length) {
+        const children = this.getChildren(val)
+        this.currentData = this.store.getColumns(children)
+        this.pickerValue = val
+        return
+      }
+      for (let i = 0; i < val.length; i++) {
+        if (val[i] !== oldVal[i]) {
+          for (let m = i + 1; m < val.length; m++) {
+            val[m] = 0
+          }
+          const children = this.getChildren(val)
+          this.currentData = this.store.getColumns(children)
+          this.pickerValue = val
+          break
+        }
+      }
+    }
+
+    getChildren (val) {
+      let data = []
+      let children = null
+      for (let i = 0; i < this.currentData.length; i++) {
+        if (children) {
+          children = this.store.getChildren(children)[val[i]].value
+          data.push(children)
+        } else {
+          children = this.currentData[i][val[i]].value
+          data.push(this.currentData[i][val[i]].value)
+        }
+      }
+      return data
+    }
+
+    getIndex (val) {
+      const index = []
+      for (let i = 0; i < val.length; i++) {
+        const value = val[i]
+        for (let j = 0; j < this.currentData[i].length; j++) {
+          const item = this.currentData[i][j]
+          if (item.value === value) {
+            index.push(j)
+            break
+          }
+        }
+      }
+      return index
+    }
+
+    onLoad () {
+      // console.log(this.value)
+      this.list = ChinaAddressV4Data
+      if (this.value.length) {
+        const parsedVal = name2value(this.value, this.list)
+        if (/__/.test(parsedVal)) {
+          console.error('[VUX] Wrong address value', this.value)
+          this.rawValue = []
+        } else {
+          this.rawValue = parsedVal.split(' ')
+        }
+      }
+
+      if (this.columns !== 0) {
+        const length = this.columns
+        this.store = new Manager(this.list, length, this.fixedColumns || this.columns)
+        // console.log('load')
+        this.currentData = this.store.getColumns(this.rawValue)
+        this.pickerValue = this.getIndex(this.rawValue)
+        if (!this.pickerValue.length) {
+          for (let i = 0; i < this.columns; i++) {
+            this.pickerValue.push(0)
+          }
+        }
+        this.currentValue = this.pickerValue
+        // console.log(this.currentValue)
+        this.rawValue = this.getValue(this.pickerValue)
+        this.$apply()
+      }
+    }
+  }
+</script>

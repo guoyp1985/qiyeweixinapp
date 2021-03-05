@@ -1,0 +1,195 @@
+<style lang="less">
+.share-search-outter{
+  width: 100%;height: 100rpx;padding:10rpx 20rpx;box-sizing:border-box;
+  background-color: white;display: flex;flex-direction: column;align-items: center;justify-content: center;
+  position:fixed;left:0;top:0;right:0;z-index:1;
+  .search-inner{width: 100%;display:flex; align-items: center;background-color: #f2f3f2;border-radius: 45px;height:70%;}
+  .search-input{
+    width: 85%;
+    box-sizing: border-box;
+    font-size: 30rpx;
+    margin: 0 20rpx;
+  }
+}
+.user-share-page{
+  padding-top:100rpx;
+  .scroll_list{
+    .scroll_item{
+      background-color: #fff;
+      display:block;padding:20rpx;box-sizing: border-box;
+    }
+    .pic{
+      width:120rpx;
+      image{width:100rpx;height:100rpx;}
+    }
+    .btn_cell{
+      width:140rpx;
+      .btn{
+        border-radius: 20rpx;width:120rpx;height:50rpx;
+      }
+    }
+  }
+}
+</style>
+<template>
+  <view class="share-search-outter b_bottom_after">
+    <view class="search-inner">
+      <input class="search-input" type="text" placeholder="  请输入商品名称" bindinput="setKeyword" value="{{keyword}}" bindconfirm="searchKeyword" confirm-type="search" />
+      <view wx:if="{{keyword}}" class="flex_center color-gray font12" bindtap="cancelSearch">取消</view>
+      <view wx:else class="flex_center color-gray font12"><text class="al al-sousuo font20"></text></view>
+    </view>
+  </view>
+  <view class="user-share-page">
+    <block wx:if="{{disList1}}">
+      <view wx:if="{{!tabData1.length}}" class="flex_empty">暂无数据</view>
+      <view class='scroll_list' wx:else>
+        <repeat for="{{tabData1}}" item="item" index="index">
+          <form class="scroll_item" data-data="{{item}}" bindsubmit="toStat" report-submit="true" data-data="{{item}}">
+            <button formType="submit" class="w_100 flex_left">
+              <view class="pic flex_left" wx:if="{{item.photo && item.photo != ''}}">
+                <image src="{{item.photo}}" mode="aspectFill"></image>
+              </view>
+              <view class="flex_cell" data-id="{{item.id}}">
+                <view class="align_left clamp1"><block wx:if="{{moduleObject[item.module] && moduleObject[item.module] != ''}}">【{{moduleObject[item.module]}}】</block>{{item.title}}</view>
+                <view class="font12 color-gray align_left">{{item.dateStr}}</view>
+              </view>
+              <view class="btn_cell flex_right">
+                <view class="btn bg-theme color-white flex_center" style="{{themeObject.bgStyle}}">统计</view>
+              </view>
+            </button>
+          </form>
+        </repeat>
+      </view>
+      <block wx:if="{{tabData1.length}}">
+        <view class="load-end-area loading" wx:if="{{isLoading}}"></view>
+        <view class="load-end-area done" wx:elif="{{isDone}}"></view>
+      </block>
+    </block>
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy'
+import Config from '@/config'
+import Time from '@/libs/time'
+import Util from '@/libs/util'
+const BokaApi = Config.BokaApi
+export default class UserShare extends wepy.page {
+  config = {
+    enablePullDownRefresh: true,
+    backgroundTextStyle: 'dark'
+  }
+  data = {
+    userInfo: {},
+    disList1: false,
+    tabData1: [],
+    onAjaxEnd: false,
+    isLoading: false,
+    isDone: false,
+    moduleObject: {
+      store: '店铺',
+      home: '商城',
+      mark: '合伙人',
+      agent: '经销商'
+    },
+    keyword: '',
+    themeObject: {}
+  }
+  refreshPage () {
+    this.onAjaxEnd = false
+    this.disList1 = false
+    this.tabData1 = []
+    this.pageStart1 = 0
+    this.isLoading = false
+    this.isDone = false
+    this.$apply()
+    this.getData1()
+  }
+  onPullDownRefresh () {
+    if (this.onAjaxEnd) {
+      wepy.showNavigationBarLoading()
+      setTimeout(function () {
+        wepy.hideNavigationBarLoading()
+        wepy.stopPullDownRefresh()
+      }, 500)
+      this.refreshPage()
+    }
+  }
+  onReachBottom () {
+    if (this.tabData1.length === (this.pageStart1 + 1) * this.limit) {
+      this.isLoading = true
+      this.pageStart1++
+      this.getData1()
+    }
+  }
+  getData1 = function () {
+    let params = {pagestart: this.pageStart1, limit: this.limit}
+    if (this.keyword !== '') {
+      params.keyword = this.keyword
+    }
+    wepy.request({
+      url: `${BokaApi}/${Config[Config.ApiVersion]}/user/shareList`,
+      data: params
+    }).then(res => {
+      this.onAjaxEnd = true
+      let data = res.data
+      let retdata = data.data ? data.data : data
+      for (let i = 0; i < retdata.length; i++) {
+        retdata[i].dateStr = new Time(retdata[i].dateline * 1000).dateFormat('yyyy-MM-dd hh:mm')
+      }
+      this.tabData1 = this.tabData1.concat(retdata)
+      if (retdata.length < this.limit && this.tabData1.length) {
+        this.isDone = true
+      } else {
+        this.isDone = false
+      }
+      this.isLoading = false
+      this.disList1 = true
+      this.$apply()
+    })
+  }
+  handlePageData () {
+    this.globalData = this.$parent.globalData
+    Util.appInit(this.globalData, this)
+    this.userInfo = this.globalData.userInfo
+    this.getData1()
+    this.$apply()
+  }
+  onLoad () {
+    this.pageStart1 = 0
+    this.limit = 15
+    if (this.$parent.globalData.flag.bokaAuth) {
+      this.handlePageData()
+    } else {
+      this.$parent.loadCallback = () => {
+        this.handlePageData()
+      }
+    }
+  }
+  methods = {
+    setKeyword (e) {
+      this.keyword = e.detail.value
+    },
+    searchKeyword (e) {
+      if (e.detail.value !== '') this.keyword = e.detail.value
+      this.pageStart1 = 0
+      this.tabData1 = []
+      this.isDone1 = false
+      this.disList1 = false
+      this.getData1()
+    },
+    cancelSearch () {
+      this.keyword = ''
+      this.pageStart1 = 0
+      this.tabData1 = []
+      this.isDone1 = false
+      this.disList1 = false
+      this.getData1()
+    },
+    toStat (e) {
+      const data = e.currentTarget.dataset.data
+      wepy.navigateTo({url: `/packageD/pages/stat?id=${data.moduleid}&module=${data.module}`})
+    }
+  }
+}
+</script>

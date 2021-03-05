@@ -1,0 +1,122 @@
+<style lang="less">
+.customer-item-page{
+  .mem_item{
+    width: 100%;border: 1px solid #e4e4e4;background: #ffffff;margin-bottom: 10rpx;box-sizing: border-box;
+    .inner_item{
+      width:100%;
+      display: flex;
+      justify-content: start;
+      align-items: center;
+      padding: 30rpx 20rpx;
+      box-sizing: border-box;
+    }
+    .btn_cell{
+      width:120rpx;
+      .btn{
+        width:100rpx;height:50rpx;background-color:#ea3a3a;border-radius:50rpx;
+        .al{color:#fff;font-size:40rpx;}
+      }
+    }
+    .pic_radius{width: 86rpx;height: 86rpx;}
+    .pic_radius image{width:86rpx;height:86rpx;border-radius: 50%;}
+    .data_txt{flex: 1;margin:0 20rpx;overflow: hidden;}
+    .detail_card{
+      background-color:#fff;
+      .detailInfo{
+        display:flex;padding:20rpx;box-sizing:border-box;flex-wrap: wrap;
+        .txt-item{width:50%;box-sizing:border-box;line-height:50rpx;}
+        .txt-item:nth-child(odd){padding-right:10rpx;}
+        .txt-item:nth-child(even){padding-left:10rpx;}
+      }
+    }
+  }
+}
+</style>
+<template>
+  <view class="scroll_list customer-item-page">
+    <repeat for="{{listData}}" item="item" index="index">
+      <view id="{{item.viewId}}" class="mem_item">
+        <view class="inner_item">
+          <view class="pic_radius" data-data="{{item}}" data-index="{{index}}" bindtap="expandEvent">
+            <image src="{{item.avatar}}"></image>
+          </view>
+          <view class="data_txt" data-data="{{item}}" data-index="{{index}}" bindtap="expandEvent">
+            <view class="w_100 clamp1">{{item.linkman}}</view>
+          </view>
+          <view class="flex_center percent-outer">
+            <view class="percentarea flex_left" bindtap="clickPercent">
+              <view class="inner" style="width: {{item.percent}}%;"></view>
+              <view class="txt font12 flex_center">{{item.percent}}%</view>
+            </view>
+          </view>
+          <form class="btn_cell flex_center" data-data="{{item}}" data-index="{{index}}" bindsubmit="expandEvent" report-submit="true">
+            <button class="bg-theme color-white btn flex_center" style="{{themeObject.bgStyle}}" formType="submit"><text class="al al-asmkticon0165"></text></button>
+          </form>
+        </view>
+        <view wx:if="{{item.checked}}" class="detail_card b_top_after">
+          <view class="detailInfo w_100 color-gray b_bottom_after" data-data="{{item}}" data-index="{{index}}" bindtap="expandEvent">
+            <view class="txt-item">性别: {{item.sexname}}</view>
+            <view class="txt-item flex_table" wx:if="{{item.mobile && item.mobile != ''}}">
+              手机号: {{item.mobile}}<view class="icon-phone ml5" data-data="{{item}}" bindtap="toPhone"><text class="al al-dianhua font16"></text></view>
+            </view>
+            <view class="txt-item">地区: {{item.country}} {{item.province}} {{item.city}}</view>
+            <view class="txt-item">影响力: <text class="color-red4">{{item.yingxiangli}}</text></view>
+            <view class="txt-item" wx:if="{{item.uploadname && item.uploadname != '' && ShowUploader}}">推荐人: {{item.uploadname}}</view>
+            <view class="txt-item" wx:if="{{item.uid != userInfo.uid}}">客户类型: {{item.customertype}}</view>
+            <view class="txt-item">获客时间: {{item.dateline_str}}</view>
+          </view>
+          <view class="flex_center h40 color-gray2">
+            <!-- <view class="flex_cell flex_center h_100 b_right_after" data-data="{{item}}" bindtap="toTimeline">客户行为</view>
+            <view class="flex_cell flex_center h_100 b_right_after" data-data="{{item}}" wx:if="{{item.priority}}" bindtap="toPriority">取消置顶</view>
+            <view class="flex_cell flex_center h_100 b_right_after" data-data="{{item}}" wx:else bindtap="toPriority">置顶</view>
+            <view class="flex_cell flex_center h_100 b_right_after" data-data="{{item}}" bindtap="toChat">联系TA</view> -->
+            <view class="flex_cell flex_center h_100" data-data="{{item}}" bindtap="toMember">更多</view>
+          </view>
+        </view>
+      </view>
+    </repeat>
+  </view>
+</template>
+
+<script>
+import Config from '@/config'
+import wepy from 'wepy'
+export default class CustomerItem extends wepy.component {
+  props = {
+    listData: {
+      type: Array,
+      default: []
+    },
+    themeObject: {
+      type: Object,
+      default: {}
+    }
+  }
+  data = {
+    ShowUploader: Config.ShowUploader
+  }
+  onLoad () {
+  }
+  methods = {
+    expandEvent (e) {
+      this.$emit('expandEvent', e)
+    },
+    toMember (e) {
+      const data = e.currentTarget.dataset.data
+      wepy.navigateTo({url: `/package/pages/customerView?uid=${data.uid}`})
+    },
+    clickPercent () {
+      this.$emit('clickPercent')
+    },
+    toPhone (e) {
+      const data = e.currentTarget.dataset.data
+      const number = data.mobile
+      wepy.makePhoneCall({
+        phoneNumber: number
+      }).then(res => {
+        console.log(number)
+      })
+    }
+  }
+}
+</script>

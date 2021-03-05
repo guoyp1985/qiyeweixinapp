@@ -1,0 +1,882 @@
+<style lang="less">
+.retailer-page{
+  .top-box{
+    padding:20rpx 20rpx 60rpx;width:100%;box-sizing:border-box;color:#fff;
+    border-bottom-left-radius:40rpx;border-bottom-right-radius:40rpx;position:relative;
+    .top-inner{position:relative;}
+    .avatar{
+      padding-right:20rpx;
+      image{width:130rpx;height:130rpx;border-radius:50%;border:#fff 8rpx solid;}
+    }
+    .txt{font-size:32rpx;font-weight:bold;width:250rpx;}
+    .r-txt{position:absolute;right:20rpx;bottom:0rpx;font-weight:bold;}
+    .txt1{font-size:70rpx;font-weight:bold;}
+    .txt2{font-size:32rpx;font-weight:bold;}
+  }
+  .tx-box{
+    margin-top:-40rpx;position:relative;z-index:1;
+    .tx-area{height:100rpx;padding:0 20rpx;box-sizing:border-box;}
+  }
+  .rw-list{
+    width:100%;padding:0 20rpx;box-sizing:border-box;
+    .rw-item{
+      width:100%;padding:20rpx 0;box-sizing:border-box;
+    }
+    .r-cell{padding-left:10rpx;min-width:130rpx;}
+    .circle-btn{min-width:120rpx;text-align:center;}
+  }
+  .boxlist{
+    padding:20rpx;box-sizing: border-box;
+  }
+
+  .app-box-area.empty{margin-bottom:20rpx !important;}
+  .app-box-area.tab .box-inner{border-bottom-left-radius:0;border-bottom-right-radius:0;}
+  .app-box-area.tab.empty .box-inner{border-bottom-left-radius:10rpx;border-bottom-right-radius:10rpx;}
+
+  .app-box-area.product-part.part{
+    margin-top:0;
+    .box-inner{padding:20rpx 0;box-sizing: border-box;border-top-left-radius:0;border-top-right-radius:0;}
+    .txt-item{box-sizing: border-box;padding-bottom:0rpx;}
+    .list-area .inner{padding:0 20rpx 30rpx;box-sizing: border-box;}
+  }
+  .app-box-area.news-part.part{
+    margin-top:0;
+    .box-inner{padding:0 0 20rpx;box-sizing: border-box;border-top-left-radius:0;border-top-right-radius:0;}
+    .txt-item{box-sizing: border-box;padding-bottom:0rpx;}
+    .list-area .inner{padding:0 20rpx 30rpx;box-sizing: border-box;}
+  }
+  .app-box-area.part{margin-top:20rpx;}
+  .part{
+    .box-inner{position:relative;padding:20rpx;}
+    .service{
+      .al{color:#fff !important;font-size:40rpx !important;}
+      .listicon .item{margin-top:40rpx;}
+    }
+    .box-item:not(:first-child){margin-top:20rpx;}
+    .box-item.money{padding:30rpx 20rpx;}
+    .box-item{
+      width:100%;padding:20rpx;box-sizing: border-box;font-size:24rpx;
+      position:relative;background-color:#fff;border-radius:16rpx;border: 1px solid #e4e4e4;
+    }
+    .txt-item{
+      color:#666;width:100%;padding-bottom:20rpx;display:flex;font-size:28rpx;color:#000;
+      .al{font-size:40rpx;}
+      .icon_cell{
+        width:200rpx;text-align:right;color:rgba(0,0,0,0.8);
+        .al{color:rgba(0,0,0,0.8) !important;}
+      }
+    }
+    .listicon{
+      width:100%;display:flex;flex-wrap: wrap;
+      .item{
+        width:25%;
+        .item-inner{
+          display:flex;justify-content: center; align-items: center;text-align:center;
+          .al{color:#ff6a61;font-size:50rpx;}
+        }
+        .inner{width:120rpx;position:relative;}
+        .radius{
+          display:flex;justify-content: center; align-items: center;
+          width:86rpx;height:86rpx;border-radius:50%;color:#fff;
+          margin:0 auto 10rpx;
+        }
+      }
+    }
+  }
+  .list-area .scroll_item:not(:last-child) .line{padding-top:10px;background-color:#f7f7f7;}
+  .list-area{
+    .scroll_item{
+      width: 100%;background: #fff;padding-top:30rpx;box-sizing: border-box;overflow:hidden;position:relative;
+      .inner{width:100%;display: flex;justify-content: center;align-items: center;position:relative;}
+      .pic{
+        width:160rpx;
+        image{width:140rpx;height:140rpx;border-radius:15rpx;}
+      }
+      .data_txt{
+        flex: 1;overflow: hidden;position:relative;
+        .empty-cell{width:240rpx;}
+      }
+      .btn-list{
+        position:absolute;right:0;bottom:10rpx;
+        .btn-item:not(:last-child){margin-right:10rpx;}
+        .btn{padding:10rpx 20rpx;}
+      }
+      .cell-list{
+        display:flex;height:70rpx;
+        .btn-cell{
+          flex:1;height:70rpx;position:relative;
+          display:flex;justify-content:center;align-items:center;
+        }
+      }
+    }
+  }
+  .buy-list{
+    padding:20rpx;
+    .avatar-list{
+      display:flex;justify-content: flex-start;align-items: center;
+      .avatar:not(:first-child){margin-left:-20rpx;}
+      .avatar{width:70rpx;height:70rpx;border-radius:50%;}
+      .dot{background-color:#d7d7d7;color:#aeaeae;display:flex;justify-content: center;align-items: center;}
+    }
+  }
+  .al-mark-store:after{content: "\e770";}
+  .al-mark-service:after{content: "\e666";}
+  .al-mark-orders:after{content: "\e79d";}
+  .al-mark-share:after{content: "\e602";}
+  .al-mark-invite:after{content: "\e656";}
+  .al-mark-income:after{content: "\e669";}
+  .al-mark-storeset:after{content: "\e622";}
+  .al-mark-message:after{content: "\e79c";}
+  .al-mark-businessschool:after{content: "\e677";}
+  .al-mark-wxgroups:after{content: "\e666";}
+  .al-mark-salestat:after{content: "\e601";}
+  .al-mark-cards:after{content: "\e697";}
+  .bg-store{background-color:#4281a4;}
+  .bg-service{background-color:#6f78f3;}
+  .bg-orders{background-color:#bc54fa;}
+  .bg-share{background-color:#6699ff;}
+  .bg-invite{background-color:#ff0400;}
+  .bg-income{background-color:orange;}
+  .bg-storeset{background-color:#4281a4;}
+  .bg-message{background-color:#4cd964;}
+  .bg-businessschool{background-color:#000;}
+  .bg-wxgroups{background-color: #6f78f3;}
+  .bg-salestart{background-color:#6699ff;}
+  .bg-cards{background-color:#99cc00;}
+}
+.tool-modal{
+  .modal-inner{padding:40rpx;box-sizing:border-box;}
+  .box-list{
+    .box-item:not(:last-child){margin-bottom:20rpx;}
+    .box-item{
+      border-style:solid;border-width:2rpx;border-radius:10rpx;
+      padding:20rpx;
+      .al{font-size:40rpx;}
+    }
+  }
+}
+</style>
+<template>
+  <view class="column-content retailer-page">
+    <view class="top-box" style="{{themeObject.linearBgStyle}}">
+      <view class="top-inner w_100 flex_left">
+        <view class="avatar">
+          <image mode="aspectFill" src="{{userInfo.avatar}}"></image>
+        </view>
+        <view class="txt flex_left">
+          <view class="w_100">
+            <view class="clamp1">{{userInfo.linkman}}</view>
+            <view class="clamp1">(ID: {{userInfo.regwid}})</view>
+          </view>
+        </view>
+        <view class="align_right flex_cell" @tap="clickJifen">
+          <text class="txt1">{{userInfo.retailerinfo.jifen}}</text>
+          <text class="txt2">分</text>
+        </view>
+      </view>
+    </view>
+    <view class="app-box-area tx-box">
+      <view class="box-inner">
+        <view class="flex_left tx-area">
+          <view class="pr10">可提现</view>
+          <view class="flex_cell bold font16" style="{{themeObject.colorStyle}}">￥{{userInfo.waitcash}}</view>
+          <view class="btn_cell flex_right" @tap="toIncome" style="{{themeObject.colorStyle}}">去提现 ></view>
+        </view>
+        <!-- <view class="flex_left tx-area b_top_after" wx:if="{{!isFactoryCommission && userInfo.retaileridentity == 'D'}}">
+          <view class="pr10">推广佣金</view>
+          <view class="flex_cell bold font16" style="{{themeObject.colorStyle}}">￥{{hbMoney}}</view>
+        </view> -->
+      </view>
+    </view>
+    <view class="app-box-area tab mt10 scroll-tab-area" wx:if="{{taskData.length}}">
+      <view class="box-inner">
+        <view class="o-tab">
+          <view class="tab-item {{taskIndex == 0 ? 'active' : ''}}" @tap="clickTaskTab(0)">
+            <view class="tab-inner" style="{{taskIndex == 0 ? themeObject.colorStyle : ''}}">
+              <text>每日任务</text>
+              <view wx:if="{{taskIndex == 0}}" class="line" style="{{themeObject.bgStyle}}"></view>
+            </view>
+          </view>
+          <view class="tab-item {{taskIndex == 1 ? 'active' : ''}}" @tap="clickTaskTab(1)">
+            <view class="tab-inner" style="{{taskIndex == 1 ? themeObject.colorStyle : ''}}">
+              <text>限时任务</text>
+              <view wx:if="{{taskIndex == 1}}" class="line" style="{{themeObject.bgStyle}}"></view>
+            </view>
+          </view>
+        </view>
+        <view wx:if="{{taskIndex == 0}}" class="rw-list">
+          <block wx:if="{{disTask}}">
+            <view wx:if="{{!taskData.length}}" class="rw-item flex_center">暂无相关任务</view>
+            <repeat for="{{taskData}}" item="item" index="index">
+              <view class="rw-item flex_left {{(index < taskData.length - 1) ? 'b_bottom_after' : ''}} " @tap="taskNav({{item}})">
+                <!-- <view class="pr10">
+                  <view class="app-checkbox" style="{{item.jindu >= item.numbers ? themeObject.bgStyle : ''}}">
+                    <text wx:if="{{item.jindu >= item.numbers}}" class="checked-ico al color-white"></text>
+                  </view>
+                </view> -->
+                <view class="flex_cell flex_left">
+                  <view class="w_100">
+                    <view class="flex_left">
+                      <text class="font16">{{item.title}}</text>
+                      <text class="ml10" style="{{themeObject.colorStyle}}" wx:if="{{item.jifen && item.jifen > 0}}">积分+{{item.jifen}}</text>
+                      <text class="ml5 color-orange" wx:if="{{item.credit && item.credit > 0}}"><text class="al al-jinbi font14"></text> +{{item.credit}}</text>
+                    </view>
+                    <view class="color-gray">{{item.desc}}</view>
+                  </view>
+                </view>
+                <!-- <view class="flex_right r-cell">
+                  <text wx:if="{{item.jindu >= item.numbers}}" style="{{themeObject.colorStyle}}">已完成</text>
+                  <block wx:else>
+                    <view wx:if="{{item.type == 'signin'}}" class="circle-btn color-white" style="{{themeObject.bgStyle}}" @tap="clickTask({{item}}, {{index}})">{{item.buttontitle}}</view>
+                    <text wx:else>{{item.jindu}}/{{item.numbers}}</text>
+                  </block>
+                </view> -->
+                <view class="flex_right r-cell" wx:if="{{item.buttontitle && item.buttontitle != ''}}">
+                  <view wx:if="{{item.isbutton}}" class="circle-btn color-white" style="{{themeObject.bgStyle}}" @tap="clickTask({{item}}, {{index}}, 'daily')">{{item.buttontitle}}</view>
+                  <text wx:else style="{{item.finished ? themeObject.colorStyle : ''}}">{{item.buttontitle}}</text>
+                </view>
+              </view>
+            </repeat>
+          </block>
+        </view>
+        <view wx:if="{{taskIndex == 1}}" class="rw-list">
+          <block wx:if="{{disTask2}}">
+            <view wx:if="{{!taskData2.length}}" class="rw-item flex_center">暂无相关任务</view>
+            <repeat for="{{taskData2}}" item="item" index="index">
+              <view class="rw-item flex_left {{(index < taskData2.length - 1) ? 'b_bottom_after' : ''}} ">
+                <!-- <view class="pr10">
+                  <view class="app-checkbox" style="{{item.finished ? themeObject.bgStyle : ''}}">
+                    <text wx:if="{{item.finished}}" class="checked-ico al color-white"></text>
+                  </view>
+                </view> -->
+                <view class="flex_cell flex_left">
+                  <view class="w_100">
+                    <view class="flex_left">
+                      <text class="font16">{{item.title}}</text>
+                      <text class="ml10" style="{{themeObject.colorStyle}}">积分+{{item.jifen}}</text>
+                      <text class="ml5 color-orange" wx:if="{{item.credit && item.credit > 0}}"><text class="al al-jinbi font14"></text> +{{item.credit}}</text>
+                    </view>
+                    <view class="color-gray">{{item.content}}</view>
+                    <view class="color-red" wx:if="{{item.desc && item.desc != ''}}">{{item.desc}}</view>
+                  </view>
+                </view>
+                <view class="flex_right r-cell" wx:if="{{item.buttontitle && item.buttontitle != ''}}">
+                  <view wx:if="{{item.isbutton}}" class="circle-btn color-white" style="{{themeObject.bgStyle}}" @tap="clickTask({{item}}, {{index}})">{{item.buttontitle}}</view>
+                  <text wx:else style="{{item.finished ? themeObject.colorStyle : ''}}">{{item.buttontitle}}</text>
+                </view>
+              </view>
+            </repeat>
+          </block>
+        </view>
+      </view>
+    </view>
+    <view class="banner-outer mt10" wx:if="{{bannerData.length}}">
+      <view class="news-swiper-outer" wx:if="{{bannerData.length > 1}}">
+        <swiper
+          class="news-swiper"
+          autoplay
+          indicator-dots="{{bannerData.length > 1}}"
+          indicator-color="#d0cdd1"
+          indicator-active-color="{{themeObject.themeColor}}"
+          interval="6000"
+          circular>
+          <repeat for="{{bannerData}}" index="index" item="item">
+            <swiper-item>
+              <image mode="aspectFill" src="{{item.photo}}" data-data="{{item}}" bindtap="clickBanner"></image>
+            </swiper-item>
+          </repeat>
+        </swiper>
+      </view>
+      <view class="banner-pic" wx:else data-data="{{bannerData[0]}}" bindtap="clickBanner">
+        <image mode="aspectFill" src="{{bannerData[0].photo}}"></image>
+      </view>
+    </view>
+    <block wx:if="{{isFactoryCommission}}">
+      <view class="app-box-area part">
+        <view class="box-inner service">
+          <view class="txt-item b_bottom_after">
+            <view class="flex_cell">我的工具</view>
+          </view>
+          <view class="listicon list">
+            <view class="item" @tap="toInvite">
+              <view class="item-inner">
+                <view class="w_100">
+                  <view class="radius bg-invite"><text class="al al-mark-invite"></text></view>
+                  <view class="align_center">我要邀请</view>
+                </view>
+              </view>
+            </view>
+            <form class="item" data-weburl="inviteFactory?fid={{Fid}}" bindsubmit="formSubmit" report-submit="true">
+              <button formType="submit" class="item-inner">
+                <view class="w_100">
+                  <view class="radius bg-orange"><text class="al al-qun2"></text></view>
+                  <view class="align_center">邀请厂家</view>
+                </view>
+              </button>
+            </form>
+            <form class="item" data-weburl="projectManage?fid={{Fid}}" bindsubmit="formSubmit" report-submit="true">
+              <button formType="submit" class="item-inner">
+                <view class="w_100">
+                  <view class="radius bg-blue"><text class="al al-set"></text></view>
+                  <view class="align_center">项目管理</view>
+                </view>
+              </button>
+            </form>
+            <form class="item" data-url="/packageD/pages/factoryIncome" bindsubmit="formSubmit" report-submit="true">
+              <button formType="submit" class="item-inner">
+                <view class="w_100">
+                  <view class="radius bg-orange"><text class="al al-qiandai"></text></view>
+                  <view class="align_center">我的收入</view>
+                </view>
+              </button>
+            </form>
+            <form class="item" data-weburl="examTest?regwid={{userInfo.regwid}}" bindsubmit="formSubmit" report-submit="true">
+              <button formType="submit" class="item-inner">
+                <view class="w_100">
+                  <view class="radius bg-green"><text class="al al-qiandai"></text></view>
+                  <view class="align_center">运营大使</view>
+                </view>
+              </button>
+            </form>
+          </view>
+        </view>
+      </view>
+    </block>
+    <block wx:else>
+      <view class="app-box-area part">
+        <view class="box-inner service">
+          <view class="txt-item b_bottom_after">
+            <view class="flex_cell">我的工具</view>
+          </view>
+          <view class="listicon list">
+            <repeat for="{{markData}}" item="item" index="index">
+              <block wx:if="{{item.skey === 'wxgroups'}}">
+                <form wx:if="{{AllowWxgroups}}" class="item" data-data="{{item}}" @tap="toPage">
+                  <button class="item-inner">
+                    <view class="w_100">
+                      <view class="radius bg-{{item.skey}}"><text class="al al-mark-{{item.skey}}"></text></view>
+                      <view>{{item.value}}</view>
+                    </view>
+                  </button>
+                </form>
+              </block>
+              <block wx:elif="{{item.skey === 'commission'}}">
+                <form wx:if="{{userInfo.retaileridentity == 'C'}}" class="item" bindsubmit="toCommission" report-submit="true">
+                  <button formType="submit"  class="item-inner">
+                    <view class="w_100">
+                      <view class="radius" style="background-color:#6fabf3;"><text class="al al-qiandai"></text></view>
+                      <view>{{item.value}}</view>
+                    </view>
+                  </button>
+                </form>
+              </block>
+              <block wx:elif="{{item.skey === 'salestat'}}">
+                <form class="item" bindsubmit="toSaleStat" report-submit="true">
+                  <button formType="submit" class="item-inner">
+                    <view class="w_100">
+                      <view class="radius" style="background-color:#6699ff;"><text class="al al-mark-salestat"></text></view>
+                      <view>{{item.value}}</view>
+                    </view>
+                  </button>
+                </form>
+              </block>
+              <block wx:elif="{{item.skey != 'businessschool'}}">
+                <form class="item" data-data="{{item}}" @tap="toPage">
+                  <button class="item-inner">
+                    <view class="w_100">
+                      <view class="radius bg-{{item.skey}}"><text class="al al-mark-{{item.skey}}"></text></view>
+                      <view>{{item.value}}</view>
+                    </view>
+                  </button>
+                </form>
+              </block>
+              <block wx:elif="{{item.skey == 'orders'}}">
+                <form class="item" data-data="{{item}}" @tap="toPage">
+                  <button class="item-inner">
+                    <view class="w_100">
+                      <view class="radius bg-{{item.skey}}"><text class="al al-mark-{{item.skey}}"></text></view>
+                      <view>{{item.value}}</view>
+                    </view>
+                  </button>
+                </form>
+              </block>
+            </repeat>
+            <!-- <view class="item" @tap="toTool">
+              <view class="item-inner">
+                <view class="w_100">
+                  <view class="radius" style="background-color: #6f78f3;"><text class="al al-biaodanwancheng2"></text></view>
+                  <view>运营工具</view>
+                </view>
+              </view>
+            </view> -->
+            <form wx:if="{{specialChannelInfo && specialChannelInfo.id}}" class="item" data-url="/package/pages/channel?id={{specialChannelInfo.id}}" bindsubmit="formSubmit" report-submit="true">
+              <button formType="submit" class="item-inner">
+                <view class="w_100">
+                  <view class="radius" style="background-color: #6f78f3;"><text class="al al-biaodanwancheng2"></text></view>
+                  <view>{{specialChannelInfo.title}}</view>
+                </view>
+              </button>
+            </form>
+          </view>
+        </view>
+      </view>
+      <view class="app-box-area tab mt10 scroll-tab-area {{(tabIndex == 0 && disList && !listData.length) ? 'empty' : ''}} {{(tabIndex == 1 && disTabList && (!tabData2.length || !tabData2[0].length)) ? 'empty' : ''}}">
+        <view class="box-inner">
+          <view class="o-tab">
+            <view class="tab-item {{tabIndex == 0 ? 'active' : ''}}" @tap="clickListTab(0)">
+              <view class="tab-inner" style="{{tabIndex == 0 ? themeObject.colorStyle : ''}}">
+                <text>今日团品</text>
+                <view wx:if="{{tabIndex == 0}}" class="line" style="{{themeObject.bgStyle}}"></view>
+              </view>
+            </view>
+            <view class="tab-item {{tabIndex == 1 ? 'active' : ''}}" @tap="clickListTab(1)">
+              <view class="tab-inner" style="{{tabIndex == 1 ? themeObject.colorStyle : ''}}">
+                <text>今日文章</text>
+                <view wx:if="{{tabIndex == 1}}" class="line" style="{{themeObject.bgStyle}}"></view>
+              </view>
+            </view>
+          </view>
+          <block wx:if="{{tabIndex == 0 && disList}}">
+            <view wx:if="{{!listData.length}}" class="flex_center padding20 color-gray">上等好货，敬请期待</view>
+          </block>
+          <block wx:if="{{tabIndex == 1 && disTabList}}">
+            <view wx:if="{{!tabData2.length}}" class="flex_center padding20 color-gray">暂无文章</view>
+          </block>
+        </view>
+      </view>
+      <block wx:if="{{tabIndex == 0}}">
+        <view class="app-box-area part product-part" wx:if="{{disList && listData.length}}">
+          <view class="box-inner">
+            <view class="txt-item pl10 pr10" wx:if="{{saveMoneyMode}}">
+              <view class="flex_cell pb10 b_bottom_after">自用省钱，分享赚钱</view>
+            </view>
+            <view class="list-area">
+              <repeat for="{{listData}}" item="item" index="index">
+                <view class="scroll_item b_bottom_after">
+                  <view class="inner">
+                    <view class="pic flex_left" data-data="{{item}}" bindtap="toProduct">
+                      <image mode="aspectFill" src='{{item.photo}}' lazy-load></image>
+                    </view>
+                    <view class="data_txt" data-data="{{item}}" bindtap="toProduct">
+                      <view class="mb5 clamp1">{{item.title}}</view>
+                      <!-- <view class="mb5 clamp1 color-red" wx:if="{{item.sellingpoint && item.sellingpoint != ''}}">{{item.sellingpoint}}</view> -->
+                      <view class="mb5 font12 clamp1" wx:if="{{item.minprice && item.maxprice && item.minprice != '' && item.maxprice != '' && item.minprice != item.maxprice}}">￥{{item.minprice}}-{{item.maxprice}}</view>
+                      <view class="mb5 font12 clamp1" wx:elif="{{item.minprice && item.minprice != ''}}">￥{{item.minprice}}</view>
+                      <view class="mb5 font12 clamp1" wx:else>￥{{item.price}}</view>
+                      <view class="font12 clamp1 color-red" wx:if="{{item.sellingpoint && item.sellingpoint != ''}}">{{item.sellingpoint}}</view>
+                    </view>
+                  </view>
+                  <view class="flex_left padding10 b_top_after">
+                    <view class="flex_cell">
+                      <view class="w_100 font12 color-gray clamp1">
+                        <text>分享赚:</text>
+                        <text class="color-red" wx:if="{{item.minsalesrebate && item.maxsalesrebate && item.minsalesrebate != item.maxsalesrebate}}"> ￥{{ item.minsalesrebate }}-{{ item.maxsalesrebate }}</text>
+                        <text class="color-red" wx:else> ￥{{ item.minsalesrebate }}</text>
+                      </view>
+                    </view>
+                    <view class="flex_cell" wx:if="{{item.nextjifen && item.nextjifen != 0}}">
+                      <view class="w_100 font12 color-gray clamp1">
+                        <text>{{item.nextjifen}}积分赚:</text>
+                        <text class="color-red" wx:if="{{item.next_minsalesrebate && item.next_maxsalesrebate && item.next_minsalesrebate != item.next_maxsalesrebate}}"> ￥{{ item.next_minsalesrebate }}-{{ item.next_maxsalesrebate }}</text>
+                        <text class="color-red" wx:else> ￥{{ item.next_minsalesrebate }}</text>
+                      </view>
+                    </view>
+                  </view>
+                  <view wx:if="{{item.maybuy && item.maybuy.length}}" class="buy-list flex_left b_top_after" @tap="toBuyUser({{item}})">
+                    <view class="avatar-list">
+                      <repeat for="{{item.maybuy}}" item="buyuser" index="userindex">
+                        <image class="avatar" src="{{buyuser.avatar}}"></image>
+                      </repeat>
+                      <view wx:if="{{item.maybuy.length > 5}}" class="avatar dot"><text class="al al-asmkticon0165 font30 bold"></text></view>
+                    </view>
+                    <view class="color-gray pl10">可能会购买此商品的人</view>
+                  </view>
+                  <view class="cell-list b_top_after">
+                    <view class="btn-cell b_right_after" style="{{themeObject.colorStyle}}" data-data="{{item}}" @tap="toCard">
+                      <text class="al al-youhuiquan font20"></text>
+                      <text class="ml5">发券</text>
+                    </view>
+                    <view wx:if="{{ShowMaterial && !item.fromfid}}" class="btn-cell b_right_after" style="{{themeObject.colorStyle}}" data-data="{{item}}" @tap="toMaterial">
+                      <text class="al al-photo font20"></text>
+                      <text class="ml5">素材({{item.materials}})</text>
+                    </view>
+                    <view class="btn-cell" style="{{themeObject.colorStyle}}" data-data="{{item}}" @tap="toShare">
+                      <text class="al al-zhuanfa font20"></text>
+                      <text class="ml5">分享赚钱</text>
+                    </view>
+                  </view>
+                  <view class="line"></view>
+                </view>
+              </repeat>
+            </view>
+            <view class="load-end-area loading" wx:if="{{isLoading}}"></view>
+            <view class="load-end-area done" wx:elif="{{isDone}}"></view>
+          </view>
+        </view>
+      </block>
+      <block wx:if="{{tabIndex == 1}}">
+        <view class="app-box-area part news-part" wx:if="{{tabData2.length}}">
+          <view class="box-inner">
+            <view class="list-area">
+              <repeat for="{{tabData2}}" item="item" index="index">
+                <view class="scroll_item b_bottom_after">
+                  <view class="inner">
+                    <view class="pic flex_left" data-data="{{item}}" bindtap="toNews">
+                      <image mode="aspectFill" src='{{item.photo}}' lazy-load></image>
+                    </view>
+                    <view class="data_txt" data-data="{{item}}" bindtap="toNews">
+                      <view class="clamp1">{{item.title}}</view>
+                      <view class="flex_left font12 color-gray mt5">
+                        <view class="flex_cell flex_left">{{item.dateline_str}}</view>
+                      </view>
+                    </view>
+                  </view>
+                  <view class="cell-list b_top_after">
+                    <view class="btn-cell b_right_after" style="{{themeObject.colorStyle}}" data-data="{{item}}" @tap="toStat">
+                      <text class="al al-bingxingtu font20"></text>
+                      <text class="ml5">统计</text>
+                    </view>
+                    <view class="btn-cell" style="{{themeObject.colorStyle}}" data-data="{{item}}" @tap="toShareNews">
+                      <text class="al al-zhuanfa font20"></text>
+                      <text class="ml5">分享</text>
+                    </view>
+                  </view>
+                  <view class="line"></view>
+                </view>
+              </repeat>
+            </view>
+            <view class="load-end-area loading" wx:if="{{isLoading2}}"></view>
+            <view class="load-end-area done" wx:elif="{{isDone2}}"></view>
+          </view>
+        </view>
+      </block>
+    </block>
+    <view :class="{'iphone' : isIpx}" class="blank-area"></view>
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy'
+import Util from '@/libs/util'
+import Config from '@/config'
+export default class TipBgLayer extends wepy.component {
+  props = {
+    globalData: {
+      type: Object,
+      default: {}
+    },
+    userInfo: {
+      type: Object,
+      default: {}
+    },
+    listData: {
+      type: Array,
+      default: []
+    },
+    disList: {
+      type: Boolean,
+      default: false
+    },
+    isLoading: {
+      type: Boolean,
+      default: false
+    },
+    isDone: {
+      type: Boolean,
+      default: false
+    },
+    bannerData: {
+      type: Array,
+      default: []
+    },
+    markData: {
+      type: Array,
+      default: []
+    },
+    hbMoney: {
+      type: String,
+      default: '0.00'
+    },
+    specialChannelInfo: {
+      type: Object,
+      default: {}
+    },
+    themeObject: {
+      type: Object,
+      default: {}
+    },
+    isIpx: {
+      type: Boolean,
+      default: false
+    },
+    tabIndex: {
+      type: Number,
+      default: 0
+    },
+    disTabList: {
+      type: Boolean,
+      default: false
+    },
+    tabData2: {
+      type: Array,
+      default: []
+    },
+    isLoading2: {
+      type: Boolean,
+      default: false
+    },
+    isDone2: {
+      type: Boolean,
+      default: false
+    },
+    taskIndex: {
+      type: Number,
+      default: 0
+    },
+    taskData: {
+      type: Array,
+      default: []
+    },
+    disTask: {
+      type: Boolean,
+      default: false
+    },
+    taskData2: {
+      type: Array,
+      default: []
+    },
+    disTask2: {
+      type: Boolean,
+      default: false
+    },
+    saveMoneyMode: {
+      type: Boolean,
+      default: false
+    }
+  }
+  data = {
+    Fid: Config.Fid,
+    ShowMaterial: Config.ShowMaterial,
+    BackgroundColor: Config.BackgroundColor,
+    AllowWxgroups: Config.AllowWxgroups,
+    isFactoryCommission: Config.CommissionFactory[Config.AppId],
+    AppId: Config.AppId
+  }
+  onLoad () {
+  }
+  methods = {
+    toTool () {
+      wepy.navigateTo({url: `/packageC/pages/tool`})
+    },
+    clickBanner (e) {
+      Util.clickBanner(e, this)
+    },
+    toInvite (e) {
+      // 订单支付成功通知、订单发货通知、咨询回复通知
+      Util.checkTmpMsg({
+        systeminfo: this.globalData.systemInfo,
+        tmplIds: [this.globalData.Templates.order_delivery, this.globalData.Templates.msg_reply],
+        callback: () => {
+          wepy.navigateTo({url: '/pages/vip?from=commission'})
+        }
+      })
+    },
+    formSubmit (e) {
+      const dataset = e.currentTarget.dataset
+      let url = dataset.weburl ? dataset.weburl : dataset.url
+      let navurl = url
+      if (dataset.weburl) {
+        console.log(url)
+        url = encodeURIComponent(url)
+        navurl = `/pages/webview?url=${url}`
+      }
+      wepy.navigateTo({url: navurl})
+    },
+    toCommission (e) {
+      if (this.globalData.AuthInfo.payment) {
+        wepy.navigateTo({url: `/packageB/pages/subCommission`})
+      } else {
+        let url = encodeURIComponent('subCommission')
+        wepy.navigateTo({url: `/pages/webview?url=${url}`})
+      }
+    },
+    toSaleStat (e) {
+      const identity = this.userInfo.retaileridentity
+      if (identity === 'B') {
+        wepy.navigateTo({url: `/packageB/pages/saleStat`})
+      } else if (identity === 'A') {
+        wepy.navigateTo({url: `/packageB/pages/saleStatA`})
+      } else if (identity === 'C') {
+        wepy.navigateTo({url: `/packageB/pages/saleStatC`})
+      } else if (identity === 'D') {
+        wepy.navigateTo({url: `/packageB/pages/saleStatD`})
+      }
+    },
+    toPage (e) {
+      const dataset = e.currentTarget.dataset
+      const data = dataset.data
+      let navurl = `/${Config.Router[data.skey]}`
+      if (data.skey === 'invite') {
+        // 订单支付成功通知、订单发货通知、咨询回复通知
+        Util.checkTmpMsg({
+          systeminfo: this.globalData.systemInfo,
+          tmplIds: [this.globalData.Templates.order_delivery, this.globalData.Templates.msg_reply],
+          callback: () => {
+            wepy.navigateTo({url: navurl})
+          }
+        })
+      } else if (data.skey === 'orders') {
+        // 订单支付成功通知、订单发货通知、咨询回复通知
+        Util.checkTmpMsg({
+          systeminfo: this.globalData.systemInfo,
+          tmplIds: [this.globalData.Templates.orders_notify],
+          callback: () => {
+            navurl = '/packageD/pages/retailerOrders'
+            wepy.navigateTo({url: navurl})
+          }
+        })
+      } else {
+        if (data.skey === 'income') {
+          if (this.globalData.AuthInfo.payment) {
+            navurl = '/packageB/pages/income'
+          } else {
+            navurl = '/pages/webview?url=retailerRevenue'
+          }
+        } else if (data.skey === 'storeset') {
+          let minibackurl = encodeURIComponent(`/packageB/pages/store`)
+          let url = encodeURIComponent(`retailerSetting?minibackurl=${minibackurl}`)
+          navurl = `/pages/webview?url=${url}`
+        } else if (data.skey === 'message') {
+          navurl = '/pages/webview?url=messageList'
+        } else if (data.skey === 'businessschool') {
+          let url = encodeURIComponent(`retailerAcademic?fid=${this.Fid}`)
+          navurl = `/pages/webview?url=${url}`
+        } else if (data.skey === 'wxgroups') {
+          navurl = '/packageB/pages/myGroups'
+        } else if (data.skey === 'cards') {
+          navurl = '/packageC/pages/commonCard'
+        }
+        wepy.navigateTo({url: navurl})
+      }
+    },
+    scrollEvent () {
+      this.$emit('scrollEvent')
+    },
+    toProduct (e) {
+      const data = e.currentTarget.dataset.data
+      wepy.setStorageSync('selectedProduct', data)
+      wepy.navigateTo({url: `/${Config.Router.product}?id=${data.id}&fid=${this.Fid}&select=product&type=fpimport`})
+    },
+    toMaterial (e) {
+      const data = e.currentTarget.dataset.data
+      wepy.navigateTo({url: `/package/pages/materialBank?id=${data.moduleid}&pid=${data.id}`})
+    },
+    toCard (e) {
+      const data = e.currentTarget.dataset.data
+      wepy.navigateTo({url: `/packageC/pages/addCard?id=${data.id}&productid=${data.moduleid}`})
+    },
+    toIncome (e) {
+      if (this.globalData.AuthInfo.payment) {
+        wepy.navigateTo({url: '/packageB/pages/income?from=retailerrevenue'})
+      } else {
+        wepy.navigateTo({url: '/pages/webview?url=retailerRevenue'})
+      }
+    },
+    toShare (e) {
+      this.$emit('clickShare', e.currentTarget.dataset.data)
+    },
+    clickListTab (index) {
+      this.$emit('clickListTab', index)
+    },
+    toStat (e) {
+      const data = e.currentTarget.dataset.data
+      wepy.navigateTo({url: `/packageD/pages/stat?id=${data.id}&module=factorynews`})
+    },
+    toNews (e) {
+      const data = e.currentTarget.dataset.data
+      wepy.navigateTo({url: `/packageB/pages/news?id=${data.id}&fid=${Config.Fid}`})
+    },
+    toShareNews (e) {
+      this.$emit('clickShareNews', e.currentTarget.dataset.data)
+    },
+    toBuyUser (data) {
+      wepy.navigateTo({url: `/packageD/pages/buyUserList?id=${data.id}&fpid=${data.moduleid}`})
+    },
+    taskNav (item) {
+      if (item.type !== 'signin' && !item.finished) {
+        wepy.reLaunch({ url: '/pages/index' })
+      }
+    },
+    clickTaskTab (index) {
+      this.$emit('clickTaskTab', index)
+    },
+    clickTask (item, index, type) {
+      if (item.type === 'signin') {
+        wepy.request({
+          url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/seller/signIn`
+        }).then(res => {
+          const data = res.data
+          let errorTxt = data.error
+          if (data.flag) errorTxt = '签到成功'
+          wepy.showToast({
+            title: errorTxt,
+            icon: 'none',
+            duration: Util.delay(errorTxt)
+          })
+          if (data.flag) {
+            this.$emit('updateJifen', data.jifen, index)
+          }
+        })
+      } else if (item.tasktype === 'photo') {
+        this.$emit('clickPhotoTask', item, index)
+      } else {
+        if (item.finished) {
+          let ajaxUrl = ''
+          let params = {}
+          if (type === 'daily') {
+            params = {type: item.type}
+            ajaxUrl = `${Config.BokaApi}/${Config[Config.ApiVersion]}/Task/finishDailyTask`
+          } else {
+            params = {id: item.id}
+            ajaxUrl = `${Config.BokaApi}/${Config[Config.ApiVersion]}/Task/finishTask`
+          }
+          wepy.request({
+            url: ajaxUrl,
+            method: 'post',
+            data: params
+          }).then(res => {
+            const data = res.data
+            let errorTxt = data.error
+            if (data.flag) errorTxt = '领取成功'
+            wepy.showToast({
+              title: errorTxt,
+              icon: 'none',
+              duration: Util.delay(errorTxt)
+            })
+            if (data.flag) {
+              this.$emit('updateSaleJifen', item, index, data.jifen, type)
+            }
+          })
+        } else {
+          if (item.module && item.moduleid) {
+            let navurl = `/${Config.Router[item.module]}?id=${item.moduleid}&fid=${Config.Fid}`
+            if (item.module === 'fpimport') {
+              navurl = `${navurl}&type=fpimport`
+            } else if (item.module === 'minilive') {
+              let customParams = {share_uid: this.userInfo.uid, share_wid: this.globalData.Wid, wid: this.globalData.Wid, liveid: item.moduleid}
+              let cpstr = encodeURIComponent(JSON.stringify(customParams))
+              navurl = `plugin-private://wx2b03c6e691cd7370/pages/live-player-plugin?room_id=${item.moduledata.roomid}&custom_params=${cpstr}`
+            }
+            wepy.navigateTo({url: navurl})
+          } else if (item.url && item.url !== '') {
+            wepy.navigateTo({url: item.url})
+          }
+        }
+      }
+    },
+    clickJifen () {
+      this.$emit('clickJifen')
+    }
+  }
+}
+</script>

@@ -1,0 +1,281 @@
+<style lang="less">
+.rule-page{
+  .top-box{
+    padding:20rpx 20rpx 80rpx;width:100%;box-sizing:border-box;color:#fff;
+    border-bottom-left-radius:40rpx;border-bottom-right-radius:40rpx;position:relative;
+    text-align:center;
+    .txt1{font-size:70rpx;font-weight:bold;}
+  }
+  .scroll-tab-area {
+    margin-top:-50rpx;
+    width:100%;
+    .txt-area {
+      padding-bottom:40rpx;
+    }
+    .type-title{
+      max-width:95%;
+      overflow:hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+  }
+  .tx-box{
+    margin-top:-40rpx;position:relative;z-index:1;
+    .tx-area{height:100rpx;padding:0 20rpx;box-sizing:border-box;}
+  }
+  .rw-list{
+    width:100%;padding:0 20rpx;box-sizing:border-box;
+    .rw-item{
+      width:100%;padding:20rpx 0;box-sizing:border-box;
+    }
+    .r-cell{padding-left:10rpx;min-width:130rpx;}
+    .circle-btn{min-width:120rpx;text-align:center;}
+  }
+  .boxlist{
+    padding:20rpx;box-sizing: border-box;
+  }
+
+  .app-box-area.empty{margin-bottom:20rpx !important;}
+  .app-box-area.tab .box-inner{border-bottom-left-radius:0;border-bottom-right-radius:0;}
+  .app-box-area.tab.empty .box-inner{border-bottom-left-radius:10rpx;border-bottom-right-radius:10rpx;}
+}
+</style>
+<template>
+  <view :class="{'iphone' : isIpx}" class="mark-page havemenu">
+    <view class="page-inner columnarea rule-page">
+      <view class="top-box" style="{{themeObject.linearBgStyle}}">
+         <view class="font16 flex_left">我的积分</view>
+         <view class="txt1 padding5">{{jifen}}</view>
+         <view style="height:34rpx">{{isShowExceed ? '超越'+exceed+'的合伙人' :''}}</view>
+      </view>
+      <view class="app-box-area tab scroll-tab-area" wx:if="{{taskData.length}}">
+       <view class="box-inner">
+         <view class="o-tab">
+           <view class="tab-item {{taskIndex == 0 ? 'active' : ''}}" @tap="clickTaskTab(0)">
+             <view class="tab-inner" style="{{taskIndex == 0 ? themeObject.colorStyle : ''}}">
+               <text>积分纪录</text>
+               <view wx:if="{{taskIndex == 0}}" class="line" style="{{themeObject.bgStyle}}"></view>
+             </view>
+           </view>
+           <view class="tab-item {{taskIndex == 1 ? 'active' : ''}}" @tap="clickTaskTab(1)">
+             <view class="tab-inner" style="{{taskIndex == 1 ? themeObject.colorStyle : ''}}">
+               <text>积分规则</text>
+               <view wx:if="{{taskIndex == 1}}" class="line" style="{{themeObject.bgStyle}}"></view>
+             </view>
+           </view>
+         </view>
+         <view wx:if="{{taskIndex == 0}}" class="rw-list">
+           <block wx:if="{{disTask}}">
+             <view wx:if="{{!taskData.length}}" class="rw-item flex_center">暂无数据</view>
+             <repeat for="{{taskData}}" item="item" index="index">
+               <view class="rw-item flex_left {{(index < taskData.length - 1) ? 'b_bottom_after' : ''}} ">
+                 <view class="flex_cell flex_left">
+                   <view class="w_100">
+                     <view class="font16 type-title">{{item.typedesc}}</view>
+                     <view class="color-gray">{{item.dateline}}</view>
+                   </view>
+                 </view>
+                 <view class="flex_right r-cell">
+                   <view class="w_100">
+                     <view class="font16">{{item.jifen}}</view>
+                     <view class="color-gray">{{item.newjifen}}</view>
+                   </view>
+                 </view>
+               </view>
+             </repeat>
+             <view class="load-end-area loading" wx:if="{{isLoading}}"></view>
+             <view class="load-end-area done" wx:elif="{{isDone}}"></view>
+           </block>
+         </view>
+         <view wx:if="{{taskIndex == 1}}" class="rw-list">
+          <view class="txt-area">
+            <view class="bold flex_left"><text style="{{themeObject.colorStyle}}" class="al al-bangzhu font20"></text><text class="ml5 font16">积分有何作用？</text></view>
+            <view class="font14">积分越高，分享商品获得的佣金越高，每提升1积分商品佣金都会有所增长哦！</view>
+            <view class="bold mt10 flex_left"><text style="{{themeObject.colorStyle}}" class="al al-bangzhu font20"></text><text class="font16 ml5">如何提升积分？</text></view>
+            <view class="font14">完成任务就可以获得积分奖励，所以每天一定要记得做任务哦！</view>
+            <view class="bold mt10 flex_left">
+              <text style="{{themeObject.colorStyle}}" class="al al-bangzhu font20"></text>
+              <text class="font16 ml5">降分规则：总积分{{ico}}=700分</text>
+            </view>
+            <view class="font14">
+             <view>1.连续3天不活跃，且没有销售额，-50分</view>
+             <view>2.连续7天不活跃，且没有销售额，-100分</view>
+             <view>3.连续15天不活跃，且没有销售额，-100分</view>
+             <view>4.连续30天不活跃，且没有销售额，降为300分</view>
+            </view>
+            <view class="bold mt10 flex_left"><text style="{{themeObject.colorStyle}}" class="al al-bangzhu font20"></text>
+            <text class="font16 ml5">降分规则：总积分>700分</text></view>
+            <view class="font14">
+             <view>1.连续3天不活跃，且团队没有销售额，-50分</view>
+             <view>2.连续7天不活跃，且团队没有销售额，-100分</view>
+             <view>（活跃：活跃是指点击任意链接访问小程序。）</view>
+            </view>
+          </view>
+         </view>
+       </view>
+     </view>
+    </view>
+  </view>
+</template>
+<script>
+  import wepy from 'wepy'
+  import Config from '@/config'
+  import Util from '@/libs/util'
+  import NumberAnimate from '@/libs/NumberAnimate'
+  import User from '@/components/user'
+  import Retailer from '@/components/retailer'
+  import BottomMenu from '@/components/bottomMenu'
+  import Share from '@/components/store/share'
+  export default class Mark extends wepy.page {
+    config = {
+      enablePullDownRefresh: true,
+      backgroundTextStyle: 'dark'
+    }
+    components = {
+      user: User,
+      retailer: Retailer,
+      bottomMenu: BottomMenu,
+      share: Share
+    }
+    data = {
+      options: {},
+      globalData: {},
+      userInfo: {},
+      taskIndex: 0,
+      taskData: [],
+      disTask: false,
+      exceed: '',
+      jifen: '',
+      isLoading: false,
+      isDone: false,
+      themeObject: {},
+      ico: '<',
+      isShowExceed: false
+    }
+    refreshPage () {
+      this.userInfo = {}
+      this.disTask = false
+      this.taskData = []
+      this.pageStart = 0
+      this.isLoading = false
+      this.isDone = false
+      this.$apply()
+      this.handlePageData()
+    }
+    onPullDownRefresh () {
+      this.refreshPage()
+      wepy.showNavigationBarLoading()
+      setTimeout(() => {
+        wepy.hideNavigationBarLoading()
+        wepy.stopPullDownRefresh()
+      }, 500)
+    }
+    onReachBottom () {
+      if (this.isLoading) return false
+      switch (this.taskIndex) {
+        case 0:
+          if (this.taskData.length === (this.pageStart + 1) * this.limit) {
+            this.pageStart++
+            this.isLoading = true
+            this.getTask()
+          }
+          break
+        case 1:
+          // if (this.tabData2.length === (this.pageStart2 + 1) * this.limit) {
+          //   this.pageStart2++
+          //   this.isLoading2 = true
+          //   this.getNewsData()
+          // }
+          break
+      }
+    }
+    handlePageData () {
+      this.globalData = this.$parent.globalData
+      Util.appInit(this.globalData, this)
+      this.userInfo = this.globalData.userInfo
+      this.getTask()
+    }
+    onLoad (options) {
+      this.pageStart = 0
+      this.limit = Config.Limit
+      if (this.$parent.globalData.flag.bokaAuth) {
+        this.handlePageData()
+      } else {
+        this.$parent.loadCallback = () => {
+          this.handlePageData()
+        }
+      }
+    }
+    getTask () {
+      wepy.request({
+        url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/Task/jifenList`,
+        data: {pagestart: this.pageStart, limit: this.limit},
+        method: 'post'
+      }).then(res => {
+        wepy.hideLoading()
+        const data = res.data
+        if (data.flag) {
+          let data = res.data
+          let retdata = data.data ? data.data : data
+          if (this.pageStart === 0) {
+            let num1 = data.jifen
+            let n1 = new NumberAnimate({
+              from: num1,
+              speed: 2000,
+              refreshTime: 100,
+              decimals: 0,
+              onUpdate: () => {
+                this.jifen = n1.tempValue
+                this.$apply()
+              },
+              onComplete: () => {
+                this.exceed = data.exceed
+                this.isShowExceed = true
+              }
+            })
+          }
+          for (let i = 0; i < retdata.length; i++) {
+            let curd = retdata[i]
+            let date = new Date(parseInt(curd.dateline) * 1000)
+            let year = date.getFullYear()
+            let month = date.getMonth() + 1
+            let strDate = date.getDate()
+            if (month > 0 && month < 10) {
+              month = '0' + month
+            }
+            if (strDate > 0 && strDate < 10) {
+              strDate = '0' + strDate
+            }
+            curd.dateline = year + '-' + month + '-' + strDate + ' ' + date.toTimeString().substr(0, 8)
+            let jifens = curd.jifen.toString()
+            console.log(typeof jifens)
+            if (jifens.indexOf('-') === -1) {
+              curd.jifen = '+' + curd.jifen
+            }
+          }
+          this.isLoading = false
+          this.taskData = this.taskData.concat(retdata)
+          if (retdata.length < this.limit && this.taskData.length) {
+            this.isDone = true
+          } else {
+            this.isDone = false
+          }
+          this.disTask = true
+          this.$apply()
+        }
+      })
+    }
+    methods = {
+      clickTaskTab (index) {
+        this.taskIndex = parseInt(index)
+        switch (this.taskIndex) {
+          case 0:
+            if (!this.taskData.length) {
+              this.getTask()
+            }
+            break
+        }
+      }
+    }
+  }
+</script>

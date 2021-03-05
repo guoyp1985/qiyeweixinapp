@@ -1,0 +1,2386 @@
+<style lang="less">
+.product{
+  .jinbi-ico{margin-top:2rpx;}
+}
+ .group-bk{
+   width: 100vw;
+   height: 100vh;
+   background-color: rgba(0, 0, 0, 0.6);
+   position: fixed;
+   left: 0;
+   top: 0;
+   display: flex;
+   flex-direction: column;
+   justify-content: center;
+   align-items: center;
+ }
+ .group{
+   width: 80vw;
+   border-radius: 20rpx;
+   background-color: #fff;
+   padding: 20rpx;
+   text-align: center;
+   box-sizing: border-box;
+ }
+ .group image{
+   width: 400rpx;
+   height: 400rpx;
+ }
+ .group>text{
+   display: block;
+   // color: #fff;
+ }
+ .group text:nth-child(1){
+   height: 60rpx;
+   line-height: 60rpx;
+   text-align: center;
+   border-bottom: 1px solid #eee;
+   margin-bottom: 20rpx;
+ }
+ .group text:nth-child(2){
+   // text-indent: 28px;
+   text-align: center;
+   line-height: 30px;
+ }
+ .group .btn{
+   width: 100%;
+   text-align: center;
+ }
+ .group .btn .close{
+   margin-right: 20rpx;
+ }
+ .group .btn button{
+   // width: 40%;
+   // margin: 0 5%;
+   border-radius: 10rpx;
+   height: 80rpx;
+   line-height: 80rpx;
+   display: inline-block;
+   width: 200rpx;
+ }
+ .notop .pagetop{display:none;}
+ .vline{position:relative;}
+ .vline:after {
+   content: " ";
+   display: block;
+   position: absolute;
+   width: 2px;
+   top: 4px;
+   bottom: 4px;
+   margin: auto 0;
+   left: -1px;
+   background-color: #ff6600;
+ }
+ .product-content {
+   padding: 20px 15px;
+ }
+ .product rich-text{word-wrap: break-word;display: inline-block;}
+ .product .rich-txt{padding-left:85rpx;margin-bottom: 10px;}
+ .product .product-area.scroll-end:after {
+     background-color: #f6f6f6;
+ }
+
+ .product .pagetop{
+   box-shadow: 0px 0px 10px 3px #d0d0d0;
+ }
+ .product .pagemiddle {top:50px;}
+ .product.notop .pagemiddle {top:0px;}
+ .swiper-h{
+   position:relative;
+   padding-bottom:100%;
+   height:auto;
+ }
+ .product .pic-swiper {
+   position:absolute;
+   height:100%;
+   width:100%;
+   video{width:100%;height:100%;}
+ }
+ .product .vux-swiper-item image{}
+ .product .vux-swiper-desc{display:none !important;}
+ .product .group-title{
+   width:100%;
+   height: 45px;
+   color: #fff;
+   font-size: 12px;
+   background-image: url(https://tossharingsales.boka.cn/images/productbg.png);
+   background-repeat: no-repeat;
+   background-position: left top;
+   background-size: cover;
+   position:relative;
+ }
+ .product .group-title .t-table{height:100%;}
+ .product .group-title .t-cell{height:100%;vertical-align:middle;}
+ .product .group-title .col1{padding-left:10px;padding-right:10px;display:inline-block;}
+ .product .group-title .col2{display:inline-block;margin-top:2px;}
+ .product .group-title .col3{
+   display:inline-block;border-radius:10px;padding:1px 10px;text-align:center;background-color:rgba(0,0,0,0.1);
+   position:absolute;right:10px;top:50%;margin-top:-9px;
+ }
+ .product .group-title .col2 .colicon{display:inline-block;border-radius:10px;border:#fff 1px solid;padding:1px 10px;text-align:center;}
+ .product .group-title .timer-col{
+   display:inline-block;text-align:center;
+   position:absolute;right:10px;top:0;bottom:0;
+   display:flex;justify-content:center;align-items: center;
+   .num{
+     background-color:#fff;width:40rpx;height:30rpx;display:flex;justify-content:center;align-items: center;color:#f64635;
+     border-radius:10rpx;box-sizing: border-box;
+   }
+   .num.big{width:60rpx;}
+   .txt{width:20rpx;height:30rpx;display:flex;justify-content:center;align-items: center;font-weight:bold;}
+ }
+ .product .groupbybottom {
+   overflow: hidden;
+ }
+ .product .pagemiddle {bottom:50px;}
+ .product .pagebottom {height:50px;}
+ .product .pagebottom icon {line-height: 3}
+ .flex{display:flex}
+ .flex_cell{display:flex;flex:1;width:0;}
+ .flex_self{align-self:center;}
+ .first-pic .al{
+   position: absolute;
+   width: 10vw;
+   height: 10vw;
+   line-height: 10vw;
+   text-align: center;
+   left: 45vw;
+   top: 45vw;
+   /* background-color: pink; */
+ }
+ .w140{
+   flex: 0 0 140rpx;
+ }
+ .w250{
+   flex: 0 0 250rpx;
+ }
+ .evaluates{
+   position: fixed;
+   width: 100vw;
+   left: 0;
+   top:100%;
+   bottom:0;
+   overflow:hidden;
+   background-color: #f5faf9;
+   scroll-view{
+     width: 100%;
+     height: 94vh;
+   }
+   .close-btn{
+     width: 100vw;
+     height: 6vh;
+     border-top: 1rpx solid #eee;
+     button{
+       line-height: 6vh;
+     }
+   }
+ }
+ .reply-panel{
+   position:fixed;left:0;right:0;bottom:0;top:100%;background-color:#fff;
+   textarea{width:100%;border:#ccc 1px solid;box-sizing: border-box;padding:20rpx;}
+   .btn{border-radius:10rpx;height:70rpx;}
+ }
+.tip-layer{
+ position:absolute;left:0;top:0;right:0;bottom:0;background-color:rgba(0,0,0,0.5);z-index:1;color:#fff;
+}
+.hbpic-modal{
+ .inner{width:90%;position:relative;}
+ .pic-area{
+   width:70%;
+   .pic{
+     width:100%;position:relative;
+     image{width:100%;}
+     .txt1{
+       width:34%;max-height:100%;position:absolute;left:33%;top:34%;
+       .inner{width:100%;max-height:100%;position:relative;}
+       .inner:after{padding-top:100%;content:"";display:block;}
+       .btn{position:absolute;left:0;top:0;right:0;bottom:0;font-size:50rpx;color:#f95a51;}
+       .btn.disable{color:#999;}
+     }
+     .txt2{position:absolute;left:0;bottom:15%;right:0;text-align:center;color:#F9EA72;font-size:30rpx;letter-spacing: 2rpx;}
+   }
+ }
+}
+.roduct-options-area.iphone{padding-bottom:54px;}
+.product-bottom-area.iphone{padding-bottom:54px;background-color:#fff;}
+.product-bottom-area{
+ width:100%;
+ height:90rpx;
+ position: fixed;
+ bottom: 0;
+ left: 0;z-index:10;
+ .btnback{color:#646464;}
+ .share{color:#646464;}
+ .personal{color:#646464;}
+ .user{color:#646464;}
+ .cart{
+   color:#646464;position:relative;
+   .al{color:orange;}
+   .ico{
+     width:40rpx;height:40rpx;line-height:40rpx;text-align:center;
+     position:absolute;top:-6rpx;right:0rpx;font-size:20rpx;
+     border-radius:50%;
+   }
+ }
+ .nav-item{
+   display: flex;flex-direction: column;justify-content: center;position:relative;
+ }
+ .btnback .al:before {content:"\e7be";color:#FF5507;}
+ .share .al:before {content: "\e7c2";color:#646464;}
+ .share{box-sizing: border-box;}
+ .personal .al:before {content: "\e62d";color:#646464;}
+}
+.hidden.product{height:100%;overflow:hidden;}
+.product.zhuan{padding-bottom:180rpx;}
+.product{
+ .discount{
+   padding:10rpx 20rpx;box-sizing:border-box;
+   .item{border-width:1rpx;border-style:solid;border-radius:20rpx;padding:5rpx 10rpx;}
+ }
+ .activity-list{
+   .scroll_item:not(:last-child){margin-bottom:20rpx;}
+   .scroll_item{
+     padding:20rpx;
+     .pic{
+       width:100rpx;
+       image{width:80rpx;height:80rpx;border-radius:50%;}
+     }
+     .txt-cell{width:200rpx;}
+     .btn-cell{
+       width:140rpx;
+       .btn{width:110rpx;height:50rpx;border-radius:30rpx;}
+     }
+   }
+ }
+ .buylist:after{content:'';display:block;clear:both;}
+ .buylist .item{
+   float: left;
+   width: 50px;
+   text-align: center;
+   display: block;
+   color:inherit;
+   .txt{height:40rpx;padding-bottom:10rpx;}
+ }
+ .card-options{
+   display: flex;flex-wrap: wrap;
+   image{width:60rpx;height:60rpx;margin-right:20rpx;margin-top:20rpx;}
+   .txt-item{margin-top:20rpx;}
+   .btn{border-radius:20rpx;background-color:#ccc;color:#999;font-size:24rpx;height:44rpx;padding:0 20rpx;}
+ }
+ .seller-area{
+   image{width:100rpx;height:100rpx;}
+   .btn{width:180rpx;height:60rpx;border:#ff4400 2rpx solid;color:#ff4400;border-radius:60rpx;}
+ }
+ .card-list{
+   box-sizing: border-box;padding: 20rpx;
+ }
+ .card-list .card-item{
+   width: 106px;font-size:24rpx;text-align:center;
+   box-sizing: border-box;
+   background-color: #ffe7e7;
+   padding: 5px;
+   color: #ff2900;
+   border: 1px solid #ffa8a7;
+ }
+ .card-info{
+   padding:20rpx;
+   .card-item{
+     border-style:solid;border-width:2rpx;border-radius:60rpx;
+     padding:10rpx 20rpx;
+   }
+ }
+ .detail-box{
+   width:100%;padding:30rpx 20rpx;box-sizing: border-box;border-width:10rpx;border-style:solid;
+   margin-bottom:20rpx;
+ }
+}
+.videoarea{
+ position:absolute;left:0;top:0;right:0;bottom:0;z-index:9999;background-color:#000;color:#fff;
+ .btn-area{
+   position:absolute;left:0;top:0;right:0;height:100rpx;
+   .btn-item:not(:last-child){margin-right:20rpx;}
+   .btn-item{
+     width:120rpx;height:60rpx;background-color:#232323;color:#fff;border-radius:20rpx;position:relative;
+     button{position:absolute;left:0;top:0;right:0;bottom:0;}
+   }
+ }
+ .video-inner{
+   position:absolute;left:0;top:100rpx;right:0;bottom:0;
+   video{position: absolute;width: 100%;height: 100%;}
+ }
+}
+.fix-icon-radius{
+ width:140rpx;height:140rpx;border-radius:50%;color:#fff;background-color:#f64635;
+ position:fixed;right:20rpx;bottom:110rpx;
+}
+.iphone.fix-icon-radius{bottom:200rpx;}
+.txtindent{padding-left: 2.8em;}
+.avatar{
+ margin:0 auto;width:130rpx;height:130rpx;border-radius:50%;padding:20px 20px 10px 20px;
+ image{width:100%;height:100%;border-radius:50%;}
+}
+.lengthLgThree{height: 55% !important;}
+.yhq-outter{
+ display: flex;text-align:left;
+ width:100%;
+ position:relative;
+ .yhq-left{
+   border-top-left-radius: 5px;
+   border-bottom-left-radius: 5px;
+   width: 60%;
+   background-color: white;
+   border-right-width:1px;
+   border-right-style:dotted;
+   .money{font-size: 28px;font-weight: bold;margin-left: 10px;}
+ }
+ .yhq-right{
+   border-top-right-radius: 5px;
+   border-bottom-right-radius: 5px;
+   background-color: white;
+   width: 40%;
+   .ljlq{
+     text-align: center;
+     padding: 5px 10px;
+     border: 1px solid;
+     border-radius: 40px;
+     color: white;
+     margin-right: 5px;
+   }
+ }
+ .ball{
+   position: absolute;
+   width: 20px;
+   height: 20px;
+   border-radius: 50%;
+ }
+ .ball-top{left: 58%;top: -10px;}
+ .ball-bottom{left: 58%;bottom: -10px;}
+ .ball-right{top:40%;right:-10px;}
+ .ball-left{top:40%;left:-10px;}
+ @media screen and (max-width:320px) {
+   .ball-top{left: 57%;}
+   .ball-bottom{left: 57%;}
+ }
+}
+.resize{height: 92% !important;padding-top: 15px;}
+
+.retailer-modal{
+ .modal-inner{background-color:#fff !important;}
+ .user-avatar{width:200rpx;height:200rpx;border-radius:50%;}
+ .form-list{
+   padding:0 20rpx 20rpx;box-sizing: border-box;
+   .form-item{
+     background-color:#fff;box-sizing: border-box;
+     box-shadow:0px 0px 3px 1px #e4e4e4;border-radius:4rpx;
+     width:100%;min-height:100rpx;display:flex;align-items:center;padding:20rpx;position:relative;
+     margin-top:20rpx;
+     .title-cell{width:145rpx;height:100%;display: flex;align-items: left;justify-content:flex-start;align-items: center;text-align:left;}
+     .input-cell{
+       flex:1;height:100%;display:flex;justify-content: flex-end; align-items: center;position:relative;
+     }
+   }
+ }
+}
+.fixed-video{
+ position:fixed;right:20rpx;top:20%;width:200rpx;height:400rpx;z-index:100;
+ video{width:100%;height:100%;}
+}
+</style>
+<template>
+ <view :class="{'iphone' : isIpx, 'hidden': hiddePage, 'zhuan': showZhuan}" class="product bg-page">
+   <!-- <creditSwiper :listData.sync="creditData" :themeObject.sync="themeObject"></creditSwiper> -->
+   <view wx:if="{{loaded}}" scroll-y="0" scroll-top="{{backScrollTop}}" id="scroll-container" class="bg-white h_100">
+     <view class="fixed-video" wx:if="{{product.video && product.video != ''}}">
+       <video
+         src="{{product.video}}"
+         autoplay
+         muted="{{ismuted}}"
+         bindfullscreenchange="screenChange"
+         vslide-gesture-in-fullscreen="{{1==1}}">
+       </video>
+     </view>
+     <view class="swiper-h">
+       <block wx:if="{{showGallery}}">
+         <swiper
+           class="pic-swiper notitle"
+           autoplay
+           indicator-dots="{{dot}}"
+           indicator-color="#d0cdd1"
+           indicator-active-color="#ff9900"
+           interval="6000"
+           circular>
+           <!-- <swiper-item wx:if="{{product.video && product.video != ''}}">
+             <video src="{{product.video}}" autoplay="{{1==1}}"></video>
+           </swiper-item> -->
+           <repeat for="{{images}}" index="index" item="image">
+             <swiper-item :class="{'first-pic' : index === 0}">
+               <image class="imgcover w_100 h_100" mode="aspectFill" src="{{image}}" @tap="previewConver({{index}})"></image>
+               <!-- <view class="al al-video" wx:if="{{video.length > 0}}" @tap.stop="onVideoTap" style="color:#fff;"></view> -->
+             </swiper-item>
+           </repeat>
+         </swiper>
+       </block>
+     </view>
+     <view class="group-title flex_left" wx:if="{{activityInfo.id && activityInfo.type == 'groupbuy'}}">
+       <view class="col1">
+         <text>￥</text>
+         <text class="font20 bold">{{activityInfo.groupprice}}</text>
+       </view>
+       <view class="col2">
+         <view class="colicon">{{activityInfo.numbers}}人团</view>
+         <text class="db-in">限购{{activityInfo.everybuy}}{{product.unit}}</text>
+       </view>
+       <view class="col3">已团{{product.havetuan}}{{product.unit}}</view>
+     </view>
+     <view class="group-title flex_left" wx:elif="{{afterInfo && showTimer}}">
+       <view class="col1">
+         <text>￥</text>
+         <text class="font20 bold" wx:if="{{product.minprice && product.maxprice && product.minprice != '' && product.maxprice != '' && product.minprice != product.maxprice}}">{{product.minprice}}-{{product.maxprice}}</text>
+         <text class="font20 bold" wx:elif="{{product.minprice && product.minprice != ''}}">{{product.minprice}}</text>
+         <text class="font20 bold" wx:else>{{product.price}}</text>
+         <text class="font16 ml5" style="text-decoration:line-through" wx:if="{{oripriceShow}}">￥{{product.oriprice}}</text>
+       </view>
+       <view class="timer-col">
+         <text>距截团</text>
+         <text :class="{big: (product.lefthour.length > 2 || product.lefthour >= 100)}" class="num ml5">{{product.lefthour}}</text>
+         <text class="txt">:</text>
+         <text class="num">{{product.leftminute}}</text>
+         <text class="txt">:</text>
+         <text class="num">{{product.leftsecond}}</text>
+       </view>
+     </view>
+     <view class="pt10 pb10 bg-white pl10 pr10 b_bottom_after" style="position:relative;">
+       <view class="clamp2" bindtap="copyTxt">
+         <text wx:if="{{!product.onshelftime && (product.isshow == 0 || (product.fromfid && product.originmoderate == 0)) && product.id}}" class="v_middle db-in bold color-gray bold">【已下架】</text>
+         <text class="v_middle db-in bold">{{product.title}}</text>
+       </view>
+       <view wx:if="{{product.sellingpoint && product.sellingpoint != ''}}" class="color-theme" style="{{themeObject.colorStyle}}">{{product.sellingpoint}}</view>
+       <block wx:if="{{afterInfo}}">
+         <block wx:if="{{showTimer}}">
+           <!-- <view class="flex_left" wx:if="{{(product.limitbuy && product.limitbuy > 0) || (product.minmaxcredits && product.minmaxcredits > 0)}}">
+             <view wx:if="{{product.limitbuy && product.limitbuy > 0}}" class="border-btn" style="{{themeObject.borderStyle}}{{themeObject.colorStyle}}">限购{{product.limitbuy}}件</view>
+             <view wx:if="{{product.minmaxcredits && product.minmaxcredits > 0}}" class="border-btn {{(product.limitbuy && product.limitbuy > 0) ? 'ml10' : ''}}" style="{{themeObject.borderStyle}}{{themeObject.colorStyle}}">
+               <text>最多可使用金币</text>
+               <text wx:if="{{product.minmaxcredits && product.maxmaxcredits && product.minmaxcredits != product.maxmaxcredits}}">{{product.minmaxcredits}}-{{product.maxmaxcredits}}</text>
+               <text wx:else>{{product.minmaxcredits}}</text>
+             </view>
+           </view> -->
+           <view class="flex_left" wx:if="{{(product.limitbuy && product.limitbuy > 0)}}">
+             <view wx:if="{{product.limitbuy && product.limitbuy > 0}}" class="border-btn" style="{{themeObject.borderStyle}}{{themeObject.colorStyle}}">限购{{product.limitbuy}}件</view>
+           </view>
+         </block>
+         <block wx:else>
+           <view class="flex_left" style="{{themeObject.colorStyle}}">
+             <view class="flex_left flex_cell">
+               <text class="font18">￥</text>
+               <text class="font16" wx:if="{{product.minprice && product.maxprice && product.minprice != '' && product.maxprice != '' && product.minprice != product.maxprice}}">{{product.minprice}}-{{product.maxprice}}</text>
+               <text class="font16" wx:elif="{{product.minprice && product.minprice != ''}}">{{product.minprice}}</text>
+               <text class="font16" wx:else>{{product.price}}</text>
+               <text class="font16 ml5 .color-gray" style="text-decoration: line-through" wx:if="{{oripriceShow}}">￥{{product.oriprice}}</text>
+             </view>
+           </view>
+           <!-- <view class="flex_left" wx:if="{{(product.limitbuy && product.limitbuy > 0) || (product.minmaxcredits && product.minmaxcredits > 0)}}">
+             <view wx:if="{{product.limitbuy && product.limitbuy > 0}}" class="color-orange">限购{{product.limitbuy}}件</view>
+             <view wx:if="{{product.minmaxcredits && product.minmaxcredits > 0}}" class="color-orange {{(product.limitbuy && product.limitbuy > 0) ? 'ml10' : ''}}">
+               <text>最多可使用金币</text>
+               <text wx:if="{{product.minmaxcredits && product.maxmaxcredits && product.minmaxcredits != product.maxmaxcredits}}">{{product.minmaxcredits}}-{{product.maxmaxcredits}}</text>
+               <text wx:else>{{product.minmaxcredits}}</text>
+             </view>
+           </view> -->
+           <view class="flex_left" wx:if="{{(product.limitbuy && product.limitbuy > 0)}}">
+             <view wx:if="{{product.limitbuy && product.limitbuy > 0}}" class="color-orange">限购{{product.limitbuy}}件</view>
+           </view>
+         </block>
+       </block>
+       <view class="flex_left mt5 color-gray" wx:if="{{product.showJdPrice || product.showTbPrice}}">
+         <text wx:if="{{product.showTbPrice}}">猫价: ￥{{product.tb_price}}</text>
+         <text :class="{'ml10': product.showJdPrice}" wx:if="{{product.showJdPrice}}">狗价: ￥{{product.jd_price}}</text>
+       </view>
+       <view class="flex_left font12 mt5 color-gray2">
+         <view wx:if="{{product.postage == 0}}" class="flex_left w90">运费: 包邮</view>
+         <view wx:else class="flex_left w90">运费: ￥{{ product.postage }}</view>
+         <!-- <view wx:if="{{isAdmin}}" class="flex_cell flex_right">销量: {{ product.truesaled }}{{ product.unit }}</view>
+         <view wx:elif="{{globalData.SystemParams.ShowSaled != 0}}" class="flex_cell flex_right">销量: {{ product.saled }}{{ product.unit }}</view> -->
+         <view wx:if="{{globalData.SystemParams.ShowSaled != 0}}" class="flex_cell flex_right">销量: {{ product.saled }}{{ product.unit }}</view>
+       </view>
+     </view>
+     <!-- 需判断 该商品有没有优惠券 -->
+     <view wx:if="{{showCardInfo}}" class="flex_left card-info" bindtap="getProductCard">
+       <view class="pr10">专属福利</view>
+       <view class="db-flex">
+         <view class="card-item" style="{{themeObject.colorStyle}}{{themeObject.borderStyle}}">立减{{cardInfo.cardmoney}}元，点击领取</view>
+       </view>
+     </view>
+     <view wx:if="{{cardList.length > 0}}" class="flex_left card-list" style="position:relative;" bindtap="getCard(false)">
+       <view class="pr10">优惠</view>
+       <view class="db-flex" style="box-sizing:border-box;width:75%;">
+         <repeat for="{{cardList}}" item="item" index="index">
+           <view wx:if="{{index < 2}}" class="mr10 card-item clamp1">满{{ item.ordermoney }}减{{ item.facemoney }}优惠券</view>
+           <view wx:if="{{index == 2}}">...</view>
+         </repeat>
+       </view>
+       <view class="color-gray flex_cell flex_right" bindtap="getCard(false)">领券 > </view>
+     </view>
+     <block wx:if="{{saveMoneyMode && userInfo.regwid && userInfo.bindstatus && (options.from != 'home' || showRebate) && (product.minmemberprice || product.maxmemberprice)}}">
+       <view class="bg-page" style="height:10px;"></view>
+       <view class="b_top_after"></view>
+       <view class="padding10 b_bottom_after levelarea">
+         <view class="db-flex">
+           <view class="flex_cell flex_left">
+             <text>合伙人价格: </text>
+             <text style="{{themeObject.colorStyle}}" wx:if="{{product.maxmemberprice && product.minmemberprice && product.minmemberprice != product.maxmemberprice}}">￥{{ product.minmemberprice }}-{{product.maxmemberprice}}</text>
+             <text style="{{themeObject.colorStyle}}" wx:elif="{{product.options.length && product.minmemberprice && product.minmemberprice != ''}}">￥{{ product.minmemberprice }}</text>
+             <text style="{{themeObject.colorStyle}}" wx:else>￥{{ product.maxmemberprice }}</text>
+           </view>
+           <view class="pl10 flex_right color-gray font12">仅自己可见</view>
+         </view>
+       </view>
+     </block>
+     <block wx:if="{{product.options && product.options.length}}">
+       <view class="bg-page" style="height:10px;"></view>
+       <form class="b_bottom_after bg-white padding10 db" @tap="toBuy">
+         <button class="w_100">
+           <view class="flex_left">
+             <view class="w40 flex_left">规格</view>
+             <view class="flex_cell flex_left color-gray" wx:if="{{selectedOption && selectedOption.id}}">{{selectedOption.title}}</view>
+             <view class="flex_cell flex_left color-gray" wx:else>请选择</view>
+           </view>
+           <view class="card-options">
+             <repeat for="{{product.options}}" item="item" index="index">
+               <block wx:if="{{index < 5}}">
+                 <image wx:if="{{item.photo && item.photo != ''}}" mode="aspectFill" src="{{item.photo}}"></image>
+                 <image wx:else mode="aspectFill" src="{{images[0]}}"></image>
+               </block>
+             </repeat>
+             <text class="flex_center txt-item">
+               <text class="btn flex_center">共{{product.options.length}}种规格可选</text>
+             </text>
+           </view>
+         </button>
+       </form>
+     </block>
+     <block wx:if="{{defaultWid != globalData.Wid}}">
+       <view class="bg-page" style="height:10px;"></view>
+       <view class="b_top_after"></view>
+       <form class="padding10 b_bottom_after bg-white db" bindsubmit="toStoreMark" report-submit="true">
+         <button class="flex_left seller-area" form-type="submit">
+           <view class="flex_left flex_cell">
+             <image mode="aspectFill" src="{{sellerUser.avatar}}"></image>
+             <text class="ml5 font16 bold">{{sellerUser.linkman}}</text>
+           </view>
+           <view class="flex_right w100">
+             <view style="{{themeObject.colorStyle}}{{themeObject.borderStyle}}" class="btn flex_center">进店逛逛</view>
+           </view>
+         </button>
+       </form>
+     </block>
+     <view class="flex_center pt10 pb10 bg-page color-gray">—— 详情 ——</view>
+     <view class="product-content bg-white">
+       <view class="detail-box" style="{{themeObject.borderStyle}}" wx:if="{{product.options.length || (product.deliverdesc_json && product.deliverdesc_json.length)}}">
+         <view class="font18 bold align_center">{{product.title}}</view>
+         <view class="db-flex pt5 pb5 {{(product.deliverdesc_json && product.deliverdesc_json.length) ? 'b_bottom_after' : ''}}" wx:if="{{product.options.length}}">
+           <view class="align_left">【规  格】</view>
+           <view class="flex_cell flex_left">
+             <repeat for="{{product.options}}" item="o" index="oindex">
+               {{o.title}}<block wx:if="{{oindex < product.options.length - 1}}" class="ml3 mr3"> | </block>
+             </repeat>
+           </view>
+         </view>
+         <block wx:if="{{product.deliverdesc_json && product.deliverdesc_json.length}}">
+           <repeat for="{{product.deliverdesc_json}}" item="s" index="sindex">
+             <view class="db-flex pt5 pb5 {{sindex < product.deliverdesc_json.length - 1 ? 'b_bottom_after' : ''}}">
+               <view class="align_left">{{s.title}}</view>
+               <view class="flex_cell flex_left">{{s.content}}</view>
+             </view>
+           </repeat>
+         </block>
+       </view>
+       <div>
+         <text>{{product.content}}</text>
+       </div>
+       <repeat for="{{previewGallery}}" key="index" item="image">
+         <image class="imgcover w_100" style="vertical-align:middle;" src="{{image}}" mode="widthFix" lazy-load @tap="previewImg({{index}})"></image>
+       </repeat>
+       <block wx:if="{{globalData.SystemParams.saleconvention && globalData.SystemParams.saleconvention != ''}}">
+         <image class="imgcover w_100" style="vertical-align:middle;" src="{{globalData.SystemParams.saleconvention}}" data-url="{{globalData.SystemParams.saleconvention}}" mode="widthFix" lazy-load @tap="viewBigImg"></image>
+       </block>
+       <block wx:if="{{globalData.SystemParams.salehelp && globalData.SystemParams.salehelp != ''}}">
+         <image class="imgcover w_100" style="vertical-align:middle;" src="{{globalData.SystemParams.salehelp}}" data-url="{{globalData.SystemParams.salehelp}}" mode="widthFix" lazy-load @tap="viewBigImg"></image>
+       </block>
+       <view style="margin-top:20rpx;text-align:center;color:#ccc;font-size:24rpx;">———— 已经到底了 ————</view>
+     </view>
+     <view class="product-area scrollendarea scroll-end" style="background-color:#f6f6f6;"></view>
+   </view>
+ </view>
+ <block wx:if="{{loaded}}">
+   <view :class="{'iphone' : isIpx}" class="product-bottom-area bg-white b_top_after">
+     <view class="flex_center h_100">
+       <form wx:if="{{!product.activityid}}" class="w50 flex_center h_100 user flex_form"  style="box-sizing:border-box" bindsubmit="toStoreMark" report-submit="true">
+         <button class="nav-item" form-type="submit">
+           <view class="al font18 al-icon-gohome" style="color:#FF5100;"></view>
+           <view class="font10">首页</view>
+         </button>
+       </form>
+       <form class="w50 flex_center h_100 share flex_form" bindsubmit="onShareTap" report-submit="true">
+         <button class="nav-item" form-type="submit">
+           <view class="al font18"></view>
+           <view class="font10">分享</view>
+         </button>
+       </form>
+       <block wx:if="{{afterSys}}">
+         <form class="w50 flex_center h_100 flex_form cart" wx:if="{{openCart}}" style="box-sizing:border-box" bindsubmit="navCart" report-submit="true">
+           <button class="nav-item" form-type="submit">
+             <view class="al font18 al-cart"></view>
+             <view class="font10">购物车</view>
+           </button>
+           <block wx:if="{{cartCount != '0' && cartCount > 0}}">
+             <view class="ico" style="{{themeObject.colorStyle}}" wx:if="{{cartCount > 99}}"><text class="al al-asmkticon0165 font10"></text></view>
+             <view class="ico" style="{{themeObject.colorStyle}}" wx:else>{{cartCount}}</view>
+           </block>
+         </form>
+         <form wx:else class="w80 flex_center h_100 user flex_form"  style="box-sizing:border-box" bindsubmit="onPersonalTap" report-submit="true">
+           <button class="nav-item" form-type="submit">
+             <view class="al font18 al-gerenzhongxin6" style="color:#FF5100;"></view>
+             <view class="font10">个人中心</view>
+           </button>
+         </form>
+       </block>
+       <view class="flex_cell h_100 flex_left">
+         <!--从home页导航进入-->
+         <block wx:if="{{fromNavPage}}">
+           <block wx:if="{{product.activityid}}">
+             <form wx:if="{{ShowChat}}" class="w50 flex_center h_100 personal flex_form" bindsubmit="toChat" report-submit="true">
+               <button class="nav-item" form-type="submit">
+                 <view class="al font18"></view>
+                 <view class="font10">咨询</view>
+               </button>
+             </form>
+             <block wx:if="{{product.isshow == 1 && (!product.fromfid || (product.fromfid && product.originmoderate != 0))}}">
+               <form wx:if="{{product.storage > 0}}" class="flex_cell flex_center color-white h_100 bg-orange1 flex_form" @tap="toBuy">
+                 <button class="w_100 nav-item">
+                   <view class="w_100 align_center">￥{{product.price}}</view>
+                   <view class="w_100 align_center">原价购买</view>
+                 </button>
+               </form>
+               <form class="flex_cell flex_center color-white h_100 bg-red2 flex_form" data-type="groupbuy" @tap="toBuy">
+                 <button class="w_100 nav-item">
+                   <view class="w_100 align_center">￥{{activityInfo.groupprice}}</view>
+                   <view class="w_100 align_center">一键拼团</view>
+                 </button>
+               </form>
+             </block>
+             <view wx:elif="{{product.onshelftime}}" class="flex_cell flex_center color-white h_100 bg-gray11">即将开团</view>
+             <view wx:elif="{{product.isshow == 0 || (product.fromfid && product.originmoderate == 0)}}" class="flex_cell flex_center color-white h_100 bg-gray11">已下架</view>
+           </block>
+           <block wx:else>
+             <form wx:if="{{ShowChat}}" class="flex_cell flex_center color-white h_100 bg-orange flex_form" style="background-color:#FFA401;" bindsubmit="toChat" report-submit="true">
+               <button class="flex_center" form-type="submit">我要咨询</button>
+             </form>
+             <view wx:if="{{product.storage <= 0}}" class="flex_cell flex_center color-white h_100 bg-gray">已售罄</view>
+             <block wx:elif="{{product.isshow == 1 && (!product.fromfid || (product.fromfid && product.originmoderate != 0))}}">
+               <block if="{{afterSys}}">
+                 <block wx:if="{{(OnlyRetailerBuy && userInfo.regwid && userInfo.bindstatus) || !OnlyRetailerBuy}}">
+                   <form class="flex_cell flex_center color-white h_100 bg-orange flex_form" wx:if="{{openCart && !product.retailerbuy}}" bindsubmit="toCart" report-submit="true">
+                     <button class="flex_center" form-type="submit">加入购物车</button>
+                   </form>
+                   <form class="flex_cell flex_center color-white h_100 bg-red2 flex_form" style="{{themeObject.bgStyle}}" bindsubmit="toBuy" report-submit="true">
+                     <button class="flex_center" form-type="submit">立即购买</button>
+                   </form>
+                 </block>
+                 <block wx:if="{{OnlyRetailerBuy && (!userInfo.regwid || !userInfo.bindstatus)}}">
+                   <view class="flex_cell flex_center color-white h_100 bg-red2 flex_form" style="background-color:#FF5100;" @tap="retailerBuy">
+                     <button class="flex_center">找店主下单</button>
+                   </view>
+                 </block>
+               </block>
+             </block>
+             <view wx:elif="{{product.onshelftime}}" class="flex_cell flex_center color-white h_100 bg-gray11">即将开团</view>
+             <view wx:elif="{{product.isshow == 0 || (product.fromfid && product.originmoderate == 0)}}" class="flex_cell flex_center color-white h_100 bg-gray11">已下架</view>
+           </block>
+         </block>
+         <block wx:else>
+           <block wx:if="{{product.id}}">
+             <block wx:if="{{product.activityid && product.activityinfo.type == 'groupbuy'}}">
+               <form wx:if="{{ShowChat}}" class="w50 flex_center h_100 personal flex_form" bindsubmit="toChat" report-submit="true">
+                 <button class="nav-item" form-type="submit">
+                   <text class="al font18"></text>
+                   <text class="font10">咨询</text>
+                 </button>
+               </form>
+               <form wx:if="{{product.storage > 0}}" class="flex_cell flex_center color-white h_100 bg-orange1 flex_form" @tap="toBuy">
+                 <button class="w_100 nav-item">
+                   <view class="w_100 align_center">￥{{product.price}}</view>
+                   <view class="w_100 align_center">原价购买</view>
+                 </button>
+               </form>
+               <form class="flex_cell flex_center color-white h_100 bg-red2 flex_form" data-type="groupbuy" @tap="toBuy">
+                 <button class="w_100 nav-item">
+                   <view class="w_100 align_center">￥{{activityInfo.groupprice}}</view>
+                   <view class="w_100 align_center">一键拼团</view>
+                 </button>
+               </form>
+             </block>
+             <block wx:else>
+               <form wx:if="{{ShowChat}}" class="flex_cell flex_center color-white h_100 bg-orange flex_form" style="background-color:#FFA401;" bindsubmit="toChat" report-submit="true">
+                 <button class="flex_center" form-type="submit">我要咨询</button>
+               </form>
+               <view wx:if="{{product.storage <= 0}}" class="flex_cell flex_center color-white h_100 bg-gray">已售罄</view>
+               <block wx:elif="{{product.isshow == 1 && (!product.fromfid || (product.fromfid && product.originmoderate != 0))}}">
+                 <block if="{{afterSys}}">
+                   <block wx:if="{{(OnlyRetailerBuy && userInfo.regwid && userInfo.bindstatus) || !OnlyRetailerBuy}}">
+                     <form class="flex_cell flex_center color-white h_100 bg-orange flex_form" wx:if="{{openCart && !product.retailerbuy}}" @tap="toCart">
+                       <button class="flex_center">加入购物车</button>
+                     </form>
+                     <form class="flex_cell flex_center color-white h_100 bg-red2 flex_form" style="{{themeObject.bgStyle}}" @tap="toBuy">
+                       <button class="flex_center">立即购买</button>
+                     </form>
+                   </block>
+                   <block wx:if="{{OnlyRetailerBuy && (!userInfo.regwid || !userInfo.bindstatus)}}">
+                     <form class="flex_cell flex_center color-white h_100 bg-red2 flex_form" style="background-color:#FF5100;" @tap="retailerBuy">
+                       <button class="flex_center">找店主下单</button>
+                     </form>
+                   </block>
+                 </block>
+               </block>
+               <view wx:elif="{{product.onshelftime}}" class="flex_cell flex_center color-white h_100 bg-gray11">即将开团</view>
+               <view wx:elif="{{product.isshow == 0 || (product.fromfid && product.originmoderate == 0)}}" class="flex_cell flex_center color-white h_100 bg-gray11">已下架</view>
+             </block>
+           </block>
+           <view wx:else class="flex_cell"></view>
+         </block>
+       </view>
+     </view>
+   </view>
+ </block>
+ <productOptions
+   :selectedOption.sync="selectedOption"
+   :selectedOptionIndex.sync="selectedOptionIndex"
+   :clickProduct.sync="product"
+   :themeObject.sync="themeObject"
+   :afterSys.sync="afterSys"
+   :OnlyRetailerBuy.sync="OnlyRetailerBuy"
+   :userInfo.sync="userInfo"
+   :clickCart.sync="clickCart"
+   fromModule="product"
+   :showRebate.sync="showRebate"
+   :fromPage.sync="fromPage"
+   :saveMoneyMode.sync="saveMoneyMode">
+ </productOptions>
+ <share :themeObject.sync="themeObject" :globalData.sync="globalData" :viewData.sync="product" :userInfo.sync="userInfo" :wid.sync="retailerInfo" opacity="1" :photo.sync="photo" :title.sync="title" :retailerInfo.sync="retailerInfo" :id.sync="productId" :module.sync="module"></share>
+ <view class="videoarea" wx:if="{{videoShow}}">
+   <view class="btn-area flex_center">
+     <form class="btn-item" bindsubmit="saveVideo" report-submit="true">
+       <button class="flex_center" form-type="submit">保存</button>
+     </form>
+     <form class="btn-item" bindsubmit="stopPlay" report-submit="true">
+       <button class="flex_center" form-type="submit">关闭</button>
+     </form>
+   </view>
+   <view class="video-inner">
+     <video src="{{video}}" autoplay="1" direction="0"></video>
+   </view>
+ </view>
+ <retailerWechat :userInfo.sync="userInfo" :retailerInfo.sync="retailerInfo" :module.sync="module" :themeObject.sync="themeObject"></retailerWechat>
+ <view class="tip-layer flex_center" wx:if="{{showTip}}" bindtap="clickTip">
+   <view class="padding10">
+     <view>1. 点击左下角“分享”按钮分享到微信群</view>
+     <view class="mt10">2. 群成员点击查看或购买都可获得收入</view>
+   </view>
+ </view>
+ <form :class="{'iphone' : isIpx}" class="fix-icon-radius" style="{{themeObject.bgStyle}}" report-submit="true" bindsubmit="onShareTap" wx:if="{{showZhuan}}">
+   <view class="w_100 h_100 flex_center">
+     <button form-type="submit">
+       <view class="al al-shangchuan font20 bold"></view>
+       <view wx:if="{{product.zhuan && product.zhuan != ''}}" class="font10">赚￥{{product.zhuan}}</view>
+     </button>
+   </view>
+ </form>
+ <view class="auto-modal flex_center" wx:if="{{(options.share_uid && !options.custom_params && showCardModal) || showCardModal1 || showCardModal2}}">
+   <view
+     class="modal-inner border-box pb10 {{cardList.length > 3 ? 'lengthLgThree' : ''}} {{(showCardInfo && cardList.length > 2) ? 'lengthLgThree' : ''}}"
+     style="width:80%;{{themeObject.linearBgStyle}}">
+     <view wx:if="{{showHead || (options.share_uid && !userInfo.regwid)}}" class="avatar">
+       <image mode="aspectFill" src="{{sellerUser.avatar}}"/>
+     </view>
+     <view wx:if="{{options.share_uid && !userInfo.regwid}}" class="flex_center bold mt10 mb10" style="color:#fff">{{sellerUser.linkman}}送你的优惠券</view>
+     <view wx:else class="flex_center bold font16 mt10 mb10" style="color:#fff;height:30px;">恭喜您，获得专属礼包</view>
+     <scroll-view scroll-y bindscrolltolower="handleScrollPage" style="height:80%;">
+       <form wx:if="{{showCardInfo}}" class="db mb10 pr20 pl20" @tap="getProductCard">
+         <button class="yhq-outter">
+           <view class="yhq-left pt10 pl10 pb10" style="{{themeObject.colorStyle}}{{themeObject.borderStyle}}">
+               <view class="money">￥{{ cardInfo.cardmoney }}</view>
+               <view class="font15" style="margin-left:15px;color:#666;">仅限该商品使用</view>
+           </view>
+           <view class="yhq-right flex_center">
+             <view class="padding5 align_center ljlq" style="background-color:#ccc !important;" wx:if="{{!cardInfo.leftcount || cardInfo.leftcount === '0'}}">已抢光</view>
+             <view wx:else class="padding5 align_center ljlq" style="{{themeObject.bgStyle}}">立即领取</view>
+           </view>
+           <view class="ball ball-left" style="{{themeObject.bgStyle}}"></view>
+           <view class="ball ball-right" style="{{themeObject.bgStyle}}"></view>
+           <view class="ball ball-top" style="{{themeObject.bgStyle}}"></view>
+           <view class="ball ball-bottom" style="{{themeObject.bgStyle}}"></view>
+         </button>
+       </form>
+       <repeat for="{{cardList}}" item="item" index="index">
+         <form class="db mb10 pr20 pl20" data-data="{{item}}" data-index="{{index}}" @tap="recive">
+           <button class="yhq-outter">
+             <view class="yhq-left pt10 pl10 pb10" style="{{themeObject.colorStyle}}{{themeObject.borderStyle}}">
+                 <view class="money">￥{{ item.facemoney }}</view>
+                 <view class="font15" style="margin-left:15px;color:#666;">满{{ item.ordermoney }}元使用</view>
+             </view>
+             <view class="yhq-right flex_center">
+               <view class="padding5 align_center ljlq" style="background-color:#ccc !important;" wx:if="{{!item.leftcount || item.leftcount === '0'}}">已抢光</view>
+               <view wx:else class="padding5 align_center ljlq" style="{{themeObject.bgStyle}}">{{item.txt}}</view>
+             </view>
+             <view class="ball ball-left" style="{{themeObject.bgStyle}}"></view>
+             <view class="ball ball-right" style="{{themeObject.bgStyle}}"></view>
+             <view class="ball ball-top" style="{{themeObject.bgStyle}}"></view>
+             <view class="ball ball-bottom" style="{{themeObject.bgStyle}}"></view>
+           </button>
+         </form>
+       </repeat>
+     </scroll-view>
+     <form class="close-area flex_center" bindsubmit="closeCardModal" report-submit="true">
+       <button formType="submit" class="al al-close1"></button>
+     </form>
+   </view>
+ </view>
+ <block wx:if="{{showAuth}}">
+   <auth :pageurl.sync="pageurl" :themeObject.sync="themeObject" :globalData.sync="globalData"></auth>
+ </block>
+ <block wx:if="{{showRetailerModal}}">
+   <sellerInfo :sellerUser.sync="sellerUser" :themeObject.sync="themeObject"></sellerInfo>
+ </block>
+ <block wx:if="{{showSellerModal}}">
+   <view class="auto-modal flex_center seller-info-modal">
+     <view class="modal-inner border-box" style="width:80%;">
+       <view class="align_center font18 bold pb10 b_bottom_after color-theme pt20" style="{{themeObject.colorStyle}}">联系卖家领取</view>
+       <view class="padding20 flex_center">
+         <image class="user-avatar" src="{{sellerUser.avatar}}"></image>
+       </view>
+       <view class="padding10 flex_center" wx:if="{{!(sellerUser.weixinaccount && sellerUser.weixinaccount != '') && !(sellerUser.mobile && sellerUser.mobile != '')}}">
+         <text class="color-gray">卖家还未设置个人信息</text>
+       </view>
+       <view wx:else class="padding10 form-list">
+         <view class="form-item" wx:if="{{sellerUser.weixinaccount && sellerUser.weixinaccount != ''}}">
+           <view class="title-cell">微信号</view>
+           <view class="input-cell">{{sellerUser.weixinaccount}}</view>
+           <view class="pl10 pr10 color-theme" style="{{themeObject.colorStyle}}" @tap="copyWechat">复制</view>
+         </view>
+         <view class="form-item" wx:if="{{sellerUser.mobile && sellerUser.mobile != ''}}">
+           <view class="title-cell">手机号</view>
+           <view class="input-cell">{{sellerUser.mobile}}</view>
+           <view class="pl10 pr10 color-green" @tap="clickMobile"><text class="al al-dianhua font20"></text></view>
+         </view>
+       </view>
+       <form class="close-area flex_center" bindsubmit="closeSellerEvent" report-submit="true">
+         <button formType="submit" class="al al-close1"></button>
+       </form>
+     </view>
+   </view>
+ </block>
+ <block wx:if="{{showBuyTip}}">
+   <buyTip :sellerUser.sync="sellerUser" :themeObject.sync="themeObject"></buyTip>
+ </block>
+ <block wx:if="{{showCardTip}}">
+   <buyTip1 type="card" :sellerUser.sync="sellerUser" :themeObject.sync="themeObject"></buyTip1>
+ </block>
+ <canvas style="position: absolute;top: -1000px; left: -1000px; width: 875px; height: 700px; background: #fff;" canvas-id="photoCanvas"></canvas>
+</template>
+<script>
+import Auth from '@/components/auth'
+import Share from '@/components/store/share'
+import RetailerWechat from '@/components/retailerWechat'
+import TipBgLayer from '@/components/tipBgLayer'
+import SellerInfo from '@/components/sellerInfo'
+import wepy from 'wepy'
+import Time from '@/libs/time'
+import Util from '@/libs/util'
+import Config from '@/config'
+import Cached from '@/libs/cached'
+import ProductOptions from '@/components/store/product-options'
+import BuyTip from '@/components/buyTip'
+import CreditSwiper from '@/components/creditSwiper'
+export default class Product extends wepy.page {
+  components = {
+    share: Share,
+    retailerWechat: RetailerWechat,
+    tipBgLayer: TipBgLayer,
+    auth: Auth,
+    sellerInfo: SellerInfo,
+    productOptions: ProductOptions,
+    buyTip: BuyTip,
+    buyTip1: BuyTip,
+    creditSwiper: CreditSwiper
+  }
+  data = {
+    module: 'factoryproduct',
+    query: {},
+    options: {},
+    loaded: true,
+    showShareTip: true,
+    product: {price: '0.00', moderate: 1},
+    factoryInfo: {},
+    retailerInfo: {},
+    activityInfo: {},
+    userInfo: {},
+    waitgetcredit: 100,
+    showGallery: true,
+    showDot: true,
+    showpopup: false,
+    showEvluate: false,
+    wxQrcode: Config.WeixinQrcode,
+    images: [],
+    previewGallery: [],
+    evluate: [],
+    evluate1: [],
+    activity: [],
+    submitData: {flag: 1, quantity: 1},
+    replyData: null,
+    pageStart: 0,
+    genOrder: false,
+    video: '',
+    animationShareMethod: {},
+    productId: null,
+    title: '',
+    photo: '',
+    isProduct: true,
+    videoShow: false,
+    showPopup: false,
+    isIpx: false,
+    systemInfo: null,
+    globalData: {},
+    oripriceShow: false,
+    height: 0,
+    disTextarea: false,
+    showTip: false,
+    showModalarea: false,
+    showModalarea1: false,
+    showSuccessModal: false,
+    moneyParams: null,
+    retailerWechat: Config.RetailerWechat,
+    shareTipTxt: '',
+    selectedOption: {},
+    buyAnimation: {},
+    selectedOptionIndex: 0,
+    clickBuytype: null,
+    clickGoupData: null,
+    Fid: Config.Fid,
+    ShowChat: Config.ShowChat,
+    AdminUids: Config.AdminUids,
+    isAdmin: false,
+    disAdmin: false,
+    sellerUser: {},
+    fromNavPage: false,
+    showCardModal: false,
+    showCardModal1: false,
+    showCardModal2: false,
+    cardList: [],
+    pageStart1: 0,
+    limit: 10,
+    showHead: false,
+    defaultWid: Config.Wid,
+    showProductOpt: false,
+    productType: 'fpimport',
+    afterInfo: false,
+    showTimer: false,
+    showAuth: false,
+    pageurl: '',
+    showRebate: false,
+    OnlyRetailerBuy: false,
+    afterSys: false,
+    showRetailerModal: false,
+    themeObject: {},
+    Wid: 0,
+    showSellerModal: false,
+    cardInfo: {},
+    showCardInfo: false,
+    allowScroll: 0,
+    backScrollTop: 0,
+    hiddePage: false,
+    clickCart: false,
+    cartCount: 0,
+    isIOS: false,
+    fromPage: '',
+    showZhuan: false,
+    openCart: false,
+    showBuyTip: false,
+    showCardTip: false,
+    creditData: [],
+    saveMoneyMode: false,
+    ismuted: true
+  }
+  computed = {
+    dot: function () {
+      this.showDot = this.images.length > 1
+      return this.showDot
+    }
+  }
+  getSeller () {
+    if (Config.Wid !== this.globalData.Wid || this.cardList.length) {
+      wepy.request({
+        url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/retailer/info`,
+        data: {uid: this.globalData.Wid, appid: Config.AppId}
+      }).then(res => {
+        const data = res.data
+        if (data.flag) {
+          this.sellerUser = data.data
+        }
+        this.$apply()
+      })
+    }
+  }
+  dateFormat (value) {
+    return new Time(value * 1000).dateFormat('yyyy-MM-dd')
+  }
+  dateFormat2 (value) {
+    return new Time(value * 1000).dateFormat('hh:mm')
+  }
+  onPageScroll (e) {
+    this.pageScrollTop = e.scrollTop
+  }
+  watch = {
+    product (newValue) {
+      if (parseInt(newValue.oriprice) > parseInt(newValue.price)) {
+        this.oripriceShow = true
+        this.$apply()
+      }
+    }
+  }
+  disOptionsArea () {
+    this.backScrollTop = this.pageScrollTop
+    this.hiddePage = true
+  }
+  hideOptionsArea () {
+    this.hiddePage = false
+    this.$apply()
+    wepy.pageScrollTo({
+      scrollTop: this.backScrollTop
+    })
+  }
+  addCartEvent (callback) {
+    let params = {fpid: this.product.moduleid, fpimportid: this.product.id, wid: this.globalData.Wid}
+    if (this.options.room_id && this.options.room_id) {
+      params.roomid = this.options.room_id
+    }
+    if (this.product.options.length) {
+      if (this.selectedOption && this.selectedOption.id) {
+        params.foid = this.selectedOption.id
+      }
+    }
+    wepy.request({
+      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/cart/addCart`,
+      data: params,
+      method: 'post'
+    }).then(res => {
+      const data = res.data
+      wepy.showToast({
+        title: data.error,
+        icon: 'none'
+      })
+      if (data.flag) {
+        this.globalData.userInfo.cartcount = data.cartcount
+        this.userInfo.cartcount = data.cartcount
+        this.$parent.globalData = this.globalData
+        this.cartCount = data.cartcount
+        this.$apply()
+        callback && callback()
+      }
+    })
+  }
+  cartEvent () {
+    if (this.product.options.length) {
+      if (!this.selectedOption || !this.selectedOption.id) {
+        this.selectedOption = this.product.options[0]
+        this.selectedOptionIndex = 0
+      }
+      this.$apply()
+      this.disOptionsArea()
+      this.$invoke('productOptions', 'showOptions')
+    } else {
+      this.addCartEvent()
+    }
+  }
+  buyEvent () {
+    this.buyIng = true
+    if (this.product.options.length) {
+      if (!this.selectedOption || !this.selectedOption.id) {
+        this.selectedOption = this.product.options[0]
+        this.selectedOptionIndex = 0
+      }
+      this.disOptionsArea()
+      this.buyIng = false
+      this.$invoke('productOptions', 'showOptions')
+    } else {
+      if (this.genOrder) return
+      let isgroup = false
+      if (this.activityInfo.id && (this.clickBuytype === 'groupbuy' || this.clickBuytype === 'group')) {
+        isgroup = true
+        this.submitData.activityid = this.activityInfo.id
+        if (this.clickBuytype === 'group') {
+          this.submitData.crowdowner = this.clickGoupData.uid
+        }
+      } else {
+        delete this.submitData.activityid
+        delete this.submitData.crowdowner
+      }
+      if (this.retailerInfo.uid) {
+        this.submitData.wid = this.retailerInfo.uid
+      }
+      if (this.userInfo.subscribe === 0) {
+        this.showAuth = true
+        this.addShopParams = this.submitData
+        this.buyIng = false
+        this.$apply()
+        return false
+      }
+      let iscontinue = true
+      if (this.product.retailerbuy) {
+        if (!this.options.custom_params) {
+          if ((!this.userInfo.regwid || !this.userInfo.bindstatus) && (!this.options.share_uid || this.options.shareuser !== 'self')) {
+            iscontinue = false
+            this.showBuyTip = true
+          }
+        }
+      }
+      if (!iscontinue) {
+        this.buyIng = false
+        return false
+      }
+      if (isgroup) {
+        Util.checkTmpMsg({
+          systeminfo: this.globalData.systemInfo,
+          tmplIds: [this.globalData.Templates.groupbuy_success],
+          callback: () => {
+            this.addShop(this.submitData)
+          }
+        })
+      } else {
+        this.addShop(this.submitData)
+      }
+    }
+  }
+  afterBuyGroup () {
+    this.submitData.activityid = this.activityInfo.id
+    if (this.clickBuytype === 'group') {
+      this.submitData.crowdowner = this.clickGoupData.uid
+    } else {
+      delete this.submitData.crowdowner
+    }
+    if (this.retailerInfo.uid) {
+      this.submitData.wid = this.retailerInfo.uid
+    }
+    if (this.query.fromwid) {
+      this.submitData.wid = parseInt(this.query.fromwid)
+      this.submitData.fid = Config.Fid
+    }
+    this.hideOptionsArea()
+    this.addShop(this.submitData)
+  }
+  events = {
+    cancelLogin () {
+      this.showAuth = false
+      this.$apply()
+    },
+    afterAuth () {
+      this.globalData = this.$parent.globalData
+      this.userInfo = this.globalData.userInfo
+      this.Wid = this.globalData.Wid
+      this.showAuth = false
+      if (this.clickCart) {
+        this.cartEvent()
+      } else {
+        this.addShop(this.addShopParams)
+      }
+      this.$apply()
+    },
+    closeSellerModal () {
+      this.showRetailerModal = false
+      this.$apply()
+    },
+    clickOptions (dataset) {
+      this.selectedOption = dataset.data
+      this.selectedOptionIndex = dataset.index
+      this.$apply()
+    },
+    buyOption () {
+      if (this.genOrder || this.buyIng) return
+      this.buyIng = true
+      if (!this.selectedOption || !this.selectedOption.id) {
+        wepy.showToast({
+          title: '请选择商品规格',
+          icon: 'none'
+        })
+        return false
+      }
+      if (this.selectedOption.storage <= 0) {
+        wepy.showToast({
+          title: '该规格商品库存不足',
+          icon: 'none'
+        })
+        return false
+      }
+      delete this.submitData.activityid
+      delete this.submitData.crowdowner
+      if (this.retailerInfo.uid) {
+        this.submitData.wid = this.retailerInfo.uid
+      }
+      if (this.query.fromwid) {
+        this.submitData.wid = parseInt(this.query.fromwid)
+        this.submitData.fid = Config.Fid
+      }
+      this.hideOptionsArea()
+      this.$invoke('productOptions', 'closeOptions')
+      if (this.userInfo.subscribe === 0) {
+        this.showAuth = true
+        this.addShopParams = this.submitData
+        this.buyIng = false
+        this.$apply()
+        return false
+      }
+      let iscontinue = true
+      if (this.product.retailerbuy) {
+        if (!this.options.custom_params) {
+          if ((!this.userInfo.regwid || !this.userInfo.bindstatus) && (!this.options.share_uid || this.options.shareuser !== 'self')) {
+            iscontinue = false
+            this.showBuyTip = true
+          }
+        }
+      }
+      if (!iscontinue) {
+        this.buyIng = false
+        return false
+      }
+      this.buyIng = true
+      this.addShop(this.submitData)
+    },
+    toAddCart () {
+      if (this.genOrder) return
+      if (!this.selectedOption || !this.selectedOption.id) {
+        wepy.showToast({
+          title: '请选择商品规格',
+          icon: 'none'
+        })
+        return false
+      }
+      if (this.selectedOption.storage <= 0) {
+        wepy.showToast({
+          title: '该规格商品库存不足',
+          icon: 'none'
+        })
+        return false
+      }
+      this.addCartEvent(() => {
+        this.hideOptionsArea()
+        this.$invoke('productOptions', 'closeOptions')
+      })
+    },
+    closeOptions () {
+      this.buyIng = false
+      this.hideOptionsArea()
+    },
+    closeBuyTip () {
+      this.showBuyTip = false
+      this.showCardTip = false
+    }
+  }
+  methods = {
+    screenChange (e) {
+      console.log('视频窗口变化时')
+      console.log(e)
+      console.log(e.detail.value)
+      this.ismuted = !this.ismuted
+      this.$apply()
+    },
+    onPersonalTap (e) {
+      wepy.reLaunch({url: '/pages/own'})
+    },
+    viewBigImg (e) {
+      let url = e.currentTarget.dataset.url
+      wepy.previewImage({
+        urls: [url],
+        current: url
+      })
+    },
+    onGrouptap () {
+      if (!this.retailerInfo.qrcode || this.retailerInfo.qrcode === '') {
+        Util.remindQrcode(this.retailerInfo.uid)
+      }
+      this.$invoke('retailerWechat', 'showModal')
+    },
+    switchTo (uid) {
+      wepy.navigateTo({url: `./store?wid=${uid}`})
+    },
+    toChat (e) {
+      let touid = this.globalData.Wid
+      if (this.factoryInfo && this.factoryInfo.services && this.factoryInfo.services !== '') {
+        touid = this.factoryInfo.services.split(',')[0]
+      }
+      const url = encodeURIComponent(`chat?uid=${touid}&fromModule=product&fromId=${this.options.id}`)
+      wepy.navigateTo({url: `/pages/webview?url=${url}`})
+    },
+    saveVideo (e) {
+      const url = this.video.replace(/http:/g, 'https:')
+      console.log('当前保存的视频地址')
+      console.log(url)
+      wepy.downloadFile({
+        url: url
+      }).then(res => {
+        console.log('下载完文件返回数据')
+        console.log(res)
+        if (!res.tempFilePath) {
+          return new Promise()
+        }
+        Util.saveVideo({
+          path: res.tempFilePath
+        })
+      })
+    },
+    stopPlay (e) {
+      this.videoShow = false
+    },
+    onVideoTap () {
+      this.videoShow = true
+    },
+    onShareTap (e) {
+      this.$invoke('share', 'showPopuModal')
+    },
+    navCart () {
+      wepy.navigateTo({url: '/packageC/pages/cart'})
+    },
+    toHome (e) {
+      wepy.reLaunch({url: Config.HomePage})
+    },
+    errImg (event) {
+      event.currentTarget.src = 'https://tossharingsales.boka.cn/images/nopic.jpg'
+    },
+    errUserImg (event) {
+      event.currentTarget.src = 'https://tossharingsales.boka.cn/images/user.jpg'
+    },
+    access () {
+      if (this.userInfo.subscribe === 0) {
+        Util.wxAccess()
+      } else {
+        wepy.navigateTo({url: 'center'})
+      }
+    },
+    closeShareTip () {
+      this.showShareTip = false
+    },
+    previewConver (index) {
+      wepy.previewImage({
+        current: this.images[index],
+        urls: this.images
+      })
+    },
+    previewImg (index) {
+      const images = this.previewGallery.length > 0 ? this.previewGallery : this.images
+      wepy.previewImage({
+        current: images[index],
+        urls: images
+      })
+    },
+    buyGroup (e) {
+      if (this.genOrder) return
+      if (!this.selectedOption.id) {
+        wepy.showToast({
+          title: '请选择商品规格',
+          icon: 'none'
+        })
+        return false
+      }
+      if (this.selectedOption.storage <= 0) {
+        wepy.showToast({
+          title: '该规格商品库存不足',
+          icon: 'none'
+        })
+        return false
+      }
+      // 拼团结果通知、拼团成功提醒
+      Util.checkTmpMsg({
+        systeminfo: this.globalData.systemInfo,
+        tmplIds: [this.globalData.Templates.groupbuy_success],
+        callback: () => {
+          this.afterBuyGroup()
+        }
+      })
+    },
+    toCart (e) {
+      this.clickCart = true
+      if (this.genOrder) return
+      if (this.userInfo.subscribe === 0) {
+        this.showAuth = true
+        this.$apply()
+        return false
+      }
+      this.cartEvent()
+    },
+    toBuy (e) {
+      if (this.buyIng) return false
+      this.clickCart = false
+      const dataset = e.currentTarget.dataset
+      const type = dataset.type
+      if (type && type !== '') {
+        if (type === 'groupbuy') {
+          this.clickBuytype = type
+        }
+      } else {
+        this.clickBuytype = null
+      }
+      this.buyEvent()
+    },
+    clickTip () {
+      this.showTip = false
+    },
+    openEvent (e) {
+      this.showModalarea = false
+      wepy.showLoading()
+      wepy.request({
+        url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/miniactivity/partInLottery`,
+        data: {wid: this.retailerInfo.uid, appid: Config.AppId, from: 'product'},
+        method: 'post'
+      }).then(res => {
+        wepy.hideLoading()
+        const data = res.data
+        if (data.flag) {
+          this.product.awardnum--
+          this.moneyParams = {}
+          this.moneyParams.awardtype = data.awardtype
+          this.moneyParams.awardmoney = data.awardmoney
+          this.moneyParams.ordermoney = data.ordermoney
+          if (this.product.ingroup) {
+            this.showSuccessModal = true
+          } else {
+            this.showModalarea1 = true
+          }
+          this.$apply()
+        } else {
+          wepy.showToast({
+            title: data.error,
+            icon: 'none',
+            duration: Util.delay(data.error)
+          })
+        }
+      })
+    },
+    closeOpenModal (e) {
+      this.showModalarea = false
+    },
+    closeModal1 (e) {
+      this.showModalarea1 = false
+    },
+    closeHbModal (e) {
+      this.showModalarea1 = false
+      this.showSuccessModal = false
+    },
+    toStore (e) {
+      wepy.navigateTo({url: `/${Config.Router.store}?wid=${this.retailerInfo.uid}`})
+    },
+    toStoreMark (e) {
+      wepy.reLaunch({url: Config.HomePage})
+    },
+    copyTxt () {
+      wepy.setClipboardData({
+        data: this.product.title
+      })
+    },
+    getProductCard () {
+      if (!this.options.custom_params) {
+        if ((!this.userInfo.regwid || !this.userInfo.bindstatus) && (!this.options.share_uid || this.options.shareuser !== 'self')) {
+          this.showCardTip = true
+          return false
+        }
+      }
+      if (this.options.share_wid && this.options.shareuser === 'self') {
+        if (this.isIng) return false
+        wepy.showLoading()
+        this.showCardModal = false
+        this.showCardModal1 = false
+        this.showCardModal2 = false
+        this.isIng = true
+        // 合伙人创建的优惠券
+        wepy.request({
+          url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/card/getRetailerCard`,
+          data: {id: this.product.cardinfo.id},
+          method: 'post'
+        }).then(res => {
+          wepy.hideLoading()
+          this.isIng = false
+          const data = res.data
+          wepy.showToast({
+            title: data.error,
+            icon: 'none'
+          })
+        })
+      } else {
+        this.showCardModal = false
+        this.showCardModal1 = false
+        this.showCardModal2 = false
+        this.showSellerModal = true
+        this.$apply()
+      }
+    },
+    closeSellerEvent () {
+      this.showSellerModal = false
+      this.$apply()
+    },
+    getCard (flag) {
+      console.log('====用户去领取优惠券=====')
+      let iscontinue = false
+      if (this.options.custom_params) {
+        iscontinue = true
+      } else {
+        if (this.userInfo.regwid && this.userInfo.bindstatus) {
+          iscontinue = true
+        } else if (this.options.share_uid && this.options.shareuser === 'self') {
+          iscontinue = true
+        }
+      }
+      if (!iscontinue) {
+        this.showCardTip = true
+        return false
+      }
+      if (flag) {
+        this.showHead = false
+      } else {
+        this.showHead = true
+      }
+      this.showCardModal1 = true
+      this.$apply()
+    },
+    closeCardModal (e) {
+      this.showCardModal = false
+      this.showCardModal1 = false
+      this.showCardModal2 = false
+      this.$apply()
+    },
+    recive (e) {
+      const dataset = e.currentTarget.dataset
+      const card = dataset.data
+      const index = dataset.index
+      if (!card.leftcount || card.leftcount === '0' || card.leftcount <= 0 || card.isreceived) return false
+      wepy.request({
+        url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/card/getCard`,
+        data: {id: card.id},
+        method: 'post'
+      }).then(res => {
+        const data = res.data
+        if (data.flag) {
+          wepy.showToast({
+            title: data.error,
+            icon: 'none'
+          })
+          // 礼品领取成功通知
+          Util.checkTmpMsg({
+            systeminfo: this.globalData.systemInfo,
+            tmplIds: [this.globalData.Templates.card_receive],
+            callback: () => {
+              this.cardList[index].txt = '领取成功'
+            }
+          })
+        } else {
+          this.cardList[index].isreceived = true
+          this.cardList[index].txt = '领取失败'
+          wepy.showToast({
+            title: data.error,
+            icon: 'none'
+          })
+        }
+        this.$apply()
+      })
+    },
+    retailerBuy () {
+      this.showRetailerModal = true
+      this.$apply()
+    },
+    clickMobile () {
+      wepy.makePhoneCall({
+        phoneNumber: this.sellerUser.mobile
+      })
+    },
+    copyWechat () {
+      wepy.setClipboardData({
+        data: `${this.sellerUser.weixinaccount}`
+      })
+    }
+  }
+  handleNewAdd () {
+    if (this.query.newadd) {
+      setTimeout(function () {
+        this.showShareTip = false
+      }, 10000)
+    }
+  }
+  cutDown (item, interval) {
+    interval = setInterval(() => {
+      let h = parseInt(item.lefthour)
+      let m = parseInt(item.leftminute)
+      let s = parseInt(item.leftsecond)
+      if (s > 0) {
+        s--
+        if (s < 10) {
+          item.leftsecond = '0' + s
+        } else {
+          item.leftsecond = s
+        }
+      } else if (m > 0) {
+        m--
+        if (m < 10) {
+          item.leftminute = '0' + m
+        } else {
+          item.leftminute = m
+        }
+        item.leftsecond = '59'
+      } else if (h > 0) {
+        h--
+        if (h < 10) {
+          item.lefthour = '0' + h
+        } else {
+          item.lefthour = h
+        }
+        item.leftminute = '59'
+        item.leftsecond = '59'
+      }
+      if (h === 0 && m === 0 && s === 0) {
+        clearInterval(interval)
+      }
+      this.$apply()
+    }, 1000)
+  }
+  async addShop (params) {
+    this.genOrder = true
+    wepy.showLoading()
+    if (this.query.wechatorderid) {
+      params.wechatorderid = this.query.wechatorderid
+    }
+    if (this.product.options.length && this.selectedOption && this.selectedOption.id) {
+      params.poid = this.selectedOption.id
+    }
+    if (this.options.room_id) {
+      params.liveid = this.options.room_id
+    } else if (this.options.lid) {
+      params.liveid = this.options.lid
+    }
+    let postData = {...params, wid: this.globalData.Wid, external: 1, sessionkey: `factory_${this.userInfo.uid}`, gxkuid: this.userInfo.gxkuid, module: this.module, fid: this.Fid}
+    postData.id = this.product.moduleid
+    const res = await wepy.request({
+      // url: `${Config.GxkApi}/api/order/sessionAddShop`,
+      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/order/addShop`,
+      data: postData,
+      method: 'POST'
+    })
+    const data = res.data
+    wepy.hideLoading()
+    if (data.flag === 1) {
+      let url = `/pages/addOrder?wid=${this.globalData.Wid}&shop_id=${data.data}&fromfid=${this.Fid}`
+      if (this.product.agentfid) {
+        url = `${url}&agentfid=${this.product.agentfid}`
+      }
+      if (this.options.lid) {
+        url = `${url}&liveid=${this.options.lid}`
+      }
+      if (this.clickBuytype) {
+        url = `${url}&clickBuytype=${this.clickBuytype}`
+      }
+      wepy.navigateTo({url: url})
+    } else {
+      wepy.showToast({
+        title: data.error,
+        icon: 'none'
+      })
+      this.buyIng = false
+    }
+    this.genOrder = false
+  }
+  getCowerUser () {
+    if (this.activityInfo && this.activityInfo.id && this.activityInfo.type === 'groupbuy') {
+      wepy.request({url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/activity/crowdUser`, data: { id: this.activityInfo.id }})
+      .then(res => {
+        const data = res.data.data
+        for (let i = 0; i < data.length; i++) {
+          let d = data[i]
+          let lefttime = d.lefttime
+          d.lefthour = lefttime.hour
+          d.leftminute = lefttime.minute
+          d.leftsecond = lefttime.second
+          d.interval = null
+          this.cutDown(d, d.interval)
+        }
+        this.activity = data
+        this.$apply()
+      })
+    }
+  }
+
+  getData () {
+    let shareParams = Util.getShareParams(this.query)
+    // let params = {...shareParams, id: this.query.id, wid: this.globalData.Wid}
+    let params = {...shareParams, id: this.query.id, module: 'product', addviews: 1}
+    console.log('加载商品信息')
+    console.log(this.query)
+    if (this.module === 'factoryproduct') {
+      params.fid = this.Fid
+    }
+    if (this.options.type) {
+      params.type = this.options.type
+    } else {
+      params.type = 'others'
+    }
+    this.productType = params.type
+    if (this.inHide) return false
+    Cached.queueRequest({
+      // url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/factory/newfpInfo`,
+      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/content/info`,
+      data: params
+    }, `product.list.${params.id}`, Config.URT.H,
+    () => true,
+    cacheData => {
+      this.processData(cacheData.data)
+    },
+    res => {
+      const data = res.data
+      if (data.code === 0) {
+        let retdata = data.data
+        retdata.isshow = retdata.moderate
+        if (retdata.jd_price && retdata.jd_price !== '' && parseFloat(retdata.jd_price.replace(/,/g, '')) > 0) {
+          retdata.showJdPrice = true
+        } else {
+          retdata.showJdPrice = false
+        }
+        if (retdata.tb_price && retdata.tb_price !== '' && parseFloat(retdata.tb_price.replace(/,/g, '')) > 0) {
+          retdata.showTbPrice = true
+        } else {
+          retdata.showTbPrice = false
+        }
+        if (retdata.content && retdata.content !== '') {
+          retdata.content = retdata.content.replace(/<br \/>/g, '\n').replace(/<br\/>/g, '\n').replace(/<br>/g, '\n')
+        }
+        if (retdata.deliverdesc && retdata.deliverdesc !== '') {
+          retdata.deliverdesc_json = JSON.parse(retdata.deliverdesc)
+        }
+        this.processData(retdata)
+        this.$apply()
+        return { data: this.product }
+      }
+    })
+  }
+  getCardListData () {
+    let params = {fpid: this.product.moduleid, fid: this.Fid, pagestart: this.pageStart1, limit: this.limit}
+    // 厂家创建的优惠券
+    wepy.request({
+      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/card/factoryCardList`,
+      data: params,
+      method: 'post'
+    }).then(res => {
+      const data = res.data
+      if (data.flag) {
+        let retdata = data.data ? data.data : data
+        for (var i = 0; i < retdata.length; i++) {
+          retdata[i].txt = '立即领取'
+          retdata[i].starttime_str = new Time(retdata[i].starttime * 1000).dateFormat('yyyy-MM-dd hh:mm')
+          retdata[i].endtime_str = new Time(retdata[i].endtime * 1000).dateFormat('yyyy-MM-dd hh:mm')
+        }
+        if (retdata.length) {
+          if (this.options.custom_params) {
+            let str = `card-${this.product.id}`
+            if (!wepy.getStorageSync(str) || wepy.getStorageSync(str) === '') {
+              this.showCardModal2 = true
+              wepy.setStorageSync(str, 1)
+            }
+          } else if (this.options.share_uid) {
+            this.showCardModal = true
+          }
+        }
+        this.cardList = this.cardList.concat(retdata)
+        this.$apply()
+      }
+    })
+  }
+  handleScrollPage () {
+    if (this.cardList.length === (this.pageStart1 + 1) * this.limit) {
+      this.pageStart1 ++
+      this.getCardListData()
+      this.$apply()
+    }
+  }
+  handleTimer () {
+    let offshelftime = this.product.offshelftime
+    if (offshelftime && offshelftime !== '') {
+      let now = parseInt((new Date().getTime()) / 1000)
+      let lefttime = offshelftime - now
+      if (lefttime > 0) {
+        let hour = Math.floor(lefttime / 60 / 60)
+        console.log('倒计时的hour', hour)
+        if (hour < 100) {
+          if (hour < 10) {
+            hour = `0${hour}`
+          }
+          let minute = Math.floor((lefttime - hour * 60 * 60) / 60)
+          if (minute < 10) {
+            minute = `0${minute}`
+          }
+          let second = lefttime - hour * 60 * 60 - minute * 60
+          if (second < 10) {
+            second = `0${second}`
+          }
+          this.product.lefthour = hour
+          this.product.leftminute = minute
+          this.product.leftsecond = second
+          this.product.interval = null
+          this.showTimer = true
+          this.cutDown(this.product, this.product.interval)
+        }
+      }
+      this.afterInfo = true
+    } else {
+      this.showTimer = false
+      this.afterInfo = true
+      this.$apply()
+    }
+  }
+  processData (product) {
+    this.product = {...this.product, ...product}
+    if (this.userInfo.regwid && this.userInfo.bindstatus && this.product.salesrebate) {
+      this.showZhuan = true
+    }
+    if (this.product.cardinfo && this.product.cardinfo.id) {
+      this.cardInfo = this.product.cardinfo
+    }
+    if (this.cardInfo && this.cardInfo.wid === this.Wid && this.cardInfo.wid !== this.userInfo.regwid) {
+      this.showCardInfo = true
+      this.showCardModal = true
+    } else {
+      this.showCardInfo = false
+    }
+    this.handleTimer()
+    if (!this.product.fromfid) {
+      // this.getCardListData()
+    }
+    this.productId = this.product.id
+    this.title = this.product.title
+    if (!this.inHide) {
+      wepy.setNavigationBarTitle({
+        title: this.product.title
+      })
+    }
+    if (this.product.options.length) {
+      this.selectedOption = {storage: this.product.storage, photo: this.product.options[0].photo}
+    }
+    let ptitle = this.product.title
+    if (ptitle.length > 8) {
+      ptitle = ptitle.substr(0, 6)
+      ptitle = `${ptitle}...`
+    }
+    this.menuTitle = ptitle
+    if (this.product.photo.indexOf(',') !== -1) {
+      this.photo = this.product.photo.split(',')[0]
+    } else {
+      this.photo = this.product.photo
+    }
+    if (this.product.video !== '') {
+      this.video = this.product.video
+    }
+    if (this.product.retailerinfo) {
+      this.retailerInfo = this.product.retailerinfo
+      const retailerParams = this.retailerInfo.params
+      if (this.product.awardnum && retailerParams && (retailerParams.joincard_open || retailerParams.joinhb_open)) {
+        this.showModalarea = true
+      } else {
+        this.showModalarea = false
+      }
+    }
+    if (this.product.activityinfo) {
+      this.activityInfo = { ...this.activityInfo, ...this.product.activityinfo }
+      this.activityInfo = this.product.activityinfo
+    }
+    this.handleNewAdd()
+    const photo = this.product.photo
+    if (photo && Util.trim(photo) !== '') {
+      this.images = photo.split(',')
+    }
+    if (this.images.length > 0) {
+      this.showGallery = true
+    }
+    const content = this.product.content
+    const contentPhoto = this.product.contentphoto
+    if ((!content || Util.trim(content) === '') && (!contentPhoto || Util.trim(contentPhoto) === '')) {
+      this.previewGallery = this.images
+    } else if (contentPhoto && Util.trim(contentPhoto) !== '') {
+      this.previewGallery = contentPhoto.split(',')
+    }
+  }
+  async handleShare () {
+    this.showPopup = false
+    this.$apply()
+    const lastshareuid = this.options.share_uid
+    let shareurl = `/${Config.Router.product}?id=${this.options.id}&type=${this.productType}&module=${this.module}&share_uid=${this.userInfo.uid}&share_wid=${this.globalData.Wid}&wid=${this.globalData.Wid}&comefrom=${Config.AppName}`
+    if (this.userInfo.regwid && this.userInfo.bindstatus === 1) {
+      shareurl = `${shareurl}&shareuser=self`
+    }
+    if (this.options.wechatorderid && this.options.iswechat) {
+      shareurl = `${shareurl}&wechatorderid=${this.options.wechatorderid}`
+    }
+    if (lastshareuid) {
+      shareurl = `${shareurl}&lastshareuid=${lastshareuid}`
+    }
+    let backUrl = encodeURIComponent(shareurl)
+    shareurl = `${shareurl}&currentUrl=${backUrl}`
+    let shareTitle = this.product.title
+    if (this.product.activityid && this.product.activityinfo.type === 'groupbuy') {
+      shareTitle = `团购: ${shareTitle}`
+    }
+    let imageUrl = this.product.photo.split(',')[0]
+    shareurl = `${shareurl}&title=${this.product.title}&photo=${imageUrl}&price=${this.product.price}&sellingpoint=${this.product.sellingpoint}&activityid=${this.product.activityid}&storage=${this.product.storage}`
+    imageUrl = await this.drawShareImg(imageUrl)
+    console.log('========商品分享的图片路径=========')
+    console.log(imageUrl)
+    this.shareParams = {
+      title: shareTitle,
+      imageUrl: imageUrl,
+      path: shareurl
+    }
+  }
+  async onShareAppMessage (res) {
+    await this.handleShare()
+    console.log('==========进入到了分享方法=========')
+    console.log(this.shareParams)
+    console.log(this.shareParams.imageUrl)
+    return this.shareParams
+  }
+  async onShareTimeline () {
+    this.handleShare()
+    return this.shareParams
+  }
+  async drawShareImg (imgUrl) {
+    let canvasW = 210
+    let canvasH = 168
+    return new Promise((resolve) => {
+      wx.getImageInfo({
+        src: imgUrl, // 原图路径
+        success: (res) => {
+          let ctx = wx.createCanvasContext('photoCanvas')
+          let imgW = res.width
+          let imgH = res.height
+          let rawRateW = Number(imgW / canvasW).toFixed(2)
+          let rawRateH = Number(imgH / canvasH).toFixed(2)
+          let sx = 0
+          let sy = 0
+          let dx = 0
+          let dy = 0
+          let sWidth = 0
+          let sHeight = 0
+          let dWidth = canvasW
+          let dHeight = canvasH
+          let rCentralPointX = imgW / 2
+          let rCentralPointY = imgH / 2
+          if ((rawRateW >= 1 && rawRateH >= 1) || (rawRateW <= 1 && rawRateH <= 1)) { // 常规比例(按x方向比例缩放)
+            sWidth = Math.floor(canvasW * rawRateW)
+            sHeight = Math.floor(canvasH * rawRateW)
+            let sHalfWidth = sWidth / 2
+            let sHalfHeight = sHeight / 2
+            sx = rCentralPointX - sHalfWidth
+            sy = rCentralPointY - sHalfHeight
+            sy = sy > 0 ? sy : 0
+          } else if (rawRateW <= 1 && rawRateH >= 1) { // 纵向长条状
+            sWidth = imgW
+            sHeight = Math.floor(imgH * 4 / 5)
+            let sHalfWidth = sWidth / 2
+            let sHalfHeight = sHeight / 2
+            sx = rCentralPointX - sHalfWidth
+            sy = rCentralPointY - sHalfHeight
+            sy = sy > 0 ? sy : 0
+          } else if (rawRateW >= 1 && rawRateH <= 1) { // 横向长条状
+            sHeight = imgH
+            sWidth = Math.floor(imgH * 5 / 4)
+            let sHalfWidth = sWidth / 2
+            let sHalfHeight = sHeight / 2
+            sx = rCentralPointX - sHalfWidth
+            sy = rCentralPointY - sHalfHeight
+            sy = sy > 0 ? sy : 0
+          }
+          ctx.fillStyle = '#fff'
+          ctx.fillRect(0, 0, canvasW, canvasH)
+          // 宽度从中间向两边填充
+          ctx.drawImage(res.path, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight)
+          let txtH = canvasH * 0.18
+          let txtTop = canvasH * 0.82
+          let txtLeftW = canvasW * 0.5
+          let txtLeft = canvasW * 0.02
+          let r = txtH * 0.2
+          if (this.afterInfo && this.showTimer) {
+            let txtTop1 = txtTop + r / 2
+            let txtH1 = canvasH - txtTop1
+            ctx.setFillStyle('#feca59')
+            ctx.fillRect(0, txtTop1, canvasW, txtH1)
+            let txtSize2 = 12
+            let txtW2 = canvasW * 0.45
+            ctx.font = `bold ${txtSize2}px`
+            ctx.setFontSize(txtSize2)
+            ctx.setFillStyle('#ffffff')
+            ctx.setTextAlign('right')
+            let txt = `距截团 ${this.product.lefthour}:${this.product.leftminute}:${this.product.leftsecond}`
+            ctx.fillText(txt, canvasW - txtLeft, txtTop1 + txtH1 / 2 + txtSize2 / 2, txtW2)
+            ctx.save()
+            ctx.restore()
+          }
+          ctx.beginPath()
+          ctx.setStrokeStyle(this.themeObject.themeColor)
+          ctx.setLineWidth(4)
+          ctx.moveTo(0, txtTop)
+          ctx.lineTo(txtLeftW - 2 * r, txtTop)
+          ctx.arcTo(txtLeftW - r, txtTop, txtLeftW, txtTop + r, 2 * r) // 创建弧
+          ctx.lineTo(txtLeftW + r, canvasH) // 创建垂直线
+          ctx.lineTo(0, canvasH)
+          ctx.stroke()
+          ctx.setFillStyle(this.themeObject.themeColor)
+          ctx.fill()
+          ctx.closePath()
+          ctx.save()
+          ctx.restore()
+
+          let txtSize = 12
+          let txtSize1 = 14
+          let txtW = txtSize
+          ctx.font = `bold ${txtSize}px`
+          ctx.setFontSize(txtSize)
+          ctx.setFillStyle('#ffffff')
+          ctx.setTextAlign('left')
+          ctx.fillText('￥', txtLeft, txtTop + txtH / 2 + txtSize1 / 3.5, txtW)
+          ctx.save()
+          ctx.restore()
+          ctx.font = `bold ${txtSize1}px`
+          ctx.setFontSize(txtSize1)
+          ctx.setFillStyle('#ffffff')
+          ctx.setTextAlign('left')
+          let disprice = this.product.price
+          if (this.product.minprice && this.product.maxprice && this.product.minprice !== '' && this.product.maxprice !== '' && this.product.minprice !== this.product.maxprice) {
+            disprice = `${this.product.minprice}-${this.product.maxprice}`
+          } else if (this.product.minprice && this.product.minprice !== '') {
+            disprice = this.product.minprice
+          }
+          ctx.fillText(disprice, txtLeft + txtW, txtTop + txtH / 2 + txtSize1 / 3, canvasW - txtW - txtLeft * 2)
+          ctx.save()
+          ctx.restore()
+          ctx.draw(false, () => {
+            wx.canvasToTempFilePath({
+              width: canvasW,
+              height: canvasH,
+              destWidth: 750, // 标准的iphone6尺寸的两倍，生成高清图
+              destHeight: 600,
+              canvasId: 'photoCanvas',
+              fileType: 'jpg',  // 注意jpg默认背景为透明
+              success: (res) => {
+                // 设置分享图片路径
+                console.log('=====promise 返回的图片路径=======')
+                console.log(res.tempFilePath)
+                resolve(res.tempFilePath)
+              }
+            })
+          })
+        }
+      })
+    })
+  }
+  async _drawShareImg (imgUrl) {
+    console.log('&&&&&&&&&&&&&&&进入到了drawShareImg')
+    let canvasW = 210
+    let canvasH = 168
+    return new Promise((resolve) => {
+      wx.getImageInfo({
+        src: imgUrl, // 原图路径
+        success: (res) => {
+          let ctx = wx.createCanvasContext('photoCanvas')
+          let imgW = res.width
+          let imgH = res.height
+          console.log(`商品图片的宽度=${imgW}  商品图片的高度= ${imgH}`)
+          console.log(`画布的宽度=${canvasW}  画布的高度= ${canvasH}`)
+          // 为画框设置背景色，注意要放在画图前，图会覆盖在背景色上
+          ctx.fillStyle = '#fff'
+          ctx.fillRect(0, 0, canvasW, canvasH)
+          // 宽度从中间向两边填充
+          ctx.drawImage(res.path, 0, 0, canvasW, canvasH)
+          let txtH = canvasH * 0.18
+          let txtTop = canvasH * 0.82
+          let txtLeftW = canvasW * 0.5
+          let txtLeft = canvasW * 0.02
+          let r = txtH * 0.2
+          if (this.afterInfo && this.showTimer) {
+            let txtTop1 = txtTop + r / 2
+            let txtH1 = canvasH - txtTop1
+            ctx.setFillStyle('#feca59')
+            ctx.fillRect(0, txtTop1, canvasW, txtH1)
+            let txtSize2 = 12
+            let txtW2 = canvasW * 0.45
+            ctx.font = `bold ${txtSize2}px`
+            ctx.setFontSize(txtSize2)
+            ctx.setFillStyle('#ffffff')
+            ctx.setTextAlign('right')
+            let txt = `距截团 ${this.product.lefthour}:${this.product.leftminute}:${this.product.leftsecond}`
+            ctx.fillText(txt, canvasW - txtLeft, txtTop1 + txtH1 / 2 + txtSize2 / 2, txtW2)
+            ctx.save()
+            ctx.restore()
+          }
+          ctx.beginPath()
+          ctx.setStrokeStyle(this.themeObject.themeColor)
+          ctx.setLineWidth(4)
+          ctx.moveTo(0, txtTop)
+          ctx.lineTo(txtLeftW - 2 * r, txtTop)
+          ctx.arcTo(txtLeftW - r, txtTop, txtLeftW, txtTop + r, 2 * r) // 创建弧
+          ctx.lineTo(txtLeftW + r, canvasH) // 创建垂直线
+          ctx.lineTo(0, canvasH)
+          ctx.stroke()
+          ctx.setFillStyle(this.themeObject.themeColor)
+          ctx.fill()
+          ctx.closePath()
+          ctx.save()
+          ctx.restore()
+
+          let txtSize = 12
+          let txtSize1 = 14
+          let txtW = txtSize
+          ctx.font = `bold ${txtSize}px`
+          ctx.setFontSize(txtSize)
+          ctx.setFillStyle('#ffffff')
+          ctx.setTextAlign('left')
+          ctx.fillText('￥', txtLeft, txtTop + txtH / 2 + txtSize1 / 3.5, txtW)
+          ctx.save()
+          ctx.restore()
+          ctx.font = `bold ${txtSize1}px`
+          ctx.setFontSize(txtSize1)
+          ctx.setFillStyle('#ffffff')
+          ctx.setTextAlign('left')
+          let disprice = this.product.price
+          if (this.product.minprice && this.product.maxprice && this.product.minprice !== '' && this.product.maxprice !== '' && this.product.minprice !== this.product.maxprice) {
+            disprice = `${this.product.minprice}-${this.product.maxprice}`
+          } else if (this.product.minprice && this.product.minprice !== '') {
+            disprice = this.product.minprice
+          }
+          ctx.fillText(disprice, txtLeft + txtW, txtTop + txtH / 2 + txtSize1 / 3, canvasW - txtW - txtLeft * 2)
+          ctx.save()
+          ctx.restore()
+          ctx.draw(false, () => {
+            wx.canvasToTempFilePath({
+              width: canvasW,
+              height: canvasH,
+              destWidth: 750, // 标准的iphone6尺寸的两倍，生成高清图
+              destHeight: 600,
+              canvasId: 'photoCanvas',
+              fileType: 'jpg',  // 注意jpg默认背景为透明
+              success: (res) => {
+                // 设置分享图片路径
+                console.log('=====promise 返回的图片路径=======')
+                console.log(res.tempFilePath)
+                resolve(res.tempFilePath)
+              }
+            })
+          })
+        }
+      })
+    })
+  }
+
+  // 利用父级页面缓存数据快速加载
+  usePrevCache (options) {
+    let storageProduct = wepy.getStorageSync('selectedProduct')
+    let storageActivity = wepy.getStorageSync('selectedActivity')
+    if (options.select === 'product' && storageProduct && storageProduct.id === parseInt(options.id)) {
+      this.fromNavPage = true
+      this.product = storageProduct
+      this.images = [this.product.photo]
+    } else if (options.select === 'activity' && storageActivity) {
+      this.fromNavPage = true
+      this.activityInfo = storageActivity
+      this.product = {
+        title: this.activityInfo.title,
+        price: this.activityInfo.price,
+        activityid: this.activityInfo.id,
+        storage: 1,
+        moderate: this.activityInfo.moderate
+      }
+      this.images = [this.activityInfo.photo]
+    } else if (options.select === 'history' && storageProduct && storageProduct.id === parseInt(options.id)) {
+      this.fromNavPage = true
+      const product = storageProduct
+      this.product = {
+        title: product.title
+      }
+      this.images = [product.photo]
+    }
+    this.$apply()
+  }
+
+  // 利用分享链接缓存数据快速加载
+  useSharedCache (options) {
+    if (options.share_uid) {
+      this.fromNavPage = true
+      this.product = {
+        title: options.title,
+        price: options.price,
+        sellingpoint: options.sellingpoint,
+        activityid: options.activityid,
+        storage: options.storage
+      }
+      this.images = [options.photo]
+    }
+  }
+  onUnload () {
+    this.inHide = true
+    this.afterProduct = false
+    this.showTimer = false
+  }
+  onHide () {
+    this.inHide = true
+    this.afterProduct = false
+    this.product.interval = null
+    clearInterval(this.product.interval)
+    this.showTimer = false
+  }
+  handleShowData () {
+    if (this.inHide) {
+      this.inHide = false
+      this.getSeller()
+      if (!this.product || !this.product.id) {
+        this.getData()
+      }
+    }
+  }
+  getGlobalData () {
+    this.globalData = this.$parent.globalData
+    if (this.globalData.OpenCart) {
+      this.openCart = true
+    }
+    this.userInfo = this.globalData.userInfo
+    this.Wid = this.globalData.Wid
+    this.cartCount = this.userInfo.cartcount
+    this.$apply()
+  }
+  onShow () {
+    this.buyIng = false
+    if (!this.afterProduct && this.product.id) {
+      this.product.interval = null
+      clearInterval(this.product.interval)
+      this.handleTimer(this.product, this.product.interval)
+    }
+    if (this.$parent.globalData.flag.bokaAuth) {
+      this.getGlobalData()
+      this.handleShowData()
+    } else {
+      this.$parent.showCallback = () => {
+        this.getGlobalData()
+        this.handleShowData()
+      }
+    }
+  }
+  async onLoad (options) {
+    this.fromPage = options.from
+    this.inHide = false
+    this.menuTitle = Config.AppName
+    clearInterval(this.product.interval)
+    this.useSharedCache(options)
+    this.usePrevCache(options)
+    wepy.getSystemInfo().then(res => {
+      this.systemInfo = res
+      if (res.model.indexOf('iPhone') > -1 || res.system.indexOf('iOS') > -1) {
+        this.isIOS = true
+      } else {
+        this.isIOS = false
+      }
+      if (res.model.substring(0, res.model.indexOf('X')) + 'X' === 'iPhone X') {
+        this.isIpx = true
+      }
+      this.$apply()
+    })
+    // 处理通过二维码进入的场景
+    if (this.$parent.globalData.preloadData) {
+      this.product = this.$parent.globalData.preloadData
+    }
+    if (options.custom_params) {
+      let customParams = decodeURIComponent(decodeURIComponent(options.custom_params))
+      customParams = JSON.parse(customParams)
+      for (let key in customParams) {
+        options[key] = customParams[key]
+      }
+      options.type = 'fpimport'
+    }
+    if (options.scene) {
+      let sceneOptions = Util.queryScene(options.scene)
+      options = {...options, ...sceneOptions}
+    }
+    this.query = options
+    this.options = options
+    console.log('=============商品详情页的options信息==================')
+    console.log(this.options)
+    this.pageurl = Util.objectToUrl('/pages/product', this.options)
+    if (this.options.module && this.options.module !== '') {
+      this.module = this.options.module
+    }
+    this.showTip = false
+    if (this.options.id) {
+      this.product.id = this.options.id
+    }
+    if (this.options.iswechat) {
+      this.showTip = true
+    }
+    wepy.showShareMenu({
+      withShareTicket: true
+    })
+    if (this.$parent.globalData.flag.bokaAuth) {
+      this.handlePageData()
+    } else {
+      this.$parent.loadCallback = () => {
+        this.handlePageData()
+      }
+    }
+  }
+
+  handlePageData () {
+    if (this.options.share_wid) {
+      this.$parent.globalData.ShareWid = parseInt(this.options.share_wid)
+    }
+    this.globalData = this.$parent.globalData
+    let saveMoneyMode = this.globalData.SystemParams.SaveMoneyMode
+    this.saveMoneyMode = saveMoneyMode ? parseInt(saveMoneyMode) : false
+    if (this.globalData.OpenCart) {
+      this.openCart = true
+    }
+    this.Wid = this.globalData.Wid
+    Util.appInit(this.globalData, this)
+    this.userInfo = this.globalData.userInfo
+    this.cartCount = this.userInfo.cartcount
+    this.factoryInfo = this.globalData.FactoryInfo
+    let SystemParams = this.globalData.SystemParams
+    this.SystemParams = SystemParams
+    if (SystemParams.OnlyRetailerBuy === '0' || SystemParams.OnlyRetailerBuy === 0) {
+      this.OnlyRetailerBuy = false
+    } else {
+      this.OnlyRetailerBuy = true
+    }
+    this.afterSys = true
+    if (SystemParams.OrderType === '10' || SystemParams.OrderType === 10) {
+      this.showRebate = true
+    } else {
+      this.showRebate = false
+    }
+    if (this.options.wid) {
+      if (this.options.scene && (!this.userInfo.regwid || !this.userInfo.bindstatus)) {
+        this.globalData.Wid = this.options.wid
+        this.$parent.globalData.Wid = this.options.wid
+      }
+    }
+    if (this.userInfo.fid === this.Fid) {
+      this.isAdmin = true
+    } else if (this.AdminUids[this.Fid]) {
+      let curArr = this.AdminUids[this.Fid]
+      for (let i in curArr) {
+        if (curArr[i] === this.userInfo.regwid) {
+          this.isAdmin = true
+          break
+        }
+      }
+    }
+    this.disAdmin = true
+    this.getSeller()
+    this.getData()
+  }
+}
+</script>

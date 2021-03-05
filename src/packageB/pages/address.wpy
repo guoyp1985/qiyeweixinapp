@@ -1,0 +1,363 @@
+<style lang="less">
+.address-search-outter{
+  width: 100%;height: 100rpx;padding:10rpx 20rpx;box-sizing:border-box;
+  background-color: white;display: flex;flex-direction: column;align-items: center;justify-content: center;
+  position:fixed;left:0;top:0;right:0;z-index:1;
+  .search-inner{width: 100%;display:flex; align-items: center;background-color: #f2f3f2;border-radius: 45px;height:70%;}
+  .search-input{
+    width: 85%;
+    box-sizing: border-box;
+    font-size: 30rpx;
+    margin: 0 20rpx;
+  }
+}
+.address-page{
+  padding-top:100rpx;
+  .top-gap {
+    margin-top: 20px;
+  }
+  .address-item {
+    padding: 5px 15px;
+  }
+  .flex-box {
+    display: flex;
+  }
+  .check-cell {
+    display: flex;
+    align-items: center;
+  }
+  .content-cell {
+    flex: 1;
+    padding:10px 10px 20px 0px;
+  }
+  .link-cell {
+    position: relative;
+    text-align: right;
+    color: #999;
+  }
+  .radio_check button{border:none;color:#999;height:45px;}
+  .radio_check button-hover{color:#999;}
+  .circle-icon{width:20px;height:20px;border:#ccc 2rpx solid;background-color:#fff;box-sizing:border-box;border-radius:50%;}
+  .blank-area{width:100%;height:100rpx;}
+  .blank-area.iphone{width:100%;height:180rpx;}
+}
+.address-bottom-outer.iphone{padding-bottom:68rpx;}
+.address-bottom-outer{
+  width:100%;position:fixed;left:0;bottom:0;z-index:10;background-color:#fff;
+  .address-bottom-area{
+    width: 100%;height:90rpx;display:block;
+  }
+}
+</style>
+<template>
+  <view class="address-search-outter b_bottom_after" wx:if="{{items.length || disSearch}}">
+    <view class="search-inner">
+      <input class="search-input" type="text" placeholder="请输入姓名或电话" bindinput="setKeyword" value="{{keyword}}" bindconfirm="searchKeyword" confirm-type="search" />
+      <view wx:if="{{keyword}}" class="flex_center color-gray font12" bindtap="cancelSearch">取消</view>
+      <view wx:else class="flex_center color-gray font12"><text class="al al-sousuo font20"></text></view>
+    </view>
+  </view>
+  <view class="address-page">
+    <block wx:if="{{disList}}">
+      <view wx:if="{{!items.length}}" class="flex_empty">
+        <block wx:if="{{afterSearch}}">暂无搜索结果</block>
+        <block wx:else>暂无数据</block>
+      </view>
+      <block wx:else>
+        <repeat for="{{items}}" index="index" item="item">
+          <view class="radio_check bg-white mb10 list-shadow b_top_after b_bottom_after pl10" @tap="tapItem({{item}})">
+            <view class="pl10 pr10 pt15 pb15 b_bottom_after">
+              <view class="flex_left w_100">
+                <view class="w_100">
+                  <view class="font16">{{item.linkman}} {{item.telephone}}</view>
+                  <view class="color-gray">{{item.fulladdress}}</view>
+                </view>
+              </view>
+            </view>
+            <view class="flex_left pl10 pr10">
+              <view class="flex_left color-gray" @tap.stop="setDefault({{item}})">
+                <icon type="success" size="20" wx:if="{{item.isdefault === 1}}"></icon>
+                <view class="circle-icon" wx:else></view>
+                <view class="ml5">默认地址</view>
+              </view>
+              <view class="flex_cell flex_right">
+                <button @tap.stop="onDetails" plain class="flex_center pl10 pr10" data-index="{{index}}">
+                  <text class="al al-yijianfankui font22 v_middle pr5"></text>编辑
+                </button>
+                <button data-data="{{item}}" data-index="{{index}}" @tap.stop='onDelete' plain class="flex_center pl10 pr10 color-theme" style="{{themeObject.colorStyle}}">
+                  <text class="al al-neirongguanli_shanchu font18 v_middle pr5"></text>删除
+                </button>
+              </view>
+            </view>
+          </view>
+        </repeat>
+      </block>
+    </block>
+    <view class="load-end-area loading" wx:if="{{isLoading}}"></view>
+    <view class="load-end-area done" wx:elif="{{isDone && items.length}}"></view>
+    <view :class="{'iphone' : isIpx}" class="blank-area"></view>
+  </view>
+  <view :class="{'iphone': isIpx}" class="address-bottom-outer">
+    <form class="address-bottom-area" bindsubmit="newAddress" bindreset="useWxAddress" report-submit='true'>
+      <view class="w_100 h_100 flex_center">
+        <button class="flex_cell h_100 flex_center font18 color-white" form-type="submit" style="{{themeObject.bgStyle}}">新建地址</button>
+        <button class="flex_cell h_100 flex_center font18 color-white bg-orange" form-type="reset">使用微信地址</button>
+      </view>
+    </form>
+  </view>
+</template>
+<script>
+import wepy from 'wepy'
+import 'wepy-async-function'
+import Util from '@/libs/util'
+import Config from '@/config'
+
+export default class Address extends wepy.page {
+  config = {
+    enablePullDownRefresh: true,
+    backgroundTextStyle: 'dark'
+  }
+
+  addressFormat (value, item) {
+    return `${item.province}${item.city}${item.counties} ${item.address}`
+  }
+
+  data = {
+    items: [],
+    inner: false,
+    top: 0,
+    options: {},
+    disList: false,
+    firstModal: true,
+    isIpx: false,
+    isLoading: false,
+    isDone: false,
+    keyword: '',
+    afterSearch: false,
+    disSearch: false,
+    themeObject: {}
+  }
+  refreshPage () {
+    this.disList = false
+    this.isLoading = false
+    this.isDone = false
+    this.pageStart = 0
+    this.items = []
+    this.getData()
+  }
+  onPullDownRefresh () {
+    this.refreshPage()
+    wepy.showNavigationBarLoading()
+    setTimeout(() => {
+      wepy.hideNavigationBarLoading()
+      wepy.stopPullDownRefresh()
+    }, 500)
+  }
+  onReachBottom () {
+    if (!this.isLoading) {
+      if (this.items.length === (this.pageStart + 1) * this.limit) {
+        this.pageStart++
+        this.isLoading = true
+        this.getData()
+      }
+    }
+  }
+  methods = {
+    setKeyword (e) {
+      this.keyword = e.detail.value
+    },
+    cancelSearch () {
+      this.keyword = ''
+      this.disList = false
+      this.items = []
+      this.pageStart = 0
+      this.afterSearch = false
+      this.disSearch = true
+      this.getData()
+    },
+    searchKeyword () {
+      this.disList = false
+      this.items = []
+      this.pageStart = 0
+      this.afterSearch = true
+      this.disSearch = true
+      this.getData()
+    },
+    tapItem (item) {
+      if (this.inner) {
+        this.$parent.globalData.address = item
+        wepy.navigateBack()
+      }
+    },
+    onDelete (e) {
+      const index = e.currentTarget.dataset.index
+      const item = this.items[index]
+      wepy.showModal({
+        title: '确定要删除吗？'
+      }).then(res => {
+        if (res.confirm) {
+          wepy.request({
+            url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/address/delete`,
+            data: {id: item.id},
+            method: 'POST'
+          }).then(res => {
+            const data = res.data
+            wepy.showToast({
+              title: data.error,
+              icon: 'none',
+              duration: Util.delay(data.error)
+            })
+            if (data.flag) {
+              this.items.splice(index, 1)
+              this.$parent.globalData.address = null
+              this.$apply()
+            }
+          })
+        }
+      })
+    },
+    onDetails (e) {
+      const index = e.currentTarget.dataset.index
+      const item = this.items[index]
+      this.$preload('preload', item)
+      this.$navigate('./newAddress')
+    },
+    setDefault (item) {
+      for (let i of this.items) {
+        i.isdefault = 0
+      }
+      Util.changeItem(this.items, item.id, i => {
+        i.isdefault = 1
+        return i
+      })
+      item.isdefault = 1
+      item.do = 'update'
+      wepy.request({
+        url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/address/add`,
+        data: item,
+        method: 'POST'
+      }).then(res => {
+        wepy.showToast({
+          title: '设置成功',
+          icon: 'none',
+          duration: 1000
+        })
+      })
+    },
+    newAddress (e) {
+      wepy.navigateTo({url: 'newAddress'})
+    },
+    useWxAddress (e) {
+      this.handleWxAddress()
+    }
+  }
+  handleWxAddress () {
+    wepy.chooseAddress().then(res => {
+      if (res) {
+        if (res.errMsg === 'chooseAddress:ok') {
+          let postData = {}
+          if (!this.items.length) {
+            postData.isdefault = 1
+          }
+          postData.province = res.provinceName
+          postData.city = (res.provinceName !== res.cityName) ? res.cityName : ''
+          postData.counties = res.countyName
+          postData.address = res.detailInfo
+          postData.linkman = res.userName
+          postData.telephone = res.telNumber
+          return wepy.request({
+            url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/address/add`,
+            data: postData,
+            method: 'post'
+          })
+        }
+      }
+    }).then(res => {
+      if (res) {
+        const data = res.data
+        if (data.flag) {
+          if (this.inner) {
+            this.$parent.globalData.address = data.data
+            this.$apply()
+            wepy.navigateBack()
+          } else {
+            this.items = [data.data].concat(this.items)
+            this.$apply()
+          }
+        }
+      }
+    })
+  }
+  getData () {
+    let params = {pagestart: this.pageStart, limit: this.limit}
+    if (this.keyword && Util.trim(this.keyword) !== '') {
+      params.keyword = this.keyword
+    }
+    wepy.request({
+      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/address/getList`,
+      data: params
+    }).then(res => {
+      const data = res.data
+      const retdata = data.data ? data.data : data
+      this.isLoading = false
+      this.items = this.items.concat(retdata)
+      if (this.items.length) {
+        this.disSearch = true
+      } else if (!this.afterSearch) {
+        this.disSearch = false
+      }
+      if (retdata.length < this.limit && this.items.length) {
+        this.isDone = true
+      } else {
+        this.isDone = false
+      }
+      this.disList = true
+      if (!this.items.length && this.firstModal && !this.afterSearch) {
+        this.firstModal = false
+        wepy.showModal({
+          title: '是否使用微信地址？'
+        }).then(res => {
+          if (res.confirm) {
+            this.handleWxAddress()
+          }
+        })
+      }
+      this.$apply()
+    })
+  }
+  onLoad (options) {
+    this.options = options
+    wepy.getSystemInfo().then(res => {
+      if (res.model.substring(0, res.model.indexOf('X')) + 'X' === 'iPhone X') {
+        this.isIpx = true
+      }
+      this.$apply()
+    })
+  }
+
+  onShow () {
+    if (this.options && this.options.mod === 'inner') {
+      this.inner = true
+    }
+    if (this.$parent.globalData.flag.bokaAuth) {
+      this.handlePageData()
+    } else {
+      this.$parent.loadCallback = () => {
+        this.handlePageData()
+      }
+    }
+  }
+
+  handlePageData () {
+    this.globalData = this.$parent.globalData
+    Util.appInit(this.globalData, this)
+    this.userInfo = this.globalData.userInfo
+    this.disList = false
+    this.items = []
+    this.pageStart = 0
+    this.limit = Config.Limit
+    this.getData()
+  }
+}
+
+</script>

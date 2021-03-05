@@ -1,0 +1,738 @@
+<style lang="less">
+.pay-success{
+  .message{
+    display:flex;flex-direction:column;justify-content:center; align-items:center;
+    width:100%;min-height: 300rpx;color:#fff;padding:40rpx 0;
+    background: linear-gradient(#F25D5D, #DB293E);
+  }
+  .message .icon-success{width: 100rpx;height:100rpx;border-radius:50%;background-color:#fff;margin-bottom:20rpx;}
+  .message .icon-success .al{font-size:70rpx;margin-top:6rpx;}
+  .btns{display:flex;flex-direction:row;justify-content:center;align-items:center;padding: 30rpx 0;}
+  .btns .btn{background-color:transparent;color:#fff;border-radius:20rpx;border:1rpx solid #fff;padding: 10rpx 20rpx;font-size:14px;line-height:1;}
+  .btns .btn-item:not(:last-child){margin-right:20px;}
+  .products .text-suggest{display:flex;flex-direction:row;width:100vw;height:100rpx;padding:0 20rpx;box-sizing:border-box;align-items:center;}
+  .products .text-suggest .blank{height:1px;flex:1;background-color:#d3d3d3;}
+  .products .text-suggest text{width:50%;height:100%;line-height:100rpx;text-align:center;}
+  .end-area{width:100%;height:100rpx;color:#ccc;display:flex;align-items:center;justify-content: center;}
+  .btn-area{
+    width:80%;height:90rpx;margin:20rpx auto;font-size:36rpx;
+    display:flex;justify-content:center; align-items:center;
+    color:#fff;
+    border-radius:60rpx;
+  }
+  .box-area{
+    width:100%;position:relative;z-index:1;margin-top:40rpx;
+    padding:0 20rpx;box-sizing: border-box;
+    .box-inner{
+      width:100%;background-color:#fff;border-radius:10rpx;
+      .title{padding:20rpx;font-size:32rpx;box-sizing: border-box;}
+    }
+  }
+  .top-pic{
+    padding:20rpx;box-sizing: border-box;
+    .pic-cell{
+      width:160rpx;height:160rpx;border-radius:50%;box-sizing: border-box;margin-right:10rpx;
+      image{width:100%;height:100%;border-radius:50%;}
+    }
+    .box-txt{
+      border:#ee5357 2rpx solid;color:#ee5357;border-radius:5rpx;margin-left:10rpx;
+      display:flex;justify-content: center;align-items: center;padding:4rpx 10rpx;
+    }
+  }
+  .app-box-area{margin-top:-40rpx;}
+  .list-item{
+    padding:20rpx;box-sizing: border-box;
+    .item{display:flex;justify-content: center;align-items: center;}
+    .item:not(:first-child){margin-top:20rpx;}
+  }
+}
+.order-canvas{
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background-color: #222;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  canvas{
+    width: 300px;
+    height: 500px;
+    margin: 0 auto;
+  }
+  .btn{
+    width: 100vw;
+    margin-top: 30rpx;
+    text-align: center;
+    button{
+      display: inline-block;
+      height: 80rpx;
+      line-height: 80rpx;
+      border-radius: 10rpx !important;
+      padding: 0 60rpx !important;
+    }
+    .save{
+      margin-left: 20rpx;
+    }
+  }
+}
+</style>
+<template>
+  <block wx:if="{{showArea1}}">
+    <view class="pay-success">
+      <view class="message" style="{{themeObject.linearBgStyle}}">
+        <view class="flex_center">
+          <view class="icon-success flex_center" style="margin-bottom:0;"><text style="{{themeObject.colorStyle}}" class="al al-duihao2 font30"></text></view>
+          <text class="color-white font20 ml10">支付成功</text>
+        </view>
+        <view class="btns mt10">
+          <view class="btn-item">
+            <view class="btn" data-url="/packageD/pages/userOrders" @tap="formSubmit">查看订单</view>
+          </view>
+          <view class="btn-item">
+            <view class="btn" data-url="/pages/own" data-urltype="relaunch" @tap="formSubmit">个人中心</view>
+          </view>
+          <view class="btn-item">
+            <view class="btn" data-url="/pages/index" data-urltype="relaunch" @tap="formSubmit">回到首页</view>
+          </view>
+        </view>
+      </view>
+      <view class="app-box-area">
+        <view class="box-inner list-item">
+          <view class="item" data-url="/packageD/pages/creditList" @tap="formSubmit">
+            <view class="flex_left pr10">
+              <text class="al al-jinbi font25 color-orange"></text>
+            </view>
+            <view class="flex_cell flex_left">
+              <view class="w_100">
+                <view class="font16">恭喜您获得{{creditCount}}个金币奖励！</view>
+                <view class="color-gray font12">金币可在下单时抵扣商品金额哦</view>
+              </view>
+            </view>
+            <view class="pl10 flex_right">
+              <view class="btn circle-btn" style="{{themeObject.bgStyle}}">立即查看</view>
+            </view>
+          </view>
+          <view class="item" @tap="toCreateOrder">
+            <view class="flex_left pr10">
+              <text class="al al-ziliao font25 color-red"></text>
+            </view>
+            <view class="flex_cell flex_left font16">生成下单回执，分享给朋友吧！</view>
+            <view class="pl10 flex_right">
+              <view class="btn circle-btn" style="{{themeObject.bgStyle}}">立即生成</view>
+            </view>
+          </view>
+        </view>
+      </view>
+      <view class="products pb10" wx:if="{{productData.length}}">
+        <view class="text-suggest">
+          <view class="blank"></view>
+          <text>你或许还喜欢这些宝贝</text>
+          <view class="blank"></view>
+        </view>
+        <view class="productlist squarepic">
+          <repeat for="{{productData}}" key="index" item="item">
+            <product :item="item" :globalData.sync="globalData" :isAdmin="isAdmin" navType="reLaunch"></product>
+          </repeat>
+        </view>
+        <view class="load-end-area loading" wx:if="{{isLoading}}"></view>
+        <view class="load-end-area done" wx:elif="{{isDone}}"></view>
+      </view>
+    </view>
+    <retailerWechat :userInfo.sync="userInfo" :retailerInfo.sync="retailerInfo" :module.sync="wechatModule" :themeObject.sync="themeObject"></retailerWechat>
+  </block>
+  <block wx:if="{{showArea2}}">
+    <view class="pay-success">
+      <view class="message" style="{{themeObject.linearBgStyle}}">
+        <view class="icon-success flex_center"><text style="{{themeObject.colorStyle}}" class="al al-duihao2"></text></view>
+        <view class="font20">订单提交成功</view>
+        <view class="font16 align_center mt20" wx:if="{{ordermoney && ordermoney != ''}}">
+          <text>订单金额: </text><text class="font20">￥{{ordermoney}}</text>
+        </view>
+        <view class="font16" wx:if="{{orderno && orderno != ''}}">订单号: {{orderno}}</view>
+      </view>
+      <view style="{{themeObject.colorStyle}}" class="padding20 align_center font18">通知卖家接单，享极速发货特权！</view>
+      <button open-type="share" class="btn-area" style="{{themeObject.linearBgStyle}}">通知卖家接单</button>
+      <view class="box-area">
+        <view class="box-inner">
+          <view class="flex_center color-gray pt10 pb10">没有卖家微信？添加卖家为好友！</view>
+          <view class="db-flex top-pic">
+            <view class="pic-cell flex_left">
+              <image mode="aspectFill" src="{{sellerUser.avatar}}"></image>
+            </view>
+            <view class="flex_cell flex_left">
+              <view class="w_100">
+                <view class="font16 bold">卖家: {{sellerUser.linkman}}</view>
+                <view class="mt5 font16 flex_left" wx:if="{{sellerUser.weixinaccount && sellerUser.weixinaccount != ''}}">
+                  <view>微信: {{sellerUser.weixinaccount}}</view>
+                  <view class="box-txt" @tap="copyWechat">复制微信号</view>
+                </view>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </block>
+  <block wx:if="{{showCanvas}}">
+    <view class="order-canvas" style="top:0px;" catchtouchmove="onTouchmove">
+      <canvas canvas-id="myOrderCanvas" style="width:{{myCanvasWidth}}px;height:{{myCanvasHeight}}px"></canvas>
+      <view class="btn">
+        <form  report-submit='true' bindsubmit="cancelCanvas">
+          <button class="cancel bg-white" form-type="submit">取消</button>
+        </form>
+        <form  report-submit='true' bindsubmit="saveImgEvent" wx:if="{{saveBtnShow}}">
+          <button class="save" style="{{themeObject.bgStyle}}" form-type="submit" >保存到相册</button>
+        </form>
+      </view>
+      <view class="btn flex_center color-white" wx:if="{{saveBtnShow}}">（保存回执发到群内通知群主接单）</view>
+    </view>
+  </block>
+</template>
+<script>
+  import Product from '@/components/store/product'
+  import RetailerWechat from '@/components/retailerWechat'
+  import Util from '@/libs/util'
+  import Time from '@/libs/time'
+  import Config from '@/config'
+  import wepy from 'wepy'
+  export default class extends wepy.page {
+    components = {
+      product: Product,
+      retailerWechat: RetailerWechat
+    }
+    data = {
+      options: {},
+      userInfo: {},
+      globalData: {},
+      retailerInfo: {},
+      productData: [],
+      retailerQrcodeShow: false,
+      retailerQrcode: '',
+      wid: 0,
+      activityData: [],
+      wechatModule: 'product',
+      isLoading: false,
+      isDone: false,
+      disProduct: false,
+      AdminUids: Config.AdminUids,
+      isAdmin: false,
+      showArea1: false,
+      showArea2: false,
+      sellerUser: {},
+      orderno: null,
+      ordermoney: '',
+      themeObject: {},
+      showCanvas: false,
+      myCanvasWidth: 0,
+      myCanvasHeight: 0,
+      saveBtnShow: false,
+      creditCount: 0
+    }
+    handlePageData () {
+      this.globalData = this.$parent.globalData
+      this.MiniInfo = this.globalData.MiniInfo
+      Util.appInit(this.globalData, this)
+      this.userInfo = this.globalData.userInfo
+      this.wid = this.globalData.Wid
+      if (this.globalData.SystemParams.OrderType === '10' || this.globalData.SystemParams.OrderType === 10) {
+        this.showArea1 = false
+        this.showArea2 = true
+        this.orderno = this.options.orderno
+        this.ordermoney = this.options.ordermoney
+        this.$apply()
+        if (!this.userInfo.regwid || !this.userInfo.bindstatus) {
+          wepy.request({
+            url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/retailer/info`,
+            data: {uid: this.globalData.Wid, appid: Config.AppId}
+          }).then(res => {
+            const data = res.data
+            if (data.flag) {
+              this.sellerUser = data.data
+            }
+            this.$apply()
+          })
+        } else {
+          this.sellerUser = this.userInfo
+        }
+      } else {
+        this.showArea2 = false
+        this.showArea1 = true
+        if (this.userInfo.fid === Config.Fid) {
+          this.isAdmin = true
+        } else if (this.AdminUids[Config.Fid]) {
+          let curArr = this.AdminUids[Config.Fid]
+          for (let i in curArr) {
+            if (curArr[i] === this.userInfo.regwid) {
+              this.isAdmin = true
+              break
+            }
+          }
+        }
+        this.getOrderData()
+        this.$apply()
+        if (!this.productData.length) {
+          this.getProduct()
+        }
+      }
+    }
+    onReachBottom () {
+      if (this.showArea1 && this.productData.length === this.limit * (this.pagestart + 1)) {
+        this.pagestart++
+        this.isLoading = true
+        this.getProduct()
+      }
+      this.$apply()
+    }
+    getProduct () {
+      wepy.request({
+        url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/factory/factoryproductList`,
+        data: {fid: Config.Fid, pagestart: this.pagestart, limit: this.limit},
+        method: 'post'
+      }).then(res => {
+        const data = res.data
+        const retdata = data.data ? data.data : data
+        if (retdata.length) {
+          this.productData = this.productData.concat(retdata)
+        }
+        this.isLoading = false
+        if (retdata.length < this.limit && this.productData.length) {
+          this.isDone = true
+        } else {
+          this.isDone = false
+        }
+        this.disProduct = true
+        this.$apply()
+      })
+    }
+    onLoad (options) {
+      this.options = options
+      this.limit = Config.Limit
+      this.pagestart = 0
+      if (this.$parent.globalData.flag.bokaAuth) {
+        this.handlePageData()
+      } else {
+        this.$parent.loadCallback = () => {
+          this.handlePageData()
+        }
+      }
+      this.$apply()
+    }
+    handleShare () {
+      const lastshareuid = this.options.share_uid
+      let shareurl = `/pages/index?share_uid=${this.userInfo.uid}&share_wid=${this.globalData.Wid}&wid=${this.globalData.Wid}&comefrom=${Config.AppName}`
+      if (lastshareuid) {
+        shareurl = `${shareurl}&lastshareuid=${lastshareuid}`
+      }
+      let backUrl = encodeURIComponent(shareurl)
+      shareurl = `${shareurl}&currentUrl=${backUrl}&from=pay`
+      this.shareParams = {
+        title: Config.AppName,
+        path: shareurl
+      }
+    }
+    onShareAppMessage (res) {
+      this.handleShare()
+      return this.shareParams
+    }
+    onShareTimeline () {
+      this.handleShare()
+      return this.shareParams
+    }
+    getOrderData () {
+      wepy.showLoading()
+      let orderid = `${this.options.orderid}`
+      orderid = orderid.split(',')[0]
+      wepy.request({
+        url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/order/orderDetail`,
+        data: {id: orderid, from: 'user'}
+      }).then(res => {
+        wepy.hideLoading()
+        const data = res.data
+        if (!data.flag) return false
+        let retdata = data.data
+        retdata.dateline_str = new Time(retdata.dateline * 1000).dateFormat('yyyy-MM-dd hh:mm')
+        this.orderData = retdata
+        this.orderProduct = this.orderData.orderlist[0]
+        this.creditCount = this.orderData.getcredit
+        this.$apply()
+        // this.showCanvas = true
+        // this.createImg()
+      })
+    }
+    createImg () {
+      let cw = this.globalData.systemInfo.windowWidth * 0.8
+      let ch = cw * 1.494
+      let defaultH = this.globalData.systemInfo.windowHeight * 0.6
+      if (defaultH > 600) defaultH = 600
+      if (ch > defaultH) {
+        ch = defaultH
+        cw = defaultH * 0.6692
+      }
+      cw = cw.toFixed(2)
+      ch = ch.toFixed(2)
+      this.myCanvasWidth = parseInt(cw)
+      this.myCanvasHeight = parseInt(ch)
+      this.showCanvas = true
+      this.$apply()
+      let bgPhoto = 'https://tossharingsales.boka.cn/minigxk/huizhiBg.png'
+      let yzPhoto = 'https://tossharingsales.boka.cn/minigxk/xiadanyinzhang.png'
+      let appLogo = this.MiniInfo.logo.replace(/http:/g, 'https:')
+      let productPhoto = this.orderData.orderlist[0].photo.replace(/http:/g, 'https:')
+      let miniQrcode = ''
+      wepy.showLoading({
+        title: '生成二维码'
+      }).then(res => {
+        return wepy.downloadFile({
+          url: appLogo
+        })
+      }).then(res => {
+        if (!res.tempFilePath) {
+          return new Promise()
+        }
+        appLogo = res.tempFilePath
+        return wepy.downloadFile({
+          url: bgPhoto
+        })
+      }).then(res => {
+        if (!res.tempFilePath) {
+          return new Promise()
+        }
+        bgPhoto = res.tempFilePath
+        return wepy.downloadFile({
+          url: yzPhoto
+        })
+      }).then(res => {
+        if (!res.tempFilePath) {
+          return new Promise()
+        }
+        yzPhoto = res.tempFilePath
+        console.log('yzphot=', yzPhoto)
+        return wepy.downloadFile({
+          url: productPhoto
+        })
+      }).then(res => {
+        if (!res.tempFilePath) {
+          return new Promise()
+        }
+        productPhoto = res.tempFilePath
+        return wepy.request({
+          url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/wxa/createPoster`,
+          method: 'POST',
+          data: {
+            appid: Config.AppId,
+            sourceurl: `/${Config.Router.product}?id=${this.orderData.orderlist[0].fpimportid}&type=fpimport&fid=${Config.Fid}&share_uid=${this.userInfo.uid}&wid=${this.globalData.Wid}`,
+            page: 'pages/index'
+          }
+        })
+      }).then(res => {
+        if (res.data.flag === 1) {
+          let retdata = res.data.data
+          retdata = retdata.replace(/http:/g, 'https:')
+          return wepy.downloadFile({
+            url: retdata
+          })
+        }
+      }).then(res => {
+        if (!res.tempFilePath) {
+          return new Promise()
+        }
+        miniQrcode = res.tempFilePath
+        const context = wepy.createCanvasContext('myOrderCanvas')
+        context.save()
+        const _canvasWidth = parseFloat(this.myCanvasWidth)
+        const _canvasHeight = parseFloat(this.myCanvasHeight)
+        // 画背景图
+        context.setFillStyle(this.themeObject.themeColor)
+        context.fillRect(0, 0, _canvasWidth, _canvasHeight)
+        // 头部透明背景870*501
+        context.drawImage(bgPhoto, 0, 0, _canvasWidth, _canvasWidth * 0.5758)
+        // 870*250
+        context.setFillStyle('#ffffff')
+        let topH = _canvasWidth * 0.287
+        context.fillRect(0, topH, _canvasWidth, _canvasHeight - topH)
+
+        let txtLeft = _canvasWidth * 0.0459
+        let topTxtW = _canvasWidth * 0.617
+        context.setFillStyle('#ffffff')
+        context.setTextAlign('left')
+        let size40 = _canvasWidth * 0.0459
+        let size30 = _canvasWidth * 0.0344
+        let size38 = _canvasWidth * 0.0436
+        // 下单回执 左40px 上50px 大小40px
+        let txt1 = '下单回执'
+        let txt1Size = size40
+        context.setFontSize(txt1Size)
+        context.fillText(txt1, txtLeft, _canvasHeight * 0.0384 + txt1Size / 2, topTxtW)
+        let txt2 = '下单编号:'
+        // 下单编号 左40px 上127px 大小30px
+        let txt2Size = size30
+        context.setFontSize(txt2Size)
+        context.fillText(`${txt2}  ${this.orderData.orderno}`, txtLeft, _canvasHeight * 0.0976 + txt2Size / 2, topTxtW)
+        let txt3 = '下单时间:'
+        // 下单编号 左40px 上185px 大小30px
+        context.fillText(`${txt3}  ${this.orderData.dateline_str}`, txtLeft, _canvasHeight * 0.1423 + txt2Size / 2, topTxtW)
+
+        // logo和文字之间空隙20
+        let logoSize = size40
+        let logoW = _canvasWidth * 0.1149
+        let logoR = logoW / 2
+        let logoTxtSpace = _canvasHeight * 0.015 + logoSize / 2
+        let logoTop = (topH - logoW - logoSize - logoTxtSpace) / 2
+        let logoLeft = txtLeft + topTxtW
+        let logoTxtW = _canvasWidth - logoLeft
+        context.save()
+        context.beginPath()
+        context.arc(logoLeft + logoTxtW / 2, logoTop + logoR, logoR, 0, 2 * Math.PI, false)
+        context.clip()
+        context.drawImage(appLogo, logoLeft + logoTxtW / 2 - logoR, logoTop, logoW, logoW)
+        context.restore()
+        context.setFillStyle('#ffffff')
+        context.setTextAlign('center')
+        context.setFontSize(logoSize)
+        context.fillText(this.MiniInfo.title, logoLeft + logoTxtW / 2, logoTop + logoW + logoTxtSpace, logoTxtW)
+
+        let atxtSize = size38
+        let aTxtW = (_canvasWidth - txtLeft) / 2
+        let atxt1 = this.orderData.linkman.substr(0, 1)
+        let atxtTop = _canvasHeight * 0.2215 + atxtSize / 2
+        let shouhuoren = '收货人'
+        atxt1 = `${shouhuoren}: ${atxt1}**`
+        let phone = `${this.orderData.telephone}`
+        phone = phone.substr(0, 5)
+        atxt1 = `${atxt1}    ${phone}******`
+        context.setFillStyle('#000000')
+        context.setTextAlign('left')
+        context.setFontSize(atxtSize)
+        context.fillText(atxt1, txtLeft, atxtTop, aTxtW)
+
+        atxtTop = atxtTop + atxtSize + _canvasHeight * 0.0230
+        let atxt2 = this.orderData.address.substr(0, 3)
+        let dizhi = '地址'
+        atxt2 = `${dizhi}: ${atxt2}******`
+        context.fillText(atxt2, txtLeft, atxtTop, aTxtW)
+
+        atxtTop = atxtTop + _canvasHeight * 0.0392
+        context.beginPath()
+        context.setStrokeStyle('#eeeeee')
+        context.setLineWidth(1)
+        context.moveTo(txtLeft, atxtTop)
+        context.lineTo(_canvasWidth - txtLeft, atxtTop)
+        context.stroke()
+
+        let yzW = _canvasWidth * 0.2246
+        context.drawImage(yzPhoto, _canvasWidth - txtLeft - yzW, atxtTop - size38, yzW, yzW)
+
+        let ptxtSize = size38
+        atxtTop = atxtTop + 1 + _canvasHeight * 0.0392 + size38 / 2
+        context.setTextAlign('left')
+        context.setFontSize(ptxtSize)
+        let ddsp = '订单商品'
+        context.fillText(ddsp, txtLeft, atxtTop, _canvasWidth - txtLeft * 2)
+
+        atxtTop = atxtTop + _canvasHeight * 0.0230
+        let photoW = _canvasWidth * 0.1724
+        context.drawImage(productPhoto, txtLeft, atxtTop, photoW, photoW)
+        let pTxtLeft = _canvasWidth * 0.24
+        let pTxtW = _canvasWidth - pTxtLeft - txtLeft
+        let pNameSize = size30
+        let productName = this.orderProduct.name
+        context.setFontSize(pNameSize)
+        let oneLineCount = Math.floor(pTxtW / pNameSize)
+        let lineNum = Math.ceil(productName.length / oneLineCount)
+        let pnTop = atxtTop + pNameSize / 2
+        for (let i = 0; i < lineNum; i++) {
+          let curstr = productName.substr(i * oneLineCount, oneLineCount)
+          if (i >= 1) {
+            pnTop = pnTop + _canvasHeight * 0.0230
+            curstr = curstr.substr(0, oneLineCount - 3)
+            context.fillText(`${curstr}...`, pTxtLeft, pnTop + pNameSize / 2, pTxtW)
+            break
+          } else {
+            context.fillText(curstr, pTxtLeft, pnTop + pNameSize / 2, pTxtW)
+          }
+        }
+        context.fillText(`￥${this.orderProduct.special}`, pTxtLeft, atxtTop + photoW - pNameSize, pTxtW)
+
+        atxtTop = atxtTop + photoW + _canvasHeight * 0.0230
+        if (this.orderProduct.options && this.orderProduct.options.id) {
+          let oTxtSize = size38
+          atxtTop = atxtTop + oTxtSize / 2
+          context.setFontSize(oTxtSize)
+          let spgg = '商品规格'
+          let ggtxt = `${spgg}: ${this.orderProduct.options.title}`
+          let ggW = _canvasWidth - txtLeft * 2
+          let oneLineCount1 = Math.floor(ggW / oTxtSize)
+          let lineNum1 = Math.ceil(ggtxt.length / oneLineCount1)
+          let disLineNum = lineNum1 > 3 ? 3 : lineNum1
+          for (let j = 0; j < disLineNum; j++) {
+            let curstr = ggtxt.substr(j * oneLineCount1, oneLineCount1)
+            if (lineNum1 > 3 && j === 2) {
+              curstr = ggtxt.substr(j * oneLineCount1, oneLineCount1 - 3)
+              curstr = `${curstr}...`
+            }
+            atxtTop = atxtTop + oTxtSize / 2 + _canvasHeight * 0.0230
+            context.fillText(curstr, txtLeft, atxtTop, ggW)
+          }
+        }
+
+        atxtTop = atxtTop + _canvasHeight * 0.0392
+        context.beginPath()
+        context.setStrokeStyle('#eeeeee')
+        context.setLineWidth(1)
+        context.moveTo(txtLeft, atxtTop)
+        context.lineTo(_canvasWidth - txtLeft, atxtTop)
+        context.stroke()
+
+        atxtTop = atxtTop + 1 + _canvasHeight * 0.0392 + size38 / 2
+        let ptxtSize2 = size30
+        let leftTxtW = _canvasWidth * 0.2463
+        let rightTxtW = _canvasWidth - leftTxtW - txtLeft * 2
+        context.setFontSize(ptxtSize2)
+        let spsl = '商品数量'
+        context.fillText(`${spsl}:`, txtLeft, atxtTop, leftTxtW)
+        context.setTextAlign('right')
+        context.fillText(`×${this.orderProduct.quantity}`, _canvasWidth - txtLeft, atxtTop, rightTxtW)
+        atxtTop = atxtTop + _canvasHeight * 0.0230 + ptxtSize2 / 2
+        context.setTextAlign('left')
+        let spze = '商品总额'
+        context.fillText(`${spze}:`, txtLeft, atxtTop, leftTxtW)
+        context.setTextAlign('right')
+        let zonge = (parseFloat(this.orderProduct.special.replace(/,/g, '')) * parseInt(this.orderProduct.quantity)).toFixed(2)
+        context.fillText(zonge, _canvasWidth - txtLeft, atxtTop, rightTxtW)
+        atxtTop = atxtTop + _canvasHeight * 0.0230 + ptxtSize2 / 2
+        context.setTextAlign('left')
+        let yunfei = '运费'
+        context.fillText(`${yunfei}:`, txtLeft, atxtTop, leftTxtW)
+        context.setTextAlign('right')
+        let disPostage = this.orderData.postage
+        if (!this.orderData.postage || this.orderData.postage === '0.00') {
+          disPostage = '包邮'
+        }
+        context.fillText(disPostage, _canvasWidth - txtLeft, atxtTop, rightTxtW)
+
+        atxtTop = atxtTop + _canvasHeight * 0.0392
+        context.beginPath()
+        context.setStrokeStyle('#eeeeee')
+        context.setLineWidth(1)
+        context.moveTo(txtLeft, atxtTop)
+        context.lineTo(_canvasWidth - txtLeft, atxtTop)
+        context.stroke()
+
+        atxtTop = atxtTop + 1 + _canvasHeight * 0.0592
+        let lastRightTxtW = _canvasWidth * 0.3678
+        let lastLeftTxtW = _canvasWidth - lastRightTxtW - txtLeft * 2
+        context.setFontSize(size40)
+        context.setTextAlign('right')
+        let heji = '合计'
+        context.fillText(`${heji}: `, txtLeft + lastLeftTxtW, atxtTop, lastLeftTxtW)
+        context.setTextAlign('right')
+        context.setFillStyle(this.themeObject.themeColor)
+        let disPrice = parseFloat(this.orderProduct.special.replace(/,/g, '')) * this.orderProduct.quantity
+        if (this.orderData.postage && this.orderData.postage !== '') {
+          let addpostate = this.orderData.postage.replace(/,/g, '')
+          addpostate = parseFloat(addpostate)
+          disPrice = disPrice + addpostate
+        }
+        disPrice = disPrice.toFixed(2)
+        context.fillText(`¥${disPrice}`, _canvasWidth - txtLeft, atxtTop, lastRightTxtW)
+
+        let leftH = this.myCanvasHeight - atxtTop - size40
+        atxtTop = atxtTop + size40
+        let codeW = leftH - size40
+        if (codeW % 2 !== 0) {
+          codeW = codeW - 1
+        }
+        let codeR = codeW / 2
+        context.save()
+        context.beginPath()
+        context.arc(_canvasWidth - txtLeft - codeR, atxtTop + codeR, codeR, 0, 2 * Math.PI, false)
+        context.clip()
+        context.drawImage(miniQrcode, _canvasWidth - txtLeft - codeW, atxtTop, codeW, codeW)
+        context.restore()
+
+        context.draw()
+        wepy.hideLoading()
+        this.saveBtnShow = true
+        this.$apply()
+      })
+    }
+    methods = {
+      formSubmit (e) {
+        const dataset = e.currentTarget.dataset
+        let url = dataset.weburl ? dataset.weburl : dataset.url
+        let navurl = url
+        if (dataset.weburl) {
+          url = encodeURIComponent(url)
+          navurl = `/pages/webview?url=${url}`
+        }
+        const urltype = dataset.urltype
+        if (urltype === 'redirect') {
+          wepy.redirectTo({url: navurl})
+        } else if (urltype === 'relaunch') {
+          wepy.reLaunch({url: navurl})
+        } else {
+          wepy.navigateTo({url: navurl})
+        }
+      },
+      onProduct (event) {
+        const id = event.currentTarget.dataset.id
+        wepy.navigateTo({
+          url: `/pages/product?id=${id}`
+        })
+      },
+      onRetailerQrcode (e) {
+        this.$invoke('retailerWechat', 'showModal')
+      },
+      onClose () {
+        this.retailerQrcodeShow = false
+      },
+      onPreview (event) {
+        const url = event.currentTarget.dataset.url
+        wepy.previewImage({
+          urls: [url],
+          current: url
+        })
+      },
+      copyWechat () {
+        if (this.sellerUser.weixinaccount && this.sellerUser.weixinaccount !== '') {
+          wepy.setClipboardData({
+            data: `${this.sellerUser.weixinaccount}`
+          })
+        }
+      },
+      cancelCanvas () {
+        this.showCanvas = false
+      },
+      saveImgEvent () {
+        wepy.canvasToTempFilePath({
+          canvasId: 'myOrderCanvas'
+        }).then(res => {
+          Util.savePhoto({
+            path: res.tempFilePath,
+            callback: () => {
+              wepy.hideLoading()
+              this.showCanvas = false
+              this.saveBtnShow = false
+              this.$apply()
+            }
+          })
+        }, res => {
+          console.log('下载画布图片1失败')
+          console.log(res)
+        })
+      },
+      toCreateOrder () {
+        this.showCanvas = true
+        this.createImg()
+      }
+    }
+    events = {
+      retailerQrcodeHide () {
+        this.retailerQrcodeShow = false
+      }
+    }
+  };
+</script>

@@ -1,0 +1,232 @@
+<style lang="less">
+.bk-big-productitem{
+  .box-inner{padding:20rpx;}
+  .picarea:after{content:'';display:block;padding-top:55.55%;}
+  .picarea{
+    width:100%;position:relative;
+    .pic{
+      position:absolute;left:0;top:0;right:0;bottom:0;
+      background-position: center center;background-repeat: no-repeat;background-size: cover;
+      .lived{background: rgba(0,0,0,0.3);}
+      .live-bg{position:absolute;left:0;top:0;right:0;bottom:0;
+        .checkdetail{padding: 0 30rpx;display: flex;justify-content: center;align-items: center;background: rgba(0,0,0,0.4);border-radius: 15px;color: white;}
+        .startlive{position: absolute;top: 40rpx;right: 0;width: 180rpx;height: 60rpx;background: rgba(0,0,0,0.4);line-height: 60rpx;border-top-left-radius: 15px;border-bottom-left-radius: 15px;
+          .circle{width: 5px;height: 5px;border-radius: 50%;background-color: yellow;}
+        }
+        .views{position: absolute;top: 40rpx;left: 0;width: 180rpx;height: 60rpx;background: rgba(0,0,0,0.4);line-height: 60rpx;border-top-right-radius: 15px;border-bottom-right-radius: 15px;}
+        .ljgk{position: absolute;bottom: 0;width: 100%;background: rgba(0,0,0,0.4);}
+      }
+    }
+    image{width:100%;height:100%;}
+  }
+  .circle-btn{width:160rpx;height:60rpx;}
+  .saled-cell{width:160rpx;}
+  .fix-box{
+    position:absolute;right:0;top:0;padding:10rpx;background-color:rgba(0,0,0,0.6);color:#fff;z-index:10;
+    border-bottom-left-radius:10rpx;font-size:24rpx;
+    display:flex;justify-content:center;align-items: center;
+    .num{
+      background-color:#fff;width:40rpx;height:30rpx;display:flex;justify-content:center;align-items: center;color:#f64635;
+      border-radius:10rpx;box-sizing: border-box;
+    }
+    .num.big{width:60rpx;}
+    .txt{width:20rpx;height:30rpx;display:flex;justify-content:center;align-items: center;font-weight:bold;}
+  }
+}
+</style>
+<template>
+  <repeat for="{{productData}}" index="index" item="product">
+    <view class="app-box-area bk-big-productitem">
+      <view class="box-inner" @tap="toFactoryProduct({{product}})">
+        <view class="picarea">
+          <block wx:if="{{tmpType == 'cron'}}">
+            <view class="fix-box" wx:if="{{product.ontime_str && product.ontime_str != ''}}">
+              <text>开团时间</text>
+              <text class="ml5" style="{{themeObject.colorStyle}}">{{product.ontime_str}}</text>
+            </view>
+          </block>
+          <block wx:else>
+            <view class="fix-box" wx:if="{{product.offshelftime && product.offshelftime != '' && product.interval}}">
+              <text>距截团</text>
+              <text :class="{big: (product.lefthour.length > 2 || product.lefthour >= 100)}" class="num ml5">{{product.lefthour}}</text>
+              <text class="txt">:</text>
+              <text class="num">{{product.leftminute}}</text>
+              <text class="txt">:</text>
+              <text class="num">{{product.leftsecond}}</text>
+            </view>
+          </block>
+          <view class="pic">
+            <image class="imgcover" src="{{product.listphoto}}" mode="aspectFill" lazy-load></image>
+          </view>
+        </view>
+        <view class="w_100 flex_left mt10">
+          <view class="flex_cell">
+            <view class="font16 clamp1">{{product.title}}</view>
+          </view>
+          <view class="flex_center color-gray pl10 pr5" wx:if="{{tmpType != 'cron' && (!product.sellingpoint || product.sellingpoint == '')}}">
+            <view class="clamp1 saled-cell align_center">
+              <text>已售</text>
+              <!-- <text style="{{themeObject.colorStyle}}"><block wx:if="{{isAdmin}}">{{product.truesaled}}</block><block wx:else>{{product.saled}}</block></text> -->
+              <text style="{{themeObject.colorStyle}}">{{product.saled}}</text>
+              <text>件</text>
+            </view>
+          </view>
+        </view>
+        <view class="w_100 flex_left" wx:if="{{product.sellingpoint && product.sellingpoint != ''}}">
+          <view class="flex_cell">
+            <view class="font12 clamp1" style="{{themeObject.colorStyle}}">{{product.sellingpoint}}</view>
+          </view>
+          <view class="flex_right color-gray" wx:if="{{tmpType != 'cron'}}">
+            <text>已售</text>
+            <!-- <text style="{{themeObject.colorStyle}}"><block wx:if="{{isAdmin}}">{{product.truesaled}}</block><block wx:else>{{product.saled}}</block></text> -->
+            <text style="{{themeObject.colorStyle}}">{{product.saled}}</text>
+            <text>件</text>
+          </view>
+        </view>
+        <view class="flex_left">
+          <view class="flex_cell" style="{{themeObject.colorStyle}}">
+            <text>￥</text>
+            <text class="font18" wx:if="{{product.minprice && product.minprice != ''}}">{{product.minprice}}</text>
+            <text class="font18" wx:else>{{product.price}}</text>
+            <text wx:if="{{product.showOriprice}}" class="ml5 color-gray font12" style="text-decoration: line-through;">
+              <text>￥</text>
+              <text>{{product.oriprice}}</text>
+            </text>
+          </view>
+          <block wx:if="{{tmpType == 'cron'}}">
+            <view class="pl10 pr5 pb5 pt5 flex_right">
+              <view class="circle-btn flex_center" style="{{themeObject.bgStyle}}">即将开团</view>
+            </view>
+          </block>
+          <block wx:else>
+            <block wx:if="{{product.offshelftime && product.offshelftime != '' && !product.interval && product._offshelftime}}">
+              <view class="pl10 pr5 pb5 pt5 flex_right">
+                <view class="circle-btn bg-gray color-white flex_center">已下架</view>
+              </view>
+            </block>
+            <block wx:elif="{{afterSys}}">
+              <block wx:if="{{product.storage > 0}}">
+                <block wx:if="{{(OnlyRetailerBuy && userInfo.regwid && userInfo.bindstatus) || !OnlyRetailerBuy}}">
+                  <view class="pl10 pr5 pb5 pt5 flex_right" data-data="{{product}}" data-pageindex="{{pageIndex}}" data-index="{{index}}" catchtap="clickBuy">
+                    <view class="circle-btn flex_center" style="{{themeObject.bgStyle}}">抢购</view>
+                  </view>
+                </block>
+                <block wx:if="{{OnlyRetailerBuy && (!userInfo.regwid || !userInfo.bindstatus)}}">
+                  <view class="pl10 pr5 pb5 pt5 flex_right" catchtap="retailerBuy">
+                    <view class="circle-btn flex_center font12" style="{{themeObject.bgStyle}}">找店主下单</view>
+                  </view>
+                </block>
+              </block>
+              <view wx:else class="pl10 pr5 pb5 pt5 flex_right">
+                <view class="circle-btn flex_center bg-gray color-white">已售罄</view>
+              </view>
+            </block>
+          </block>
+        </view>
+      </view>
+    </view>
+  </repeat>
+</template>
+<script>
+  import wepy from 'wepy'
+  import Config from '@/config'
+
+  export default class extends wepy.component {
+    props = {
+      productData: {
+        type: Array,
+        default: []
+      },
+      product: {
+        type: Object,
+        default: {}
+      },
+      userInfo: {
+        type: Object,
+        default: {}
+      },
+      isAdmin: {
+        type: Boolean,
+        default: false
+      },
+      navType: {
+        type: String,
+        default: 'navigateTo'
+      },
+      themeObject: {
+        type: Object,
+        default: {}
+      },
+      OnlyRetailerBuy: {
+        type: Boolean,
+        default: false
+      },
+      afterSys: {
+        type: Boolean,
+        default: false
+      },
+      from: {
+        type: String,
+        default: 'home'
+      },
+      tmpType: {
+        type: String,
+        default: ''
+      },
+      pageIndex: {
+        type: Number,
+        default: 0
+      },
+      options: {
+        type: Object,
+        default: {}
+      }
+    }
+    data = {
+    }
+    onLoad () {
+    }
+    methods = {
+      toFactoryProduct (data) {
+        let params = []
+        if (this.options.share_uid) {
+          params.push(`share_uid=${this.options.share_uid}`)
+        }
+        if (this.options.shareuser) {
+          params.push(`shareuser=${this.options.shareuser}`)
+        }
+        if (this.from === 'home') {
+          wepy.setStorageSync('selectedProduct', data)
+          let navurl = `/${Config.Router.product}?id=${data.id}&fid=${Config.Fid}&from=home&select=product&type=fpimport`
+          if (params.length) {
+            let pstr = params.join('&')
+            navurl = `${navurl}&${pstr}`
+          }
+          wepy.navigateTo({url: navurl})
+        } else {
+          wepy.setStorageSync('selectedProduct', data)
+          let navurl = `/${Config.Router.product}?id=${data.id}&type=fpimport&fid=${Config.Fid}&select=product`
+          if (params.length) {
+            let pstr = params.join('&')
+            navurl = `${navurl}&${pstr}`
+          }
+          if (this.navType === 'navigateTo') {
+            wepy.navigateTo({url: navurl})
+          } else if (this.navType === 'redirectTo') {
+            wepy.redirectTo({url: navurl})
+          } else if (this.navType === 'reLaunch') {
+            wepy.reLaunch({url: navurl})
+          } else {
+            wepy.navigateTo({url: navurl})
+          }
+        }
+      },
+      clickBuy (e) {
+        this.$emit('clickBuy', e.currentTarget.dataset)
+      },
+      retailerBuy () {
+        this.$emit('retailerBuy')
+      }
+    }
+  }
+</script>

@@ -1,0 +1,210 @@
+<style lang="less">
+  @import '../styles/variable.less';
+
+  .vux-cell-primary {
+    flex: 1;
+  }
+  .vux-number-input {
+    float:left;
+    height:24px;
+    font-size:20px;
+    color: @number-input-font-color;
+    appearance: none;
+    border:1px solid #ececec;
+    padding:3px 0;
+    text-align:center;
+    border-radius: 1px;
+    min-height:0;
+  }
+  .vux-number-round .vux-number-input {
+    border: none;
+  }
+  .vux-number-selector {
+    float:left;
+    height:20px;
+    font-size:25px;
+    color:#FF9900;
+    border:1px solid @number-square-button-enabled-border-color;
+    display:flex;justify-content:center;align-items:center;
+  }
+  .vux-number-round .vux-number-selector {
+    width: 20px;
+    border-radius: 13px;
+  }
+  .vux-number-selector {
+    background-color: @number-button-font-color;
+  }
+  .vux-number-selector.vux-number-disabled icon {
+    opacity: 0.2;
+  }
+  .vux-number-round .vux-number-selector.vux-number-disabled {
+    border-color: @number-round-button-disabled-border-color;
+  }
+  .vux-number-round .vux-number-selector.vux-number-disabled {
+    background-color: #ccc;
+  }
+  .vux-number-selector-sub {
+    border-right:none;
+    padding:6px 8px;
+    height: 18px;
+    border-radius:2px 0 0 2px;
+  }
+  .vux-number-selector-plus {
+    border-left:none;
+    margin-right: 5px;
+    padding:5px 8px;
+    border-radius:0 2px 2px 0;
+  }
+  .vux-number-selector-plus .plus {
+    font-size:25px;
+}
+  .vux-number-round .vux-number-selector-sub {
+    position: relative;
+    top: 1px;
+  }
+  .vux-number-selector-sub .sub{
+    font-size:16px;
+  }
+  .vux-number-selector.vux-number-disabled .plus, .vux-number-selector.vux-number-disabled .sub {
+    color: #ccc;
+  }
+  .vux-number-round .vux-number-selector-sub, .vux-number-round .vux-number-selector-plus {
+    padding: 2px;
+    border: 1px solid @number-round-button-enabled-border-color;
+    text-align: center;
+  }
+</style>
+<template>
+  <view class="weui-cell">
+    <view>
+      <text style="{{labelStyle}}" :class="{'vux-cell-justify': $parent.labelAlign === 'justify' || $parent.$parent.labelAlign === 'justify'}">{{title}}</text>
+    </view>
+    <view class="weui-cell__ft vux-cell-primary" :class="{'vux-number-round': buttonStyle === 'round'}" wx:if="{{!readonly}}" style="font-size:0">
+      <view style="float: {{align}};">
+        <view @tap="sub" class="vux-number-selector vux-number-selector-sub" :class="{'vux-number-disabled': disabledMin}">
+          <!-- <icon class="sub"></icon> -->
+          <text class="sub al al-sub"></text>
+        </view>
+        <input value="{{value}}" name="{{name}}" class="vux-number-input" style="width: {{width}};" disabled="{{!fillable}}" type="number" @blur="blur"></input>
+        <view @tap="add" class="vux-number-selector vux-number-selector-plus" :class="{'vux-number-disabled': disabledMax}">
+          <!-- <icon class="plus"></icon> -->
+          <text class="plus al al-plus"></text>
+        </view>
+      </view>
+    </view>
+    <view wx:if="{{readonly}}" class="weui-cell__ft vux-cell-primary">
+      {{value}}
+    </view>
+  </view>
+</template>
+<script>
+  import wepy from 'wepy'
+  import Big from 'big.js'
+  import ToStyle from 'to-style'
+  // import objectCss from '@/libs/object-css'
+
+  export default class XNumber extends wepy.component {
+    props = {
+      min: Number,
+      max: Number,
+      readonly: Boolean,
+      step: {
+        type: Number,
+        default: 1
+      },
+      value: {
+        // validator (value) {
+        //   if (typeof value === 'number') {
+        //     return true
+        //   } else if (typeof value === 'string') {
+        //     return value === ''
+        //   }
+        //   return false
+        // },
+        type: Number,
+        default: 0,
+        twoWay: true
+      },
+      name: String,
+      title: String,
+      fillable: {
+        type: Boolean,
+        default: false
+      },
+      width: {
+        type: String,
+        default: '50px'
+      },
+      buttonStyle: {
+        type: String,
+        default: 'square'
+      },
+      align: {
+        type: String,
+        default: 'right'
+      }
+    }
+    onLoad () {
+      console.log(this.value)
+    }
+    // data = {
+    //   currentValue: 0
+    // }
+    computed = {
+      labelStyle () {
+        return ToStyle.string({width: this.$parent.labelWidth, textAlign: this.$parent.labelAlign, marginRight: this.$parent.labelMarginRight})
+      },
+      disabledMin () {
+        return typeof this.min === 'undefined' ? false : (this.value === '' ? true : this.value <= this.min)
+      },
+      disabledMax () {
+        return typeof this.max === 'undefined' ? false : (this.value === '' ? true : this.value >= this.max)
+      }
+    }
+    watch = {
+      // currentValue (newValue, old) {
+      //   if (newValue !== '') {
+      //     if (typeof this.min !== 'undefined' && this.value < this.min) {
+      //       this.value = this.min
+      //     }
+      //     if (this.max && this.value > this.max) {
+      //       this.value = this.max
+      //     }
+      //   }
+      //   this.$emit('input', this.value)
+      // },
+      value (newValue) {
+        if (newValue !== '') {
+          if (typeof this.min !== 'undefined' && this.value < this.min) {
+            this.value = this.min
+          }
+          if (this.max && this.value > this.max) {
+            this.value = this.max
+          }
+        }
+        this.value = newValue
+        this.$emit('on-change', newValue)
+      }
+    }
+
+    methods = {
+      add () {
+        if (!this.disabledMax) {
+          const x = new Big(this.value)
+          this.value = x.plus(this.step) * 1
+        }
+      },
+      sub () {
+        if (!this.disabledMin) {
+          const x = new Big(this.value)
+          this.value = x.minus(this.step) * 1
+        }
+      },
+      blur () {
+        if (this.value === '') {
+          this.value = 0
+        }
+      }
+    }
+  }
+</script>
