@@ -290,7 +290,7 @@ export default class extends wepy.page {
         if (curd.productoptions && curd.productoptions.length) {
           let optionsarr = []
           for (let j = 0; j < curd.productoptions.length; j++) {
-            if (curd.productoptions[j].id === curd.foid) {
+            if (curd.productoptions[j].id === curd.poid) {
               retdata[i].optionindex = j
               retdata[i].optiontitle = curd.productoptions[j].title
               retdata[i].selectedOption = curd.productoptions[j]
@@ -312,7 +312,7 @@ export default class extends wepy.page {
             curd.disabledMax = true
           }
         }
-        if (!curd.moderate || !curd.storage || (curd.productoptions && curd.productoptions.length && (!curd.selectedOption || !curd.foid || curd.foid === ''))) {
+        if (!curd.moderate || !curd.storage || (curd.productoptions && curd.productoptions.length && (!curd.selectedOption || !curd.poid || curd.poid === ''))) {
           retdata[i].disabled = true
         }
       }
@@ -394,18 +394,18 @@ export default class extends wepy.page {
     }
     wepy.request({
       url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/cart/update`,
-      data: {id: item.id, quantity: item.quantity, foid: item.foid},
+      data: {id: item.id, quantity: item.quantity, poid: item.poid},
       method: 'post'
     }).then(res => {
       this.updateIng = false
       const data = res.data
-      if (data.flag) {
+      if (data.code === 0) {
         this.listData[index] = item
         this.computePrice()
         this.$apply()
       } else {
         wepy.showToast({
-          title: data.error,
+          title: data.msg,
           icon: 'none'
         })
       }
@@ -446,7 +446,7 @@ export default class extends wepy.page {
     }).then(res => {
       this.submitIng = false
       const data = res.data
-      if (data.flag) {
+      if (data.code === 0) {
         this.cartCount = data.cartcount
         this.globalData.userInfo.cartcount = data.cartcount
         this.userInfo.cartcount = data.cartcount
@@ -471,7 +471,7 @@ export default class extends wepy.page {
         this.$apply()
       } else {
         wepy.showToast({
-          title: data.error,
+          title: data.msg,
           icon: 'none'
         })
       }
@@ -543,8 +543,9 @@ export default class extends wepy.page {
       let selectIndex = parseInt(e.detail.value)
       let curOptionData = item.productoptions[selectIndex]
       item.optionindex = selectIndex
-      item.optiontitle = item.optionsarr[selectIndex]
-      item.foid = curOptionData.id
+      // item.optiontitle = item.optionsarr[selectIndex]
+      item.optiontitle = item.optionsarr[selectIndex].title
+      item.poid = curOptionData.id
       item.productinfo.optiontitle = curOptionData.title
       item.productinfo.price = curOptionData.price
       item.selectedOption = curOptionData
@@ -649,7 +650,7 @@ export default class extends wepy.page {
           }).then(res => {
             this.submitIng = false
             const data = res.data
-            if (data.flag) {
+            if (data.code === 0) {
               this.isManage = false
               this.cartCount = 0
               this.globalData.userInfo.cartcount = data.cartcount
@@ -661,7 +662,7 @@ export default class extends wepy.page {
               this.$apply()
             } else {
               wepy.showToast({
-                title: data.error,
+                title: data.msg,
                 icon: 'none'
               })
             }
@@ -673,7 +674,7 @@ export default class extends wepy.page {
       wepy.reLaunch({url: '/pages/index'})
     },
     toProduct (item) {
-      wepy.navigateTo({url: `/${Config.Router.product}?id=${item.fpimportid}&fid=${Config.Fid}&type=fpimport`})
+      wepy.navigateTo({url: `/${Config.Router.product}?id=${item.id}`})
     },
     touchstart (e) {
       this.isTouchIng = true
@@ -755,7 +756,7 @@ export default class extends wepy.page {
       this.selectedProduct.selectedOption = this.selectedOption
       this.selectedProduct.optionindex = this.selectedOptionIndex
       this.selectedProduct.optiontitle = this.selectedOption.title
-      this.selectedProduct.foid = this.selectedOption.id
+      this.selectedProduct.poid = this.selectedOption.id
       this.handleNumber(this.selectedProduct, this.selectedProductIndex)
       this.$invoke('productOptions', 'closeOptions')
     },

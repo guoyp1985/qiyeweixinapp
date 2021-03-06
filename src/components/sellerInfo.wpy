@@ -50,7 +50,6 @@
 
 <script>
 import wepy from 'wepy'
-import Util from '@/libs/util'
 export default class extends wepy.component {
   props = {
     sellerUser: {

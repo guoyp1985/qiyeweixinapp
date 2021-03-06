@@ -129,20 +129,6 @@ export default class BottomMenu extends wepy.component {
         url = data.miniprogramurl
       } else {
         if (data.module === 'miniprogram') {
-          // wepy.showModal({
-          //   title: '',
-          //   content: `确定要跳转至${data.miniprogramtitle}小程序？`
-          // }).then(res => {
-          //   if (res.cancel) {
-          //     wepy.showLoading()
-          //     wepy.reLaunch({url: '/pages/own'})
-          //   } else {
-          //     wepy.navigateToMiniProgram({
-          //       appId: data.appid,
-          //       path: data.miniprogramurl
-          //     })
-          //   }
-          // })
           wepy.navigateToMiniProgram({
             appId: data.appid,
             path: data.miniprogramurl

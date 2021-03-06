@@ -111,9 +111,14 @@ const Config = {
   BoboAppIds: {
     'wx72131ab2cb77663d': true
   }, // 可以显示内测和BOBO功能的小程序，共销汇
+  // MenuData: [
+  //   {id: 1, title: '商城', module: 'home', type: '0', miniprogramurl: '/pages/home'},
+  //   {id: 2, title: '我的', module: 'own', type: '0', miniprogramurl: '/pages/own'}
+  // ],
   MenuData: [
-    {id: 1, title: '商城', module: 'home', type: '0', miniprogramurl: '/pages/home'},
-    {id: 2, title: '我的', module: 'own', type: '0', miniprogramurl: '/pages/own'}
+    {id: 1, title: '首页', module: 'home', type: '0', miniprogramurl: '/pages/qyshop'},
+    {id: 2, title: '订单', module: '', type: '0', miniprogramurl: '/packageD/pages/userOrders'},
+    {id: 3, title: '我', module: 'own', type: '0', miniprogramurl: '/pages/own'}
   ],
   OrderHomeShare: 'https://tossharingsales.boka.cn/minigxk/shxd.png',
   CardClassID: 29,
@@ -125,7 +130,8 @@ const Config = {
       fuid: {1209032: true, 683639: true}, // 楚风优选,楚风导师
       regwid: {44: true, 4903: true, 8: true} // 楚风越韵,gyp,young
     }
-  }
+  },
+  ContactPluginID: 'cd23f2bb207cb7ee3a8765dd80b52db3' // 在企业微信管理后台配置的唯一插件ID  dd14b023deed2e3530096276caa9a52e
 }
 
 Config.FilterUrls = [

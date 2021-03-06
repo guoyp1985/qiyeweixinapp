@@ -21,9 +21,9 @@
   export default class extends wepy.app {
     config = {
       pages: [
+        'pages/index',
         'pages/qyshop',
         'pages/auth',
-        'pages/index',
         'pages/home',
         'pages/addModule',
         'pages/addOrder',
@@ -44,6 +44,10 @@
         'live-player-plugin': {
           'version': '1.2.8', // 注意填写该直播组件最新版本号，微信开发者工具调试时可获取最新版本号
           'provider': 'wx2b03c6e691cd7370' // 必须填该直播组件appid，该示例值即为直播组件appid
+        },
+        'contactPlugin': {
+          'version': '1.3.1',
+          'provider': 'wx104a1a20c3f81ec2' // cd23f2bb207cb7ee3a8765dd80b52db3
         }
       },
       subPackages: [
@@ -293,7 +297,9 @@
       return user
     }
     getSettingInfo () {
+      this.globalData.OpenCart = 1
       this.globalData.SystemParams = {BackgroundColor: '#ff6a61', TopicColor: '#ff6a61', OnlyRetailerBuy: 0}
+      this.globalData.MenuData = Config.MenuData
       if (wepy.getStorageSync('version') !== Config.version) {
         wepy.clearStorageSync()
       }

@@ -119,20 +119,20 @@ export default class Own extends wepy.page {
       this.$apply()
       return this.channelInfo
     })
-    Cached.request({
-      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/codemaker/showcodemaker`,
-      data: {fid: Config.Fid}
-    }, 'own.codemaker', Config.URT.H,
-    cacheData => {
-      this.moduleListData = cacheData
-    },
-    res => {
-      const data = res.data
-      const retdata = data.data ? data.data : data
-      this.moduleListData = retdata
-      this.$apply()
-      return this.moduleListData
-    })
+    // Cached.request({
+    //   url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/codemaker/showcodemaker`,
+    //   data: {fid: Config.Fid}
+    // }, 'own.codemaker', Config.URT.H,
+    // cacheData => {
+    //   this.moduleListData = cacheData
+    // },
+    // res => {
+    //   const data = res.data
+    //   const retdata = data.data ? data.data : data
+    //   this.moduleListData = retdata
+    //   this.$apply()
+    //   return this.moduleListData
+    // })
     if (this.userInfo.fid) {
       this.getSettingList()
     }

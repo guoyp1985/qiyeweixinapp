@@ -559,7 +559,7 @@
          </button>
        </form>
      </block>
-     <block wx:if="{{defaultWid != globalData.Wid}}">
+     <block wx:if="{{defaultWid != globalData.Wid && 0 == 1}}">
        <view class="bg-page" style="height:10px;"></view>
        <view class="b_top_after"></view>
        <form class="padding10 b_bottom_after bg-white db" bindsubmit="toStoreMark" report-submit="true">
@@ -574,6 +574,17 @@
          </button>
        </form>
      </block>
+     <view class="bg-page" style="height:10px;"></view>
+     <view class="bg-white padding10">
+       <cell
+        styleType="1"
+        contactText="2"
+        avatorStyle="circle"
+        isMask="1"
+        @startmessage='startmessage'
+        @completemessage="completemessage"
+        plugid='dd14b023deed2e3530096276caa9a52e' />
+     </view>
      <view class="flex_center pt10 pb10 bg-page color-gray">—— 详情 ——</view>
      <view class="product-content bg-white">
        <view class="detail-box" style="{{themeObject.borderStyle}}" wx:if="{{product.options.length || (product.deliverdesc_json && product.deliverdesc_json.length)}}">
@@ -902,6 +913,11 @@ import ProductOptions from '@/components/store/product-options'
 import BuyTip from '@/components/buyTip'
 import CreditSwiper from '@/components/creditSwiper'
 export default class Product extends wepy.page {
+  config = {
+    usingComponents: {
+      cell: 'plugin://contactPlugin/cell'
+    }
+  }
   components = {
     share: Share,
     retailerWechat: RetailerWechat,
@@ -914,7 +930,7 @@ export default class Product extends wepy.page {
     creditSwiper: CreditSwiper
   }
   data = {
-    module: 'factoryproduct',
+    module: 'product',
     query: {},
     options: {},
     loaded: true,
@@ -1059,13 +1075,13 @@ export default class Product extends wepy.page {
     })
   }
   addCartEvent (callback) {
-    let params = {fpid: this.product.moduleid, fpimportid: this.product.id, wid: this.globalData.Wid}
+    let params = {pid: this.product.id, wid: this.globalData.Wid}
     if (this.options.room_id && this.options.room_id) {
       params.roomid = this.options.room_id
     }
     if (this.product.options.length) {
       if (this.selectedOption && this.selectedOption.id) {
-        params.foid = this.selectedOption.id
+        params.poid = this.selectedOption.id
       }
     }
     wepy.request({
@@ -1075,10 +1091,10 @@ export default class Product extends wepy.page {
     }).then(res => {
       const data = res.data
       wepy.showToast({
-        title: data.error,
+        title: data.msg,
         icon: 'none'
       })
-      if (data.flag) {
+      if (data.code === 1) {
         this.globalData.userInfo.cartcount = data.cartcount
         this.userInfo.cartcount = data.cartcount
         this.$parent.globalData = this.globalData
@@ -1285,6 +1301,14 @@ export default class Product extends wepy.page {
     }
   }
   methods = {
+    startmessage (e) {
+      console.log('in startmessage')
+      console.log(e)
+    },
+    completemessage (e) {
+      console.log('in completemessage')
+      console.log(e)
+    },
     screenChange (e) {
       console.log('视频窗口变化时')
       console.log(e)
@@ -1661,17 +1685,18 @@ export default class Product extends wepy.page {
     } else if (this.options.lid) {
       params.liveid = this.options.lid
     }
-    let postData = {...params, wid: this.globalData.Wid, external: 1, sessionkey: `factory_${this.userInfo.uid}`, gxkuid: this.userInfo.gxkuid, module: this.module, fid: this.Fid}
-    postData.id = this.product.moduleid
+    // let postData = {...params, wid: this.globalData.Wid, external: 1, sessionkey: `factory_${this.userInfo.uid}`, gxkuid: this.userInfo.gxkuid, module: this.module, fid: this.Fid}
+    // postData.id = this.product.moduleid
+    let postData = {...params, wid: this.globalData.Wid, gxkuid: this.userInfo.gxkuid, module: this.module}
+    postData.id = this.product.id
     const res = await wepy.request({
-      // url: `${Config.GxkApi}/api/order/sessionAddShop`,
       url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/order/addShop`,
       data: postData,
       method: 'POST'
     })
     const data = res.data
     wepy.hideLoading()
-    if (data.flag === 1) {
+    if (data.code === 0) {
       let url = `/pages/addOrder?wid=${this.globalData.Wid}&shop_id=${data.data}&fromfid=${this.Fid}`
       if (this.product.agentfid) {
         url = `${url}&agentfid=${this.product.agentfid}`
@@ -1685,7 +1710,7 @@ export default class Product extends wepy.page {
       wepy.navigateTo({url: url})
     } else {
       wepy.showToast({
-        title: data.error,
+        title: data.msg,
         icon: 'none'
       })
       this.buyIng = false
