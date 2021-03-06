@@ -9,11 +9,6 @@
 .app-tab.fixed-top{position:fixed;left:0;top:100rpx;right:0;z-index:10;}
 .user-order-page{
   padding-top:200rpx;padding-bottom:260rpx;
-  .list-area.zh_CN{
-    .product-img{
-      .ico:after{content:"優惠券";}
-    }
-  }
   .list-area{
     .order-item{margin-top:20rpx;}
     .product-area{padding:20rpx;}
@@ -88,7 +83,7 @@
         <view wx:if="{{flag == 101}}" class="flex_center padding10" style="{{themeObject.bgStyle}}">您的订单正在备货准备发出，暂时无法申请退款！</view>
         <repeat for="{{tabDataObject[flag]}}" index="index" item="item">
           <view class="order-item b_top_after">
-            <view class="flex_left pl10 pr10 bg-white" data-data="{{item}}" @tap="toDetail">
+            <view class="flex_left padding10 bg-white" data-data="{{item}}" @tap="toDetail">
               <view class="flex_cell flex_left" style="{{themeObject.colorStyle}}">
                 <block wx:if="{{item.retailertitle && item.retailertitle != ''}}">
                   <text class="al al-weidian font20"></text><text class="ml5">{{item.retailertitle}}</text>
@@ -96,7 +91,7 @@
               </view>
               <view class="font12 color-orange6">{{item.flagstr}}</view>
             </view>
-            <view class="product-area flex_left bg-page" data-data="{{item}}" @tap="toDetail">
+            <!-- <view class="product-area flex_left bg-page" data-data="{{item}}" @tap="toDetail">
               <view class="product-img">
                 <block wx:if="{{item.orderlist[0].options && item.orderlist[0].options.id && item.orderlist[0].options.photo != ''}}">
                   <image mode="aspectFill" src="{{item.orderlist[0].options.photo}}" />
@@ -116,7 +111,30 @@
                   </view>
                 </view>
               </view>
-            </view>
+            </view> -->
+            <repeat for="{{item.orderlist}}" item="op" index="opindex">
+              <view class="product-area flex_left bg-page" :class="{'b_bottom_after': opindex != item.orderlist.length - 1}" data-data="{{item}}" @tap="toDetail">
+                <view class="product-img">
+                  <block wx:if="{{op.options && op.options.id && op.options.photo != ''}}">
+                    <image mode="aspectFill" src="{{op.options.photo}}" />
+                  </block>
+                  <block wx:else>
+                    <image mode="aspectFill" src="{{op.photo}}" />
+                  </block>
+                  <view wx:if="{{item.carddeduct > 0}}" class="ico"></view>
+                </view>
+                <view class="flex_cell flex_left">
+                  <view class="w_100">
+                    <view class="font12 clamp1">{{op.name}}</view>
+                    <view class="color-gray font12" wx:if="{{op.options && op.options.id}}">{{op.options.title}}</view>
+                    <view class="db-flex font14">
+                      <view class="flex_cell flex_left color-red4">￥ {{ op.special }}</view>
+                      <view class="flex_cell flex_right color-999">× <text class="font12">{{ op.quantity }}</text></view>
+                    </view>
+                  </view>
+                </view>
+              </view>
+            </repeat>
             <view class="pay-info flex_right bg-white" data-data="{{item}}" @tap="toDetail">
               <view class="clamp1 w_100">
                 <text class="v_middle font12">实际支付: </text>
@@ -256,11 +274,11 @@ export default class extends wepy.page {
     this.Fid = Config.Fid
     this.limit = Config.Limit
     this.flagParams = {
-      0: {flag: 0, pagestart: 0, history: false},
-      2: {flag: 2, pagestart: 0, history: false},
-      3: {flag: 3, pagestart: 0, history: false},
-      4: {flag: 4, pagestart: 0, history: false},
-      101: {flag: 101, pagestart: 0, history: false}
+      0: {flag: 0, page: 1, history: false},
+      2: {flag: 2, page: 1, history: false},
+      3: {flag: 3, page: 1, history: false},
+      4: {flag: 4, page: 1, history: false},
+      101: {flag: 101, page: 1, history: false}
     }
     this.clearRefund()
     this.clearService()
@@ -287,7 +305,7 @@ export default class extends wepy.page {
       this.loadObject[this.flag] = true
       this.getOrderData()
     } else {
-      if (this.tabDataObject[this.flag].length === (this.flagParams[this.flag].pagestart + 1) * this.limit) {
+      if (this.tabDataObject[this.flag].length === this.flagParams[this.flag].pagestart * this.limit) {
         this.flagParams[this.flag].pagestart++
         this.loadObject[this.flag] = true
         this.getOrderData()
@@ -329,7 +347,7 @@ export default class extends wepy.page {
       this.loadObject[this.flag] = false
       if (!retdata.length && !this.tabDataObject[this.flag].length && !this.flagParams[this.flag].history) {
         this.flagParams[this.flag].history = true
-        this.flagParams[this.flag].pagestart = 0
+        this.flagParams[this.flag].pagestart = 1
         this.getOrderData()
       } else {
         if (retdata.length < this.limit && this.tabDataObject[this.flag].length) {
@@ -337,7 +355,7 @@ export default class extends wepy.page {
             this.doneObject[this.flag] = true
           } else {
             this.flagParams[this.flag].history = true
-            this.flagParams[this.flag].pagestart = -1
+            this.flagParams[this.flag].pagestart = 0
           }
         } else {
           this.doneObject[this.flag] = false
@@ -468,11 +486,11 @@ export default class extends wepy.page {
           wepy.hideLoading()
           const data = res.data
           wepy.showToast({
-            title: data.error,
+            title: data.msg,
             icon: 'none',
-            duration: Util.delay(data.error)
+            duration: Util.delay(data.msg)
           })
-          if (data.flag) {
+          if (data.code === 0) {
             this.clickOrder.flag = 0
             this.clickOrder.flagstr = '订单取消'
             this.clickOrder = this.setButton(this.clickOrder)
@@ -498,11 +516,11 @@ export default class extends wepy.page {
           wepy.hideLoading()
           const data = res.data
           wepy.showToast({
-            title: data.error,
+            title: data.msg,
             icon: 'none',
-            duration: Util.delay(data.error)
+            duration: Util.delay(data.msg)
           })
-          if (data.flag) {
+          if (data.code === 0) {
             this.refreshPage()
           }
         })
@@ -524,11 +542,11 @@ export default class extends wepy.page {
           wepy.hideLoading()
           const data = res.data
           wepy.showToast({
-            title: data.error,
+            title: data.msg,
             icon: 'none',
-            duration: Util.delay(data.error)
+            duration: Util.delay(data.msg)
           })
-          if (data.flag) {
+          if (data.code === 0) {
             this.refreshPage()
           }
         })
@@ -543,11 +561,11 @@ export default class extends wepy.page {
       if (e.detail.value !== '') this.keyword = e.detail.value
       this.disObject = {0: false, 2: false, 3: false, 4: false}
       this.flagParams = {
-        0: {flag: 0, pagestart: 0, history: false},
-        2: {flag: 2, pagestart: 0, history: false},
-        3: {flag: 3, pagestart: 0, history: false},
-        4: {flag: 4, pagestart: 0, history: false},
-        101: {flag: 101, pagestart: 0, history: false}
+        0: {flag: 0, page: 1, history: false},
+        2: {flag: 2, page: 1, history: false},
+        3: {flag: 3, page: 1, history: false},
+        4: {flag: 4, page: 1, history: false},
+        101: {flag: 101, page: 1, history: false}
       }
       this.tabDataObject = {0: [], 2: [], 3: [], 4: [], 5: []}
       this.getOrderData()
@@ -556,11 +574,11 @@ export default class extends wepy.page {
       this.keyword = ''
       this.disObject = {0: false, 2: false, 3: false, 4: false, 101: false}
       this.flagParams = {
-        0: {flag: 0, pagestart: 0, history: false},
-        2: {flag: 2, pagestart: 0, history: false},
-        3: {flag: 3, pagestart: 0, history: false},
-        4: {flag: 4, pagestart: 0, history: false},
-        101: {flag: 101, pagestart: 0, history: false}
+        0: {flag: 0, page: 1, history: false},
+        2: {flag: 2, page: 1, history: false},
+        3: {flag: 3, page: 1, history: false},
+        4: {flag: 4, page: 1, history: false},
+        101: {flag: 101, page: 1, history: false}
       }
       this.tabDataObject = {0: [], 2: [], 3: [], 4: [], 101: []}
       this.getOrderData()
@@ -660,11 +678,11 @@ export default class extends wepy.page {
         this.clearRefund()
         const data = res.data
         wepy.showToast({
-          title: data.error,
+          title: data.msg,
           icon: 'none',
-          duration: Util.delay(data.error)
+          duration: Util.delay(data.msg)
         })
-        if (data.flag) {
+        if (data.code === 0) {
           this.clickOrder.backflag = 20
           this.clickOrder.flagstr = '待发货(退款申请中)'
           this.clickOrder.buttons = []
@@ -724,11 +742,11 @@ export default class extends wepy.page {
         wepy.hideLoading()
         const data = res.data
         wepy.showToast({
-          title: data.error,
+          title: data.msg,
           icon: 'none',
-          duration: Util.delay(data.error)
+          duration: Util.delay(data.msg)
         })
-        if (data.flag) {
+        if (data.code === 0) {
           this.clearService()
           this.clickOrder.backflag = 120
           this.clickOrder.canservice = 0
@@ -783,11 +801,11 @@ export default class extends wepy.page {
                 }).then(res => {
                   wepy.hideLoading()
                   const resdata = JSON.parse(res.data)
-                  if (!resdata.flag) {
+                  if (resdata.code !== 0) {
                     wepy.showToast({
-                      title: resdata.error,
+                      title: resdata.msg,
                       icon: 'none',
-                      duration: Util.delay(resdata.error)
+                      duration: Util.delay(resdata.msg)
                     })
                   } else {
                     let jsonData = JSON.parse(res.data)

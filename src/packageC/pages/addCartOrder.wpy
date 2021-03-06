@@ -547,13 +547,13 @@ export default class AddOrder extends wepy.page {
       method: 'POST'
     }).then(res => {
       const data = res.data
-      const timeout = Util.delay(data.error)
+      const timeout = Util.delay(data.msg)
       wepy.showToast({
-        title: data.error,
+        title: data.msg,
         icon: 'none',
         duration: timeout
       })
-      if (data.flag) {
+      if (data.code === 0) {
         this.globalData.userInfo.cartcount = data.cartcount
         this.userInfo.cartcount = data.cartcount
         this.$parent.globalData = this.globalData
@@ -592,7 +592,7 @@ export default class AddOrder extends wepy.page {
       data: params,
       method: 'POST'
     }).then(res => {
-      if (res.data.flag) {
+      if (res.data.code === 0) {
         const data = res.data.data
         this.selectAddress = data
         this.selectAddress.fulladdress = `${data.province}${data.city}${data.counties}${data.address}`
@@ -841,7 +841,7 @@ export default class AddOrder extends wepy.page {
         data: {uid: this.globalData.Wid, appid: Config.AppId}
       }).then(res => {
         const data = res.data
-        if (data.flag) {
+        if (data.code === 0) {
           this.sellerUser = data.data
           this.$apply()
         }
