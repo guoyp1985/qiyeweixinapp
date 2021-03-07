@@ -289,7 +289,7 @@
     getProduct () {
       wepy.request({
         url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/miniprogram/productlist`,
-        data: {fid: Config.Fid, pagestart: this.pagestart, limit: this.limit},
+        data: {fid: Config.Fid, page: this.pagestart, limit: this.limit},
         method: 'post'
       }).then(res => {
         const data = res.data
