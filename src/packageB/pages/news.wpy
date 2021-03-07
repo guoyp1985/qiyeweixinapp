@@ -316,7 +316,7 @@
         wepy.request({url: url, data: {id: this.query.id, module: this.module}, method: 'POST'})
         .then(res => {
           const data = res.data
-          if (data.flag === 1) {
+          if (data.code === 0) {
             if (this.isdig) {
               this.isdig = false
               this.article.dig = this.article.dig - 1
@@ -327,9 +327,9 @@
             this.$apply()
           } else {
             wepy.showToast({
-              title: data.error,
+              title: data.msg,
               icon: 'none',
-              duration: Util.delay(data.error)
+              duration: Util.delay(data.msg)
             })
           }
         })
@@ -400,7 +400,7 @@
       .then(res => {
         if (res) {
           const data = res.data
-          if (data.flag === 1) {
+          if (data.code === 0) {
             this.isdig = true
           }
           return wepy.request({url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/user/favorite/show`, data: {id: this.article.id, module: this.module}, method: 'POST'})
@@ -408,7 +408,7 @@
       })
       .then(res => {
         if (res) {
-          if (res.data.flag < 1) {
+          if (res.data.code !== 0) {
             this.notFavorite = true
           } else {
             this.notFavorite = false
@@ -487,7 +487,7 @@
         },
         res => {
           const data = res.data
-          if (data.flag) {
+          if (data.code === 0) {
             this.factoryInfo = data.data
           }
           this.$apply()

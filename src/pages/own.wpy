@@ -143,7 +143,7 @@ export default class Own extends wepy.page {
         method: 'post'
       }).then(res => {
         const data = res.data
-        if (data.flag) {
+        if (data.code === 0) {
           this.userInfo.fid = Config.Fid
           this.getSettingList()
           this.$apply()
@@ -214,7 +214,7 @@ export default class Own extends wepy.page {
     // }).then(res => {
     //   wepy.hideLoading()
     //   const data = res.data
-    //   if (data.flag) {
+    //   if (data.code === 0) {
     //     let data = res.data
     //     let retdata = data.data ? data.data : data
     //     for (let i = 0; i < retdata.length; i++) {

@@ -776,7 +776,7 @@ export default class extends wepy.page {
       method: 'post'
     }).then(res => {
       const data = res.data
-      if (data.flag) {
+      if (data.code === 0) {
         const retdata = data.data
         if (retdata) {
           this.cardInfo = retdata
@@ -938,7 +938,7 @@ export default class extends wepy.page {
         wepy.hideLoading()
         this.isSubmit = false
         const data = res.data
-        if (data.flag) {
+        if (data.code === 0) {
           this.addCount = ''
           if (this.cardInfo && this.cardInfo.id) {
             this.tipTxt = '增加成功'
@@ -951,7 +951,7 @@ export default class extends wepy.page {
           this.$apply()
         } else {
           wepy.showToast({
-            title: data.error,
+            title: data.msg,
             icon: 'none'
           })
         }
@@ -989,7 +989,7 @@ export default class extends wepy.page {
       }).then(res => {
         this.showProductOpt = false
         const data = res.data
-        if (data.flag) {
+        if (data.code === 0) {
           const retdata = data.data
           if (retdata) {
             this.cardInfo = retdata

@@ -147,7 +147,7 @@
         }).then(res => {
           wepy.hideLoading()
           const data = res.data
-          if (data.flag) {
+          if (data.code === 0) {
             this.newaddress = ''
             delete this.postData.newaddress
             const info = data.data

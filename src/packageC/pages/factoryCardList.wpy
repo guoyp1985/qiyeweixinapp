@@ -209,11 +209,11 @@ export default class extends wepy.page {
         this.isIng = false
         const data = res.data
         wepy.showToast({
-          title: data.error,
+          title: data.msg,
           icon: 'none',
-          duration: Util.delay(data.error)
+          duration: Util.delay(data.msg)
         })
-        if (data.flag) {
+        if (data.code === 0) {
           // 礼品领取成功通知
           Util.checkTmpMsg({
             systeminfo: this.globalData.systemInfo,

@@ -402,7 +402,7 @@ export default class CustomerView extends wepy.page {
     }).then(res => {
       const data = res.data
       let retdata = data.data ? data.data : data
-      if (data.flag) {
+      if (data.code === 0) {
         retdata.dateline_str = new Time(retdata.dateline * 1000).dateFormat('yyyy-MM-dd hh:mm')
         if (retdata.sex === 1) {
           retdata.sex_str = '男'

@@ -1323,7 +1323,7 @@ export default class Home extends wepy.page {
       }).then(res => {
         if (res) {
           const data = res.data
-          if (data.flag) {
+          if (data.code === 0) {
             this.userInfo.fid = this.Fid
             this.$parent.globalData.userInfo = this.userInfo
             this.$apply()
@@ -1428,7 +1428,7 @@ export default class Home extends wepy.page {
         data: {uid: this.globalData.Wid, appid: Config.AppId}
       }).then(res => {
         const data = res.data
-        if (data.flag) {
+        if (data.code === 0) {
           this.sellerUser = data.data
         }
         this.disSeller = true
@@ -1581,7 +1581,7 @@ export default class Home extends wepy.page {
       let endtime = new Date().getTime()
       console.log('首页homepage请求 耗时', endtime - starttime)
       const data = res.data
-      if (data.flag) {
+      if (data.code === 0) {
         this.homeData = data
         this.afterHomePage()
         // 缓存商品列表
@@ -1736,7 +1736,7 @@ export default class Home extends wepy.page {
     })
     const data = res.data
     wepy.hideLoading()
-    if (data.flag === 1) {
+    if (data.code === 0) {
       // let url = `addOrder?wid=${this.globalData.Wid}&shop_id=${data.data}&fromfid=${this.Fid}`
       // url = encodeURIComponent(url)
       // wepy.navigateTo({url: `/pages/webview?url=${url}`})
@@ -1747,7 +1747,7 @@ export default class Home extends wepy.page {
       wepy.navigateTo({url: url})
     } else {
       wepy.showToast({
-        title: data.error,
+        title: data.msg,
         icon: 'none'
       })
       this.buyIng = false
@@ -1861,7 +1861,7 @@ export default class Home extends wepy.page {
           method: 'post'
         }).then(res => {
           const data = res.data
-          if (data.flag) {
+          if (data.code === 0) {
             const retoptions = data.data
             if (retoptions && retoptions.length) {
               this.products[curPageIndex][curIndex].options = retoptions
@@ -2070,11 +2070,11 @@ export default class Home extends wepy.page {
         this.submiting = false
         const data = res.data
         wepy.showToast({
-          title: data.error,
+          title: data.msg,
           icon: 'none',
-          duration: Util.delay(data.error)
+          duration: Util.delay(data.msg)
         })
-        if (data.flag) {
+        if (data.code === 0) {
           // 礼品领取成功通知
           Util.checkTmpMsg({
             systeminfo: this.globalData.systemInfo,
@@ -2099,7 +2099,7 @@ export default class Home extends wepy.page {
         wepy.hideLoading()
         this.submiting2 = false
         const data = res.data
-        if (data.flag) {
+        if (data.code === 0) {
           this.reciveAll = true
           wepy.setStorageSync('showCardFlag', 1)
           for (let i = 0; i < this.cardList.length; i++) {
@@ -2107,7 +2107,7 @@ export default class Home extends wepy.page {
           }
         }
         wepy.showToast({
-          title: data.flag ? '领取成功' : '领取失败',
+          title: data.code === 0 ? '领取成功' : '领取失败',
           icon: 'none'
         })
         this.$apply()

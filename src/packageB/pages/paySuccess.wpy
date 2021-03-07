@@ -249,7 +249,7 @@
             data: {uid: this.globalData.Wid, appid: Config.AppId}
           }).then(res => {
             const data = res.data
-            if (data.flag) {
+            if (data.code === 0) {
               this.sellerUser = data.data
             }
             this.$apply()
@@ -279,7 +279,7 @@
       }
     }
     onReachBottom () {
-      if (this.showArea1 && this.productData.length === this.limit * (this.pagestart + 1)) {
+      if (this.showArea1 && this.productData.length === this.limit * this.pagestart) {
         this.pagestart++
         this.isLoading = true
         this.getProduct()
@@ -288,7 +288,7 @@
     }
     getProduct () {
       wepy.request({
-        url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/factory/factoryproductList`,
+        url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/miniprogram/productlist`,
         data: {fid: Config.Fid, pagestart: this.pagestart, limit: this.limit},
         method: 'post'
       }).then(res => {
@@ -310,7 +310,7 @@
     onLoad (options) {
       this.options = options
       this.limit = Config.Limit
-      this.pagestart = 0
+      this.pagestart = 1
       if (this.$parent.globalData.flag.bokaAuth) {
         this.handlePageData()
       } else {
@@ -351,7 +351,7 @@
       }).then(res => {
         wepy.hideLoading()
         const data = res.data
-        if (!data.flag) return false
+        if (data.code !== 0) return false
         let retdata = data.data
         retdata.dateline_str = new Time(retdata.dateline * 1000).dateFormat('yyyy-MM-dd hh:mm')
         this.orderData = retdata
@@ -428,7 +428,7 @@
           }
         })
       }).then(res => {
-        if (res.data.flag === 1) {
+        if (res.data.code === 0) {
           let retdata = res.data.data
           retdata = retdata.replace(/http:/g, 'https:')
           return wepy.downloadFile({

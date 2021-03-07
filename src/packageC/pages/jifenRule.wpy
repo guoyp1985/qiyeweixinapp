@@ -214,7 +214,7 @@
       }).then(res => {
         wepy.hideLoading()
         const data = res.data
-        if (data.flag) {
+        if (data.code === 0) {
           let data = res.data
           let retdata = data.data ? data.data : data
           if (this.pageStart === 0) {

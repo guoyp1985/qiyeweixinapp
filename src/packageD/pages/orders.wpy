@@ -343,11 +343,11 @@ export default class extends wepy.page {
           wepy.hideLoading()
           const data = res.data
           wepy.showToast({
-            title: data.error,
+            title: data.msg,
             icon: 'none',
-            duration: Util.delay(data.error)
+            duration: Util.delay(data.msg)
           })
-          if (data.flag) {
+          if (data.code === 0) {
             this.tabDataObject[this.selectedIndex][params.index].canshoukuan = 0
             this.$apply()
           }
@@ -422,11 +422,11 @@ export default class extends wepy.page {
             wepy.hideLoading()
             const data = res.data
             wepy.showToast({
-              title: data.error,
+              title: data.msg,
               icon: 'none',
-              duration: Util.delay(data.error)
+              duration: Util.delay(data.msg)
             })
-            if (data.flag) {
+            if (data.code === 0) {
               this.tabDataObject[this.selectedIndex][dataset.index].cantuikuan = 0
               this.$apply()
             }

@@ -816,14 +816,14 @@ export default class TipBgLayer extends wepy.component {
           url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/seller/signIn`
         }).then(res => {
           const data = res.data
-          let errorTxt = data.error
-          if (data.flag) errorTxt = '签到成功'
+          let errorTxt = data.msg
+          if (data.code === 0) errorTxt = '签到成功'
           wepy.showToast({
             title: errorTxt,
             icon: 'none',
             duration: Util.delay(errorTxt)
           })
-          if (data.flag) {
+          if (data.code === 0) {
             this.$emit('updateJifen', data.jifen, index)
           }
         })
@@ -846,14 +846,14 @@ export default class TipBgLayer extends wepy.component {
             data: params
           }).then(res => {
             const data = res.data
-            let errorTxt = data.error
-            if (data.flag) errorTxt = '领取成功'
+            let errorTxt = data.msg
+            if (data.code === 0) errorTxt = '领取成功'
             wepy.showToast({
               title: errorTxt,
               icon: 'none',
               duration: Util.delay(errorTxt)
             })
-            if (data.flag) {
+            if (data.code === 0) {
               this.$emit('updateSaleJifen', item, index, data.jifen, type)
             }
           })

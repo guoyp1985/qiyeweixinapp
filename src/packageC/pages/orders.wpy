@@ -242,11 +242,11 @@
             wepy.hideLoading()
             const data = res.data
             wepy.showToast({
-              title: data.error,
+              title: data.msg,
               icon: 'none',
-              duration: Util.delay(data.error)
+              duration: Util.delay(data.msg)
             })
-            if (data.flag) {
+            if (data.code === 0) {
               for (let i = 0; i < ids.length; i++) {
                 for (let j = 0; j < this.tabData.length; j++) {
                   if (ids[i] === this.tabData[j].id) {

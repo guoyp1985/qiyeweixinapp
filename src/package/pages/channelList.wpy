@@ -246,13 +246,13 @@ export default class Channel extends wepy.page {
             }).then(res => {
               const data = res.data
               this.isSwitching = false
-              if (data.flag) {
+              if (data.code === 0) {
                 this.tabData1[index].miniprogram = newval
               } else {
                 wepy.showToast({
-                  title: data.error,
+                  title: data.msg,
                   icon: 'none',
-                  duration: Util.delay(data.error)
+                  duration: Util.delay(data.msg)
                 })
               }
               this.$apply()
@@ -282,13 +282,13 @@ export default class Channel extends wepy.page {
             }).then(res => {
               const data = res.data
               this.isMoving = false
-              if (data.flag) {
+              if (data.code === 0) {
                 this.tabData1.splice(index, 1)
               } else {
                 wepy.showToast({
-                  title: data.error,
+                  title: data.msg,
                   icon: 'none',
-                  duration: Util.delay(data.error)
+                  duration: Util.delay(data.msg)
                 })
               }
               this.$apply()
@@ -333,14 +333,14 @@ export default class Channel extends wepy.page {
         }).then(res => {
           const data = res.data
           this.isMoving = false
-          if (data.flag) {
+          if (data.code === 0) {
             this.tabData1[index] = moveData
             this.tabData1[moveIndex] = curData
           } else {
             wepy.showToast({
-              title: data.error,
+              title: data.msg,
               icon: 'none',
-              duration: Util.delay(data.error)
+              duration: Util.delay(data.msg)
             })
           }
           this.$apply()
@@ -384,15 +384,15 @@ export default class Channel extends wepy.page {
             }).then(res => {
               const data = res.data
               this.isOpening = false
-              if (data.flag) {
+              if (data.code === 0) {
                 this.tabData2[index].haveimport = 1
                 wepy.clearStorageSync()
                 this.$apply()
               } else {
                 wepy.showToast({
-                  title: data.error,
+                  title: data.msg,
                   icon: 'none',
-                  duration: Util.delay(data.error)
+                  duration: Util.delay(data.msg)
                 })
               }
               this.$apply()

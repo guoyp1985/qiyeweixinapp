@@ -324,7 +324,7 @@ export default class extends wepy.page {
       method: 'post'
     }).then(res => {
       const data = res.data
-      if (data.flag) {
+      if (data.code === 0) {
         const retdata = data.data
         this.listData = this.listData.concat(retdata)
         this.$apply()
@@ -417,11 +417,11 @@ export default class extends wepy.page {
                 }).then(res => {
                   wepy.hideLoading()
                   const resdata = JSON.parse(res.data)
-                  if (!resdata.flag) {
+                  if (resdata.code !== 0) {
                     wepy.showToast({
-                      title: resdata.error,
+                      title: resdata.msg,
                       icon: 'none',
-                      duration: Util.delay(resdata.error)
+                      duration: Util.delay(resdata.msg)
                     })
                   } else {
                     let jsonData = JSON.parse(res.data)
@@ -524,7 +524,7 @@ export default class extends wepy.page {
           }
         })
       }).then(res => {
-        if (res.data.flag === 1) {
+        if (res.data.code === 0) {
           let retdata = res.data.data
           retdata = retdata.replace(/http:/g, 'https:')
           return wepy.downloadFile({

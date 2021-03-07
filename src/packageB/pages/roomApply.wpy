@@ -253,11 +253,11 @@ export default class RoomApply extends wepy.page {
       // }).then(res => {
       //   wepy.hideLoading()
       //   const data = res.data
-      //   if (data.flag) {
+      //   if (data.code === 0) {
       //     wepy.showToast({
-      //       title: data.error,
+      //       title: data.msg,
       //       icon: 'none',
-      //       duration: Util.delay(data.error)
+      //       duration: Util.delay(data.msg)
       //     })
       //     wepy.navigateTo({
       //       url: `/packageB/pages/myGroups`
@@ -266,7 +266,7 @@ export default class RoomApply extends wepy.page {
       //     wepy.showToast({
       //       title: '请先验证群',
       //       icon: 'none',
-      //       duration: Util.delay(data.error)
+      //       duration: Util.delay(data.msg)
       //     })
       //   }
       // })
@@ -312,11 +312,11 @@ export default class RoomApply extends wepy.page {
         const data = res.data
         this.gruopId = data.data
         wepy.showToast({
-          title: data.error,
+          title: data.msg,
           icon: 'none',
-          duration: Util.delay(data.error)
+          duration: Util.delay(data.msg)
         })
-        if (data.flag) {
+        if (data.code === 0) {
           wepy.navigateTo({
             url: `/packageB/pages/myGroups`
           })

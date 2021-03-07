@@ -637,9 +637,9 @@
             wepy.hideLoading()
             this.isIng = false
             const data = res.data
-            if (data.flag) {
+            if (data.code === 0) {
               wepy.showToast({
-                title: data.error,
+                title: data.msg,
                 icon: 'none'
               })
               // 礼品领取成功通知
@@ -657,7 +657,7 @@
               })
             } else {
               wepy.showToast({
-                title: data.error,
+                title: data.msg,
                 icon: 'none'
               })
             }
@@ -700,11 +700,11 @@
           this.isIng = false
           const data = res.data
           wepy.showToast({
-            title: data.error,
+            title: data.msg,
             icon: 'none',
-            duration: Util.delay(data.error)
+            duration: Util.delay(data.msg)
           })
-          if (data.flag) {
+          if (data.code === 0) {
             // 礼品领取成功通知
             Util.checkTmpMsg({
               systeminfo: this.globalData.systemInfo,

@@ -179,7 +179,7 @@ export default class extends wepy.page {
         }).then(res => {
           const data = res.data
           this.isSwitching = false
-          if (data.flag) {
+          if (data.code === 0) {
             if (this.selectedIndex === 0) {
               this.tabData1[index].moderate = newval
             } else {
@@ -187,9 +187,9 @@ export default class extends wepy.page {
             }
           } else {
             wepy.showToast({
-              title: data.error,
+              title: data.msg,
               icon: 'none',
-              duration: Util.delay(data.error)
+              duration: Util.delay(data.msg)
             })
           }
           this.$apply()

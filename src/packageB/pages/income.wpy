@@ -282,7 +282,7 @@
         url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/user/cashInfo`
       }).then(res => {
         const data = res.data
-        if (data.flag) {
+        if (data.code === 0) {
           this.cashInfo = data.data
           this.pendingmoney = data.data
           this.$apply()
@@ -350,11 +350,11 @@
           wepy.hideLoading()
           const data = res.data
           wepy.showToast({
-            title: data.error,
+            title: data.msg,
             icon: 'none',
-            duration: Util.delay(data.error)
+            duration: Util.delay(data.msg)
           })
-          if (data.flag) {
+          if (data.code === 0) {
             this.userInfo.waitcash = data.waitcash
             this.cashInfo.ketixian = data.waitcash
             this.globalData.userInfo = this.userInfo

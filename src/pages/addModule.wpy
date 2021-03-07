@@ -910,13 +910,13 @@ export default class AddModule extends wepy.page {
           wepy.hideLoading()
           this.submitIng = false
           this.$apply()
-          const timeout = Util.delay(data.error)
+          const timeout = Util.delay(data.msg)
           wepy.showToast({
-            title: data.error,
+            title: data.msg,
             icon: 'none',
-            duration: Util.delay(data.error)
+            duration: Util.delay(data.msg)
           })
-          if (data.flag) {
+          if (data.code === 0) {
             this.postData = {photo: []}
             this.$apply()
             setTimeout(() => {
@@ -955,11 +955,11 @@ export default class AddModule extends wepy.page {
                 }).then(res => {
                   wepy.hideLoading()
                   const resdata = JSON.parse(res.data)
-                  if (!resdata.flag) {
+                  if (resdata.code !== 0) {
                     wepy.showToast({
-                      title: resdata.error,
+                      title: resdata.msg,
                       icon: 'none',
-                      duration: Util.delay(resdata.error)
+                      duration: Util.delay(resdata.msg)
                     })
                   } else {
                     let jsonData = JSON.parse(res.data)
@@ -1224,11 +1224,11 @@ export default class AddModule extends wepy.page {
                 }).then(res => {
                   wepy.hideLoading()
                   const resdata = JSON.parse(res.data)
-                  if (!resdata.flag) {
+                  if (resdata.code !== 0) {
                     wepy.showToast({
-                      title: resdata.error,
+                      title: resdata.msg,
                       icon: 'none',
-                      duration: Util.delay(resdata.error)
+                      duration: Util.delay(resdata.msg)
                     })
                   } else {
                     let jsonData = JSON.parse(res.data)

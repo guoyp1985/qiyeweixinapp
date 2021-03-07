@@ -203,11 +203,11 @@ export default class Address extends wepy.page {
           }).then(res => {
             const data = res.data
             wepy.showToast({
-              title: data.error,
+              title: data.msg,
               icon: 'none',
-              duration: Util.delay(data.error)
+              duration: Util.delay(data.msg)
             })
-            if (data.flag) {
+            if (data.code === 0) {
               this.items.splice(index, 1)
               this.$parent.globalData.address = null
               this.$apply()
@@ -275,7 +275,7 @@ export default class Address extends wepy.page {
     }).then(res => {
       if (res) {
         const data = res.data
-        if (data.flag) {
+        if (data.code === 0) {
           if (this.inner) {
             this.$parent.globalData.address = data.data
             this.$apply()

@@ -1039,7 +1039,7 @@ export default class Product extends wepy.page {
         data: {uid: this.globalData.Wid, appid: Config.AppId}
       }).then(res => {
         const data = res.data
-        if (data.flag) {
+        if (data.code === 0) {
           this.sellerUser = data.data
         }
         this.$apply()
@@ -1466,7 +1466,7 @@ export default class Product extends wepy.page {
       }).then(res => {
         wepy.hideLoading()
         const data = res.data
-        if (data.flag) {
+        if (data.code === 0) {
           this.product.awardnum--
           this.moneyParams = {}
           this.moneyParams.awardtype = data.awardtype
@@ -1480,9 +1480,9 @@ export default class Product extends wepy.page {
           this.$apply()
         } else {
           wepy.showToast({
-            title: data.error,
+            title: data.msg,
             icon: 'none',
-            duration: Util.delay(data.error)
+            duration: Util.delay(data.msg)
           })
         }
       })
@@ -1532,7 +1532,7 @@ export default class Product extends wepy.page {
           this.isIng = false
           const data = res.data
           wepy.showToast({
-            title: data.error,
+            title: data.msg,
             icon: 'none'
           })
         })
@@ -1589,9 +1589,9 @@ export default class Product extends wepy.page {
         method: 'post'
       }).then(res => {
         const data = res.data
-        if (data.flag) {
+        if (data.code === 0) {
           wepy.showToast({
-            title: data.error,
+            title: data.msg,
             icon: 'none'
           })
           // 礼品领取成功通知
@@ -1606,7 +1606,7 @@ export default class Product extends wepy.page {
           this.cardList[index].isreceived = true
           this.cardList[index].txt = '领取失败'
           wepy.showToast({
-            title: data.error,
+            title: data.msg,
             icon: 'none'
           })
         }
@@ -1798,7 +1798,7 @@ export default class Product extends wepy.page {
       method: 'post'
     }).then(res => {
       const data = res.data
-      if (data.flag) {
+      if (data.code === 0) {
         let retdata = data.data ? data.data : data
         for (var i = 0; i < retdata.length; i++) {
           retdata[i].txt = '立即领取'

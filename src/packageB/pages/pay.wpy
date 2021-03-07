@@ -164,7 +164,7 @@
       })
       .then(res => {
         const data = res.data
-        if (data.flag) {
+        if (data.code === 0) {
           this.disabled = false
           this.payPrice = data.money
           this.receivables = data.weixinname
@@ -174,8 +174,10 @@
           }
         } else {
           this.disabled = true
+          let tip = data.msg
+          if (data.msg && data.msg.return_msg) tip = data.msg.return_msg
           wepy.showToast({
-            title: data.error.return_msg || data.error,
+            title: tip,
             icon: 'none'
           })
         }

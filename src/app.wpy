@@ -259,7 +259,6 @@
           if (data.code !== 0) return false
           const retdata = data.data
           let user = data.user
-          user.bindstatus = 1
           this.globalData.miniData = retdata.data
           this.globalData.loginData = data
           this.globalData.userInfo = user

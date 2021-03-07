@@ -537,7 +537,7 @@ export default class extends wepy.component {
     })
     const data = res.data
     wepy.hideLoading()
-    if (data.flag === 1) {
+    if (data.code === 0) {
       let url = `/pages/addOrder?wid=${this.globalData.Wid}&shop_id=${data.data}&fromfid=${Config.Fid}`
       if (this.clickProduct.agentfid) {
         url = `${url}&agentfid=${this.clickProduct.agentfid}`
@@ -545,7 +545,7 @@ export default class extends wepy.component {
       wepy.navigateTo({url: url})
     } else {
       wepy.showToast({
-        title: data.error,
+        title: data.msg,
         icon: 'none'
       })
     }
@@ -678,7 +678,7 @@ export default class extends wepy.component {
       url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/order/retailerRevenue`
     }).then(res => {
       const data = res.data
-      if (data.flag) {
+      if (data.code === 0) {
         this.retailerRevenue = data.data
       }
       this.newOrders = data.neworders
@@ -892,11 +892,11 @@ export default class extends wepy.component {
           wepy.hideLoading()
           const data = res.data
           wepy.showToast({
-            title: data.error,
+            title: data.msg,
             icon: 'none',
-            duration: Util.delay(data.error)
+            duration: Util.delay(data.msg)
           })
-          if (data.flag) {
+          if (data.code === 0) {
             let newOrders = this.newOrders
             newOrders = newOrders - idarr.length
             if (newOrders < 0) {

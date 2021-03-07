@@ -163,7 +163,7 @@ export default class AddMaterial extends wepy.page {
         data: {module: 'productmaterial', id: this.options.mid}
       }).then(res => {
         let data = res.data
-        if (data.flag) {
+        if (data.code === 0) {
           let retdata = data.data
           this.productContent = retdata.title
           if (retdata.contentphoto && retdata.contentphoto !== '') {
@@ -223,7 +223,7 @@ export default class AddMaterial extends wepy.page {
           method: 'post'
         }).then(res => {
           let data = res.data
-          if (data.flag === 1) {
+          if (data.code === 0) {
             wepy.showToast({
               title: '发布成功',
               icon: 'none'
@@ -283,11 +283,11 @@ export default class AddMaterial extends wepy.page {
                 }).then(res => {
                   wepy.hideLoading()
                   const resdata = JSON.parse(res.data)
-                  if (!resdata.flag) {
+                  if (resdata.code !== 0) {
                     wepy.showToast({
-                      title: resdata.error,
+                      title: resdata.msg,
                       icon: 'none',
-                      duration: Util.delay(resdata.error)
+                      duration: Util.delay(resdata.msg)
                     })
                   } else {
                     let jsonData = JSON.parse(res.data)
@@ -321,11 +321,11 @@ export default class AddMaterial extends wepy.page {
         wepy.hideLoading()
         if (res) {
           const resdata = JSON.parse(res.data)
-          if (!resdata.flag) {
+          if (resdata.code !== 0) {
             wepy.showToast({
-              title: resdata.error,
+              title: resdata.msg,
               icon: 'none',
-              duration: Util.delay(resdata.error)
+              duration: Util.delay(resdata.msg)
             })
           } else {
             this.video = resdata.data

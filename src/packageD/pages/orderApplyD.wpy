@@ -284,11 +284,11 @@ export default class extends wepy.page {
                 }).then(res => {
                   wepy.hideLoading()
                   const resdata = JSON.parse(res.data)
-                  if (!resdata.flag) {
+                  if (resdata.code !== 0) {
                     wepy.showToast({
-                      title: resdata.error,
+                      title: resdata.msg,
                       icon: 'none',
-                      duration: Util.delay(resdata.error)
+                      duration: Util.delay(resdata.msg)
                     })
                   } else {
                     let jsonData = JSON.parse(res.data)
@@ -326,11 +326,11 @@ export default class extends wepy.page {
         wepy.hideLoading()
         const data = res.data
         wepy.showToast({
-          title: data.error,
+          title: data.msg,
           icon: 'none',
-          duration: Util.delay(data.error)
+          duration: Util.delay(data.msg)
         })
-        if (data.flag) {
+        if (data.code === 0) {
           this.listData[this.clickIndex].dealed = 1
           this.listData[this.clickIndex].status = '待确认'
           this.listData[this.clickIndex].photo = this.postPhoto

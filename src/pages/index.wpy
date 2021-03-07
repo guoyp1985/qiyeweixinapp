@@ -76,7 +76,7 @@ export default class Index extends wepy.page {
           method: 'post'
         }).then(res => {
           const data = res.data
-          if (data.flag) {
+          if (data.code === 0) {
             let sourceurl = data.data.sourceurl
             let urlQuery = Util.query(sourceurl)
             let urlWid = urlQuery.wid

@@ -187,7 +187,7 @@ export default class materialBank extends wepy.page {
       data: {id: this.options.pid, type: 'fpimport', wid: this.globalData.Wid}
     }).then(res => {
       const data = res.data
-      if (data.flag) {
+      if (data.code === 0) {
         this.viewData = data.data
       }
       this.getData()
@@ -379,7 +379,7 @@ export default class materialBank extends wepy.page {
         }
       })
     }).then(res => {
-      if (res.data.flag === 1) {
+      if (res.data.code === 0) {
         let retdata = res.data.data
         retdata = retdata.replace(/http:/g, 'https:')
         return wepy.downloadFile({
@@ -596,7 +596,7 @@ export default class materialBank extends wepy.page {
             method: 'post'
           }).then(res => {
             const data = res.data
-            if (data.flag === 1) {
+            if (data.code === 0) {
               this.materData.splice(index, 1)
               wepy.showToast({
                 title: '删除成功',
@@ -604,9 +604,9 @@ export default class materialBank extends wepy.page {
               })
             } else {
               wepy.showToast({
-                title: data.error,
+                title: data.msg,
                 icon: 'none',
-                duration: Util.delay(data.error)
+                duration: Util.delay(data.msg)
               })
             }
             this.$apply()

@@ -484,7 +484,7 @@
         },
         res => {
           const data = res.data
-          if (data.flag) {
+          if (data.code === 0) {
             this.hbMoney = data.data.hongbaomoney
             this.$apply()
           }
@@ -795,7 +795,7 @@
         method: 'post'
       }).then(res => {
         const data = res.data
-        if (data.flag) {
+        if (data.code === 0) {
           this.taskData = data.data
           this.exceed = data.exceed
           this.userInfo.retailerinfo.jifen = data.jifen
@@ -813,7 +813,7 @@
         method: 'post'
       }).then(res => {
         const data = res.data
-        if (data.flag) {
+        if (data.code === 0) {
           this.taskData2 = data.data
           this.disTask2 = true
           this.$apply()
@@ -848,11 +848,11 @@
                   }).then(res => {
                     wepy.hideLoading()
                     const resdata = JSON.parse(res.data)
-                    if (!resdata.flag) {
+                    if (resdata.code !== 0) {
                       wepy.showToast({
-                        title: resdata.error,
+                        title: resdata.msg,
                         icon: 'none',
-                        duration: Util.delay(resdata.error)
+                        duration: Util.delay(resdata.msg)
                       })
                     } else {
                       let jsonData = JSON.parse(res.data)
@@ -899,11 +899,11 @@
           wepy.hideLoading()
           const data = res.data
           wepy.showToast({
-            title: data.error,
+            title: data.msg,
             icon: 'none',
-            duration: Util.delay(data.error)
+            duration: Util.delay(data.msg)
           })
-          if (data.flag) {
+          if (data.code === 0) {
             this.showPhotoTask = false
             this.clickTaskData.isbutton = false
             this.clickTaskData.buttontitle = '待审核'

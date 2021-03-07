@@ -282,7 +282,7 @@ export default class extends wepy.page {
         method: 'post'
       }).then(res => {
         const data = res.data
-        if (data.flag) {
+        if (data.code === 0) {
           this.liveData[this.shareIndex].poster = photo
         }
         this.$apply()

@@ -977,11 +977,11 @@ export default class extends wepy.page {
       }).then(res => {
         const data = res.data
         wepy.showToast({
-          title: data.error,
+          title: data.msg,
           icon: 'none',
-          duration: Util.delay(data.error)
+          duration: Util.delay(data.msg)
         })
-        if (data.flag) {
+        if (data.code === 0) {
           this.tabData4[this.clickIndex].waitcashmoney = (waitMoney - parseFloat(money)).toFixed(2)
           this.$apply()
           this.clearCash()

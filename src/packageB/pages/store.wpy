@@ -403,7 +403,7 @@ export default class store1 extends wepy.page {
     },
     res => {
       const data = res.data
-      if (data.flag) {
+      if (data.code === 0) {
         this.processRetailer(data.data)
       }
       this.$apply()
@@ -432,7 +432,7 @@ export default class store1 extends wepy.page {
       method: 'POST'
     }).then(res => {
       const data = res.data
-      if (data.flag === 1) {
+      if (data.code === 0) {
         this.isFavorite = true
       } else {
         this.isFavorite = false
@@ -585,7 +585,7 @@ export default class store1 extends wepy.page {
             method: 'POST'
           }).then(res => {
             const data = res.data
-            if (data.flag) {
+            if (data.code === 0) {
               this.userInfo.retailerinfo.params = data.data
               this.retailerInfo.params = data.data
               this.$parent.globalData.userInfo = this.userInfo

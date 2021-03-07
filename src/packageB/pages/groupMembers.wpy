@@ -270,8 +270,8 @@ export default class GroupMembers extends wepy.page {
       }).then(res => {
         wepy.hideLoading()
         const data = res.data
-        let error = data.error
-        if (data.flag) {
+        let error = data.msg
+        if (data.code === 0) {
           if (curdata.priority) {
             error = '已在客户列表中取消置顶'
           } else {
@@ -285,7 +285,7 @@ export default class GroupMembers extends wepy.page {
           duration: timeout
         })
         setTimeout(() => {
-          if (data.flag) {
+          if (data.code === 0) {
             this.userData[curdata.uid].priority = !this.userData[curdata.uid].priority
             this.$apply()
           }

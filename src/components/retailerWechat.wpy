@@ -110,11 +110,11 @@
           })
         }).then((res) => {
           const resdata = JSON.parse(res.data)
-          if (!resdata.flag) {
+          if (resdata.code !== 0) {
             wepy.showToast({
-              title: resdata.error,
+              title: resdata.msg,
               icon: 'none',
-              duration: Util.delay(resdata.error)
+              duration: Util.delay(resdata.msg)
             })
           } else {
             return wepy.request({

@@ -87,7 +87,7 @@
       },
       res => {
         const data = res.data
-        if (data.flag) {
+        if (data.code === 0) {
           this.factoryInfo = data.data
           this.afterFactoryInfo()
         }

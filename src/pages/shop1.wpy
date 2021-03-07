@@ -407,7 +407,7 @@
           data: {uid: this.globalData.Wid, appid: Config.AppId}
         }).then(res => {
           const data = res.data
-          if (data.flag) {
+          if (data.code === 0) {
             this.sellerUser = data.data
           }
           this.disSeller = true
@@ -461,7 +461,7 @@
         let endtime = new Date().getTime()
         console.log('首页homepage请求 耗时', endtime - starttime)
         const data = res.data
-        if (data.flag) {
+        if (data.code === 0) {
           this.homeData = data
           this.afterHomePage()
           // 缓存商品列表
@@ -660,7 +660,7 @@
         }).then(res => {
           if (res) {
             const data = res.data
-            if (data.flag) {
+            if (data.code === 0) {
               this.userInfo.fid = this.Fid
               this.$parent.globalData.userInfo = this.userInfo
               this.$apply()
@@ -694,7 +694,7 @@
       })
       const data = res.data
       wepy.hideLoading()
-      if (data.flag === 1) {
+      if (data.code === 0) {
         let url = `/pages/addOrder?wid=${this.globalData.Wid}&shop_id=${data.data}&fromfid=${this.Fid}`
         if (this.clickProduct.agentfid) {
           url = `${url}&agentfid=${this.clickProduct.agentfid}`
@@ -702,7 +702,7 @@
         wepy.navigateTo({url: url})
       } else {
         wepy.showToast({
-          title: data.error,
+          title: data.msg,
           icon: 'none'
         })
         this.buyIng = false
@@ -874,7 +874,7 @@
             method: 'post'
           }).then(res => {
             const data = res.data
-            if (data.flag) {
+            if (data.code === 0) {
               const retoptions = data.data
               if (retoptions && retoptions.length) {
                 this.products[curPageIndex][curIndex].options = retoptions

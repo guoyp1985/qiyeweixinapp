@@ -143,8 +143,8 @@ export default class extends wepy.component {
         }).then(res => {
           wepy.hideLoading()
           const data = res.data
-          if (data.flag) {
-            let retuser = data.user
+          if (data.code === 0) {
+            let retuser = data.data
             this.$parent.globalData.userInfo = retuser
             wepy.setStorageSync('user', retuser)
             wepy.setStorageSync('version', Config.version)

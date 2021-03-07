@@ -299,7 +299,7 @@ import Time from '@/libs/time'
       }).then(res => {
         wepy.hideLoading()
         const data = res.data
-        if (data.flag) {
+        if (data.code === 0) {
           let data = res.data
           let retdata = data.data ? data.data : data
           this.isLoading = false
@@ -322,7 +322,7 @@ import Time from '@/libs/time'
       }).then(res => {
         wepy.hideLoading()
         const data = res.data
-        if (data.flag) {
+        if (data.code === 0) {
           let data = res.data
           let retdata = data.data ? data.data : data
           for (let i = 0; i < retdata.length; i++) {
@@ -389,14 +389,14 @@ import Time from '@/libs/time'
             url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/seller/signIn`
           }).then(res => {
             const data = res.data
-            let errorTxt = data.error
-            if (data.flag) errorTxt = '签到成功'
+            let errorTxt = data.msg
+            if (data.code === 0) errorTxt = '签到成功'
             wepy.showToast({
               title: errorTxt,
               icon: 'none',
               duration: Util.delay(errorTxt)
             })
-            if (data.flag) {
+            if (data.code === 0) {
               this.updateJifen(data.credit, index)
             }
           })
@@ -410,14 +410,14 @@ import Time from '@/libs/time'
               data: {id: item.id}
             }).then(res => {
               const data = res.data
-              let errorTxt = data.error
-              if (data.flag) errorTxt = '领取成功'
+              let errorTxt = data.msg
+              if (data.code === 0) errorTxt = '领取成功'
               wepy.showToast({
                 title: errorTxt,
                 icon: 'none',
                 duration: Util.delay(errorTxt)
               })
-              if (data.flag) {
+              if (data.code === 0) {
                 this.updateSaleJifen(item, index, data.credit)
               }
             })
@@ -462,11 +462,11 @@ import Time from '@/libs/time'
                   }).then(res => {
                     wepy.hideLoading()
                     const resdata = JSON.parse(res.data)
-                    if (!resdata.flag) {
+                    if (resdata.code !== 0) {
                       wepy.showToast({
-                        title: resdata.error,
+                        title: resdata.msg,
                         icon: 'none',
-                        duration: Util.delay(resdata.error)
+                        duration: Util.delay(resdata.msg)
                       })
                     } else {
                       let jsonData = JSON.parse(res.data)
@@ -513,11 +513,11 @@ import Time from '@/libs/time'
           wepy.hideLoading()
           const data = res.data
           wepy.showToast({
-            title: data.error,
+            title: data.msg,
             icon: 'none',
-            duration: Util.delay(data.error)
+            duration: Util.delay(data.msg)
           })
-          if (data.flag) {
+          if (data.code === 0) {
             this.showPhotoTask = false
             this.clickTaskData.isbutton = false
             this.clickTaskData.buttontitle = '待审核'

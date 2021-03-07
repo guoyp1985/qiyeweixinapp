@@ -962,14 +962,14 @@ export default class extends wepy.page {
           const data = res.data
           wepy.hideLoading()
           let successTip = this.language.success ? this.language.success : '成功'
-          let error = data.flag ? successTip : data.error
+          let error = data.code === 0 ? successTip : data.msg
           const timeout = Util.delay(error)
           wepy.showToast({
             title: error,
             icon: 'none',
             duration: timeout
           })
-          if (data.flag) {
+          if (data.code === 0) {
             setTimeout(() => {
               this.submitIng = false
               if (this.viewData.id && this.viewData.module !== '' && this.viewData.module !== 'channel') {
@@ -1006,11 +1006,11 @@ export default class extends wepy.page {
                 }).then(res => {
                   wepy.hideLoading()
                   const resdata = JSON.parse(res.data)
-                  if (!resdata.flag) {
+                  if (resdata.code !== 0) {
                     wepy.showToast({
-                      title: resdata.error,
+                      title: resdata.msg,
                       icon: 'none',
-                      duration: Util.delay(resdata.error)
+                      duration: Util.delay(resdata.msg)
                     })
                   } else {
                     let jsonData = JSON.parse(res.data)
@@ -1048,11 +1048,11 @@ export default class extends wepy.page {
                 }).then(res => {
                   wepy.hideLoading()
                   const resdata = JSON.parse(res.data)
-                  if (!resdata.flag) {
+                  if (resdata.code !== 0) {
                     wepy.showToast({
-                      title: resdata.error,
+                      title: resdata.msg,
                       icon: 'none',
-                      duration: Util.delay(resdata.error)
+                      duration: Util.delay(resdata.msg)
                     })
                   } else {
                     let jsonData = JSON.parse(res.data)
@@ -1098,11 +1098,11 @@ export default class extends wepy.page {
                 }).then(res => {
                   wepy.hideLoading()
                   const resdata = JSON.parse(res.data)
-                  if (!resdata.flag) {
+                  if (resdata.code !== 0) {
                     wepy.showToast({
-                      title: resdata.error,
+                      title: resdata.msg,
                       icon: 'none',
-                      duration: Util.delay(resdata.error)
+                      duration: Util.delay(resdata.msg)
                     })
                   } else {
                     let jsonData = JSON.parse(res.data)

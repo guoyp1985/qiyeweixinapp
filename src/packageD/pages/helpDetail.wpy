@@ -95,7 +95,7 @@
         if (retdata.content && retdata.content !== '') {
           this.contentArr = JSON.parse(retdata.content)
         }
-        if (data.flag) {
+        if (data.code === 0) {
           this.showSos = false
         } else {
           this.showSos = true

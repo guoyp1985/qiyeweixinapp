@@ -340,7 +340,7 @@ export default class extends wepy.page {
     }).then(res => {
       wepy.hideLoading()
       const data = res.data
-      if (!data.flag) return false
+      if (data.code !== 0) return false
       let retdata = data.data
       retdata.dateline_str = new Time(retdata.dateline * 1000).dateFormat('yyyy-MM-dd hh:mm')
       retdata.delivertime_str = new Time(retdata.delivertime * 1000).dateFormat('yyyy-MM-dd hh:mm')
@@ -489,11 +489,11 @@ export default class extends wepy.page {
           wepy.hideLoading()
           const data = res.data
           wepy.showToast({
-            title: data.error,
+            title: data.msg,
             icon: 'none',
-            duration: Util.delay(data.error)
+            duration: Util.delay(data.msg)
           })
-          if (data.flag) {
+          if (data.code === 0) {
             this.getInfo()
           }
         })
@@ -515,11 +515,11 @@ export default class extends wepy.page {
           wepy.hideLoading()
           const data = res.data
           wepy.showToast({
-            title: data.error,
+            title: data.msg,
             icon: 'none',
-            duration: Util.delay(data.error)
+            duration: Util.delay(data.msg)
           })
-          if (data.flag) {
+          if (data.code === 0) {
             this.getInfo()
           }
         })
@@ -541,11 +541,11 @@ export default class extends wepy.page {
           wepy.hideLoading()
           const data = res.data
           wepy.showToast({
-            title: data.error,
+            title: data.msg,
             icon: 'none',
-            duration: Util.delay(data.error)
+            duration: Util.delay(data.msg)
           })
-          if (data.flag) {
+          if (data.code === 0) {
             this.getInfo()
           }
         })
@@ -690,11 +690,11 @@ export default class extends wepy.page {
         this.clearRefund()
         const data = res.data
         wepy.showToast({
-          title: data.error,
+          title: data.msg,
           icon: 'none',
-          duration: Util.delay(data.error)
+          duration: Util.delay(data.msg)
         })
-        if (data.flag) {
+        if (data.code === 0) {
           // this.orderData.backflag = 20
           // this.orderData.flagstr = '待发货(退款申请中)'
           // this.orderData.buttons = []
@@ -739,11 +739,11 @@ export default class extends wepy.page {
         wepy.hideLoading()
         const data = res.data
         wepy.showToast({
-          title: data.error,
+          title: data.msg,
           icon: 'none',
-          duration: Util.delay(data.error)
+          duration: Util.delay(data.msg)
         })
-        if (data.flag) {
+        if (data.code === 0) {
           this.clearService()
           // this.orderData.backflag = 120
           // this.orderData.buttons.splice(1, 1)
@@ -776,11 +776,11 @@ export default class extends wepy.page {
                 }).then(res => {
                   wepy.hideLoading()
                   const resdata = JSON.parse(res.data)
-                  if (!resdata.flag) {
+                  if (resdata.code !== 0) {
                     wepy.showToast({
-                      title: resdata.error,
+                      title: resdata.msg,
                       icon: 'none',
-                      duration: Util.delay(resdata.error)
+                      duration: Util.delay(resdata.msg)
                     })
                   } else {
                     let jsonData = JSON.parse(res.data)
@@ -886,7 +886,7 @@ export default class extends wepy.page {
           }
         })
       }).then(res => {
-        if (res.data.flag === 1) {
+        if (res.data.code === 0) {
           let retdata = res.data.data
           retdata = retdata.replace(/http:/g, 'https:')
           return wepy.downloadFile({
