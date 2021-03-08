@@ -574,7 +574,7 @@
          </button>
        </form>
      </block>
-     <view class="bg-page" style="height:10px;"></view>
+     <!-- <view class="bg-page" style="height:10px;"></view>
      <view class="bg-white padding10">
        <cell
         styleType="1"
@@ -584,7 +584,7 @@
         @startmessage='startmessage'
         @completemessage="completemessage"
         plugid='dd14b023deed2e3530096276caa9a52e' />
-     </view>
+     </view> -->
      <view class="flex_center pt10 pb10 bg-page color-gray">—— 详情 ——</view>
      <view class="product-content bg-white">
        <view class="detail-box" style="{{themeObject.borderStyle}}" wx:if="{{product.options.length || (product.deliverdesc_json && product.deliverdesc_json.length)}}">
@@ -691,11 +691,11 @@
              <block wx:elif="{{product.isshow == 1 && (!product.fromfid || (product.fromfid && product.originmoderate != 0))}}">
                <block if="{{afterSys}}">
                  <block wx:if="{{(OnlyRetailerBuy && userInfo.regwid && userInfo.bindstatus) || !OnlyRetailerBuy}}">
-                   <form class="flex_cell flex_center color-white h_100 bg-orange flex_form" wx:if="{{openCart && !product.retailerbuy}}" bindsubmit="toCart" report-submit="true">
-                     <button class="flex_center" form-type="submit">加入购物车</button>
-                   </form>
                    <form class="flex_cell flex_center color-white h_100 bg-red2 flex_form" style="{{themeObject.bgStyle}}" bindsubmit="toBuy" report-submit="true">
                      <button class="flex_center" form-type="submit">立即购买</button>
+                   </form>
+                   <form class="flex_cell flex_center color-white h_100 bg-orange flex_form" wx:if="{{openCart && !product.retailerbuy}}" bindsubmit="toCart" report-submit="true">
+                     <button class="flex_center" form-type="submit">加入购物车</button>
                    </form>
                  </block>
                  <block wx:if="{{OnlyRetailerBuy && (!userInfo.regwid || !userInfo.bindstatus)}}">
@@ -739,11 +739,11 @@
                <block wx:elif="{{product.isshow == 1 && (!product.fromfid || (product.fromfid && product.originmoderate != 0))}}">
                  <block if="{{afterSys}}">
                    <block wx:if="{{(OnlyRetailerBuy && userInfo.regwid && userInfo.bindstatus) || !OnlyRetailerBuy}}">
-                     <form class="flex_cell flex_center color-white h_100 bg-orange flex_form" wx:if="{{openCart && !product.retailerbuy}}" @tap="toCart">
-                       <button class="flex_center">加入购物车</button>
-                     </form>
                      <form class="flex_cell flex_center color-white h_100 bg-red2 flex_form" style="{{themeObject.bgStyle}}" @tap="toBuy">
                        <button class="flex_center">立即购买</button>
+                     </form>
+                     <form class="flex_cell flex_center color-white h_100 bg-orange flex_form" wx:if="{{openCart && !product.retailerbuy}}" @tap="toCart">
+                       <button class="flex_center">加入购物车</button>
                      </form>
                    </block>
                    <block wx:if="{{OnlyRetailerBuy && (!userInfo.regwid || !userInfo.bindstatus)}}">

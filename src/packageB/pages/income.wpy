@@ -74,7 +74,7 @@
 }
 </style>
 <template>
-  <view class="fixed-help bg-theme color-white" style="{{themeObject.bgStyle}}" @tap="toHelp">帮助</view>
+  <!-- <view class="fixed-help bg-theme color-white" style="{{themeObject.bgStyle}}" @tap="toHelp">帮助</view> -->
   <view class="font14 income-page">
     <view class="inhead" style="{{themeObject.linearBgStyle}}">
       <view class="flex_left pl10 pr10 pt10 pb20">

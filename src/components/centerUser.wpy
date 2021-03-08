@@ -182,7 +182,7 @@
             <view wx:if="{{userInfo.gxkuid}}">ID: {{userInfo.gxkuid}}</view>
           </view>
         </view>
-        <view class="color-white jinbinumber" catchtap="toCredit">{{userInfo.credit}}<text class="al al-icon-64-jinbi font16"></text></view>
+        <!-- <view class="color-white jinbinumber" catchtap="toCredit">{{userInfo.credit}}<text class="al al-icon-64-jinbi font16"></text></view> -->
         <!-- <view class="flex_center flex_cell color-white" catchtap="toCredit">金币任务</view> -->
         <view class="fix-notice" catchtap="toNotice">
           <text class="al al-tongzhi1 color-white font24"></text>
@@ -314,7 +314,7 @@
               </view>
             </button>
           </form>
-          <form class="item mt20" data-url="/packageD/pages/about" bindsubmit="formSubmit" report-submit="true">
+          <!-- <form class="item mt20" data-url="/packageD/pages/about" bindsubmit="formSubmit" report-submit="true">
             <button formType="submit" class="item-inner">
               <view class="w_100">
                 <view wx:if="{{AppId == 'wx46317f562509ab24'}}" class="pic">
@@ -324,7 +324,7 @@
                 <view>关于我们</view>
               </view>
             </button>
-          </form>
+          </form> -->
           <form class="item mt20" bindsubmit="clickQrcode" wx:if="{{userInfo.factoryinfo && userInfo.factoryinfo.publicqrcode && userInfo.factoryinfo.publicqrcode != ''}}" report-submit="true">
             <button formType="submit" class="item-inner">
               <view class="w_100">
@@ -349,14 +349,14 @@
               </button>
             </form>
           </repeat>
-          <form class="item mt20" data-url="/packageD/pages/helpCenter" bindsubmit="formSubmit" report-submit="true">
+          <!-- <form class="item mt20" data-url="/packageD/pages/helpCenter" bindsubmit="formSubmit" report-submit="true">
             <button formType="submit" class="item-inner">
               <view class="w_100">
                 <view class="radius"><text class="al al-wenda color-theme" style="{{themeObject.colorStyle}}"></text></view>
                 <view>帮助中心</view>
               </view>
             </button>
-          </form>
+          </form> -->
           <view class="item mt20" wx:if="{{userInfo.regwid}}" @tap="clickSet">
             <button class="item-inner">
               <view class="w_100">
@@ -582,22 +582,7 @@ export default class CenterUser extends wepy.component {
   }
   methods = {
     clickBanner (e) {
-      const dataset = e.currentTarget.dataset
-      const data = dataset.data
-      if (data.type === 'link') {
-        wepy.reLaunch({url: data.url})
-      } else if (data.module !== '' && data.moduledata) {
-        let navurl = `/${Config.Router[data.module]}?id=${data.moduleid}&fid=${data.fid}`
-        if (data.module === 'fpimport') {
-          navurl = `${navurl}&type=fpimport`
-        }
-        wepy.navigateTo({url: navurl})
-      } else {
-        wepy.previewImage({
-          current: 0,
-          urls: [data.photo]
-        })
-      }
+      Util.clickBanner(e, this)
     },
     toProfile (e) {
       let minibackurl = encodeURIComponent(`/pages/own?from=profile&backtype=relaunch`)

@@ -46,7 +46,7 @@
 </style>
 <template>
   <view wx:if="{{userInfo && userInfo.regwid && userInfo.bindstatus}}" class="fixed-share bg-theme color-white" style="{{themeObject.bgStyle}}" @tap="toShare">分享</view>
-  <view class="fixed-help bg-theme color-white" style="{{themeObject.bgStyle}}" @tap="toHelp">帮助</view>
+  <!-- <view class="fixed-help bg-theme color-white" style="{{themeObject.bgStyle}}" @tap="toHelp">帮助</view> -->
   <view class="user-order-search-outter b_bottom_after">
     <view class="search-inner">
       <input class="search-input" type="text" placeholder="请输入商品名称" bindinput="setKeyword" value="{{keyword}}" bindconfirm="searchKeyword" confirm-type="search" />
@@ -72,7 +72,7 @@
       <view class="line" style="{{selectedIndex == 3 ? themeObject.bgStyle : ''}}"></view>
     </view>
     <view class="tab-item font14 {{selectedIndex == 4 ? 'active' : ''}}" data-current="4" bindtap="clickTab">
-      <text style="{{selectedIndex == 4 ? themeObject.colorStyle : ''}}">已完成}</text>
+      <text style="{{selectedIndex == 4 ? themeObject.colorStyle : ''}}">已完成</text>
       <view class="line" style="{{selectedIndex == 4 ? themeObject.bgStyle : ''}}"></view>
     </view>
   </view>

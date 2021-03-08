@@ -641,13 +641,12 @@ const Util = {
   clickBanner: (e, page) => {
     const dataset = e.currentTarget.dataset
     const data = dataset.data
-    if (data.type === 'link') {
-      wepy.reLaunch({url: data.url})
-    } else if (data.module !== '' && data.moduledata) {
-      let navurl = `/${Config.Router[data.module]}?id=${data.moduleid}&fid=${data.fid}`
-      if (data.module === 'fpimport') {
-        navurl = `${navurl}&type=fpimport`
-      } else if (data.module === 'minilive') {
+    let curModule = data.modules
+    console.log(curModule)
+    console.log(Config.Router[curModule])
+    if (curModule !== '' && data.moduledata) {
+      let navurl = `/${Config.Router[curModule]}?id=${data.moduleid}`
+      if (curModule === 'minilive') {
         let customParams = {share_uid: page.userInfo.uid, share_wid: page.globalData.Wid, wid: page.globalData.Wid, liveid: data.moduleid}
         let cpstr = encodeURIComponent(JSON.stringify(customParams))
         navurl = `plugin-private://wx2b03c6e691cd7370/pages/live-player-plugin?room_id=${data.moduledata.roomid}&custom_params=${cpstr}`

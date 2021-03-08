@@ -75,7 +75,7 @@
 }
 </style>
 <template>
-  <view class="fixed-help bg-theme color-white" style="{{themeObject.bgStyle}}" @tap="toHelp">帮助</view>
+  <!-- <view class="fixed-help bg-theme color-white" style="{{themeObject.bgStyle}}" @tap="toHelp">帮助</view> -->
   <view class="container font14 income-page">
     <scroll-view class="h_100" scroll-y="1">
       <view class="inhead">
@@ -87,7 +87,7 @@
         </view>
         <view class="flex_center font40 bold">{{cashInfo.ketixian}}</view>
         <form class="db pt20 pb20" bindsubmit="clickwechat" report-submit="true">
-          <button class="btn-cash color-theme flex_center" style="{{themeObject.colorStyle}}" form-type="submit">提现}</button>
+          <button class="btn-cash color-theme flex_center" style="{{themeObject.colorStyle}}" form-type="submit">提现</button>
         </form>
         <image class="wave-pic" mode="widthFix" src="https://tossharingsales.boka.cn/minigxk/wave.png"></image>
       </view>

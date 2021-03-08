@@ -46,7 +46,7 @@
 }
 </style>
 <template>
-  <view class="fixed-help bg-theme color-white" style="{{themeObject.bgStyle}}" @tap="toHelp">帮助</view>
+  <!-- <view class="fixed-help bg-theme color-white" style="{{themeObject.bgStyle}}" @tap="toHelp">帮助</view> -->
   <view class="retailer-order-search-outter b_bottom_after">
     <view class="search-inner">
       <input class="search-input" type="text" placeholder="请输入订单号/收货人姓名/手机号" bindinput="setKeyword" value="{{keyword}}" bindconfirm="searchKeyword" confirm-type="search" />

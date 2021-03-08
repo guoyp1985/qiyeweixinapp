@@ -71,7 +71,7 @@
 }
 </style>
 <template>
-  <view class="fixed-help bg-theme color-white" style="{{themeObject.bgStyle}}" @tap="toHelp">帮助</view>
+  <!-- <view class="fixed-help bg-theme color-white" style="{{themeObject.bgStyle}}" @tap="toHelp">帮助</view> -->
   <view class="order-detail-page">
     <view class="padding10 flex_left bg-white b_bottom_after">
       <view wx:if="{{options.fromType == 'user'}}" class="flex_cell flex_left">

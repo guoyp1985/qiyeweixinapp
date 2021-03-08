@@ -371,7 +371,7 @@
     </view>
     <view wx:if="{{selectedIndex == 1 && disOrderList}}" class="box-area mt20 mb20">
       <view class="box-inner">
-        <view wx:if="{{!orderData.length}}" class="flex_empty">暂无收款数据}</view>
+        <view wx:if="{{!orderData.length}}" class="flex_empty">暂无收款数据</view>
         <view wx:else class="order-list scroll_list">
           <repeat for="{{orderData}}" item="item" index="index">
             <view class="scroll_item">

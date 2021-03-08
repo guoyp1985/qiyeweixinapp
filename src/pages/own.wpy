@@ -92,64 +92,43 @@ export default class Own extends wepy.page {
     this.getCreditData()
     this.$apply()
   }
+  getBanner () {
+    wepy.request({
+      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/miniprogram/getBanner`,
+      data: {page: 'own'}
+    }).then(res => {
+      const retdata = res.data
+      if (retdata.code === 0) {
+        this.bannerData = retdata.data
+        this.disBanner = true
+        this.$apply()
+      }
+    })
+  }
   handlePageData () {
     this.globalData = this.$parent.globalData
     Util.appInit(this.globalData, this)
     this.userInfo = this.globalData.userInfo
     this.noticeCount = parseInt(this.userInfo.newmessages)
     this.$apply()
-    let shareParams = Util.getShareParams(this.options)
-    let params = {...shareParams, fid: Config.Fid, module: 'own'}
-    Cached.request({
-      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/channel/info`,
-      data: params,
-      method: 'post'
-    }, 'own.channelInfo', Config.URT.H,
-    cacheData => {
-      this.channelInfo = cacheData
-      this.bannerData = this.channelInfo.banner
-    },
-    res => {
-      const data = res.data
-      const retdata = data.data ? data.data : data
-      if (retdata.banner && retdata.banner.length) {
-        this.bannerData = retdata.banner
-      }
-      this.channelInfo = data
-      this.$apply()
-      return this.channelInfo
-    })
-    // Cached.request({
-    //   url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/codemaker/showcodemaker`,
-    //   data: {fid: Config.Fid}
-    // }, 'own.codemaker', Config.URT.H,
-    // cacheData => {
-    //   this.moduleListData = cacheData
-    // },
-    // res => {
-    //   const data = res.data
-    //   const retdata = data.data ? data.data : data
-    //   this.moduleListData = retdata
-    //   this.$apply()
-    //   return this.moduleListData
-    // })
-    if (this.userInfo.fid) {
-      this.getSettingList()
-    }
-    if (this.options.gxkfid && parseInt(this.options.gxkfid) === parseInt(Config.Fid)) {
-      wepy.request({
-        url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/miniopen/bindFactoryManager`,
-        data: {appid: Config.AppId, factoryuid: this.userInfo.uid},
-        method: 'post'
-      }).then(res => {
-        const data = res.data
-        if (data.code === 0) {
-          this.userInfo.fid = Config.Fid
-          this.getSettingList()
-          this.$apply()
-        }
-      })
-    }
+    this.getBanner()
+    // if (this.userInfo.fid) {
+    //   this.getSettingList()
+    // }
+    // if (this.options.gxkfid && parseInt(this.options.gxkfid) === parseInt(Config.Fid)) {
+    //   wepy.request({
+    //     url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/miniopen/bindFactoryManager`,
+    //     data: {appid: Config.AppId, factoryuid: this.userInfo.uid},
+    //     method: 'post'
+    //   }).then(res => {
+    //     const data = res.data
+    //     if (data.code === 0) {
+    //       this.userInfo.fid = Config.Fid
+    //       this.getSettingList()
+    //       this.$apply()
+    //     }
+    //   })
+    // }
   }
   getSettingList () {
     Cached.request({

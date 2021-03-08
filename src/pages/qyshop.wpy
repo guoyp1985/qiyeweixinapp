@@ -8,14 +8,24 @@
     .txt1{font-size:32rpx;font-weight:bold;}
     .txt2{color:#ccc;}
   }
-  .left-area.fixed{top:0;}
+  .top-bg{width:100%;height:240rpx;border-bottom-left-radius:60rpx;border-bottom-right-radius:60rpx;}
+  .banner-outer{margin-top:-200rpx;background-color:#fff;}
+  .list-container{}
+  .list-container.normal{display:flex;}
+  .list-container.fixed{}
+  .left-area.fixed{top:0;position:fixed;left:0;;bottom:0;}
+  .left-area.havebanner{
+    /*top:240rpx;*/
+  }
+  .left-area.fixed.havebanner{top:0;position:fixed;left:0;bottom:0;}
   .left-area{
-    position:fixed;left:0;top:130rpx;bottom:0;overflow-y:auto;
-    width:200rpx;background-color:#f2f2f2;
+    /*position:fixed;left:0;top:130rpx;bottom:0;*/
+    overflow-y:auto;
+    width:200rpx;
     .class-list{
       width:100%;
       .item{
-        position:relative;width:100%;padding:20rpx 0;
+        position:relative;width:100%;padding:20rpx 0;background-color:#f2f2f2;
         .txt{
           text-align:center;font-size:30rpx;word-wrap:break-word;
         }
@@ -30,8 +40,10 @@
       }
     }
   }
+  .right-area.fixed{padding-left:220rpx;}
   .right-area{
-    padding-left:220rpx;padding-right:20rpx;box-sizing: border-box;padding-bottom:126rpx;
+    padding-left:20rpx;flex:1;background-color:#fff;
+    padding-right:20rpx;box-sizing: border-box;padding-bottom:126rpx;
     .c-txt{line-height:50rpx;font-weight:bold;padding-top:20rpx;font-size:30rpx;}
   }
   .product-list{
@@ -50,50 +62,90 @@
         background-color:rgba(0,0,0,0.5);color:#fff;
         text-align:left;line-height:60rpx;
       }
+      .ico-txt{
+        position:absolute;left:0;top:0;right:0;bottom:0;z-index:2;
+        background-color:rgba(255,255,255,0.5);color:#fff;
+        display:flex;justify-content:center;align-items: center;
+        .ico{
+          width:100rpx;height:100rpx;border-radius:50%;
+          background-color:rgba(0,0,0,0.5);color:#fff;
+          display:flex;justify-content:center;align-items: center;
+        }
+      }
     }
   }
 }
 </style>
 <template>
   <view id="page-container" class="qyshop-page">
-    <view class="top-address">
+    <!-- <view class="top-address">
       <view>
         <text class="al al-dizhi2" style="{{themeObject.colorStyle}}"></text>
       </view>
       <view class="flex_cell">
         <view class="txt1">{{sysParams.company}}</view>
-        <view class="txt2">北京市金家村</view>
       </view>
-    </view>
-    <view class="left-area {{isScroll ? 'fixed' : ''}}">
-      <view wx:if="disClass" class="class-list">
-        <repeat for="{{classData}}" item="item" index="index">
-          <view id="class-{{item.id}}" class="item {{item.clicked ? 'active' : ''}}" bindtap="clickClass({{item}}, {{index}})">
-            <view class="line" style="{{item.clicked ? themeObject.bgStyle : ''}}"></view>
-            <view class="txt" style="{{item.clicked ? themeObject.colorStyle : ''}}">{{item.title}}</view>
-          </view>
-        </repeat>
-      </view>
-    </view>
-    <view id="right-container" class="right-area">
-      <block wx:if="disList">
-        <repeat for="{{classData}}" item="citem" index="cindex">
-          <view id="product-{{citem.id}}" class="class-container">
-            <view class="c-txt">{{citem.title}}</view>
-            <view class="product-list">
-              <repeat for="{{listObject[citem.id]}}" item="item" index="index">
-                <view class="item" bindtap="toProduct({{item}},{{index}})">
-                  <view class="pic">
-                    <image mode="aspectFill" src="{{item.photo}}"></image>
-                  </view>
-                  <view class="txt">{{item.title}}</view>
-                </view>
+    </view> -->
+    <block wx:if="{{disBanner}}">
+      <block wx:if="{{bannerData.length}}">
+        <view class="top-bg" style="{{themeObject.linearBgStyle}}"></view>
+        <view class="banner-outer">
+          <view class="news-swiper-outer" wx:if="{{bannerData.length > 1}}">
+            <swiper
+              class="news-swiper"
+              autoplay
+              indicator-dots="{{bannerData.length > 1}}"
+              indicator-color="#d0cdd1"
+              indicator-active-color="#ff9900"
+              interval="6000"
+              circular>
+              <repeat for="{{bannerData}}" index="index" item="item">
+                <swiper-item>
+                  <image mode="aspectFill" src="{{item.photo}}" data-data="{{item}}" bindtap="clickBanner"></image>
+                </swiper-item>
               </repeat>
-            </view>
+            </swiper>
           </view>
-        </repeat>
+          <view class="banner-pic" wx:else data-data="{{bannerData[0]}}" bindtap="clickBanner">
+            <image mode="aspectFill" src="{{bannerData[0].photo}}"></image>
+          </view>
+        </view>
       </block>
-    </view>
+      <view class="list-container {{isScroll ? 'fixed' : 'normal'}}">
+        <view class="left-area {{isScroll ? 'fixed' : ''}} {{bannerData.length ? 'havebanner' : ''}}">
+          <view wx:if="disClass" class="class-list">
+            <repeat for="{{classData}}" item="item" index="index">
+              <view id="class-{{item.id}}" class="item {{item.clicked ? 'active' : ''}}" bindtap="clickClass({{item}}, {{index}})">
+                <view class="line" style="{{item.clicked ? themeObject.bgStyle : ''}}"></view>
+                <view class="txt" style="{{item.clicked ? themeObject.colorStyle : ''}}">{{item.title}}</view>
+              </view>
+            </repeat>
+          </view>
+        </view>
+        <view id="right-container" class="right-area {{isScroll ? 'fixed' : 'normal'}}">
+          <block wx:if="disList">
+            <repeat for="{{classData}}" item="citem" index="cindex">
+              <view id="product-{{citem.id}}" class="class-container">
+                <view class="c-txt">{{citem.title}}</view>
+                <view class="product-list">
+                  <repeat for="{{listObject[citem.id]}}" item="item" index="index">
+                    <view class="item" bindtap="toProduct({{item}},{{index}})">
+                      <view class="ico-txt" wx:if="{{item.storage <= 0}}">
+                        <view class="ico">已售罄</view>
+                      </view>
+                      <view class="pic">
+                        <image mode="aspectFill" src="{{item.photo}}"></image>
+                      </view>
+                      <view class="txt">{{item.title}}</view>
+                    </view>
+                  </repeat>
+                </view>
+              </view>
+            </repeat>
+          </block>
+        </view>
+      </view>
+    </block>
   </view>
   <bottomMenu
     current="home"
@@ -125,7 +177,9 @@ export default class extends wepy.page {
     listObject: {},
     isScroll: false,
     allowNav: false,
-    isIpx: false
+    isIpx: false,
+    disBanner: false,
+    bannerData: []
   }
   setClassActive (index) {
     for (let i = 0; i < this.classData.length; i++) {
@@ -270,6 +324,19 @@ export default class extends wepy.page {
       }
     })
   }
+  getBanner () {
+    wepy.request({
+      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/miniprogram/getBanner`,
+      data: {page: 'home'}
+    }).then(res => {
+      const retdata = res.data
+      if (retdata.code === 0) {
+        this.bannerData = retdata.data
+        this.disBanner = true
+        this.$apply()
+      }
+    })
+  }
   getHomeData () {
     wepy.request({
       url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/miniprogram/home`,
@@ -304,6 +371,7 @@ export default class extends wepy.page {
     console.log(this.globalData.MenuData)
     Util.appInit(this.globalData, this)
     this.userInfo = this.globalData.userInfo
+    this.getBanner()
     this.getHomeData()
   }
   onLoad (options) {
@@ -372,6 +440,9 @@ export default class extends wepy.page {
     },
     toProduct (item, index) {
       wepy.navigateTo({url: `/pages/product?id=${item.id}`})
+    },
+    clickBanner (e) {
+      Util.clickBanner(e, this)
     }
   }
 }
