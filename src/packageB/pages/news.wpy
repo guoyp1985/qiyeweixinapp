@@ -230,7 +230,7 @@
       newsId: null,
       options: {},
       globalData: {},
-      module: 'factorynews',
+      module: 'news',
       query: {},
       userInfo: {},
       params: {},
@@ -309,12 +309,15 @@
         wepy.navigateTo({url: `/pages/webview?url=${url}`})
       },
       clickDig () {
-        let url = `${Config.BokaApi}/${Config[Config.ApiVersion]}/user/digs/add`
+        let digparams = {id: this.query.id, module: this.module, action: 'add'}
         if (this.isdig) {
-          url = `${Config.BokaApi}/${Config[Config.ApiVersion]}/user/digs/delete`
+          digparams.action = 'delete'
         }
-        wepy.request({url: url, data: {id: this.query.id, module: this.module}, method: 'POST'})
-        .then(res => {
+        wepy.request({
+          url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/content/digs`,
+          data: digparams,
+          method: 'POST'
+        }).then(res => {
           const data = res.data
           if (data.code === 0) {
             if (this.isdig) {
@@ -363,7 +366,7 @@
         return false
       }
       wepy.request({
-        url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/moduleInfo`,
+        url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/content/info`,
         data: infoParams,
         method: 'POST'
       }).then(res => {
@@ -394,28 +397,28 @@
           this.params = {uid: this.reward.uid, uploader: this.article.uploader}
           this.showContainer = true
           this.$apply()
-          return wepy.request({url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/user/digs/show`, data: {id: id, module: this.module}})
+          // return wepy.request({url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/content/digs`, data: {id: id, module: this.module, action: 'show'}})
         }
       })
-      .then(res => {
-        if (res) {
-          const data = res.data
-          if (data.code === 0) {
-            this.isdig = true
-          }
-          return wepy.request({url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/user/favorite/show`, data: {id: this.article.id, module: this.module}, method: 'POST'})
-        }
-      })
-      .then(res => {
-        if (res) {
-          if (res.data.code !== 0) {
-            this.notFavorite = true
-          } else {
-            this.notFavorite = false
-          }
-        }
-        this.$apply()
-      })
+      // .then(res => {
+      //   if (res) {
+      //     const data = res.data
+      //     if (data.code === 0) {
+      //       this.isdig = true
+      //     }
+      //     return wepy.request({url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/user/favorite/show`, data: {id: this.article.id, module: this.module}, method: 'POST'})
+      //   }
+      // })
+      // .then(res => {
+      //   if (res) {
+      //     if (res.data.code !== 0) {
+      //       this.notFavorite = true
+      //     } else {
+      //       this.notFavorite = false
+      //     }
+      //   }
+      //   this.$apply()
+      // })
     }
     handleShare () {
       const lastshareuid = this.options.share_uid
