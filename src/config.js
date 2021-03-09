@@ -2,7 +2,7 @@ const ExtConfig = wx.getExtConfigSync ? wx.getExtConfigSync() : {}
 const Config = {
   DebugMode: false, // 输出调试，正式环境不需要配置
   version: ExtConfig.version ? ExtConfig.version : '1.0.0.1',
-  AppName: ExtConfig.appName ? ExtConfig.appName : '共销汇',
+  AppName: ExtConfig.appName ? ExtConfig.appName : '博卡供销社',
   WeixinName: ExtConfig.appName,
   AppId: ExtConfig.appId ? ExtConfig.appId : 'wx9f7339af150e0b6f', // 博卡供销社 wx9f7339af150e0b6f
   // AppId: ExtConfig.appId ? ExtConfig.appId : 'wx1b22fe75584085ee', // 灰太狼 wx1b22fe75584085ee

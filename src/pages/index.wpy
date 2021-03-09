@@ -49,7 +49,7 @@ export default class Index extends wepy.page {
   }
   handlePageData () {
     this.globalData = this.$parent.globalData
-    Util.appInit(this.globalData)
+    Util.appInit(this.globalData, this)
     this.userInfo = this.globalData.userInfo
     this.MenuData = this.globalData.MenuData
     if (this.options.refresh) {

@@ -424,6 +424,18 @@ export default class extends wepy.page {
       _this.$apply()
     })
   }
+  onShareAppMessage () {
+    const lastshareuid = this.options.share_uid
+    let shareurl = `/pages/qyshop?share_uid=${this.userInfo.uid}&share_wid=${this.globalData.Wid}&wid=${this.globalData.Wid}&comefrom=${Config.AppName}`
+    if (lastshareuid) {
+      shareurl = `${shareurl}&lastshareuid=${lastshareuid}`
+    }
+    let backUrl = encodeURIComponent(shareurl)
+    shareurl = `${shareurl}&currentUrl=${backUrl}`
+    return {
+      path: shareurl
+    }
+  }
   methods = {
     clickClass (item, index) {
       if (!item.clicked) {

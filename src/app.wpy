@@ -93,6 +93,7 @@
             'pages/addCartOrder',
             'pages/addExclusive',
             'pages/addWelfare',
+            'pages/card',
             'pages/cart',
             'pages/codemaker',
             'pages/commonCard',
@@ -137,6 +138,7 @@
         }
       ],
       window: {
+        navigationBarTitleText: '博卡供销社',
         backgroundTextStyle: 'dark',
         navigationBarBackgroundColor: '#ffffff',
         navigationBarTextStyle: 'white',
@@ -266,12 +268,10 @@
           console.log('=== user ===')
           console.log(user)
           console.log(`当前用户的uid=${user.uid}`)
-          Log.info(`当前用户的uid=${user.uid}`)
-          if (user.regwid && user.bindstatus) {
-            this.globalData.Wid = user.regwid
-          } else if (user.lastbuywid && !this.globalData.options.query.share_wid) {
-            this.globalData.Wid = user.lastbuywid
-            console.log('app页面 launchData wid赋值lastbuywid', this.globalData.Wid)
+          if (this.globalData.options.query.wid) {
+            this.globalData.Wid = this.globalData.options.query.wid
+          } else {
+            this.globalData.Wid = user.ownid
           }
           console.log('当前用户的wid globalData.Wid')
           console.log(this.globalData.Wid)
