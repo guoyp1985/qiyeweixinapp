@@ -1,4 +1,5 @@
 <style lang="less">
+.qyshop-page.iphone{padding-bottom:68rpx;}
 .qyshop-page{
   width:100%;height:100%;position:relative;box-sizing: border-box;
   .top-address{
@@ -11,7 +12,7 @@
   .top-bg{width:100%;height:240rpx;border-bottom-left-radius:60rpx;border-bottom-right-radius:60rpx;}
   .banner-outer{margin-top:-200rpx;background-color:#fff;}
   .list-container{}
-  .list-container.normal{display:flex;}
+  .list-container.normal{display:flex;padding-top:20rpx;}
   .list-container.fixed{}
   .left-area.fixed{top:0;position:fixed;left:0;;bottom:0;}
   .left-area.havebanner{
@@ -49,6 +50,7 @@
   .product-list{
     .item:not(:first-child){margin-top:20rpx;}
     .item{
+      /*
       position:relative;padding-bottom:55%;
       .pic{
         position:absolute;left:0;top:0;right:0;bottom:0;
@@ -72,12 +74,64 @@
           display:flex;justify-content:center;align-items: center;
         }
       }
+      */
+      display:flex;
+      .pic{
+        width:175rpx;margin-right:20rpx;position:relative;
+        image{width:175rpx;height:175rpx;border-radius:10rpx;border:#ccc 2rpx solid;box-sizing: border-box;}
+        .ico-txt{
+          position:absolute;left:0;top:0;right:0;bottom:0;z-index:2;
+          background-color:rgba(255,255,255,0.5);color:#fff;
+          display:flex;justify-content:center;align-items: center;
+          .ico{
+            width:100rpx;height:100rpx;border-radius:50%;
+            background-color:rgba(0,0,0,0.5);color:#fff;
+            display:flex;justify-content:center;align-items: center;
+          }
+        }
+      }
+      .txt-cell{
+        flex:1;padding-right:10rpx;
+        .row1{width:100%;height:80rpx;font-size:30rpx;font-weight:bold;line-height:1.3;}
+        .row2{
+          width:100%;height:40rpx;display:flex;
+          .txt-btn{
+            display:flex;justify-content: flex-start;align-items: center;
+            .l-btn{
+              background-color:#000;color:#fff;padding:4rpx 12rpx 4rpx 6rpx;
+              border-top-left-radius:10rpx;border-bottom-left-radius:10rpx;
+            }
+            .r-btn{border-top-right-radius:10rpx;border-bottom-right-radius:10rpx;padding:4rpx 10rpx 4rpx 6rpx;}
+          }
+        }
+        .row3:after{
+          content:'';display:block;clear:both;width:0;overflow:hidden;
+        }
+        .row3{
+          width:100%;height:40rpx;margin-top:10rpx;padding-bottom:5rpx;box-sizing: border-box;
+          .l-cell{float:left;font-weight:bold;}
+          .r-cell{
+            float:right;display:flex;justify-content: flex-end;align-items: center;
+            .ico{width:40rpx;height:40rpx;border-radius:50%;text-align:center;line-height:35rpx;}
+            .border-ico{border-style:solid;border-width:2rpx;}
+            .txt{width:60rpx;height:40rpx;display:flex;justify-content:center;align-items:center;}
+          }
+        }
+      }
     }
+  }
+}
+.gray-bottom{
+  position:fixed;left:0;bottom:130rpx;right:0;z-index:2;
+  display:flex;justify-content: center;align-items: center;
+  .inner{
+    width:90%;background-color:#434345;height:100rpx;border-radius:100rpx;
+    display:flex;justify-content: center;align-items: center;color:#fff;
   }
 }
 </style>
 <template>
-  <view id="page-container" class="qyshop-page">
+  <view :class="{'iphone' : isIpx}" id="page-container" class="qyshop-page">
     <!-- <view class="top-address">
       <view>
         <text class="al al-dizhi2" style="{{themeObject.colorStyle}}"></text>
@@ -128,8 +182,9 @@
               <view id="product-{{citem.id}}" class="class-container">
                 <view class="c-txt">{{citem.title}}</view>
                 <view class="product-list">
-                  <repeat for="{{listObject[citem.id]}}" item="item" index="index">
-                    <view class="item" bindtap="toProduct({{item}},{{index}})">
+                  <!-- <repeat for="{{listObject[citem.id]}}" item="item" index="index"> -->
+                  <repeat for="{{productList}}" item="item" index="index">
+                    <!-- <view class="item" bindtap="toProduct({{item}},{{index}})">
                       <view class="ico-txt" wx:if="{{item.storage <= 0}}">
                         <view class="ico">已售罄</view>
                       </view>
@@ -137,6 +192,33 @@
                         <image mode="aspectFill" src="{{item.photo}}"></image>
                       </view>
                       <view class="txt">{{item.title}}</view>
+                    </view> -->
+                    <view class="item" wx:if="{{item.classid == citem.id}}">
+                      <view class="pic">
+                        <view class="ico-txt" wx:if="{{item.storage <= 0}}">
+                          <view class="ico">已售罄</view>
+                        </view>
+                        <image mode="aspectFill" src="{{item.photo}}"></image>
+                      </view>
+                      <view class="txt-cell">
+                        <view class="row1">{{item.title}}</view>
+                        <view class="row2">
+                          <view class="txt-btn" wx:if="{{item.minmemberprice && item.minmemberprice != 0 && item.minmemberprice != '0.00' && item.minmemberprice != item.minprice}}">
+                            <view class="l-btn">￥{{item.minmemberprice}}</view>
+                            <view class="r-btn" style="{{themeObject.bgStyle}}">会员</view>
+                          </view>
+                        </view>
+                        <view class="row3">
+                          <view class="l-cell" style="{{themeObject.colorStyle}}">
+                            <span>￥</span><span class="font16">{{item.minprice}}</span>
+                          </view>
+                          <view class="r-cell" wx:if="{{item.storage}}">
+                            <view wx:if="{{item.cart_quantity}}" class="ico border-ico" style="{{themeObject.borderStyle}}{{themeObject.colorStyle}}" @tap="cutToCart({{item}},{{index}})">-</view>
+                            <view wx:if="{{item.cart_quantity}}" class="txt">{{item.cart_quantity}}</view>
+                            <view class="ico color-white" style="{{item.cart_quantity ? themeObject.bgStyle : 'background-color:#ccc;'}}" @tap="addToCart({{item}},{{index}})">+</view>
+                          </view>
+                        </view>
+                      </view>
                     </view>
                   </repeat>
                 </view>
@@ -147,6 +229,7 @@
       </view>
     </block>
   </view>
+  <view class="gray-bottom" wx:if="{{isClose}}"><view class="inner">很抱歉，本店已打烊</view></view>
   <bottomMenu
     current="home"
     :allowNav.sync="allowNav"
@@ -154,15 +237,21 @@
     :isIpx.sync="isIpx"
     :themeObject.sync="themeObject">
   </bottomMenu>
+  <block wx:if="{{showAuth}}">
+    <auth :pageurl.sync="pageurl" :themeObject.sync="themeObject" :globalData.sync="globalData"></auth>
+  </block>
 </template>
 <script>
 import wepy from 'wepy'
 import Config from '@/config'
 import Util from '@/libs/util'
+import Time from '@/libs/time'
 import BottomMenu from '@/components/bottomMenu'
+import Auth from '@/components/auth'
 export default class extends wepy.page {
   components = {
-    bottomMenu: BottomMenu
+    bottomMenu: BottomMenu,
+    auth: Auth
   }
   data = {
     globalData: {},
@@ -179,7 +268,10 @@ export default class extends wepy.page {
     allowNav: false,
     isIpx: false,
     disBanner: false,
-    bannerData: []
+    bannerData: [],
+    showAuth: false,
+    pageurl: '',
+    isClose: false
   }
   setClassActive (index) {
     for (let i = 0; i < this.classData.length; i++) {
@@ -191,45 +283,6 @@ export default class extends wepy.page {
     this.classid = this.classData[index].id
     this.classIndex = index
     this.classData[index].clicked = true
-  }
-  reachBottomGetProduct (cid, page, callback) {
-    this.isLoading = true
-    if (!this.pageObject[cid]) {
-      this.pageObject[cid] = {}
-    }
-    this.pageObject[cid].page = page
-    callback && callback()
-    this.getProductList()
-  }
-  onReachBottom () {
-    if (this.isLoading || this.afterClickClass) return false
-    let curList = this.listObject[this.classid]
-    if (!curList.length) {
-      this.reachBottomGetProduct(this.classid, 1)
-    } else {
-      if (curList.length >= this.pageObject[this.classid].page * this.limit) {
-        this.reachBottomGetProduct(this.classid, this.pageObject[this.classid].page + 1)
-      } else {
-        // console.log('in to nextclass')
-        let nextClassIndex = this.classIndex + 1
-        // console.log('nextClassIndex=', nextClassIndex)
-        // console.log('classid=', this.classid)
-        // console.log('classindex=', this.classIndex)
-        if (nextClassIndex < this.classData.length) {
-          let nextClassid = this.classData[nextClassIndex].id
-          let nextList = this.listObject[nextClassid]
-          let nextPage = this.pageObject[nextClassid].page
-          if (nextList && nextList.length === nextPage * this.limit) nextPage++
-          if (!nextList || !nextList.length || nextList.length === nextPage * this.limit) {
-            this.reachBottomGetProduct(nextClassid, nextPage, () => {
-              this.setClassActive(nextClassIndex)
-              this.$apply()
-            })
-          }
-        }
-        // console.log('\n\n\n\n')
-      }
-    }
   }
   onPageScroll (e) {
     let _this = this
@@ -337,10 +390,24 @@ export default class extends wepy.page {
       }
     })
   }
+  checkClose () {
+    let now = new Date().getTime()
+    let nowstr = new Time(now).dateFormat('hh:mm:ss')
+    console.log('当前时间=', nowstr)
+    let closestr = this.sysParams.closestore
+    console.log('闭店时间=', closestr)
+    let curTime = new Date(`2021/01/01 ${nowstr}`).getTime()
+    console.log('当前时间=', curTime)
+    let closeTime = new Date(`2021/01/01 ${closestr}`).getTime()
+    console.log('闭店时间=', closeTime)
+    if (curTime >= closeTime) {
+      this.isClose = true
+    }
+  }
   getHomeData () {
     wepy.request({
       url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/miniprogram/home`,
-      data: {limit: this.limit}
+      data: {limit: 1000}
     }).then(res => {
       const retdata = res.data
       if (retdata.code === 0) {
@@ -360,15 +427,15 @@ export default class extends wepy.page {
         this.disClass = true
         this.productList = retdata.fpdata
         this.disList = true
-        this.getProductList()
+        this.allowNav = true
+        this.checkClose()
+        // this.getProductList()
         this.$apply()
       }
     })
   }
   handlePageData () {
     this.globalData = this.$parent.globalData
-    console.log('------------底部菜单-----------------')
-    console.log(this.globalData.MenuData)
     Util.appInit(this.globalData, this)
     this.userInfo = this.globalData.userInfo
     this.getBanner()
@@ -376,6 +443,7 @@ export default class extends wepy.page {
   }
   onLoad (options) {
     this.options = options
+    this.pageurl = Util.objectToUrl('/pages/qyshop', this.options)
     this.limit = 5
     this.pageObject = {}
     this.afterClickClass = false
@@ -436,6 +504,78 @@ export default class extends wepy.page {
       path: shareurl
     }
   }
+  addCartEvent () {
+    this.isCarting = true
+    const item = this.clickProduct
+    const index = this.clickIndex
+    let ajaxUrl = `${Config.BokaApi}/${Config[Config.ApiVersion]}/cart/addCart`
+    let ajaxParams = {}
+    if (item.cart_id) {
+      ajaxUrl = `${Config.BokaApi}/${Config[Config.ApiVersion]}/cart/update`
+      ajaxParams.id = item.cart_id
+      ajaxParams.quantity = item.cart_quantity + 1
+    } else {
+      ajaxParams.pid = item.id
+    }
+    wepy.request({
+      url: ajaxUrl,
+      data: ajaxParams,
+      method: 'post'
+    }).then(res => {
+      const data = res.data
+      this.isCarting = false
+      if (data.code === 0) {
+        if (item.cart_id) {
+          this.productList[index].cart_quantity = ajaxParams.quantity
+        } else {
+          this.productList[index].cart_id = data.id
+          this.productList[index].cart_quantity = 1
+        }
+        this.$apply()
+      } else {
+        wepy.showToast({
+          title: data.msg,
+          icon: 'none'
+        })
+      }
+    })
+  }
+  cutCartEvent () {
+    this.isCarting = true
+    const item = this.clickProduct
+    const index = this.clickIndex
+    let ajaxUrl = `${Config.BokaApi}/${Config[Config.ApiVersion]}/cart/update`
+    let ajaxParams = {id: item.cart_id}
+    console.log('in cutcartevent ======')
+    console.log(item.cart_quantity > 1)
+    if (item.cart_quantity > 1) {
+      ajaxParams.quantity = item.cart_quantity - 1
+    } else {
+      ajaxUrl = `${Config.BokaApi}/${Config[Config.ApiVersion]}/cart/delete`
+    }
+    wepy.request({
+      url: ajaxUrl,
+      data: ajaxParams,
+      method: 'post'
+    }).then(res => {
+      const data = res.data
+      this.isCarting = false
+      if (data.code === 0) {
+        if (item.cart_quantity > 1) {
+          this.productList[index].cart_quantity = ajaxParams.quantity
+        } else {
+          this.productList[index].cart_quantity = 0
+          this.productList[index].cart_id = 0
+        }
+        this.$apply()
+      } else {
+        wepy.showToast({
+          title: data.msg,
+          icon: 'none'
+        })
+      }
+    })
+  }
   methods = {
     clickClass (item, index) {
       if (!item.clicked) {
@@ -455,6 +595,47 @@ export default class extends wepy.page {
     },
     clickBanner (e) {
       Util.clickBanner(e, this)
+    },
+    addToCart (item, index) {
+      if (this.isCarting) return false
+      this.clickProduct = item
+      this.clickIndex = index
+      this.cartType = 'add'
+      if (this.userInfo.subscribe === 0) {
+        this.showAuth = true
+        this.$apply()
+        return false
+      }
+      this.addCartEvent()
+    },
+    cutToCart (item, index) {
+      if (this.isCarting) return false
+      this.clickProduct = item
+      this.clickIndex = index
+      this.cartType = 'cut'
+      if (this.userInfo.subscribe === 0) {
+        this.showAuth = true
+        this.$apply()
+        return false
+      }
+      this.cutCartEvent()
+    }
+  }
+  events = {
+    cancelLogin () {
+      this.showAuth = false
+      this.$apply()
+    },
+    afterAuth () {
+      this.globalData = this.$parent.globalData
+      this.userInfo = this.globalData.userInfo
+      this.showAuth = false
+      if (this.cartType === 'add') {
+        this.addCartEvent()
+      } else {
+        this.cutCartEvent()
+      }
+      this.$apply()
     }
   }
 }

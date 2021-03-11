@@ -7,6 +7,7 @@
   .search-input{width: 85%;box-sizing: border-box;font-size:24rpx;padding: 0 20rpx;flex:1;}
 }
 .app-tab.fixed-top{position:fixed;left:0;top:100rpx;right:0;z-index:10;}
+.user-order-page.iphone{padding-bottom:328rpx;}
 .user-order-page{
   padding-top:200rpx;padding-bottom:260rpx;
   .list-area{
@@ -224,18 +225,27 @@
     module="userorders"
     pagePath="packageD/pages/userOrders">
   </share>
+  <bottomMenu
+    current="order"
+    :allowNav.sync="allowNav"
+    :globalData.sync="globalData"
+    :isIpx.sync="isIpx"
+    :themeObject.sync="themeObject">
+  </bottomMenu>
 </template>
 <script>
 import wepy from 'wepy'
 import Config from '@/config'
 import Util from '@/libs/util'
 import Share from '@/components/store/share'
+import BottomMenu from '@/components/bottomMenu'
 export default class extends wepy.page {
   config = {
     enablePullDownRefresh: true,
     backgroundTextStyle: 'dark'
   }
   components = {
+    bottomMenu: BottomMenu,
     share: Share
   }
   data = {
@@ -254,7 +264,9 @@ export default class extends wepy.page {
     maxnum: 4,
     keyword: '',
     themeObject: {},
-    clickShare: false
+    clickShare: false,
+    allowNav: false,
+    isIpx: false
   }
   clearRefund () {
     this.refundContent = ''
@@ -333,6 +345,7 @@ export default class extends wepy.page {
     }).then(res => {
       wepy.hideLoading()
       this.isLoading = false
+      this.allowNav = true
       const data = res.data
       let retdata = data.data ? data.data : data
       for (let i = 0; i < retdata.length; i++) {
@@ -460,6 +473,12 @@ export default class extends wepy.page {
         this.handlePageData()
       }
     }
+    wepy.getSystemInfo().then(res => {
+      if (res.model.substring(0, res.model.indexOf('X')) + 'X' === 'iPhone X') {
+        this.isIpx = true
+      }
+      this.$apply()
+    })
   }
   // onShow () {
   //   this.initData()

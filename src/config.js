@@ -118,7 +118,7 @@ const Config = {
   MenuData: [
     {id: 1, title: '首页', module: 'home', type: '0', miniprogramurl: '/pages/qyshop'},
     {id: 2, title: '购物车', module: 'shop', type: '0', miniprogramurl: '/packageC/pages/cart'},
-    {id: 2, title: '订单', module: '', type: '0', miniprogramurl: '/packageD/pages/userOrders'},
+    {id: 2, title: '订单', module: 'order', type: '0', miniprogramurl: '/packageD/pages/userOrders'},
     {id: 3, title: '我', module: 'own', type: '0', miniprogramurl: '/pages/own'}
   ],
   OrderHomeShare: 'https://tossharingsales.boka.cn/minigxk/shxd.png',

@@ -1094,7 +1094,7 @@ export default class Product extends wepy.page {
         title: data.msg,
         icon: 'none'
       })
-      if (data.code === 1) {
+      if (data.code === 0) {
         this.globalData.userInfo.cartcount = data.cartcount
         this.userInfo.cartcount = data.cartcount
         this.$parent.globalData = this.globalData

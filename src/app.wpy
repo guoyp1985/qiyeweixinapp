@@ -297,7 +297,7 @@
     }
     getSettingInfo () {
       this.globalData.OpenCart = 1
-      this.globalData.SystemParams = {BackgroundColor: '#ff6a61', TopicColor: '#ff6a61', OnlyRetailerBuy: 0}
+      this.globalData.SystemParams = {BackgroundColor: '#ff6a61', TopicColor: '#ff6a61', OnlyRetailerBuy: 0, ShowSaled: 0}
       this.globalData.MenuData = Config.MenuData
       if (wepy.getStorageSync('version') !== Config.version) {
         wepy.clearStorageSync()
