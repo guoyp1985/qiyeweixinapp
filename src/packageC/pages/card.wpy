@@ -279,13 +279,20 @@ export default class Card extends wepy.page {
     Util.appInit(this.globalData, this)
     this.userInfo = this.globalData.userInfo
     this.$apply()
-    if (this.options.id) {
-      let infoparams = {id: this.options.id, module: 'miniactivity', addviews: 1}
+    if (this.options.id || this.options.type) {
+      let ajaxUrl = `${Config.BokaApi}/${Config[Config.ApiVersion]}/content/info`
+      let infoparams = {module: 'miniactivity', addviews: 1}
+      if (this.options.id) {
+        infoparams.id = this.options.id
+      } else if (this.options.type) {
+        infoparams.type = this.options.type
+        ajaxUrl = `${Config.BokaApi}/${Config[Config.ApiVersion]}/miniactivity/info`
+      }
       if (this.options.share_uid) {
         infoparams.share_uid = this.options.share_uid
       }
       wepy.request({
-        url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/content/info`,
+        url: ajaxUrl,
         data: infoparams,
         method: 'post'
       }).then(res => {
@@ -307,6 +314,21 @@ export default class Card extends wepy.page {
             this.facemoney = cmoney[1]
           }
           this.setCardName()
+          if (this.options.type) {
+            this.shareParams = {
+              title: this.viewData.push_title,
+              photo: this.viewData.photo
+            }
+          } else {
+            let shareTitle = this.viewData.push_title
+            if (shareTitle === '') {
+              shareTitle = this.viewData.title
+            }
+            this.shareParams = {
+              title: shareTitle,
+              photo: this.viewData.photo
+            }
+          }
         }
         this.$apply()
       })
@@ -334,17 +356,20 @@ export default class Card extends wepy.page {
   onShareAppMessage () {
     const lastshareuid = this.options.share_uid
     let shareurl = `/packageC/pages/card?share_uid=${this.userInfo.uid}&share_wid=${this.globalData.Wid}&wid=${this.globalData.Wid}&comefrom=${Config.AppName}`
+    if (this.options.id) {
+      shareurl = `${shareurl}&id=${this.options.id}`
+    } else if (this.options.type) {
+      shareurl = `${shareurl}&type=${this.options.type}`
+    }
     if (lastshareuid) {
       shareurl = `${shareurl}&lastshareuid=${lastshareuid}`
     }
     let backUrl = encodeURIComponent(shareurl)
     shareurl = `${shareurl}&currentUrl=${backUrl}`
-    let shareTitle = '优惠券'
-    if (this.viewData && this.viewData.id) shareTitle = this.viewData.title
     return {
-      title: shareTitle,
+      title: this.shareParams.title,
       path: shareurl,
-      imageUrl: 'https://tossharingsales.boka.cn/minigxk/luck/bg3.png'
+      imageUrl: this.shareParams.photo
     }
   }
   events = {

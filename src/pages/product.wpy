@@ -1033,18 +1033,18 @@ export default class Product extends wepy.page {
     }
   }
   getSeller () {
-    if (Config.Wid !== this.globalData.Wid || this.cardList.length) {
-      wepy.request({
-        url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/retailer/info`,
-        data: {uid: this.globalData.Wid, appid: Config.AppId}
-      }).then(res => {
-        const data = res.data
-        if (data.code === 0) {
-          this.sellerUser = data.data
-        }
-        this.$apply()
-      })
-    }
+    // if (Config.Wid !== this.globalData.Wid || this.cardList.length) {
+    //   wepy.request({
+    //     url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/retailer/info`,
+    //     data: {uid: this.globalData.Wid, appid: Config.AppId}
+    //   }).then(res => {
+    //     const data = res.data
+    //     if (data.code === 0) {
+    //       this.sellerUser = data.data
+    //     }
+    //     this.$apply()
+    //   })
+    // }
   }
   dateFormat (value) {
     return new Time(value * 1000).dateFormat('yyyy-MM-dd')
