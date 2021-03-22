@@ -1,0 +1,228 @@
+<style lang="less">
+.get-card-page{
+  background-color:#f94929;width:100%;height:100%;
+  .row1{
+    width:100%;padding-bottom:90%;
+    .bg-image{position:absolute;left:0;top:0;right:0;bottom:0;width:100%;height:100%;}
+  }
+  .row2{
+    width:100%;position:relative;background-color:#f94929;
+    .bg-image{position:absolute;left:0;top:0;right:0;width:100%;}
+  }
+  .pic-area{
+    width:53%;
+    .pic{
+      width:100%;position:relative;
+      image{width:100%;}
+      .txt1{
+        width:34%;max-height:100%;position:absolute;left:33%;top:34%;
+        .inner{width:100%;max-height:100%;position:relative;}
+        .inner:after{padding-top:100%;content:"";display:block;}
+        .btn{position:absolute;left:0;top:0;right:0;bottom:0;font-size:50rpx;color:#f95a51;}
+        .btn.disable{color:#999;}
+      }
+      .txt2{position:absolute;left:0;bottom:15%;right:0;text-align:center;color:#F9EA72;font-size:30rpx;letter-spacing: 2rpx;}
+    }
+  }
+  .txt-area{
+    padding:0 40rpx 40rpx;box-sizing: border-box;color:#fff;
+    .txt{width:150rpx;text-align:right;padding-right:10rpx;box-sizing: border-box;}
+  }
+  .info-txt{width:85%;margin:0 auto;box-sizing: border-box;color:#fff;position:relative;word-break: break-word;font-size:34rpx;line-height:60rpx;}
+  .info-blank{height:200rpx;}
+  .btn-list{
+    width:70%;margin:0 auto;display:flex;padding:40rpx 0;
+    .item{
+      flex:1;height:80rpx;position:relative;
+      .inner{
+        position:absolute;top:0;bottom:0;
+        .btn{width:100%;height:100%;background-color:#f8edad;border-radius:80rpx;font-size:30rpx;}
+        .btn.dark{background-color:#fce665;}
+      }
+    }
+    .item:nth-child(1){
+      .inner{left:0;right:0;}
+    }
+  }
+  .btn-list.btn-list1{margin: 40rpx auto;}
+  .btn3{
+    width:200rpx;height:80rpx;position:relative;margin:40rpx auto;
+    .btn{position:absolute;left:0;top:0;right:0;bottom:0;background-color:#f8edad;border-radius:80rpx;font-size:30rpx;}
+  }
+  .box-area{
+    width:80%;margin:0 auto;box-sizing: border-box;position:relative;z-index:1;
+    border:#fc0 8rpx solid;border-radius:12rpx;background-color:#fff;padding:30rpx;
+    .txt{margin-top:10rpx;color:#666;}
+  }
+  .box-area.area1{margin:80rpx auto 0;}
+  .box-area.area2{
+    height:800rpx;
+    swiper{height:570rpx;}
+  }
+  .box-area.area3{height:300rpx;}
+
+  .image-outer{width:60%;}
+  .friend-list{padding:20rpx 40rpx;box-sizing: border-box;}
+  .friend-list .friend-item:not(:last-child){margin-bottom:20rpx;}
+  .friend-list .pic{width:100rpx;}
+  .friend-list .pic image{width:80rpx;height:80rpx;border-radius:50%;}
+
+  .btn-play{
+    width:200rpx;height:70rpx;margin:0 auto;color:#f8edad;
+    button{text-decoration: underline;font-size:32rpx;}
+  }
+  .wechat-pic{
+    position:relative;width:70%;margin:10rpx auto 0;
+    image{width:100%;max-width:100%;max-height:100%;}
+    .txt1{position:absolute;top:21.5%;left:65.5%;}
+    .txt2{position:absolute;bottom:3%;left:6%;}
+  }
+  .modal-bottom{
+    width:100%;height:90rpx;
+    button{border-radius: 10rpx;}
+  }
+}
+</style>
+<template>
+  <view class="get-card-page">
+    <view class="row1">
+      <image class="bg-image" mode="widthFix" src="https://tossharingsales.boka.cn/minigxk/luck/bg3.png"></image>
+    </view>
+    <view class="row2">
+      <image class="bg-image" mode="widthFix" src="https://tossharingsales.boka.cn/minigxk/luck/bg2.png"></image>
+      <block wx:if="{{showOpen}}">
+        <view class="w_100 flex_center">
+          <view class="pic-area">
+            <view class="pic">
+              <image mode="widthFix" src="https://tossharingsales.boka.cn/minigxk/luck/hb1.png"></image>
+              <form class="txt1" report-submit="true" bindsubmit="openEvent">
+                <view class="inner">
+                  <button class="btn flex_center" form-type="submit">開</button>
+                </view>
+              </form>
+            </view>
+          </view>
+        </view>
+        <view class="btn-list">
+          <view class="item flex_left">
+            <view class="inner">
+              <button class="btn flex_center dark color-theme" open-type="share">分享给好友</button>
+            </view>
+          </view>
+        </view>
+      </block>
+      <block wx:if="{{showResult}}">
+        <view class="flex_center hb-modal">
+          <view class="inner">
+            <view class="pic-outer">
+              <view class="pic">
+                <image src="https://tossharingsales.boka.cn/minigxk/luck/hb2.png"></image>
+              </view>
+            </view>
+            <view class="top-txt flex_center">恭喜你获得<text class="big">{{options.type && cardObject[options.type] ? cardObject[options.type] : '优惠券'}}</text></view>
+            <view class="con-txt flex_center">
+              <view class="w_100 align_center">
+                  <view class="big">￥{{facemoney}}</view>
+                  <view>满{{ordermoney}}可用</view>
+              </view>
+            </view>
+          </view>
+        </view>
+        <view class="btn-list">
+          <view class="item flex_left">
+            <view class="inner">
+              <button class="btn flex_center dark color-theme" open-type="share">分享给好友</button>
+            </view>
+          </view>
+        </view>
+      </block>
+      <view wx:if="{{viewData && viewData.id}}" class="txt-area">
+        <view class="db-flex" wx:if="{{viewData.content && viewData.content != ''}}">
+          <view class="txt">使用说明: </view>
+          <text class="flex_cell">{{viewData.content}}</text>
+        </view>
+        <view class="flex_left" wx:if="{{viewData.starttime}}">
+          <view class="txt">有效期: </view>
+          <view class="flex_cell">{{viewData.starttime_str}} 至 {{viewData.endtime_str}}</view>
+        </view>
+        <view class="flex_left" wx:elif="{{viewData.deadline}}">
+          <view class="txt">有效期至: </view>
+          <view class="flex_cell">{{viewData.deadline_str}}</view>
+        </view>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy'
+import Config from '@/config'
+import Util from '@/libs/util'
+export default class extends wepy.component {
+  props = {
+    viewData: {
+      type: Object,
+      default: {}
+    },
+    userInfo: {
+      type: Object,
+      default: {}
+    },
+    options: {
+      type: Object,
+      default: {}
+    },
+    ordermoney: {
+      type: String,
+      default: ''
+    },
+    facemoney: {
+      type: String,
+      default: ''
+    }
+  }
+  data = {
+    showOpen: true,
+    showResult: false,
+    cardObject: {
+      newcustomer: '新人优惠券',
+      singlecard: '专属优惠券'
+    }
+  }
+  methods = {
+    openEvent () {
+      if (this.userInfo.subscribe === 0) {
+        this.$emit('authEvent')
+        return false
+      }
+      if (this.openIng) return false
+      this.openIng = true
+      let params = {frommini: 1, wid: this.userInfo.ownid}
+      if (this.options.type) params.type = this.options.type
+      if (this.options.id) params.id = this.options.id
+      wepy.showLoading()
+      wepy.request({
+        url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/card/getCard`,
+        data: params,
+        method: 'post'
+      }).then(res => {
+        wepy.hideLoading()
+        const data = res.data
+        if (data.code !== 0) {
+          wepy.showToast({
+            title: data.msg,
+            icon: 'none',
+            duration: Util.delay(data.msg)
+          })
+        }
+        if (data.data) {
+          this.showOpen = false
+          this.showResult = true
+        }
+        this.$emit('afterOpenCard', data)
+        this.openIng = false
+      })
+    }
+  }
+}
+</script>

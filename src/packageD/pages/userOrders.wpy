@@ -140,7 +140,7 @@
               <view class="clamp1 w_100">
                 <text class="v_middle font12">实际支付: </text>
                 <text class="v_middle font14">￥{{item.needpaymoney}}</text>
-                <block wx:if="{{!item.delivertype && item.postage && item.postage != ''}}">
+                <block wx:if="{{!item.delivertype && item.postage && item.postage != '' && item.ordertype != 3}}">
                   <text class="v_middle font12 color-gray ml5" wx:if="{{item.postage == 0}}">( 运费 : 包邮 )</text>
                   <text class="v_middle font12 color-gray ml5" wx:else>( 运费 : ￥{{ item.postage }} )</text>
                 </block>
@@ -433,6 +433,9 @@ export default class extends wepy.page {
         ]
         if (item.singlepay) {
           item.buttons.push({id: 2, name: '去支付'})
+          if (item.ordertype === 3) {
+            item.buttons.push({id: 10, name: '继续点餐'})
+          }
         }
         break
       case 2:
@@ -674,6 +677,9 @@ export default class extends wepy.page {
             url = `${url}&history=1`
           }
           wepy.navigateTo({url: url})
+          break
+        case 10:
+          wepy.reLaunch({url: `/pages/qyshop?orderid=${order.id}`})
           break
       }
     },

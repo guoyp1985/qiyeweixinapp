@@ -243,20 +243,20 @@
         this.orderno = this.options.orderno
         this.ordermoney = this.options.ordermoney
         this.$apply()
-        if (!this.userInfo.regwid || !this.userInfo.bindstatus) {
-          wepy.request({
-            url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/retailer/info`,
-            data: {uid: this.globalData.Wid, appid: Config.AppId}
-          }).then(res => {
-            const data = res.data
-            if (data.code === 0) {
-              this.sellerUser = data.data
-            }
-            this.$apply()
-          })
-        } else {
-          this.sellerUser = this.userInfo
-        }
+        // if (!this.userInfo.regwid || !this.userInfo.bindstatus) {
+        //   wepy.request({
+        //     url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/retailer/info`,
+        //     data: {uid: this.globalData.Wid, appid: Config.AppId}
+        //   }).then(res => {
+        //     const data = res.data
+        //     if (data.code === 0) {
+        //       this.sellerUser = data.data
+        //     }
+        //     this.$apply()
+        //   })
+        // } else {
+        //   this.sellerUser = this.userInfo
+        // }
       } else {
         this.showArea2 = false
         this.showArea1 = true

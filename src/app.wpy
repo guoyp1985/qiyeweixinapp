@@ -22,7 +22,6 @@
     config = {
       pages: [
         'pages/index',
-        'pages/qyshop',
         'pages/auth',
         'pages/home',
         'pages/addModule',
@@ -34,6 +33,9 @@
         'pages/moduleList',
         'pages/own',
         'pages/product',
+        'pages/qyhome',
+        'pages/qyorder',
+        'pages/qyshop',
         'pages/shop',
         'pages/shop1',
         'pages/sos',
@@ -42,7 +44,7 @@
       ],
       'plugins': {
         'live-player-plugin': {
-          'version': '1.2.9', // 注意填写该直播组件最新版本号，微信开发者工具调试时可获取最新版本号
+          'version': '1.2.10', // 注意填写该直播组件最新版本号，微信开发者工具调试时可获取最新版本号
           'provider': 'wx2b03c6e691cd7370' // 必须填该直播组件appid，该示例值即为直播组件appid
         },
         'contactPlugin': {
@@ -137,6 +139,11 @@
           ]
         }
       ],
+      permission: {
+        'scope.userLocation': {
+          desc: '请点击确定'
+        }
+      },
       window: {
         navigationBarTitleText: '博卡供销社',
         backgroundTextStyle: 'dark',
@@ -160,6 +167,7 @@
       AuthInfo: {},
       MiniInfo: {},
       SystemParams: {},
+      Store: [],
       Templates: {},
       giveCredit: false,
       lastShareInfo: null,
@@ -264,7 +272,6 @@
           this.globalData.miniData = retdata.data
           this.globalData.loginData = data
           this.globalData.userInfo = user
-          this.globalData.flag.bokaAuth = true
           console.log('=== user ===')
           console.log(user)
           console.log(`当前用户的uid=${user.uid}`)
@@ -295,9 +302,8 @@
       }
       return user
     }
-    getSettingInfo () {
+    _getSettingInfo () {
       this.globalData.OpenCart = 1
-      this.globalData.SystemParams = {BackgroundColor: '#ff6a61', TopicColor: '#ff6a61', OnlyRetailerBuy: 0, ShowSaled: 0}
       this.globalData.MenuData = Config.MenuData
       if (wepy.getStorageSync('version') !== Config.version) {
         wepy.clearStorageSync()
@@ -323,69 +329,21 @@
         delete this.loadComponentsCallback1
       }
     }
-    _getSettingInfo () {
+    getSettingInfo () {
+      this.globalData.OpenCart = 1
+      this.globalData.MenuData = Config.MenuData
       wepy.request({
-        url: `${BokaApi}/${Config[Config.ApiVersion]}/common/settingInfo`,
-        data: {appid: Config.AppId, fid: Config.Fid}
+        url: `${BokaApi}/${Config[Config.ApiVersion]}/common/miniSetting`,
+        data: {appid: Config.AppId}
       }).then(settingRes => {
         this.globalData.flag.bokaAuth = true
         console.log('======settingifno请求结束了======')
         if (settingRes) {
           const data = settingRes.data
           if (data.code === 0) {
-            this.globalData.FactoryInfo = data.factoryinfo
-            let retSyspara = data.syspara
-            let retMenuData = data.menudata
-            if (retSyspara.OrderType === '10' || retSyspara.OrderType === 10) {
-              retMenuData = Config.MenuData
-            } else {
-              for (let i = 0; i < retMenuData.length; i++) {
-                let curd = retMenuData[i]
-                if (curd.photostate && curd.photostate !== '' && curd.photostate !== '0') {
-                  retMenuData[i].ico_arr = curd.photostate.split(',')
-                }
-                if (curd.module === 'shop') {
-                  this.globalData.OpenCart = 1
-                }
-              }
-            }
-            let betaData = []
-            if (data.betamodules) {
-              let retBetaData = data.betamodules
-              for (let i = 0; i < retBetaData.length; i++) {
-                let curBeta = retBetaData[i]
-                if (curBeta.moderate !== 0) {
-                  if (curBeta.testwids && curBeta.testwids !== '') {
-                    let testwids = curBeta.testwids.split(',')
-                    for (let j = 0; j < testwids.length; j++) {
-                      if (this.globalData.userInfo.regwid === parseInt(testwids[j])) {
-                        curBeta.allowtest = true
-                        break
-                      }
-                    }
-                  }
-                  if (curBeta.allowtest) {
-                    betaData.push(curBeta)
-                  }
-                }
-              }
-            }
-            this.globalData.BetaData = betaData
-            this.globalData.Module = retMenuData
-            this.globalData.MenuData = retMenuData
-            this.globalData.AuthInfo = data.miniinfo
-            this.globalData.MiniInfo = data.miniinfo
-            this.globalData.SystemParams = retSyspara
-            this.globalData.Templates = data.templates
+            this.globalData.SystemParams = {...data.syspara, BackgroundColor: '#ff6a61', TopicColor: '#ff6a61', OnlyRetailerBuy: 0, ShowSaled: 0}
+            this.globalData.Store = data.store
           }
-          if (wepy.getStorageSync('version') !== Config.version || wepy.getStorageSync('sysversion') !== data.syspara.Version) {
-            wepy.clearStorageSync()
-          }
-          wepy.setStorageSync('user', this.globalData.userInfo)
-          wepy.setStorageSync('miniData', this.globalData.miniData)
-          wepy.setStorageSync('token', this.globalData.miniData.token)
-          wepy.setStorageSync('version', Config.version)
-          wepy.setStorageSync('sysversion', data.syspara.Version)
           if (this.loadCallback) {
             this.loadCallback()
             delete this.loadCallback

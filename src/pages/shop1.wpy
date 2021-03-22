@@ -401,22 +401,22 @@
       this.getSeller()
     }
     getSeller () {
-      if (Config.Wid !== this.globalData.Wid) {
-        wepy.request({
-          url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/retailer/info`,
-          data: {uid: this.globalData.Wid, appid: Config.AppId}
-        }).then(res => {
-          const data = res.data
-          if (data.code === 0) {
-            this.sellerUser = data.data
-          }
-          this.disSeller = true
-          this.$apply()
-        })
-      } else {
-        this.disSeller = true
-        this.$apply()
-      }
+      // if (Config.Wid !== this.globalData.Wid) {
+      //   wepy.request({
+      //     url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/retailer/info`,
+      //     data: {uid: this.globalData.Wid, appid: Config.AppId}
+      //   }).then(res => {
+      //     const data = res.data
+      //     if (data.code === 0) {
+      //       this.sellerUser = data.data
+      //     }
+      //     this.disSeller = true
+      //     this.$apply()
+      //   })
+      // } else {
+      //   this.disSeller = true
+      //   this.$apply()
+      // }
     }
     getNotice () {
       this.noticeData = []

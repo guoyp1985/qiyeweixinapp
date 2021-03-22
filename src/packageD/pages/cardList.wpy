@@ -310,25 +310,7 @@ export default class CardList extends wepy.page {
   }
   methods = {
     toUse (item) {
-      if (item.validate === 0) return false
-      if (!item.limitpid) {
-        wepy.reLaunch({url: '/pages/index'})
-        return false
-      }
-      if (item.cardtype === 'retailercard') {
-        if (item.wid === this.globalData.Wid) {
-          wepy.navigateTo({url: `/${Config.Router.product}?id=${item.limitpid}`})
-        } else {
-          let txt1 = '请点击'
-          let txt2 = '分享的链接使用优惠券'
-          wepy.showToast({
-            title: `${txt1}【${item.retailer}】${txt2}`,
-            icon: 'none'
-          })
-        }
-      } else {
-        wepy.navigateTo({url: `/${Config.Router.product}?id=${item.limitpid}`})
-      }
+      wepy.navigateTo({url: `/packageC/pages/card?id=${item.id}&frompage=user`})
     },
     toHome (e) {
       wepy.reLaunch({url: Config.HomePage})

@@ -457,14 +457,6 @@
        <view wx:if="{{product.sellingpoint && product.sellingpoint != ''}}" class="color-theme" style="{{themeObject.colorStyle}}">{{product.sellingpoint}}</view>
        <block wx:if="{{afterInfo}}">
          <block wx:if="{{showTimer}}">
-           <!-- <view class="flex_left" wx:if="{{(product.limitbuy && product.limitbuy > 0) || (product.minmaxcredits && product.minmaxcredits > 0)}}">
-             <view wx:if="{{product.limitbuy && product.limitbuy > 0}}" class="border-btn" style="{{themeObject.borderStyle}}{{themeObject.colorStyle}}">限购{{product.limitbuy}}件</view>
-             <view wx:if="{{product.minmaxcredits && product.minmaxcredits > 0}}" class="border-btn {{(product.limitbuy && product.limitbuy > 0) ? 'ml10' : ''}}" style="{{themeObject.borderStyle}}{{themeObject.colorStyle}}">
-               <text>最多可使用金币</text>
-               <text wx:if="{{product.minmaxcredits && product.maxmaxcredits && product.minmaxcredits != product.maxmaxcredits}}">{{product.minmaxcredits}}-{{product.maxmaxcredits}}</text>
-               <text wx:else>{{product.minmaxcredits}}</text>
-             </view>
-           </view> -->
            <view class="flex_left" wx:if="{{(product.limitbuy && product.limitbuy > 0)}}">
              <view wx:if="{{product.limitbuy && product.limitbuy > 0}}" class="border-btn" style="{{themeObject.borderStyle}}{{themeObject.colorStyle}}">限购{{product.limitbuy}}件</view>
            </view>
@@ -479,14 +471,6 @@
                <text class="font16 ml5 .color-gray" style="text-decoration: line-through" wx:if="{{oripriceShow}}">￥{{product.oriprice}}</text>
              </view>
            </view>
-           <!-- <view class="flex_left" wx:if="{{(product.limitbuy && product.limitbuy > 0) || (product.minmaxcredits && product.minmaxcredits > 0)}}">
-             <view wx:if="{{product.limitbuy && product.limitbuy > 0}}" class="color-orange">限购{{product.limitbuy}}件</view>
-             <view wx:if="{{product.minmaxcredits && product.minmaxcredits > 0}}" class="color-orange {{(product.limitbuy && product.limitbuy > 0) ? 'ml10' : ''}}">
-               <text>最多可使用金币</text>
-               <text wx:if="{{product.minmaxcredits && product.maxmaxcredits && product.minmaxcredits != product.maxmaxcredits}}">{{product.minmaxcredits}}-{{product.maxmaxcredits}}</text>
-               <text wx:else>{{product.minmaxcredits}}</text>
-             </view>
-           </view> -->
            <view class="flex_left" wx:if="{{(product.limitbuy && product.limitbuy > 0)}}">
              <view wx:if="{{product.limitbuy && product.limitbuy > 0}}" class="color-orange">限购{{product.limitbuy}}件</view>
            </view>
@@ -499,8 +483,6 @@
        <view class="flex_left font12 mt5 color-gray2">
          <view wx:if="{{product.postage == 0}}" class="flex_left w90">运费: 包邮</view>
          <view wx:else class="flex_left w90">运费: ￥{{ product.postage }}</view>
-         <!-- <view wx:if="{{isAdmin}}" class="flex_cell flex_right">销量: {{ product.truesaled }}{{ product.unit }}</view>
-         <view wx:elif="{{globalData.SystemParams.ShowSaled != 0}}" class="flex_cell flex_right">销量: {{ product.saled }}{{ product.unit }}</view> -->
          <view wx:if="{{globalData.SystemParams.ShowSaled != 0}}" class="flex_cell flex_right">销量: {{ product.saled }}{{ product.unit }}</view>
        </view>
      </view>

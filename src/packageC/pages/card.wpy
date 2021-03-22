@@ -127,84 +127,36 @@
 }
 </style>
 <template>
-  <view class="card-page">
-    <view class="row1">
-      <image class="bg-image" mode="widthFix" src="https://tossharingsales.boka.cn/minigxk/luck/bg3.png"></image>
-    </view>
-    <view class="row2">
-      <image class="bg-image" mode="widthFix" src="https://tossharingsales.boka.cn/minigxk/luck/bg2.png"></image>
-      <block wx:if="{{showOpen}}">
-        <view class="w_100 flex_center">
-          <view class="pic-area">
-            <view class="pic">
-              <image mode="widthFix" src="https://tossharingsales.boka.cn/minigxk/luck/hb1.png"></image>
-              <form class="txt1" report-submit="true" bindsubmit="openEvent">
-                <view class="inner">
-                  <button class="btn flex_center" form-type="submit">開</button>
-                </view>
-              </form>
-            </view>
-          </view>
-        </view>
-        <view class="btn-list">
-          <view class="item flex_left">
-            <view class="inner">
-              <button class="btn flex_center dark color-theme" open-type="share">分享给好友</button>
-            </view>
-          </view>
-        </view>
-        <view wx:if="{{viewData && viewData.id}}" class="txt-area">
-          <view class="db-flex">
-            <view class="txt">使用说明: </view>
-            <span class="flex_cell">{{viewData.content}}</span>
-          </view>
-          <view class="flex_left" wx:if="{{viewData.starttime}}">
-            <view class="txt">有效期: </view>
-            <view class="flex_cell">{{viewData.starttime_str}} 至 {{viewData.endtime_str}}</view>
-          </view>
-          <view class="flex_left" wx:elif="{{viewData.deadline}}">
-            <view class="txt">有效期至: </view>
-            <view class="flex_cell">{{viewData.deadline_str}}</view>
-          </view>
-        </view>
-      </block>
-      <block wx:if="{{showResult}}">
-        <view class="flex_center hb-modal">
-          <view class="inner">
-            <view class="pic-outer">
-              <view class="pic">
-                <image src="https://tossharingsales.boka.cn/minigxk/luck/hb2.png"></image>
-              </view>
-            </view>
-            <view class="top-txt flex_center">恭喜你获得<text class="big">{{cardTypeName}}</text></view>
-            <view class="con-txt flex_center">
-              <view class="w_100 align_center">
-                  <view class="big">￥{{facemoney}}</view>
-                  <view>满{{ordermoney}}可用</view>
-              </view>
-            </view>
-          </view>
-        </view>
-        <view class="btn-list">
-          <view class="item flex_left">
-            <view class="inner">
-              <button class="btn flex_center dark color-theme" open-type="share">分享给好友</button>
-            </view>
-          </view>
-        </view>
-        <view wx:if="{{viewData && viewData.id}}" class="txt-area">
-          <view class="db-flex">
-            <view class="txt">使用说明: </view>
-            <span class="flex_cell">{{viewData.content}}</span>
-          </view>
-          <view class="flex_left">
-            <view class="txt">有效期至: </view>
-            <view class="flex_cell">{{viewData.deadline_str}}</view>
-          </view>
-        </view>
-      </block>
-    </view>
-  </view>
+  <block wx:if="{{showGetPage}}">
+    <getCard
+      :themeObject.sync="themeObject"
+      :viewData.sync="viewData"
+      :userInfo.sync="userInfo"
+      :options.sync="options"
+      :ordermoney.sync="ordermoney"
+      :facemoney.sync="facemoney">
+    </getCard>
+  </block>
+  <block wx:if="{{showUserPage}}">
+    <userCard
+      :themeObject.sync="themeObject"
+      :viewData.sync="viewData"
+      :userInfo.sync="userInfo"
+      :options.sync="options"
+      :ordermoney.sync="ordermoney"
+      :facemoney.sync="facemoney">
+    </userCard>
+  </block>
+  <block wx:if="{{showViewPage}}">
+    <viewCard
+      :themeObject.sync="themeObject"
+      :viewData.sync="viewData"
+      :userInfo.sync="userInfo"
+      :options.sync="options"
+      :ordermoney.sync="ordermoney"
+      :facemoney.sync="facemoney">
+    </viewCard>
+  </block>
   <view class="auto-modal flex_center kefu-info-modal" wx:if="{{showKefuModal}}">
     <view class="modal-inner border-box" style="width:80%;">
       <view class="padding20 flex_center">
@@ -231,9 +183,15 @@ import Util from '@/libs/util'
 import Time from '@/libs/time'
 import Config from '@/config'
 import Auth from '@/components/auth'
+import GetCard from '@/components/getCard'
+import UserCard from '@/components/userCard'
+import ViewCard from '@/components/viewCard'
 export default class Card extends wepy.page {
   components = {
-    auth: Auth
+    auth: Auth,
+    getCard: GetCard,
+    userCard: UserCard,
+    viewCard: ViewCard
   }
   data = {
     options: {},
@@ -265,42 +223,51 @@ export default class Card extends wepy.page {
     showShareModal: false,
     cardTypeName: '',
     showKefuModal: false,
-    kefuQrcode: ''
+    kefuQrcode: '',
+    showGetPage: false,
+    showUserPage: false,
+    showViewPage: false
   }
-  setCardName () {
-    if (this.typeObject[this.cardType]) {
-      this.cardTypeName = this.typeObject[this.cardType]
+  setMoney () {
+    if (this.viewData.discounttype && this.viewData.discounttype !== '') {
+      let cmoney = this.viewData.discounttype.split(',')
+      this.ordermoney = cmoney[0]
+      if (cmoney.length === 3) {
+        this.facemoney = `${cmoney[1]}-${cmoney[2]}`
+      } else {
+        this.facemoney = cmoney[1]
+      }
     } else {
-      this.cardTypeName = '优惠券'
+      this.ordermoney = this.viewData.ordermoney
+      this.facemoney = this.viewData.money
     }
   }
-  handlePageData () {
-    this.globalData = this.$parent.globalData
-    Util.appInit(this.globalData, this)
-    this.userInfo = this.globalData.userInfo
-    this.$apply()
-    if (this.options.id || this.options.type) {
-      let ajaxUrl = `${Config.BokaApi}/${Config[Config.ApiVersion]}/content/info`
-      let infoparams = {module: 'miniactivity', addviews: 1}
+  getCard () {
+    let ajaxUrl = `${Config.BokaApi}/${Config[Config.ApiVersion]}/content/info`
+    let infoparams = {id: this.options.id, module: 'miniactivity', addviews: 1}
+    if (this.options.id && this.options.frompage === 'user') {
+      ajaxUrl = `${Config.BokaApi}/${Config[Config.ApiVersion]}/card/info`
+    } else {
       if (this.options.id) {
         infoparams.id = this.options.id
       } else if (this.options.type) {
         infoparams.type = this.options.type
         ajaxUrl = `${Config.BokaApi}/${Config[Config.ApiVersion]}/miniactivity/info`
       }
-      if (this.options.share_uid) {
-        infoparams.share_uid = this.options.share_uid
-      }
-      wepy.request({
-        url: ajaxUrl,
-        data: infoparams,
-        method: 'post'
-      }).then(res => {
-        wepy.hideLoading()
-        const data = res.data
-        if (data.code === 0) {
-          let retdata = data.data
-          retdata.content = retdata.content.replace(/\n/g, '<br />')
+    }
+    if (this.options.share_uid) {
+      infoparams['share_uid'] = this.options.share_uid
+    }
+    wepy.request({
+      url: ajaxUrl,
+      data: infoparams,
+      method: 'post'
+    }).then(res => {
+      wepy.hideLoading()
+      const data = res.data
+      if (data.code === 0) {
+        let retdata = data.data
+        if (retdata) {
           if (retdata.starttime) {
             retdata.starttime_str = new Time(retdata.starttime * 1000).dateFormat('yyyy-MM-dd')
             retdata.endtime_str = new Time(retdata.endtime * 1000).dateFormat('yyyy-MM-dd')
@@ -308,38 +275,21 @@ export default class Card extends wepy.page {
             retdata.deadline_str = new Time(retdata.deadline * 1000).dateFormat('yyyy-MM-dd')
           }
           this.viewData = retdata
-          if (this.viewData.type === 'cardcommon') {
-            let cmoney = this.viewData.discounttype.split(',')
-            this.ordermoney = cmoney[0]
-            this.facemoney = cmoney[1]
-          }
-          this.setCardName()
-          if (this.options.type) {
-            this.shareParams = {
-              title: this.viewData.push_title,
-              photo: this.viewData.photo
-            }
-          } else {
-            let shareTitle = this.viewData.push_title
-            if (shareTitle === '') {
-              shareTitle = this.viewData.title
-            }
-            this.shareParams = {
-              title: shareTitle,
-              photo: this.viewData.photo
-            }
-          }
+          this.setMoney()
         }
-        this.$apply()
-      })
-    }
+      }
+      this.$apply()
+    })
+  }
+  handlePageData () {
+    this.globalData = this.$parent.globalData
+    Util.appInit(this.globalData, this)
+    this.userInfo = this.globalData.userInfo
+    this.getCard()
+    this.$apply()
   }
   onLoad (options) {
     this.options = options
-    if (this.options.type) {
-      this.cardType = this.options.type
-      this.setCardName()
-    }
     this.pageurl = Util.objectToUrl('/packageC/pages/card', this.options)
     this.$apply()
     if (this.$parent.globalData.flag.bokaAuth) {
@@ -353,26 +303,45 @@ export default class Card extends wepy.page {
       withShareTicket: true
     })
   }
+  handleShowData () {
+    if (this.options.share_uid || this.options.push) {
+      this.showGetPage = true
+    } else if (this.options.frompage === 'user') {
+      this.showUserPage = true
+    } else {
+      this.showViewPage = true
+    }
+    this.$apply()
+  }
+  onShow () {
+    if (this.$parent.globalData.flag.bokaAuth) {
+      this.handleShowData()
+    } else {
+      this.$parent.showCallback = () => {
+        this.handleShowData()
+      }
+    }
+  }
   onShareAppMessage () {
-    const lastshareuid = this.options.share_uid
     let shareurl = `/packageC/pages/card?share_uid=${this.userInfo.uid}&share_wid=${this.globalData.Wid}&wid=${this.globalData.Wid}&comefrom=${Config.AppName}`
-    if (this.options.id) {
-      shareurl = `${shareurl}&id=${this.options.id}`
-    } else if (this.options.type) {
-      shareurl = `${shareurl}&type=${this.options.type}`
-    }
-    if (lastshareuid) {
-      shareurl = `${shareurl}&lastshareuid=${lastshareuid}`
-    }
+    if (this.options.id) shareurl = `${shareurl}&id=${this.options.id}`
+    if (this.options.type) shareurl = `${shareurl}&type=${this.options.type}`
+    if (this.options.share_uid) shareurl = `${shareurl}&lastshareuid=${this.options.share_uid}`
     let backUrl = encodeURIComponent(shareurl)
     shareurl = `${shareurl}&currentUrl=${backUrl}`
+    let shareTitle = this.viewData.push_title
+    if (!shareTitle || shareTitle === '') shareTitle = this.viewData.title
     return {
-      title: this.shareParams.title,
+      title: shareTitle,
       path: shareurl,
-      imageUrl: this.shareParams.photo
+      imageUrl: this.viewData.photo
     }
   }
   events = {
+    authEvent () {
+      this.showAuth = true
+      this.$apply()
+    },
     cancelLogin () {
       this.showAuth = false
       this.$apply()
@@ -382,6 +351,27 @@ export default class Card extends wepy.page {
       this.userInfo = this.globalData.userInfo
       this.showAuth = false
       this.$apply()
+    },
+    afterOpenCard (data) {
+      if (data.code === 2 && data.qrcode !== '') {
+        this.kefuQrcode = data.qrcode
+        this.showKefuModal = true
+      }
+      let retdata = data.data
+      if (retdata) {
+        retdata.content = data.activity.content
+        retdata.deadline_str = new Time(retdata.deadline * 1000).dateFormat('yyyy-MM-dd')
+        this.ordermoney = retdata.ordermoney
+        this.facemoney = retdata.money
+        this.viewData = retdata
+      }
+      this.$apply()
+    },
+    afterUse (data) {
+      if (data.code === 0) {
+        this.viewData.used = 1
+        this.$apply()
+      }
     }
   }
   methods = {
@@ -395,60 +385,6 @@ export default class Card extends wepy.page {
         callback: () => {
           wepy.hideLoading()
         }
-      })
-    },
-    openEvent (e) {
-      if (this.userInfo.subscribe === 0) {
-        this.showAuth = true
-        this.$apply()
-        return false
-      }
-      if (this.openIng) return false
-      this.openIng = true
-      let params = {frommini: 1, wid: this.userInfo.ownid}
-      if (this.options.type) params.type = this.options.type
-      if (this.options.id) params.id = this.options.id
-      wepy.showLoading()
-      wepy.request({
-        url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/card/getCard`,
-        data: params,
-        method: 'post'
-      }).then(res => {
-        wepy.hideLoading()
-        const data = res.data
-        if (data.code !== 0) {
-          wepy.showToast({
-            title: data.msg,
-            icon: 'none',
-            duration: Util.delay(data.msg)
-          })
-        }
-        if (data.code === 2 && data.qrcode !== '') {
-          this.kefuQrcode = data.qrcode
-          this.showKefuModal = true
-        }
-        if (data.activity) {
-          let retdata = data.activity
-          retdata.deadline_str = new Time(retdata.deadline * 1000).dateFormat('yyyy-MM-dd')
-          retdata.content = retdata.content.replace(/\n/g, '<br />')
-          let discounttype = retdata.discounttype.split(',')
-          this.ordermoney = discounttype[0]
-          this.facemoney = discounttype[1]
-          this.showOpen = false
-          this.showResult = true
-          this.viewData = retdata
-        } else if (data.data) {
-          let retdata = data.data
-          retdata.deadline_str = new Time(retdata.deadline * 1000).dateFormat('yyyy-MM-dd')
-          retdata.content = retdata.content.replace(/\n/g, '<br />')
-          this.ordermoney = retdata.ordermoney
-          this.facemoney = retdata.money
-          this.showOpen = false
-          this.showResult = true
-          this.viewData = retdata
-        }
-        this.openIng = false
-        this.$apply()
       })
     }
   }

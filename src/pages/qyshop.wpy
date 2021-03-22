@@ -1,16 +1,25 @@
 <style lang="less">
-.qyshop-page.iphone{padding-bottom:68rpx;}
+.qyshop-page.iphone{padding-bottom:180rpx;}
+.qyshop-page.havebottom{
+  .right-area{padding-bottom:240rpx;}
+}
 .qyshop-page{
-  width:100%;height:100%;position:relative;box-sizing: border-box;
+  width:100%;height:100%;position:relative;box-sizing: border-box;padding-bottom:110rpx;
   .top-address{
-    width:100%;height:130rpx;
-    display:flex;justify-content: flex-start;align-items: center;
-    background-color:#fff;
-    .txt1{font-size:32rpx;font-weight:bold;}
-    .txt2{color:#ccc;}
+    width:100%;padding:20rpx;box-sizing:border-box;
   }
-  .top-bg{width:100%;height:240rpx;border-bottom-left-radius:60rpx;border-bottom-right-radius:60rpx;}
-  .banner-outer{margin-top:-200rpx;background-color:#fff;}
+  .switch-area{
+    width:300rpx;height:70rpx;padding:4rpx;box-sizing:border-box;
+    border-style:solid;border-width:4rpx;border-radius:60rpx;display:flex;
+    .item{
+      flex:1;height:100%;border-radius:60rpx;
+      display:flex;justify-content:center;align-items:center;
+    }
+  }
+  .banner-outer{
+    background-color:#fff;
+    .news-swiper-outer{top:20rpx;}
+  }
   .list-container{}
   .list-container.normal{display:flex;padding-top:20rpx;}
   .list-container.fixed{}
@@ -121,28 +130,131 @@
     }
   }
 }
-.gray-bottom{
-  position:fixed;left:0;bottom:130rpx;right:0;z-index:2;
-  display:flex;justify-content: center;align-items: center;
-  .inner{
-    width:90%;background-color:#434345;height:100rpx;border-radius:100rpx;
-    display:flex;justify-content: center;align-items: center;color:#fff;
+.fix-bottom{
+  position:fixed;left:0;bottom:116rpx;right:0;background-color:#fff;z-index:10;
+  height:130rpx;display:flex;justify-content: center;align-items: center;
+  .ico-cell{
+    width:100rpx;height:100%;display:flex;justify-content: center;align-items: center;
+    .ico{
+      width:80rpx;height:80rpx;border-radius:50%;position:relative;
+      display:flex;justify-content: center;align-items: center;
+      .al{font-size:38rpx;}
+      .num-area{
+        position:absolute;right:-10rpx;top:-10rpx;
+        width:40rpx;height:40rpx;border-radius:50%;
+        display:flex;justify-content: center;align-items: center;
+      }
+      .num-area.num2{font-size:24rpx;}
+    }
   }
+  .btn{
+    margin-right:20rpx;width:200rpx;height:70rpx;border-radius:60rpx;font-size:36rpx;
+    display:flex;justify-content: center;align-items: center;
+  }
+  .inner{
+    width:90%;height:100rpx;border-radius:100rpx;
+    display:flex;justify-content: center;align-items: center;box-shadow: 0px 0px 3px 1px #e6ebed;
+  }
+}
+.fix-bottom.gray-bottom{
+  .inner{background-color:#434345;color:#fff;border-color:#434345;}
+}
+.product-cart-area{
+  position:fixed;left:0;top:0;right:0;bottom:246rpx;background-color:rgba(0,0,0,0.5);
+  transition: opacity 300ms ease 100ms;overflow:hidden;z-index:10;
+  .product-box{
+    width:100%;max-height:77%;
+    position:relative;
+    background-color:#fff;
+    border-top-left-radius:30rpx;
+    border-top-right-radius:30rpx;
+    padding:40rpx 30rpx 0;
+    box-sizing: border-box;
+    transition: bottom 300ms ease 100ms;
+    overflow-y:auto;
+    -webkit-overflow-scrolling:touch;
+  }
+  .product-box.slide-out {bottom: 0;}
+  .product-box.slide-in {bottom: -100%;}
+  .part1 .al{font-size:34rpx;}
+  .list-area{
+    .item:not(:first-child){margin-top:20rpx;}
+    .item{
+      display:flex;width:100%;
+      .pic{
+        width:175rpx;margin-right:20rpx;position:relative;
+        image{width:175rpx;height:175rpx;border-radius:10rpx;border:#ccc 2rpx solid;box-sizing: border-box;}
+        .ico-txt{
+          position:absolute;left:0;top:0;right:0;bottom:0;z-index:2;
+          background-color:rgba(255,255,255,0.5);color:#fff;
+          display:flex;justify-content:center;align-items: center;
+          .ico{
+            width:100rpx;height:100rpx;border-radius:50%;
+            background-color:rgba(0,0,0,0.5);color:#fff;
+            display:flex;justify-content:center;align-items: center;
+          }
+        }
+      }
+      .txt-cell{
+        flex:1;padding-right:10rpx;
+        .row1{width:100%;height:80rpx;font-size:30rpx;font-weight:bold;line-height:1.3;}
+        .row2{
+          width:100%;height:40rpx;display:flex;
+          .txt-btn{
+            display:flex;justify-content: flex-start;align-items: center;
+            .l-btn{
+              background-color:#000;color:#fff;padding:4rpx 12rpx 4rpx 6rpx;
+              border-top-left-radius:10rpx;border-bottom-left-radius:10rpx;
+            }
+            .r-btn{border-top-right-radius:10rpx;border-bottom-right-radius:10rpx;padding:4rpx 10rpx 4rpx 6rpx;}
+          }
+        }
+        .row3:after{
+          content:'';display:block;clear:both;width:0;overflow:hidden;
+        }
+        .row3{
+          width:100%;height:40rpx;margin-top:10rpx;padding-bottom:5rpx;box-sizing: border-box;
+          .l-cell{float:left;font-weight:bold;}
+          .r-cell{
+            float:right;display:flex;justify-content: flex-end;align-items: center;
+            .ico{width:40rpx;height:40rpx;border-radius:50%;text-align:center;line-height:35rpx;}
+            .border-ico{border-style:solid;border-width:2rpx;}
+            .txt{width:60rpx;height:40rpx;display:flex;justify-content:center;align-items:center;}
+          }
+        }
+      }
+    }
+  }
+}
+
+.product-cart-area.fade-out{z-index: 1000;top:0;overflow:hidden;}
+.product-cart-area.fade-in{top:100%;overflow:hidden;}
+.mdpop-list{
+  .scroll_item{display:block;padding:20rpx;box-sizing: border-box;}
+  .scroll_item:not(:last-child){border-bottom:#eee 2rpx solid;}
 }
 </style>
 <template>
-  <view :class="{'iphone' : isIpx}" id="page-container" class="qyshop-page">
-    <!-- <view class="top-address">
-      <view>
-        <text class="al al-dizhi2" style="{{themeObject.colorStyle}}"></text>
+  <view :class="{'iphone' : isIpx, havebottom: isClose || totalPrice > 0}" id="page-container" class="qyshop-page">
+    <view wx:if="{{selectedMd && selectedMd.id}}" class="top-address flex_left">
+      <view class="flex_left flex_cell">
+        <view class="flex_cell flex_left" @tap="chooseMd">
+          <view>
+            <view class="font16 bold">{{selectedMd.title}}</view>
+            <view class="color-gray">距您{{selectedMd.distance}}</view>
+          </view>
+        </view>
+        <view class="flex_right pl10">
+          <view class="switch-area" style="{{themeObject.borderStyle}}">
+            <view @tap="switchType(1)" class="item" style="{{dcType == 1 ? themeObject.bgStyle : ''}}">外卖</view>
+            <view @tap="switchType(2)" class="item" style="{{dcType == 2 ? themeObject.bgStyle : ''}}">自取</view>
+            <view @tap="switchType(3)" class="item" style="{{dcType == 3 ? themeObject.bgStyle : ''}}">堂食</view>
+          </view>
+        </view>
       </view>
-      <view class="flex_cell">
-        <view class="txt1">{{sysParams.company}}</view>
-      </view>
-    </view> -->
+    </view>
     <block wx:if="{{disBanner}}">
       <block wx:if="{{bannerData.length}}">
-        <view class="top-bg" style="{{themeObject.linearBgStyle}}"></view>
         <view class="banner-outer">
           <view class="news-swiper-outer" wx:if="{{bannerData.length > 1}}">
             <swiper
@@ -194,28 +306,28 @@
                       <view class="txt">{{item.title}}</view>
                     </view> -->
                     <view class="item" wx:if="{{item.classid == citem.id}}">
-                      <view class="pic">
+                      <view class="pic" @tap="toProduct({{item}},{{index}})">
                         <view class="ico-txt" wx:if="{{item.storage <= 0}}">
                           <view class="ico">已售罄</view>
                         </view>
                         <image mode="aspectFill" src="{{item.photo}}"></image>
                       </view>
                       <view class="txt-cell">
-                        <view class="row1">{{item.title}}</view>
-                        <view class="row2">
+                        <view class="row1" @tap="toProduct({{item}},{{index}})">{{item.title}}</view>
+                        <view class="row2" @tap="toProduct({{item}},{{index}})">
                           <view class="txt-btn" wx:if="{{item.minmemberprice && item.minmemberprice != 0 && item.minmemberprice != '0.00' && item.minmemberprice != item.minprice}}">
                             <view class="l-btn">￥{{item.minmemberprice}}</view>
                             <view class="r-btn" style="{{themeObject.bgStyle}}">会员</view>
                           </view>
                         </view>
                         <view class="row3">
-                          <view class="l-cell" style="{{themeObject.colorStyle}}">
+                          <view class="l-cell" style="{{themeObject.colorStyle}}" @tap="toProduct({{item}},{{index}})">
                             <span>￥</span><span class="font16">{{item.minprice}}</span>
                           </view>
-                          <view class="r-cell" wx:if="{{item.storage}}">
-                            <view wx:if="{{item.cart_quantity}}" class="ico border-ico" style="{{themeObject.borderStyle}}{{themeObject.colorStyle}}" @tap="cutToCart({{item}},{{index}})">-</view>
+                          <view class="r-cell" wx:if="{{item.storage && !isClose}}">
+                            <view wx:if="{{item.cart_quantity}}" class="ico border-ico" style="{{themeObject.borderStyle}}{{themeObject.colorStyle}}" catchtap="cutToCart({{item}},{{index}})">-</view>
                             <view wx:if="{{item.cart_quantity}}" class="txt">{{item.cart_quantity}}</view>
-                            <view class="ico color-white" style="{{item.cart_quantity ? themeObject.bgStyle : 'background-color:#ccc;'}}" @tap="addToCart({{item}},{{index}})">+</view>
+                            <view class="ico color-white" style="{{item.cart_quantity ? themeObject.bgStyle : 'background-color:#ccc;'}}" catchtap="addToCart({{item}},{{index}})">+</view>
                           </view>
                         </view>
                       </view>
@@ -229,9 +341,8 @@
       </view>
     </block>
   </view>
-  <view class="gray-bottom" wx:if="{{isClose}}"><view class="inner">很抱歉，本店已打烊</view></view>
   <bottomMenu
-    current="home"
+    current="qyshop"
     :allowNav.sync="allowNav"
     :globalData.sync="globalData"
     :isIpx.sync="isIpx"
@@ -240,6 +351,99 @@
   <block wx:if="{{showAuth}}">
     <auth :pageurl.sync="pageurl" :themeObject.sync="themeObject" :globalData.sync="globalData"></auth>
   </block>
+  <block wx:if="{{afterLoad}}">
+    <view class="fix-bottom gray-bottom" wx:if="{{isClose}}"><view class="inner">很抱歉，本店已打烊</view></view>
+    <view class="fix-bottom" wx:elif="{{totalPrice > 0}}">
+      <view class="inner">
+        <view class="ico-cell flex_left">
+          <view class="ico" style="{{themeObject.bgStyle}}" @tap="clickCart">
+            <text class="al al-shangpin"></text>
+            <view wx:if="{{cartNumber <= 99}}" class="num-area" style="{{themeObject.bgStyle}}">{{cartNumber}}</view>
+            <view wx:else class="num-area font12" style="{{themeObject.bgStyle}}">..</view>
+          </view>
+        </view>
+        <view class="flex_cell align_center bold">
+          <text class="font16">￥</text>
+          <text class="font20">{{orderPrice}}</text>
+        </view>
+        <view wx:if="{{totalPrice > 0}}" class="btn" style="{{themeObject.bgStyle}}" @tap="toOrder">确认</view>
+        <view wx:else class="btn bg-gray color-white">确认</view>
+      </view>
+    </view>
+  </block>
+  <qyproductOptions
+    :selectedOption.sync="selectedOption"
+    :selectedOptionIndex.sync="selectedOptionIndex"
+    :clickProduct.sync="clickProduct"
+    :themeObject.sync="themeObject"
+    :userInfo.sync="userInfo">
+  </qyproductOptions>
+  <view wx:if="{{cartList.length}}" class="product-cart-area columnarea" :class="{'fade-out' : showCart, 'fade-in' : !showCart}">
+    <view class="column-content" bindtap="closeCart"></view>
+    <view class="product-box columnarea" :class="{'slide-out' : showCart, 'slide-in' : !showCart}">
+      <view class="part1 flex_left w_100 pb10">
+        <view class="flex_left flex_cell bold">已选商品</view>
+        <view class="flex_right color-gray" @tap="clearCart"><text class="al al-lajitong"></text>清空</view>
+      </view>
+      <scroll-view class="column-content part2" style="position:relative;">
+        <view class="list-area">
+          <repeat for="{{cartList}}" item="item" index="index">
+            <view class="item">
+              <view class="pic" @tap="toProduct({{item}},{{index}})">
+                <image wx:if="{{item.cartOption}}" mode="aspectFill" src="{{item.cartOption.photo}}"></image>
+                <image wx:else mode="aspectFill" src="{{item.photo}}"></image>
+              </view>
+              <view class="txt-cell">
+                <view class="row1" @tap="toProduct({{item}},{{index}})">{{item.title}}</view>
+                <view class="row2 color-gray" wx:if="{{item.cartOption}}" @tap="toProduct({{item}},{{index}})">{{item.cartOption.title}}</view>
+                <view class="row3">
+                  <view class="l-cell" style="{{themeObject.colorStyle}}" @tap="toProduct({{item}},{{index}})">
+                    <span>￥</span><span class="font16">{{item.minprice}}</span>
+                  </view>
+                  <view class="r-cell" wx:if="{{item.storage && !isClose}}">
+                    <view wx:if="{{item.cart_quantity}}" class="ico border-ico" style="{{themeObject.borderStyle}}{{themeObject.colorStyle}}" catchtap="cutToCart1({{item}},{{index}})">-</view>
+                    <view wx:if="{{item.cart_quantity}}" class="txt">{{item.cart_quantity}}</view>
+                    <view class="ico color-white" style="{{item.cart_quantity ? themeObject.bgStyle : 'background-color:#ccc;'}}" catchtap="addToCart1({{item}},{{index}})">+</view>
+                  </view>
+                </view>
+              </view>
+            </view>
+          </repeat>
+        </view>
+      </scroll-view>
+    </view>
+  </view>
+  <popup2 :show.sync="showMdPop" @close.user="closeMdPop" height="60%">
+    <popup-header2
+      leftText="关闭"
+      @on-click-left.user="closeMdPop"
+      rightText="确定"
+      @on-click-right.user="confirmMd">
+    </popup-header2>
+    <scroll-view scroll-y="true">
+      <view class="mdpop-list">
+        <repeat for="{{mdList}}" item="item" index="index">
+          <label class="radio scroll_item flex_left" @tap.stop="clickMd({{item}},{{index}})">
+            <view class="flex_left radio-cell">
+              <radio class="dotradio" value="{{item.id}}" checked="{{item.checked}}"/>
+            </view>
+            <view class="flex_cell flex_left">
+              <view class="w_100">
+                <view class="clamp1 font18 bold">{{item.title}}</view>
+                <view>{{item.address}}</view>
+              </view>
+            </view>
+            <view class="flex_right ml10">
+              <view>
+                <view class="font12 color-gray align_center">距您</view>
+                <view class="font12 color-gray align_center">{{item.distance}}</view>
+              </view>
+            </view>
+          </label>
+        </repeat>
+      </view>
+    </scroll-view>
+  </popup2>
 </template>
 <script>
 import wepy from 'wepy'
@@ -248,13 +452,20 @@ import Util from '@/libs/util'
 import Time from '@/libs/time'
 import BottomMenu from '@/components/bottomMenu'
 import Auth from '@/components/auth'
+import QyproductOptions from '@/components/store/qyproduct-options'
+import Popup from '@/components/popup'
+import PopupHeader from '@/components/popup-header'
 export default class extends wepy.page {
   components = {
     bottomMenu: BottomMenu,
-    auth: Auth
+    auth: Auth,
+    qyproductOptions: QyproductOptions,
+    'popup2': Popup,
+    'popup-header2': PopupHeader
   }
   data = {
     globalData: {},
+    userInfo: {},
     themeObject: {},
     productList: [],
     disList: false,
@@ -271,7 +482,21 @@ export default class extends wepy.page {
     bannerData: [],
     showAuth: false,
     pageurl: '',
-    isClose: false
+    isClose: false,
+    afterLoad: false,
+    orderPrice: '0.00',
+    totalPrice: 0,
+    selectedOption: {},
+    selectedOptionIndex: 0,
+    clickProduct: {},
+    cartList: [],
+    showCart: false,
+    cartNumber: 0,
+    dcType: 3, // 1: 外卖 2: 自取  3: 堂食
+    mdList: [],
+    selectedMd: null,
+    userLocation: {},
+    showMdPop: false
   }
   setClassActive (index) {
     for (let i = 0; i < this.classData.length; i++) {
@@ -403,16 +628,16 @@ export default class extends wepy.page {
     if (curTime >= closeTime) {
       this.isClose = true
     }
+    this.afterLoad = true
   }
   getHomeData () {
     wepy.request({
       url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/miniprogram/home`,
-      data: {limit: 1000}
+      data: {limit: 1000, storeid: this.selectedMd.id}
     }).then(res => {
       const retdata = res.data
       if (retdata.code === 0) {
         this.homeData = retdata
-        this.sysParams = retdata.paras
         let fpclass = retdata.fpclass
         if (fpclass.length) {
           this.classid = fpclass[0].id
@@ -425,10 +650,25 @@ export default class extends wepy.page {
         }
         this.classData = fpclass
         this.disClass = true
-        this.productList = retdata.fpdata
+        let fpdata = retdata.fpdata
+        for (let i = 0; i < fpdata.length; i++) {
+          let curd = fpdata[i]
+          if (curd.options && curd.options.length) {
+            for (let j = 0; j < curd.options.length; j++) {
+              let curo = curd.options[j]
+              if (curo.cart_id) {
+                this.cartList.push({...curd, cartOption: curo, productindex: i, optionindex: j})
+              }
+            }
+          } else if (curd.cart_id) {
+            this.cartList.push(curd)
+          }
+        }
+        this.computeCartNum()
+        this.productList = fpdata
         this.disList = true
         this.allowNav = true
-        this.checkClose()
+        this.computeOrder()
         // this.getProductList()
         this.$apply()
       }
@@ -438,8 +678,52 @@ export default class extends wepy.page {
     this.globalData = this.$parent.globalData
     Util.appInit(this.globalData, this)
     this.userInfo = this.globalData.userInfo
+    this.sysParams = this.globalData.SystemParams
+    this.mdList = this.globalData.Store
+    wepy.getLocation({
+      type: 'gcj02'
+    }).then(res => {
+      console.log('======================获取微信位置***************************8')
+      // 我的位置 {accuracy: 65, errMsg: 'getLocation:ok', horizontalAccuracy: 65, latitude: 28.24595, longitude: 113.08093, speed: -1 verticalAccuracy: 65}
+      console.log(res)
+      if (res.errMsg.indexOf('getLocation:fail:') > -1) {
+        wepy.showToast({
+          title: '获取位置信息失败，请查看您的手机定位是否开启',
+          icon: 'none',
+          duration: 2000
+        })
+        this.selectedMd = this.mdList[0]
+      } else {
+        this.userLocation = {latitude: res.latitude, longitude: res.longitude}
+        let minIndex = 0
+        let minDistance = 0
+        for (let i = 0; i < this.mdList.length; i++) {
+          let curMd = this.mdList[i]
+          curMd.distance = Util.getDistance(res.latitude, res.longitude, curMd.latitude, curMd.longitude)
+          let dis = parseFloat(curMd.distance.replace('m', ''))
+          if (curMd.distance.indexOf('km') > -1) {
+            dis = parseFloat(curMd.distance.replace('km', '')) * 1000
+          }
+          if (i === 0) {
+            minIndex = 0
+            minDistance = dis
+          } else if (dis < minDistance) {
+            minIndex = i
+            minDistance = dis
+          }
+        }
+        this.selectedMd = this.mdList[minIndex]
+      }
+      this.getHomeData()
+    }, error => {
+      wepy.showToast({
+        title: '获取位置信息失败，请查看您的手机定位是否开启',
+        icon: 'none',
+        duration: 2000
+      })
+    })
+    this.checkClose()
     this.getBanner()
-    this.getHomeData()
   }
   onLoad (options) {
     this.options = options
@@ -509,13 +793,29 @@ export default class extends wepy.page {
     const item = this.clickProduct
     const index = this.clickIndex
     let ajaxUrl = `${Config.BokaApi}/${Config[Config.ApiVersion]}/cart/addCart`
+    let type = 'add'
     let ajaxParams = {}
-    if (item.cart_id) {
-      ajaxUrl = `${Config.BokaApi}/${Config[Config.ApiVersion]}/cart/update`
-      ajaxParams.id = item.cart_id
-      ajaxParams.quantity = item.cart_quantity + 1
+    if (this.addOption) {
+      if (this.selectedOption.cart_id) {
+        ajaxUrl = `${Config.BokaApi}/${Config[Config.ApiVersion]}/cart/update`
+        type = 'update'
+        ajaxParams.id = this.selectedOption.cart_id
+        ajaxParams.quantity = this.selectedOption.cart_quantity + 1
+      } else {
+        ajaxParams.pid = item.id
+        ajaxParams.poid = this.selectedOption.id
+        ajaxParams.storeid = this.selectedMd.id
+      }
     } else {
-      ajaxParams.pid = item.id
+      if (item.cart_id) {
+        ajaxUrl = `${Config.BokaApi}/${Config[Config.ApiVersion]}/cart/update`
+        type = 'update'
+        ajaxParams.id = item.cart_id
+        ajaxParams.quantity = item.cart_quantity + 1
+      } else {
+        ajaxParams.pid = item.id
+        ajaxParams.storeid = this.selectedMd.id
+      }
     }
     wepy.request({
       url: ajaxUrl,
@@ -525,12 +825,41 @@ export default class extends wepy.page {
       const data = res.data
       this.isCarting = false
       if (data.code === 0) {
-        if (item.cart_id) {
-          this.productList[index].cart_quantity = ajaxParams.quantity
+        if (this.addOption) {
+          if (this.selectedOption.cart_id) { // 更新商品规格购物车
+            this.selectedOption.cart_quantity = ajaxParams.quantity
+          } else { // 添加商品规格购物车
+            this.selectedOption.cart_id = data.id
+            this.selectedOption.cart_quantity = 1
+          }
+          item.options[this.selectedOptionIndex] = this.selectedOption
+          item.cart_quantity = item.cart_quantity + 1
+          item.cartOption = this.selectedOption
+          item.optionindex = this.selectedOptionIndex
+          this.$invoke('qyproductOptions', 'closeOptions')
         } else {
-          this.productList[index].cart_id = data.id
-          this.productList[index].cart_quantity = 1
+          if (item.cart_id) {
+            item.cart_quantity = ajaxParams.quantity
+          } else {
+            item.cart_id = data.id
+            item.cart_quantity = 1
+          }
         }
+        item.productindex = this.clickIndex
+        this.productList[index] = item
+        if (type === 'add') {
+          this.cartList.push(item)
+        } else {
+          for (let i = 0; i < this.cartList.length; i++) {
+            let cur = this.cartList[i]
+            if ((this.addOption && cur.cartOption && cur.cartOption.id === this.selectedOption.id) || (!this.addOption && cur.id === this.clickProduct.id)) {
+              this.cartList[i] = item
+              break
+            }
+          }
+        }
+        this.computeOrder()
+        this.computeCartNum()
         this.$apply()
       } else {
         wepy.showToast({
@@ -546,8 +875,6 @@ export default class extends wepy.page {
     const index = this.clickIndex
     let ajaxUrl = `${Config.BokaApi}/${Config[Config.ApiVersion]}/cart/update`
     let ajaxParams = {id: item.cart_id}
-    console.log('in cutcartevent ======')
-    console.log(item.cart_quantity > 1)
     if (item.cart_quantity > 1) {
       ajaxParams.quantity = item.cart_quantity - 1
     } else {
@@ -567,6 +894,8 @@ export default class extends wepy.page {
           this.productList[index].cart_quantity = 0
           this.productList[index].cart_id = 0
         }
+        this.computeOrder()
+        this.computeCartNum()
         this.$apply()
       } else {
         wepy.showToast({
@@ -576,7 +905,45 @@ export default class extends wepy.page {
       }
     })
   }
+  computeOrder () {
+    let total = 0
+    for (let i = 0; i < this.productList.length; i++) {
+      let curd = this.productList[i]
+      if (curd.options && curd.options.length) {
+        for (let j = 0; j < curd.options.length; j++) {
+          let curo = curd.options[j]
+          if (curo.cart_id && curo.cart_quantity) {
+            total += parseFloat(curo.price) * curo.cart_quantity
+          }
+        }
+      } else if (curd.cart_id && curd.cart_quantity) {
+        total += parseFloat(curd.minprice) * curd.cart_quantity
+      }
+    }
+    this.orderPrice = total.toFixed(2)
+    this.totalPrice = total
+  }
+  computeCartNum () {
+    let num = 0
+    for (let i = 0; i < this.cartList.length; i++) {
+      let curd = this.cartList[i]
+      if (!curd.cart_quantity) {
+        this.cartList.splice(i, 1)
+      } else {
+        if (curd.cartOption) {
+          num += curd.cartOption.cart_quantity
+        } else {
+          num += curd.cart_quantity
+        }
+      }
+    }
+    this.cartNumber = num
+  }
   methods = {
+    switchType (val) {
+      this.dcType = val
+      this.$apply()
+    },
     clickClass (item, index) {
       if (!item.clicked) {
         this.setClassActive(index)
@@ -600,25 +967,250 @@ export default class extends wepy.page {
       if (this.isCarting) return false
       this.clickProduct = item
       this.clickIndex = index
-      this.cartType = 'add'
-      if (this.userInfo.subscribe === 0) {
-        this.showAuth = true
-        this.$apply()
-        return false
+      if (item.options && item.options.length) {
+        if (!item.selectedOption) {
+          item.selectedOption = item.options[0]
+          item.selectedOptionIndex = 0
+        }
+        this.selectedOption = item.selectedOption
+        this.selectedOptionIndex = item.selectedOptionIndex
+        this.$invoke('qyproductOptions', 'showOptions')
+      } else {
+        this.addOption = false
+        this.cartType = 'add'
+        if (this.userInfo.subscribe === 0) {
+          this.showAuth = true
+          this.$apply()
+          return false
+        }
+        this.addCartEvent()
       }
-      this.addCartEvent()
     },
     cutToCart (item, index) {
       if (this.isCarting) return false
       this.clickProduct = item
       this.clickIndex = index
-      this.cartType = 'cut'
-      if (this.userInfo.subscribe === 0) {
-        this.showAuth = true
-        this.$apply()
-        return false
+      if (item.options && item.options.length) {
+        this.showCart = true
+      } else {
+        this.cartType = 'cut'
+        if (this.userInfo.subscribe === 0) {
+          this.showAuth = true
+          this.$apply()
+          return false
+        }
+        this.cutCartEvent()
       }
-      this.cutCartEvent()
+    },
+    addToCart1 (item, index) {
+      if (this.isCarting) return false
+      let ajaxParams = {}
+      if (item.cartOption) {
+        ajaxParams.id = item.cartOption.cart_id
+        ajaxParams.quantity = item.cartOption.cart_quantity + 1
+      } else {
+        ajaxParams.id = item.cart_id
+        ajaxParams.quantity = item.cart_quantity + 1
+      }
+      this.isCarting = true
+      wepy.request({
+        url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/cart/update`,
+        data: ajaxParams,
+        method: 'post'
+      }).then(res => {
+        const data = res.data
+        this.isCarting = false
+        if (data.code === 0) {
+          if (item.cartOption) {
+            item.cartOption.cart_quantity = ajaxParams.quantity
+            item.options[item.optionindex] = item.cartOption
+            item.cart_quantity = item.cart_quantity + 1
+          } else {
+            item.cart_quantity = ajaxParams.quantity
+          }
+          this.cartList[index] = item
+          this.productList[item.productindex] = item
+          this.computeOrder()
+          this.computeCartNum()
+          this.$apply()
+        } else {
+          wepy.showToast({
+            title: data.msg,
+            icon: 'none'
+          })
+        }
+      })
+    },
+    cutToCart1 (item, index) {
+      if (this.isCarting) return false
+      let ajaxUrl = `${Config.BokaApi}/${Config[Config.ApiVersion]}/cart/update`
+      let type = 'update'
+      let ajaxParams = {}
+      if (item.cartOption) {
+        ajaxParams.id = item.cartOption.cart_id
+        if (item.cartOption.cart_quantity > 1) {
+          ajaxParams.quantity = item.cartOption.cart_quantity - 1
+        } else {
+          type = 'delete'
+          ajaxUrl = `${Config.BokaApi}/${Config[Config.ApiVersion]}/cart/delete`
+        }
+      } else {
+        ajaxParams.id = item.cart_id
+        if (item.cart_quantity > 1) {
+          ajaxParams.quantity = item.cart_quantity - 1
+        } else {
+          type = 'delete'
+          ajaxUrl = `${Config.BokaApi}/${Config[Config.ApiVersion]}/cart/delete`
+        }
+      }
+      wepy.request({
+        url: ajaxUrl,
+        data: ajaxParams,
+        method: 'post'
+      }).then(res => {
+        const data = res.data
+        this.isCarting = false
+        if (data.code === 0) {
+          if (item.cartOption) {
+            if (type === 'update') {
+              item.cartOption.cart_quantity = ajaxParams.quantity
+            } else {
+              item.cartOption.cart_id = 0
+              item.cartOption.cart_quantity = 0
+            }
+            item.cart_quantity = item.cart_quantity - 1
+            this.productList[item.productindex].options[item.optionindex] = item.cartOption
+            this.productList[item.productindex].cart_quantity = item.cart_quantity
+          } else {
+            if (type === 'update') {
+              item.cart_quantity = ajaxParams.quantity
+            } else {
+              item.cart_id = 0
+              item.cart_quantity = 0
+            }
+            this.productList[item.productindex] = item
+          }
+          this.cartList[index] = item
+          this.computeOrder()
+          this.computeCartNum()
+          this.$apply()
+        } else {
+          wepy.showToast({
+            title: data.msg,
+            icon: 'none'
+          })
+        }
+      })
+    },
+    toOrder () {
+      let ids = []
+      for (let i = 0; i < this.cartList.length; i++) {
+        let curd = this.cartList[i]
+        if (curd.cart_id) {
+          ids.push(curd.cart_id)
+        } else if (curd.cartOption) {
+          ids.push(curd.cartOption.cart_id)
+        }
+      }
+      if (!ids.length) {
+        wepy.showToast({
+          title: '请选择下单商品',
+          icon: 'none'
+        })
+      }
+      let idstr = encodeURIComponent(ids.join(','))
+      let url = `/pages/qyorder?cartid=${idstr}&dctype=${this.dcType}&storeid=${this.selectedMd.id}`
+      if (this.options.orderid) url = `${url}&orderid=${this.options.orderid}`
+      wepy.navigateTo({url: url})
+    },
+    closeCart () {
+      this.showCart = false
+      this.$apply()
+    },
+    clickCart () {
+      this.showCart = true
+      this.$apply()
+    },
+    clearCart () {
+      if (this.clearIng) return false
+      wepy.showModal({
+        title: '',
+        content: '确定要清空购物车吗?'
+      }).then(res => {
+        if (res.confirm) {
+          this.clearIng = true
+          wepy.request({
+            url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/cart/delete`,
+            data: {id: -1},
+            method: 'post'
+          }).then(res => {
+            this.submitIng = false
+            const data = res.data
+            if (data.code === 0) {
+              for (let i = 0; i < this.productList.length; i++) {
+                let curd = this.productList[i]
+                if (curd.options && curd.options.length) {
+                  for (let j = 0; j < curd.options.length; j++) {
+                    this.productList[i].options[j].cart_id = 0
+                    this.productList[i].options[j].cart_quantity = 0
+                  }
+                }
+                this.productList[i].cart_id = 0
+                this.productList[i].cart_quantity = 0
+              }
+              this.cartList = []
+              this.showCart = false
+              this.computeOrder()
+              this.cartNumber = 0
+              console.log(this.productList)
+              this.$apply()
+            } else {
+              wepy.showToast({
+                title: data.msg,
+                icon: 'none'
+              })
+            }
+          })
+        }
+      })
+    },
+    closeMdPop () {
+      this.showMdPop = false
+      this.$apply()
+    },
+    chooseMd () {
+      this.clickedMd = this.selectedMd
+      for (let i = 0; i < this.mdList.length; i++) {
+        if (this.mdList[i].id === this.selectedMd.id) {
+          this.mdList[i].checked = true
+        } else {
+          this.mdList[i].checked = false
+        }
+      }
+      this.showMdPop = true
+      this.$apply()
+    },
+    clickMd (item, index) {
+      if (!item.checked) {
+        for (let i = 0; i < this.mdList.length; i++) {
+          if (this.mdList[i].checked) {
+            this.mdList[i].checked = false
+            break
+          }
+        }
+        let checked = !item.checked
+        this.clickedMd = item
+        this.mdList[index].checked = checked
+      }
+      this.$apply()
+    },
+    confirmMd () {
+      if (this.clickedMd && this.clickedMd.id) {
+        this.selectedMd = this.clickedMd
+        this.distance = Util.getDistance(this.userLocation.latitude, this.userLocation.longitude, this.selectedMd.latitude, this.selectedMd.longitude)
+      }
+      this.showMdPop = false
+      this.$apply()
     }
   }
   events = {
@@ -636,6 +1228,16 @@ export default class extends wepy.page {
         this.cutCartEvent()
       }
       this.$apply()
+    },
+    optionToCart () {
+      this.addOption = true
+      this.cartType = 'add'
+      if (this.userInfo.subscribe === 0) {
+        this.showAuth = true
+        this.$apply()
+        return false
+      }
+      this.addCartEvent()
     }
   }
 }

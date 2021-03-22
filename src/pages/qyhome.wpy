@@ -1,0 +1,159 @@
+<style lang="less">
+.qyhome-page{
+  .block-part{
+    width:100%;box-sizing: border-box;
+    .part-inner{width:100%;height:100rpx;border-radius:10rpx;display:flex;justify-content:center;align-items:center;}
+  }
+  .part-list{
+    display:flex;
+    .item:nth-child(1){padding-right:10rpx;}
+    .item:nth-child(2){padding-left:5rpx;padding-right:5rpx;}
+    .item:nth-child(3){padding-left:10rpx;}
+    .item{
+      flex:1;box-sizing:border-box;
+      .inner{padding:20rpx 0;height:200rpx;border-radius:10rpx;display:flex;justify-content:center;align-items:center;text-align:center;}
+    }
+  }
+}
+.fix-bottom{
+  position:fixed;left:0;bottom:0;right:0;padding:30rpx;
+  .bottom-inner{
+    width:100%;height:100rpx;border-radius:60rpx;box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.07);box-sizing:border-box;
+    display:flex;justify-content: flex-start;align-items:center;
+    .btn{
+      margin-left:20rpx;width:200rpx;height:80rpx;border-radius:60rpx;font-size:36rpx;
+      display:flex;justify-content: center;align-items: center;
+    }
+  }
+}
+</style>
+<template>
+  <view class="qyhome-page">
+    <view class="banner-outer" wx:if="{{bannerData.length}}">
+      <view class="news-swiper-outer" wx:if="{{bannerData.length > 1}}">
+        <swiper
+          class="news-swiper"
+          autoplay
+          indicator-dots="{{bannerData.length > 1}}"
+          indicator-color="#d0cdd1"
+          indicator-active-color="#ff9900"
+          interval="6000"
+          circular>
+          <repeat for="{{bannerData}}" index="index" item="item">
+            <swiper-item>
+              <image mode="aspectFill" src="{{item.photo}}" data-data="{{item}}" bindtap="clickBanner"></image>
+            </swiper-item>
+          </repeat>
+        </swiper>
+      </view>
+      <view class="banner-pic" wx:else data-data="{{bannerData[0]}}" bindtap="clickBanner">
+        <image mode="aspectFill" src="{{bannerData[0].photo}}"></image>
+      </view>
+    </view>
+    <view class="pl10 pr10">
+      <view :class="{'mt10': bannerData.length}" class="block-part">
+        <view class="part-inner" style="{{themeObject.bgStyle}}">会员中心</view>
+      </view>
+      <view class="block-part mt10">
+        <view class="part-inner" style="{{themeObject.bgStyle}}">推荐好友领券下单</view>
+      </view>
+      <view class="mt10 part-list">
+        <view class="item" @tap="toPage('/pages/qyshop')">
+          <view class="inner" style="{{themeObject.bgStyle}}">
+            <view>
+              <view class="al al-waimai"></view>
+              <view>外卖</view>
+            </view>
+          </view>
+        </view>
+        <view class="item" @tap="toPage('/pages/qyshop')">
+          <view class="inner" style="{{themeObject.bgStyle}}">
+            <view>
+              <view class="al al-tangshi"></view>
+              <view>堂食</view>
+            </view>
+          </view>
+        </view>
+        <view class="item" @tap="toPage('/pages/qyshop')">
+          <view class="inner" style="{{themeObject.bgStyle}}">
+            <view>
+              <view class="al al-dabao"></view>
+              <view>自提</view>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+  <bottomMenu
+    current="home"
+    :allowNav.sync="allowNav"
+    :globalData.sync="globalData"
+    :isIpx.sync="isIpx"
+    :themeObject.sync="themeObject">
+  </bottomMenu>
+</template>
+<script>
+  import wepy from 'wepy'
+  import Config from '@/config'
+  import Util from '@/libs/util'
+  import BottomMenu from '@/components/bottomMenu'
+  export default class Qyhome extends wepy.page {
+    components = {
+      bottomMenu: BottomMenu
+    }
+    data = {
+      globalData: {},
+      themeObject: {},
+      bannerData: [],
+      disBanner: false,
+      allowNav: false,
+      isIpx: false
+    }
+    getBanner () {
+      wepy.request({
+        url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/miniprogram/getBanner`,
+        data: {page: 'home'}
+      }).then(res => {
+        const retdata = res.data
+        this.allowNav = true
+        if (retdata.code === 0) {
+          this.bannerData = retdata.data
+          this.disBanner = true
+          this.$apply()
+        }
+      })
+    }
+    handlePageData () {
+      this.globalData = this.$parent.globalData
+      Util.appInit(this.globalData, this)
+      this.userInfo = this.globalData.userInfo
+      this.getBanner()
+    }
+    onLoad (options) {
+      this.options = options
+      if (this.$parent.globalData.flag.bokaAuth) {
+        this.handlePageData()
+      } else {
+        this.$parent.loadCallback = () => {
+          this.handlePageData()
+        }
+      }
+      wepy.getSystemInfo().then(res => {
+        if (res.model.substring(0, res.model.indexOf('X')) + 'X' === 'iPhone X') {
+          this.isIpx = true
+        }
+        this.$apply()
+      })
+      this.$apply()
+    }
+    methods = {
+      clickBanner (e) {
+        Util.clickBanner(e, this)
+      },
+      toPage (url) {
+        wepy.reLaunch({url: url})
+      }
+    }
+  }
+</script>

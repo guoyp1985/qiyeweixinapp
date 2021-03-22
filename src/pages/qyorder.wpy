@@ -1,5 +1,5 @@
 <style lang="less">
-@import '../../styles/variable.less';
+@import '../styles/variable.less';
 .cardlist{
   padding:0rpx 40rpx;
   .nodata{
@@ -72,7 +72,7 @@
     right: 0;
   }
 }
-.add-cart-order{
+.qyorder-page{
   .blank-area{height:120rpx;}
   .hidden{color: #fff;}
   .visiable{color: #ccc;}
@@ -111,7 +111,7 @@
     }
   }
   .box-area{
-    padding:0 20rpx;margin-top:20rpx;
+    padding:0 20rpx;
     .box-item{
       background-color:#fff;border-radius:10rpx;padding:20rpx;
       .row-item{position:relative;}
@@ -174,45 +174,84 @@
   }
 }
 .page-box-bottom.iphone{bottom:68rpx;}
+.qyorder-page{
+  .address-area{height:100rpx;}
+  .switch-area{
+    width:200rpx;height:70rpx;padding:4rpx;box-sizing:border-box;
+    border-style:solid;border-width:4rpx;border-radius:60rpx;display:flex;
+    .item{
+      flex:1;height:100%;border-radius:60rpx;
+      display:flex;justify-content:center;align-items:center;
+    }
+  }
+  .qy-tab{
+    width:100%;height:100rpx;box-sizing: border-box;
+    border-style:solid;border-width:4rpx;
+    border-radius:10rpx;display:flex;
+    .tab-item{
+      flex:1;height:100%;font-size:16px;
+      display:flex;justify-content: center;align-items: center;
+    }
+  }
+}
+.mdpop-list{
+  .scroll_item{display:block;padding:20rpx;box-sizing: border-box;}
+  .scroll_item:not(:last-child){border-bottom:#eee 2rpx solid;}
+}
 </style>
 <template>
-  <view class="add-cart-order font14">
-    <block wx:if="{{sellerUser && sellerUser.uid}}">
-      <view class="box-area">
-        <view class="box-item align_center" style="word-break:break-word;">
-          <text class="color-theme bold" style="{{themeObject.colorStyle}}">{{sellerUser.linkman}}</text>
-          <text class="bold">为您推荐</text></view>
-      </view>
-    </block>
-    <view class="box-area" @tap="showAddress">
+  <view class="qyorder-page font14">
+    <view class="box-area">
       <view class="box-item">
-        <view class="flex_left">
-          <view class="pr10">
-            <view class="address-ico bg-theme" style="{{themeObject.bgStyle}}">
-              <text class="al al-dizhi2 color-white"></text>
+        <view class="flex_right address-area">
+          <view wx:if="{{dcType == 1}}" class="flex_left flex_cell" @tap="showAddress">
+            <view class="pr10">
+              <view class="address-ico bg-theme" style="{{themeObject.bgStyle}}">
+                <text class="al al-dizhi2 color-white"></text>
+              </view>
+            </view>
+            <view class="flex_cell flex_cell">
+              <block wx:if="{{selectAddress}}">
+                <view><text class="bold">{{ selectAddress.linkman }}</text><text class="ml5">{{ selectAddress.telephone}}</text></view>
+                <view class="color-gray">{{ selectAddress.fulladdress }}</view>
+              </block>
+              <view wx:else class="color-red">请选择地址</view>
+            </view>
+            <view class="flex_right pl10">
+              <icon class="al al-mjiantou-copy2 font18 color-gray"></icon>
             </view>
           </view>
-          <view class="flex_cell flex_cell">
-            <block wx:if="{{selectAddress}}">
-              <view><text class="bold">{{ selectAddress.linkman }}</text><text class="ml5">{{ selectAddress.telephone}}</text></view>
-              <view class="color-gray">{{ selectAddress.fulladdress }}</view>
-            </block>
-            <view wx:else class="color-red">请选择地址</view>
+          <view wx:else class="flex_left flex_cell" @tap="chooseMd">
+            <view class="flex_cell flex_left">
+              <view>
+                <view class="font16 bold">{{selectedMd.title}}</view>
+                <view class="color-gray">距您{{selectedMd.distance}}</view>
+              </view>
+            </view>
+            <view class="flex_right pl10">
+              <icon class="al al-mjiantou-copy2 font18 color-gray"></icon>
+            </view>
           </view>
-          <view class="flex_right pl10">
-            <icon class="al al-mjiantou-copy2 font18 color-gray"></icon>
+        </view>
+      </view>
+      <view class="padding10">
+        <view class="qy-tab" style="{{themeObject.borderStyle}}">
+          <view class="tab-item {{dcType == 1 ? 'active' : ''}}" style="{{dcType == 1 ? themeObject.bgStyle : themeObject.colorStyle}}" @tap="switchType(1)">
+            <text>外卖</text>
+          </view>
+          <view class="tab-item {{dcType == 2 ? 'active' : ''}}" style="{{dcType == 2 ? themeObject.bgStyle : themeObject.colorStyle}}" @tap="switchType(2)">
+            <text>自取</text>
+          </view>
+          <view class="tab-item {{dcType == 3 ? 'active' : ''}}" style="{{dcType == 3 ? themeObject.bgStyle : themeObject.colorStyle}}" @tap="switchType(3)">
+            <text>堂食</text>
           </view>
         </view>
       </view>
     </view>
     <block wx:if="{{disList}}">
       <repeat for="{{listData}}" item="item" index="cindex">
-        <view class="box-area">
+        <view class="box-area mt10">
           <view class="box-item">
-            <view wx:if="{{cindex == 0}}" class="flex_left b_bottom_after pb10">
-                <image class="app-photo" src="{{MiniInfo.photo}}" mode="aspectFill"></image>
-                <text class="ml10">{{MiniInfo.title}}</text>
-            </view>
             <view class="db-flex mt10 w_100 product-area b_bottom_after pb10">
               <view class="pic flex_left">
                 <image mode="aspectFill" src="{{item.productinfo.photo}}"/>
@@ -268,7 +307,7 @@
                 <view class="flex_cell flex_right">无可用</view>
               </view>
             </block>
-            <block wx:if="{{item.disPostageArea}}">
+            <block wx:if="{{item.disPostageArea && dcType == 1}}">
               <view class="row-item db-flex" wx:if="{{item.postPostage && item.postPostage != '' && item.allowSend}}">
                 <view class="color-gray">运费</view>
                 <view class="flex_cell flex_right">
@@ -293,7 +332,7 @@
           </view>
         </view>
       </repeat>
-      <view class="box-area" wx:if="{{commCardList.length}}">
+      <view class="box-area mt10" wx:if="{{commCardList.length}}">
         <view class="box-item">
           <view wx:if="{{commCardList.length}}" class="row-item flex_left card-area" @tap.stop="popupCommCardList">
             <view class="flex_left color-gray">平台优惠券</view>
@@ -306,7 +345,7 @@
           </view>
         </view>
       </view>
-      <view class="box-area" @tap="clickCredit" wx:if="{{useCredit > 0}}">
+      <view class="box-area mt10" @tap="clickCredit" wx:if="{{useCredit > 0}}">
         <view class="box-item">
           <view class="row-item flex_left">
             <view class="flex_left flex_cell color-gray">可用{{useCredit}}金币抵扣{{deductMoney}}元</view>
@@ -321,19 +360,19 @@
     </block>
     <view class="blank-area"></view>
   </view>
-  <view wx:if="{{disPostageArea}}" class="page-box-bottom flex_right" :class="{'iphone' : isIpx}">
+  <view wx:if="{{disPostageArea || dcType}}" class="page-box-bottom flex_right" :class="{'iphone' : isIpx}">
     <view>
       <text>合计</text>
       <text class="color-theme" style="{{themeObject.colorStyle}}">￥{{payPrice}}</text>
     </view>
-    <view class="box-btn bg-theme color-white" style="{{themeObject.bgStyle}}" wx:if="{{allowSend}}" @tap="submitOrder">确认订单</view>
+    <view class="box-btn bg-theme color-white" style="{{themeObject.bgStyle}}" wx:if="{{allowSend}}" @tap="submitOrder">下单</view>
     <view class="box-btn bg-gray color-white" wx:else>该地区无法派送</view>
   </view>
   <popup :show.sync="popupShow" @close.user="cancel" height="60%">
     <popup-header
-      :leftText.sync="closeTxt"
+      leftText="关闭"
       @on-click-left.user="cancel"
-      :rightText.sync="confirmTxt"
+      rightText="确定"
       @on-click-right.user="cancel">
     </popup-header>
     <scroll-view scroll-y="true">
@@ -374,9 +413,9 @@
   </popup>
   <popup1 :show.sync="showCommCard" @close.user="closeCommPop" height="60%">
     <popup-header1
-      :leftText.sync="closeTxt"
+      leftText="关闭"
       @on-click-left.user="closeCommPop"
-      :rightText.sync="confirmTxt"
+      rightText="确定"
       @on-click-right.user="closeCommPop">
     </popup-header1>
     <scroll-view scroll-y="true">
@@ -415,6 +454,37 @@
       </view>
     </scroll-view>
   </popup1>
+  <popup2 :show.sync="showMdPop" @close.user="closeMdPop" height="60%">
+    <popup-header2
+      leftText="关闭"
+      @on-click-left.user="closeMdPop"
+      rightText="确定"
+      @on-click-right.user="confirmMd">
+    </popup-header2>
+    <scroll-view scroll-y="true">
+      <view class="mdpop-list">
+        <repeat for="{{mdList}}" item="item" index="index">
+          <label class="radio scroll_item flex_left" @tap.stop="clickMd({{item}},{{index}})">
+            <view class="flex_left radio-cell">
+              <radio class="dotradio" value="{{item.id}}" checked="{{item.checked}}"/>
+            </view>
+            <view class="flex_cell flex_left">
+              <view class="w_100">
+                <view class="clamp1 font18 bold">{{item.title}}</view>
+                <view>{{item.address}}</view>
+              </view>
+            </view>
+            <view class="flex_right ml10">
+              <view>
+                <view class="font12 color-gray align_center">距您</view>
+                <view class="font12 color-gray align_center">{{item.distance}}</view>
+              </view>
+            </view>
+          </label>
+        </repeat>
+      </view>
+    </scroll-view>
+  </popup2>
 </template>
 <script>
 import Util from '@/libs/util'
@@ -436,7 +506,9 @@ export default class AddOrder extends wepy.page {
     'popup': Popup,
     'popup-header': PopupHeader,
     'popup1': Popup,
-    'popup-header1': PopupHeader
+    'popup-header1': PopupHeader,
+    'popup2': Popup,
+    'popup-header2': PopupHeader
   }
 
   data = {
@@ -491,8 +563,6 @@ export default class AddOrder extends wepy.page {
     disList: false,
     clickProduct: null,
     clickIndex: 0,
-    closeTxt: '',
-    confirmTxt: '',
     shengPrice: '0.00',
     commCardList: [],
     clickCommCard: null,
@@ -501,12 +571,20 @@ export default class AddOrder extends wepy.page {
     clickedCredit: false,
     useCredit: 0,
     deductMoney: 0,
-    saveMoneyMode: false
+    saveMoneyMode: false,
+    dcType: 3, // 1: 外卖 2: 自取  3: 堂食
+    distance: 0,
+    SystemParams: {},
+    showMdPop: false,
+    mdList: [],
+    selectedMd: null,
+    userLocation: {}
   }
 
   ajaxOrder (postData) {
-    if (this.query.ordertype) {
-      postData.ordertype = this.query.ordertype
+    postData.ordertype = this.dcType
+    if (this.dcType) {
+      postData.storeid = this.selectedMd.id
     }
     if (this.query.fromfid) {
       postData.fromfid = this.query.fromfid
@@ -526,24 +604,31 @@ export default class AddOrder extends wepy.page {
     if (this.clickedCredit) {
       postData.credit = this.useCredit
     }
-    postData.ordertype = this.globalData.SystemParams.OrderType
     let shops = []
     for (let i = 0; i < this.listData.length; i++) {
       let curd = this.listData[i]
       let pushParama = {
         id: curd.id,
         quantity: curd.quantity,
-        content: curd.contentVal,
-        postage: curd.postPostage
+        content: curd.contentVal
       }
+      if (this.dcType === 1) pushParama.postage = curd.postPostage
       if (curd.selectedCard) {
         pushParama.cardid = curd.selectedCard.id
       }
       shops.push(pushParama)
     }
+    let ajaxUrl = `${Config.BokaApi}/${Config[Config.ApiVersion]}/cart/cartToOrder`
+    let ajaxData = {}
+    if (this.options.orderid) {
+      ajaxUrl = `${Config.BokaApi}/${Config[Config.ApiVersion]}/order/orderAddItem`
+      ajaxData = {shops: shops, orderid: this.options.orderid}
+    } else {
+      ajaxData = {...postData, shops: shops, wid: this.globalData.Wid}
+    }
     wepy.request({
-      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/cart/cartToOrder`,
-      data: {...postData, shops: shops, wid: this.globalData.Wid},
+      url: ajaxUrl,
+      data: ajaxData,
       method: 'POST'
     }).then(res => {
       const data = res.data
@@ -558,8 +643,8 @@ export default class AddOrder extends wepy.page {
         this.userInfo.cartcount = data.cartcount
         this.$parent.globalData = this.globalData
         setTimeout(() => {
-          if (this.globalData.SystemParams.OrderType === '10' || this.globalData.SystemParams.OrderType === 10) {
-            wepy.redirectTo({url: `/packageB/pages/paySuccess?orderno=${data.orderno}&ordermoney=${this.payPrice}`})
+          if (this.dcType === 3) {
+            wepy.redirectTo({url: `/packageD/pages/userOrders`})
           } else {
             if (data.id) {
               wepy.redirectTo({url: `/packageB/pages/pay?id=${data.id}&clickBuytype=${this.clickBuytype}`})
@@ -612,6 +697,7 @@ export default class AddOrder extends wepy.page {
   }
   getData () {
     let ids = decodeURIComponent(this.query.cartid)
+    ids = decodeURIComponent(ids)
     wepy.request({
       url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/cart/cartList`,
       data: {ids: ids.split(','), wid: this.globalData.Wid},
@@ -684,19 +770,20 @@ export default class AddOrder extends wepy.page {
       total += parseFloat(curd.memberprice.replace(/,/g, '')) * curd.quantity
       this.totalQuantity += curd.quantity
       this.listData[i].cardPrice = total
-      if (curd.postPostage) {
+      if (this.dcType === 1 && curd.postPostage) {
         let curpostage = curd.postPostage
         total += parseFloat(curpostage)
       }
       this.listData[i].orderPrice = total
       if (this.clickCommCard) {
-        if (curd.postPostage) {
+        if (this.dcType === 1 && curd.postPostage) {
           let curpostage = curd.postPostage
           otPrice += parseFloat(curpostage)
         }
       } else {
         if (curd.selectedCard) {
-          let postageStr = `${curd.postPostage}`
+          let postageStr = '0'
+          if (this.dcType === 1) postageStr = `${curd.postPostage}`
           let cha = parseFloat(curd.orderPrice) - parseFloat(postageStr.replace(/,/g, '')) - parseFloat(curd.selectedCard.money)
           cha = cha < 0 ? 0 : cha
           payPrice += cha + parseFloat(postageStr.replace(/,/g, ''))
@@ -725,7 +812,7 @@ export default class AddOrder extends wepy.page {
       let cards = curProduct.cards
       let haveChecked = false
       this.totalQuantity += curProduct.quantity
-      if (cards.length) {
+      if (cards && cards.length) {
         if (!this.afterClickCard) {
           for (let i = 0; i < cards.length; i++) {
             const item = cards[i]
@@ -734,7 +821,8 @@ export default class AddOrder extends wepy.page {
               if (curCardPrice >= item.ordermoney && curCardPrice > item.money && (curCardPrice - item.money) > 0) {
                 curProduct.selectedCard = item
                 cards[i].checked = true
-                let postageStr = `${curProduct.postPostage}`
+                let postageStr = '0'
+                if (this.dcType === 1) postageStr = `${curProduct.postPostage}`
                 let cha = parseFloat(curProduct.orderPrice) - parseFloat(postageStr.replace(/,/g, '')) - parseFloat(item.money)
                 cha = cha < 0 ? 0 : cha
                 curProduct.payPrice = (cha + parseFloat(postageStr.replace(/,/g, ''))).toFixed(2)
@@ -848,13 +936,13 @@ export default class AddOrder extends wepy.page {
     //   })
     // }
   }
-
   async onLoad (options) {
-    this.closeTxt = '关闭'
-    this.confirmTxt = '确定'
     this.query = options
     this.options = options
     this.$parent.globalData.address = null
+    if (options.dctype) {
+      this.dcType = parseInt(options.dctype)
+    }
     if (this.$parent.globalData.flag.bokaAuth) {
       this.handlePageData()
     } else {
@@ -869,10 +957,56 @@ export default class AddOrder extends wepy.page {
     Util.appInit(this.globalData, this)
     this.userInfo = this.globalData.userInfo
     this.MiniInfo = this.globalData.MiniInfo
+    this.SystemParams = this.globalData.SystemParams
+    this.mdList = this.globalData.Store
     let orderRemark = this.globalData.SystemParams.OrderRemark
     this.showRemark = orderRemark ? parseInt(orderRemark) : false
     let saveMoneyMode = this.globalData.SystemParams.SaveMoneyMode
     this.saveMoneyMode = saveMoneyMode ? parseInt(saveMoneyMode) : false
+    wepy.getLocation({
+      type: 'gcj02'
+    }).then(res => {
+      console.log('======================获取微信位置***************************8')
+      // 我的位置 {accuracy: 65, errMsg: 'getLocation:ok', horizontalAccuracy: 65, latitude: 28.24595, longitude: 113.08093, speed: -1 verticalAccuracy: 65}
+      console.log(res)
+      if (res.errMsg.indexOf('getLocation:fail:') > -1) {
+        wepy.showToast({
+          title: '获取位置信息失败，请查看您的手机定位是否开启',
+          icon: 'none',
+          duration: 2000
+        })
+        this.selectedMd = this.mdList[0]
+      } else {
+        this.userLocation = {latitude: res.latitude, longitude: res.longitude}
+        let minIndex = 0
+        let minDistance = 0
+        for (let i = 0; i < this.mdList.length; i++) {
+          let curMd = this.mdList[i]
+          curMd.distance = Util.getDistance(res.latitude, res.longitude, curMd.latitude, curMd.longitude)
+          let dis = parseFloat(curMd.distance.replace('m', ''))
+          if (curMd.distance.indexOf('km') > -1) {
+            dis = parseFloat(curMd.distance.replace('km', '')) * 1000
+          }
+          if (i === 0) {
+            minIndex = 0
+            minDistance = dis
+          } else if (dis < minDistance) {
+            minIndex = i
+            minDistance = dis
+          }
+          if (this.options.storeid && parseInt(this.options.storeid) === curMd.id) {
+            this.selectedMd = curMd
+          }
+        }
+        if (!this.selectedMd) this.selectedMd = this.mdList[minIndex]
+      }
+    }, error => {
+      wepy.showToast({
+        title: '获取位置信息失败，请查看您的手机定位是否开启',
+        icon: 'none',
+        duration: 2000
+      })
+    })
     this.getData()
     this.getRetailer()
     this.getCommList()
@@ -972,6 +1106,10 @@ export default class AddOrder extends wepy.page {
     this.deductMoney = (ocredit / 100).toFixed(2)
   }
   methods = {
+    switchType (val) {
+      this.dcType = parseInt(val)
+      this.$apply()
+    },
     clickCredit () {
       this.clickedCredit = !this.clickedCredit
       if (this.clickCommCard) {
@@ -1122,6 +1260,44 @@ export default class AddOrder extends wepy.page {
         item.quantity = parseInt(e.detail.value)
       }
       this.handleNumber(item, index)
+    },
+    closeMdPop () {
+      this.showMdPop = false
+      this.$apply()
+    },
+    chooseMd () {
+      this.clickedMd = this.selectedMd
+      for (let i = 0; i < this.mdList.length; i++) {
+        if (this.mdList[i].id === this.selectedMd.id) {
+          this.mdList[i].checked = true
+        } else {
+          this.mdList[i].checked = false
+        }
+      }
+      this.showMdPop = true
+      this.$apply()
+    },
+    clickMd (item, index) {
+      if (!item.checked) {
+        for (let i = 0; i < this.mdList.length; i++) {
+          if (this.mdList[i].checked) {
+            this.mdList[i].checked = false
+            break
+          }
+        }
+        let checked = !item.checked
+        this.clickedMd = item
+        this.mdList[index].checked = checked
+      }
+      this.$apply()
+    },
+    confirmMd () {
+      if (this.clickedMd && this.clickedMd.id) {
+        this.selectedMd = this.clickedMd
+        this.distance = Util.getDistance(this.userLocation.latitude, this.userLocation.longitude, this.selectedMd.latitude, this.selectedMd.longitude)
+      }
+      this.showMdPop = false
+      this.$apply()
     }
   }
 }

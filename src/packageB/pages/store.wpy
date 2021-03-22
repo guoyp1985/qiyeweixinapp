@@ -383,32 +383,32 @@ export default class store1 extends wepy.page {
   }
   // 获取卖家信息
   getRetailerInfo () {
-    const params = {uid: this.wid, appid: Config.AppId}
-    if (this.options.share_uid) {
-      params.share_uid = this.options.share_uid
-      params.share_module = 'store'
-    }
-    if (this.options.comefrom) {
-      params.comefrom = this.options.comefrom
-    }
-    if (this.options.lastshareuid) {
-      params.lastshareuid = this.options.lastshareuid
-    }
-    Cached.request({
-      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/retailer/info`,
-      data: params
-    }, 'store.retailer', Config.URT.H,
-    cacheData => {
-      this.processRetailer(cacheData)
-    },
-    res => {
-      const data = res.data
-      if (data.code === 0) {
-        this.processRetailer(data.data)
-      }
-      this.$apply()
-      return this.retailerInfo
-    })
+    // const params = {uid: this.wid, appid: Config.AppId}
+    // if (this.options.share_uid) {
+    //   params.share_uid = this.options.share_uid
+    //   params.share_module = 'store'
+    // }
+    // if (this.options.comefrom) {
+    //   params.comefrom = this.options.comefrom
+    // }
+    // if (this.options.lastshareuid) {
+    //   params.lastshareuid = this.options.lastshareuid
+    // }
+    // Cached.request({
+    //   url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/retailer/info`,
+    //   data: params
+    // }, 'store.retailer', Config.URT.H,
+    // cacheData => {
+    //   this.processRetailer(cacheData)
+    // },
+    // res => {
+    //   const data = res.data
+    //   if (data.code === 0) {
+    //     this.processRetailer(data.data)
+    //   }
+    //   this.$apply()
+    //   return this.retailerInfo
+    // })
   }
   processRetailer (data) {
     this.retailerInfo = data

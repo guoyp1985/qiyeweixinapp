@@ -125,16 +125,17 @@
               method: 'post'
             })
           }
-        }).then(res => {
-          if (res) {
-            return wepy.request({url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/retailer/info`, data: {uid: self.retailerInfo.uid, appid: Config.AppId}})
-          }
-        }).then(res => {
-          if (res) {
-            self.retailerInfo = res.data.data
-            self.$apply()
-          }
         })
+        // .then(res => {
+        //   if (res) {
+        //     return wepy.request({url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/retailer/info`, data: {uid: self.retailerInfo.uid, appid: Config.AppId}})
+        //   }
+        // }).then(res => {
+        //   if (res) {
+        //     self.retailerInfo = res.data.data
+        //     self.$apply()
+        //   }
+        // })
       }
     }
   };

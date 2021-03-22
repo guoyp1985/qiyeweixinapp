@@ -1,0 +1,487 @@
+{
+  "setting": {},
+  "condition": {
+    "plugin": {
+      "list": []
+    },
+    "game": {
+      "list": []
+    },
+    "gamePlugin": {
+      "list": []
+    },
+    "miniprogram": {
+      "list": [
+        {
+          "id": 4,
+          "name": "我的-个人中心",
+          "pathName": "pages/own",
+          "query": "aa=1",
+          "scene": null
+        },
+        {
+          "id": 17,
+          "name": "客户列表",
+          "pathName": "package/pages/customerList",
+          "query": "",
+          "scene": null
+        },
+        {
+          "id": -1,
+          "name": "带视频的文章",
+          "pathName": "packageB/pages/news",
+          "query": "id=152&share_uid=120&share_wid=8557&wid=8557",
+          "scene": null
+        },
+        {
+          "id": -1,
+          "name": "\b带ticket的分享链接",
+          "pathName": "pages/home",
+          "query": "",
+          "scene": 1044,
+          "shareInfo": {
+            "groupName": "测试模拟群0",
+            "shareName": "E2tLWgs8GX_nLguyfXIrBE7FWTlKXuQsqb2i9mx_oko@cr4dev",
+            "shareKey": "JP05t5m1wPCOCX7u_2pSnKLKIHRmkDnxM5hCocL4OgqhTuXl85ROit8P2Mry8awnJkVR8eOvryeICrrVRIG_ng~~"
+          }
+        },
+        {
+          "id": -1,
+          "name": "内测管理",
+          "pathName": "packageC/pages/testManage",
+          "query": "",
+          "scene": null
+        },
+        {
+          "id": -1,
+          "name": "D级销售统计",
+          "pathName": "packageB/pages/saleStatD",
+          "query": "",
+          "scene": null
+        },
+        {
+          "id": -1,
+          "name": "C级销售统计",
+          "pathName": "packageB/pages/saleStatC",
+          "query": "",
+          "scene": null
+        },
+        {
+          "id": 129,
+          "name": "\b代理货款报单",
+          "pathName": "packageD/pages/orderApplyD",
+          "query": "id=958",
+          "scene": null
+        },
+        {
+          "id": -1,
+          "name": "\b经理货款报单",
+          "pathName": "packageD/pages/orderApplyC",
+          "query": "id=958",
+          "scene": null
+        },
+        {
+          "id": -1,
+          "name": "用户订单列表",
+          "pathName": "packageD/pages/userOrders",
+          "query": "",
+          "scene": null
+        },
+        {
+          "id": -1,
+          "name": "\b合伙人订单",
+          "pathName": "packageD/pages/retailerOrders",
+          "query": "",
+          "scene": null
+        },
+        {
+          "id": -1,
+          "name": "商品素材",
+          "pathName": "package/pages/materialBank",
+          "query": "id=1951&pid=4144",
+          "scene": null
+        },
+        {
+          "id": 12,
+          "name": "\b客户详情页",
+          "pathName": "package/pages/customerView",
+          "query": "uid=246989",
+          "scene": null
+        },
+        {
+          "id": -1,
+          "name": "个性化商城页面",
+          "pathName": "pages/shop",
+          "query": "",
+          "scene": null
+        },
+        {
+          "id": 14,
+          "name": "合伙人订单详情页",
+          "pathName": "packageD/pages/orderDetail",
+          "query": "id=322544&fromType=retailer",
+          "scene": null
+        },
+        {
+          "id": -1,
+          "name": "\b购物车",
+          "pathName": "packageC/pages/cart",
+          "query": "",
+          "scene": null
+        },
+        {
+          "id": 16,
+          "name": "商品详情页",
+          "pathName": "pages/product",
+          "query": "id=5081&fid=39&from=home&select=product&type=fpimport",
+          "scene": null
+        },
+        {
+          "id": -1,
+          "name": "B级联创销售统计",
+          "pathName": "packageB/pages/saleStat",
+          "query": "",
+          "scene": null
+        },
+        {
+          "id": -1,
+          "name": "\b销售统计",
+          "pathName": "packageB/pages/saleStat",
+          "query": "",
+          "scene": null
+        },
+        {
+          "id": 19,
+          "name": "确认订单页",
+          "pathName": "pages/addOrder",
+          "query": "shop_id =4482",
+          "scene": null
+        },
+        {
+          "id": -1,
+          "name": "A级董事销售统计",
+          "pathName": "packageB/pages/saleStatA",
+          "query": "uid=246989",
+          "scene": null
+        },
+        {
+          "id": -1,
+          "name": "文章列表页",
+          "pathName": "packageB/pages/newslist",
+          "query": "",
+          "scene": null
+        },
+        {
+          "id": -1,
+          "name": "\b文章详情页",
+          "pathName": "packageB/pages/news",
+          "query": "id=148&fid=39",
+          "scene": null
+        },
+        {
+          "id": 24,
+          "name": "可能购买的用户",
+          "pathName": "packageD/pages/buyUserList",
+          "query": "id=4916&fpid=2096",
+          "scene": null
+        },
+        {
+          "id": 25,
+          "name": "\b营销工具",
+          "pathName": "packageC/pages/tool",
+          "query": "",
+          "scene": null
+        },
+        {
+          "id": 30,
+          "name": "购物车下单运费",
+          "pathName": "packageC/pages/addCartOrder",
+          "query": "cartid=158,157",
+          "scene": null
+        },
+        {
+          "id": -1,
+          "name": "\b合伙人收入列表",
+          "pathName": "packageB/pages/incomeList",
+          "query": "",
+          "scene": null
+        },
+        {
+          "id": 32,
+          "name": "\b报错页面",
+          "pathName": "pages/sos",
+          "query": "type=fail",
+          "scene": null
+        },
+        {
+          "id": -1,
+          "name": "分享给普通用户的首页",
+          "pathName": "pages/index",
+          "query": "share_uid=4903&wid=4903",
+          "scene": null
+        },
+        {
+          "id": 36,
+          "name": "编辑素材",
+          "pathName": "package/pages/addMaterial",
+          "query": "id=2129&pid=5073&mid=245",
+          "scene": null
+        },
+        {
+          "id": 30,
+          "name": "\b订单详情",
+          "pathName": "packageD/pages/orderDetail",
+          "query": "id=322787&fromType=retailer&history=1",
+          "scene": null
+        },
+        {
+          "id": -1,
+          "name": "编辑商城",
+          "pathName": "package/pages/addChannel",
+          "query": "id=45&module=home",
+          "scene": null
+        },
+        {
+          "id": -1,
+          "name": "\b分类",
+          "pathName": "pages/class",
+          "query": "",
+          "scene": null
+        },
+        {
+          "name": "\b支付成功页面",
+          "pathName": "packageB/pages/paySuccess",
+          "query": "",
+          "scene": null
+        },
+        {
+          "id": -1,
+          "name": "个性化商城",
+          "pathName": "pages/shop",
+          "query": "",
+          "scene": null
+        },
+        {
+          "id": -1,
+          "name": "带优惠券的商品详情",
+          "pathName": "pages/product",
+          "query": "id=1063&fid=39&type=fpimport",
+          "scene": null
+        },
+        {
+          "id": 44,
+          "name": "确认订单页面",
+          "pathName": "pages/addOrder",
+          "query": "shop_id=4806",
+          "scene": null
+        },
+        {
+          "id": 45,
+          "name": "有售后的订单",
+          "pathName": "packageD/pages/orderDetail",
+          "query": "id=322774&fromType=user",
+          "scene": null
+        },
+        {
+          "id": -1,
+          "name": "\b生成回执页",
+          "pathName": "packageD/pages/createOrder",
+          "query": "id=319819&fromType=retailer&history=1",
+          "scene": null
+        },
+        {
+          "id": -1,
+          "name": "仅限合伙人购买",
+          "pathName": "pages/product",
+          "query": "id=5310&module=factoryproduct&share_uid=247472&share_wid=115800&shareuser=self&type=fpimport&wid=115800",
+          "scene": null
+        },
+        {
+          "id": -1,
+          "name": "有视频的素材",
+          "pathName": "package/pages/materialBank",
+          "query": "id=2119&pid=5039",
+          "scene": null
+        },
+        {
+          "id": -1,
+          "name": "\b运营工具",
+          "pathName": "packageC/pages/tool",
+          "query": "",
+          "scene": null
+        },
+        {
+          "id": 50,
+          "name": "\b创建优惠券",
+          "pathName": "packageC/pages/newAddCard",
+          "query": "flag=1",
+          "scene": null
+        },
+        {
+          "id": -1,
+          "name": "福利大放送",
+          "pathName": "packageC/pages/factoryCardList",
+          "query": "",
+          "scene": null
+        },
+        {
+          "id": -1,
+          "name": "\b通用优惠券",
+          "pathName": "packageC/pages/commonCard",
+          "query": "",
+          "scene": null
+        },
+        {
+          "id": -1,
+          "name": "\b编辑频道",
+          "pathName": "package/pages/addChannel",
+          "query": "id=45",
+          "scene": null
+        },
+        {
+          "id": -1,
+          "name": "分类页",
+          "pathName": "pages/class",
+          "query": "",
+          "scene": null
+        },
+        {
+          "id": 47,
+          "name": "购物车下单",
+          "pathName": "packageC/pages/addCartOrder",
+          "query": "cartid=387,386",
+          "scene": null
+        },
+        {
+          "id": -1,
+          "name": "合伙人界面",
+          "pathName": "pages/mark",
+          "query": "",
+          "scene": null
+        },
+        {
+          "id": -1,
+          "name": "信封样式",
+          "pathName": "packageD/pages/xinfeng",
+          "query": "",
+          "scene": null
+        },
+        {
+          "id": 50,
+          "name": "商品详情页",
+          "pathName": "pages/product",
+          "query": "id=5338&fid=39&select=product&type=fpimport",
+          "scene": null
+        },
+        {
+          "id": 51,
+          "name": " 有金币抵扣的商品",
+          "pathName": "pages/product",
+          "query": "id=5444&fid=39&select=product&type=fpimport",
+          "scene": null
+        },
+        {
+          "id": 52,
+          "name": "\b确认订单可抵扣金币",
+          "pathName": "pages/addOrder",
+          "query": "wid=4903&shop_id=5433&fromfid=39",
+          "scene": null
+        },
+        {
+          "id": -1,
+          "name": "商城",
+          "pathName": "pages/home",
+          "query": "",
+          "scene": null
+        },
+        {
+          "id": -1,
+          "name": "金币列表页",
+          "pathName": "packageD/pages/creditList",
+          "query": "",
+          "scene": null
+        },
+        {
+          "id": -1,
+          "name": "\b任务中心",
+          "pathName": "packageD/pages/taskCenter",
+          "query": "",
+          "scene": null
+        },
+        {
+          "id": -1,
+          "name": "\b任务中心",
+          "pathName": "packageD/pages/taskCenter",
+          "query": "",
+          "scene": null
+        },
+        {
+          "name": "扶贫商城",
+          "pathName": "pages/shop1",
+          "query": "",
+          "scene": null
+        },
+        {
+          "name": "带视频的商品",
+          "pathName": "pages/product",
+          "query": "id=5477&fid=39&type=fpimport",
+          "scene": null
+        },
+        {
+          "name": " 商品详情页测试联系我",
+          "pathName": "pages/product",
+          "query": "id=10",
+          "scene": null
+        },
+        {
+          "name": "购物车",
+          "pathName": "packageC/pages/cart",
+          "query": "",
+          "scene": null
+        },
+        {
+          "name": "分享的优惠券",
+          "pathName": "packageC/pages/card",
+          "query": "id=3&frompage=user",
+          "scene": null
+        },
+        {
+          "name": "\b普通优惠券",
+          "pathName": "packageC/pages/card",
+          "query": "id=16",
+          "scene": null
+        },
+        {
+          "name": "点餐首页",
+          "pathName": "pages/qyhome",
+          "query": "",
+          "scene": null
+        },
+        {
+          "name": "点餐页面",
+          "pathName": "pages/qyshop",
+          "query": "",
+          "scene": null
+        },
+        {
+          "name": "点餐确认订单页",
+          "pathName": "pages/qyorder",
+          "query": "",
+          "scene": null
+        },
+        {
+          "name": "点餐确认订单页",
+          "pathName": "pages/qyorder",
+          "query": "cartid=2",
+          "scene": null
+        },
+        {
+          "name": "继续点餐",
+          "pathName": "pages/qyshop",
+          "query": "orderid=2",
+          "scene": null
+        }
+      ]
+    }
+  }
+}

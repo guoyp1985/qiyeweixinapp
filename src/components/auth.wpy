@@ -1,6 +1,6 @@
 <style lang="less">
 .auth-modal{
-  position:fixed;left:0;right:0;bottom:0;top:0;background-color:rgba(0,0,0,0.5);z-index:1000;
+  position:fixed;left:0;right:0;bottom:0;top:0;background-color:rgba(0,0,0,0.5);z-index:1100;
   display:flex;justify-content: center; align-items: center;
   .auth-inner{
     width:80%;

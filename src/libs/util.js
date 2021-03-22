@@ -658,6 +658,29 @@ const Util = {
         urls: [data.photo]
       })
     }
+  },
+  Rad: (d) => { // 计算距离函数
+    // 根据经纬度判断距离
+    return d * Math.PI / 180.0
+  },
+  getDistance: (lat1, lng1, lat2, lng2) => {
+    // lat1 用户的纬度 lng1 用户的经度
+    // lat2 商家的纬度 lng2 商家的经度
+    let radLat1 = Util.Rad(lat1)
+    let radLat2 = Util.Rad(lat2)
+    let a = radLat1 - radLat2
+    let b = Util.Rad(lng1) - Util.Rad(lng2)
+    let s = 2 * Math.asin(Math.sqrt(Math.pow(Math.sin(a / 2), 2) + Math.cos(radLat1) * Math.cos(radLat2) * Math.pow(Math.sin(b / 2), 2)))
+    s = s * 6378.137
+    s = Math.round(s * 10000) / 10000
+    s = s.toFixed(1) // 保留两位小数
+    if (s < 1) {
+      s = s * 1000 + 'm'
+    } else {
+      s = s + 'km'
+    }
+    console.log('经纬度计算的距离', s)
+    return s
   }
 }
 

@@ -115,7 +115,7 @@ export default class BottomMenu extends wepy.component {
     }
   }
   data = {
-    picObject: {home: true, mark: true, own: true, agent: true, class: true, live: true, shop: true, shop1: true},
+    picObject: {home: true, mark: true, own: true, agent: true, class: true, live: true, shop: true, shop1: true, qyshop: true},
     FactoryInvite: Config.FactoryInvite
   }
   onLoad () {
