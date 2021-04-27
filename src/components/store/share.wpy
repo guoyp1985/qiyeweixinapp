@@ -748,7 +748,7 @@ export default class extends wepy.component {
         }
       })
     }).then(res => {
-      if (res.data.flag) {
+      if (res.data.code === 0) {
         let retdata = res.data.data
         retdata = retdata.replace(/http:/g, 'https:')
         return wepy.downloadFile({

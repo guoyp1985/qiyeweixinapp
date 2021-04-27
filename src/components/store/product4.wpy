@@ -1,0 +1,135 @@
+<style lang="less">
+.bk-productitem{
+  display:block;box-sizing: border-box;
+  .inner{box-shadow:0px 0px 6rpx 2rpx #e6ebed;}
+  .pic{
+    .yhq{
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 30% !important;
+      height: 30% !important;
+    }
+    .t-icon{
+      position:absolute;
+      left:0;
+      top:10px;
+      border-top-right-radius:20px;
+      border-bottom-right-radius:20px;
+      background-color:#fff;
+      padding:5px 10px 5px 5px;
+      font-size:12px;
+      box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 8rpx 2rpx;
+    }
+  }
+  .ico{
+    position:absolute;left:0;top:0;width:290rpx;height:50rpx;line-height:50rpx;
+    color:#fff;text-align:center;font-size: 24rpx;
+    -webkit-transform: translate(-100rpx,20rpx) rotate(-45deg);
+    transform: translate(-100rpx,20rpx) rotate(-45deg);z-index:1;
+    background-color:#d81e07;
+  }
+  .ico:after{content:"优惠券";}
+  .desbox{
+    overflow:hidden;box-sizing: border-box;width:100%;
+    .title{text-align:left;}
+    .jsxuan{padding:0 10rpx;height:40rpx;text-align:center;line-height:40rpx;background-color:#fd8c2c;color:#fff;border-radius:4rpx;margin-right:10rpx;}
+    .txt1{padding-right:10rpx;box-sizing: border-box;color:#d81e07;}
+    .txt2{padding-right:10rpx;box-sizing: border-box;color:#999;height:38rpx;}
+  }
+}
+.bk-productitem.zh_CN{
+  .ico:after{content:"優惠券";}
+}
+</style>
+<template>
+  <form class="bk-productitem scroll_item" bindsubmit="toProduct" report-submit="true" data-data="{{item}}">
+    <button form-type="submit" class="inner">
+      <view class="picarea">
+        <view class="pic">
+          <image class="imgcover" src="{{item.photo}}" mode="aspectFill"></image>
+        </view>
+      </view>
+      <view class="desbox">
+        <view class="title clamp1">
+          <text style="word-break:break-all;">{{item.title}}</text>
+        </view>
+        <view class="clamp1 color-red txt2 flex_left" wx:if="{{item.sellingpoint && item.sellingpoint != ''}}"><text class="clamp1" style="word-break:break-all;">{{item.sellingpoint}}</text></view>
+        <view class="db-flex">
+          <view class="flex_cell flex_left">
+            <view class="w_100 clamp1 color-red txt1" wx:if="{{item.minprice && item.maxprice && item.minprice != '' && item.maxprice != '' && item.minprice != item.maxprice}}">￥<text style="margin-left:2px;">{{item.minprice}}-{{item.maxprice}}</text></view>
+            <view class="w_100 clamp1 color-red txt1" wx:elif="{{item.minprice && item.minprice != ''}}">￥<text style="margin-left:2px;">{{item.minprice}}</text></view>
+            <view class="w_100 clamp1 color-red txt1" wx:else>￥<text style="margin-left:2px;">{{item.price}}</text></view>
+          </view>
+        </view>
+      </view>
+    </button>
+  </form>
+</template>
+<script>
+  import wepy from 'wepy'
+  import Config from '@/config'
+
+  export default class Product extends wepy.component {
+    props = {
+      item: {
+        type: Object,
+        default: {}
+      },
+      userInfo: {
+        type: Object,
+        default: {}
+      },
+      wid: {
+        type: Number,
+        default: 0
+      },
+      navType: {
+        type: String,
+        default: 'navigateTo'
+      },
+      themeObject: {
+        type: Object,
+        default: {}
+      },
+      options: {
+        type: Object,
+        default: {}
+      }
+    }
+    data = {
+    }
+    onLoad () {
+    }
+    methods = {
+      toProduct (e) {
+        const dataset = e.currentTarget.dataset
+        const data = dataset.data
+        let params = []
+        if (this.options.share_uid) {
+          params.push(`share_uid=${this.options.share_uid}`)
+        }
+        if (this.options.shareuser) {
+          params.push(`shareuser=${this.options.shareuser}`)
+        }
+        wepy.setStorageSync('selectedProduct', data)
+        let navurl = `/${Config.Router.product}?id=${data.id}&type=fpimport&fid=${Config.Fid}&select=product`
+        if (this.options.storeid) navurl = `${navurl}&storeid=${this.options.storeid}`
+        if (this.options.tableid) navurl = `${navurl}&tableid=${this.options.tableid}`
+        if (params.length) {
+          let pstr = params.join('&')
+          navurl = `${navurl}&${pstr}`
+        }
+        if (this.navType === 'navigateTo') {
+          wepy.navigateTo({url: navurl})
+        } else if (this.navType === 'redirectTo') {
+          wepy.redirectTo({url: navurl})
+        } else if (this.navType === 'reLaunch') {
+          wepy.reLaunch({url: navurl})
+        } else {
+          wepy.navigateTo({url: navurl})
+        }
+      }
+    }
+  }
+</script>

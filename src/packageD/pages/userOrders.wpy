@@ -6,10 +6,10 @@
   .search-inner{width: 100%;display:flex; align-items: center;background-color: #f2f3f2;border-radius: 45px;height:100%;}
   .search-input{width: 85%;box-sizing: border-box;font-size:24rpx;padding: 0 20rpx;flex:1;}
 }
-.app-tab.fixed-top{position:fixed;left:0;top:100rpx;right:0;z-index:10;}
+.app-tab.fixed-top{position:fixed;left:0;top:0;right:0;z-index:10;}
 .user-order-page.iphone{padding-bottom:328rpx;}
 .user-order-page{
-  padding-top:200rpx;padding-bottom:260rpx;
+  padding-top:100rpx;padding-bottom:260rpx;
   .list-area{
     .order-item{margin-top:20rpx;}
     .product-area{padding:20rpx;}
@@ -46,35 +46,23 @@
 }
 </style>
 <template>
-  <view wx:if="{{userInfo && userInfo.regwid && userInfo.bindstatus}}" class="fixed-share bg-theme color-white" style="{{themeObject.bgStyle}}" @tap="toShare">分享</view>
+  <!-- <view wx:if="{{userInfo && userInfo.regwid && userInfo.bindstatus}}" class="fixed-share bg-theme color-white" style="{{themeObject.bgStyle}}" @tap="toShare">分享</view> -->
   <!-- <view class="fixed-help bg-theme color-white" style="{{themeObject.bgStyle}}" @tap="toHelp">帮助</view> -->
-  <view class="user-order-search-outter b_bottom_after">
+  <!-- <view class="user-order-search-outter b_bottom_after">
     <view class="search-inner">
       <input class="search-input" type="text" placeholder="请输入商品名称" bindinput="setKeyword" value="{{keyword}}" bindconfirm="searchKeyword" confirm-type="search" />
       <view wx:if="{{keyword}}" class="flex_center color-gray font12 pl10 pr10" bindtap="cancelSearch">取消</view>
       <view wx:else class="flex_center color-gray font12 pl10 pr10"><text class="al al-sousuo font20"></text></view>
     </view>
-  </view>
+  </view> -->
   <view class="app-tab fixed-top">
     <view class="tab-item font14 {{selectedIndex==0 ? 'active' : ''}}" data-current="0" bindtap="clickTab">
-      <text style="{{selectedIndex == 0 ? themeObject.colorStyle : ''}}">全部</text>
+      <text style="{{selectedIndex == 0 ? themeObject.colorStyle : ''}}">未完成</text>
       <view class="line" style="{{selectedIndex == 0 ? themeObject.bgStyle : ''}}"></view>
     </view>
     <view class="tab-item font14 {{selectedIndex == 1 ? 'active' : ''}}" data-current="1" bindtap="clickTab">
-      <text style="{{selectedIndex == 1 ? themeObject.colorStyle : ''}}">待发货</text>
+      <text style="{{selectedIndex == 1 ? themeObject.colorStyle : ''}}">已完成</text>
       <view class="line" style="{{selectedIndex == 1 ? themeObject.bgStyle : ''}}"></view>
-    </view>
-    <view class="tab-item font14 {{selectedIndex == 2 ? 'active' : ''}}" data-current="2" bindtap="clickTab">
-      <text style="{{selectedIndex == 2 ? themeObject.colorStyle : ''}}">备货中</text>
-      <view class="line" style="{{selectedIndex == 2 ? themeObject.bgStyle : ''}}"></view>
-    </view>
-    <view class="tab-item font14 {{selectedIndex == 3 ? 'active' : ''}}" data-current="3" bindtap="clickTab">
-      <text style="{{selectedIndex == 3 ? themeObject.colorStyle : ''}}">待收货</text>
-      <view class="line" style="{{selectedIndex == 3 ? themeObject.bgStyle : ''}}"></view>
-    </view>
-    <view class="tab-item font14 {{selectedIndex == 4 ? 'active' : ''}}" data-current="4" bindtap="clickTab">
-      <text style="{{selectedIndex == 4 ? themeObject.colorStyle : ''}}">已完成</text>
-      <view class="line" style="{{selectedIndex == 4 ? themeObject.bgStyle : ''}}"></view>
     </view>
   </view>
   <view class="user-order-page">
@@ -85,12 +73,8 @@
         <repeat for="{{tabDataObject[flag]}}" index="index" item="item">
           <view class="order-item b_top_after">
             <view class="flex_left padding10 bg-white" data-data="{{item}}" @tap="toDetail">
-              <view class="flex_cell flex_left" style="{{themeObject.colorStyle}}">
-                <block wx:if="{{item.retailertitle && item.retailertitle != ''}}">
-                  <text class="al al-weidian font20"></text><text class="ml5">{{item.retailertitle}}</text>
-                </block>
-              </view>
-              <view class="font12 color-orange6">{{item.flagstr}}</view>
+              <view class="flex_left">{{item.dateline_str}}</view>
+              <view class="font12 color-orange6 flex_right flex_cell">{{item.flagstr}}</view>
             </view>
             <!-- <view class="product-area flex_left bg-page" data-data="{{item}}" @tap="toDetail">
               <view class="product-img">
@@ -138,9 +122,9 @@
             </repeat>
             <view class="pay-info flex_right bg-white" data-data="{{item}}" @tap="toDetail">
               <view class="clamp1 w_100">
-                <text class="v_middle font12">实际支付: </text>
+                <text class="v_middle font12">订单金额: </text>
                 <text class="v_middle font14">￥{{item.needpaymoney}}</text>
-                <block wx:if="{{!item.delivertype && item.postage && item.postage != '' && item.ordertype != 3}}">
+                <block wx:if="{{item.postage && item.postage != '' && item.ordertype == 1}}">
                   <text class="v_middle font12 color-gray ml5" wx:if="{{item.postage == 0}}">( 运费 : 包邮 )</text>
                   <text class="v_middle font12 color-gray ml5" wx:else>( 运费 : ￥{{ item.postage }} )</text>
                 </block>
@@ -237,6 +221,7 @@
 import wepy from 'wepy'
 import Config from '@/config'
 import Util from '@/libs/util'
+import Time from '@/libs/time'
 import Share from '@/components/store/share'
 import BottomMenu from '@/components/bottomMenu'
 export default class extends wepy.page {
@@ -253,10 +238,10 @@ export default class extends wepy.page {
     userInfo: {},
     selectedIndex: 0,
     flag: 0,
-    tabDataObject: {0: [], 2: [], 3: [], 4: [], 101: []},
-    loadObject: {0: false, 2: false, 3: false, 4: false, 101: false},
-    doneObject: {0: false, 2: false, 3: false, 4: false, 101: false},
-    disObject: {0: false, 2: false, 3: false, 4: false, 101: false},
+    tabDataObject: {0: [], 1: []},
+    loadObject: {0: false, 1: false},
+    doneObject: {0: false, 1: false},
+    disObject: {0: false, 1: false},
     showRefundModal: false,
     showServiceModal: false,
     servicePhotoArr: [],
@@ -280,25 +265,22 @@ export default class extends wepy.page {
   }
   initData () {
     this.flag = this.options.flag ? parseInt(this.options.flag) : 0
-    this.indexFlag = {0: 0, 1: 2, 2: 101, 3: 3, 4: 4}
-    this.flagIndex = {0: 0, 2: 1, 101: 2, 3: 2, 4: 3}
+    this.indexFlag = {0: 0, 1: 1}
+    this.flagIndex = {0: 0, 1: 1}
     this.setIndex()
     this.Fid = Config.Fid
     this.limit = Config.Limit
     this.flagParams = {
-      0: {flag: 0, page: 1, history: false},
-      2: {flag: 2, page: 1, history: false},
-      3: {flag: 3, page: 1, history: false},
-      4: {flag: 4, page: 1, history: false},
-      101: {flag: 101, page: 1, history: false}
+      0: {flag: 0, page: 1},
+      1: {flag: 2, page: 1}
     }
     this.clearRefund()
     this.clearService()
     this.$apply()
   }
   refreshPage () {
-    this.disObject = {0: false, 2: false, 3: false, 4: false, 101: false}
-    this.tabDataObject = {0: [], 2: [], 3: [], 4: [], 101: []}
+    this.disObject = {0: false, 1: false}
+    this.tabDataObject = {0: [], 1: []}
     this.initData()
     this.getOrderData()
   }
@@ -312,16 +294,10 @@ export default class extends wepy.page {
   }
   onReachBottom (event) {
     if (this.loadObject[this.flag]) return false
-    if (this.flagParams[this.flag].history && !this.doneObject[this.flag]) {
+    if (this.tabDataObject[this.flag].length === this.flagParams[this.flag].pagestart * this.limit) {
       this.flagParams[this.flag].pagestart++
       this.loadObject[this.flag] = true
       this.getOrderData()
-    } else {
-      if (this.tabDataObject[this.flag].length === this.flagParams[this.flag].pagestart * this.limit) {
-        this.flagParams[this.flag].pagestart++
-        this.loadObject[this.flag] = true
-        this.getOrderData()
-      }
     }
   }
   getOrderData () {
@@ -329,11 +305,6 @@ export default class extends wepy.page {
     wepy.showLoading()
     this.isLoading = true
     let defaultParams = this.flagParams[this.flag]
-    if (this.flagParams[this.flag].history) {
-      defaultParams.history = 1
-    } else {
-      delete defaultParams.history
-    }
     let params = {...defaultParams, limit: this.limit, flag: this.flag, fid: this.Fid, from: 'user'}
     if (this.keyword && this.keyword !== '') {
       params.keyword = this.keyword
@@ -351,30 +322,17 @@ export default class extends wepy.page {
       for (let i = 0; i < retdata.length; i++) {
         let item = this.setButton(retdata[i])
         retdata[i].buttons = item.buttons
-        if (params.history) {
-          retdata[i]._history = 1
-        }
+        retdata[i].dateline_str = new Time(retdata[i].dateline * 1000).dateFormat('yyyy-MM-dd hh:mm')
       }
       let flagData = this.tabDataObject[this.flag]
       this.tabDataObject[this.flag] = flagData.concat(retdata)
       this.loadObject[this.flag] = false
-      if (!retdata.length && !this.tabDataObject[this.flag].length && !this.flagParams[this.flag].history) {
-        this.flagParams[this.flag].history = true
-        this.flagParams[this.flag].pagestart = 1
-        this.getOrderData()
+      if (retdata.length < this.limit && this.tabDataObject[this.flag].length) {
+        this.doneObject[this.flag] = true
       } else {
-        if (retdata.length < this.limit && this.tabDataObject[this.flag].length) {
-          if (this.flagParams[this.flag].history) {
-            this.doneObject[this.flag] = true
-          } else {
-            this.flagParams[this.flag].history = true
-            this.flagParams[this.flag].pagestart = 0
-          }
-        } else {
-          this.doneObject[this.flag] = false
-        }
-        this.disObject[this.flag] = true
+        this.doneObject[this.flag] = false
       }
+      this.disObject[this.flag] = true
       this.$apply()
     })
   }
@@ -389,17 +347,8 @@ export default class extends wepy.page {
       case 0:
         this.selectedIndex = 0
         break
-      case 2:
+      case 1:
         this.selectedIndex = 1
-        break
-      case 101:
-        this.selectedIndex = 2
-        break
-      case 3:
-        this.selectedIndex = 3
-        break
-      case 4:
-        this.selectedIndex = 4
         break
     }
   }
@@ -409,16 +358,7 @@ export default class extends wepy.page {
         this.flag = 0
         break
       case 1:
-        this.flag = 2
-        break
-      case 2:
-        this.flag = 101
-        break
-      case 3:
-        this.flag = 3
-        break
-      case 4:
-        this.flag = 4
+        this.flag = 1
         break
     }
   }
@@ -429,12 +369,13 @@ export default class extends wepy.page {
         break
       case 1:
         item.buttons = [
-          {id: 1, name: '取消订单'}
+          // {id: 1, name: '取消订单'}
         ]
-        if (item.singlepay) {
-          item.buttons.push({id: 2, name: '去支付'})
-          if (item.ordertype === 3) {
-            item.buttons.push({id: 10, name: '继续点餐'})
+        if (item.ordertype === 3) {
+          item.buttons.push({id: 2, name: '去下单'})
+        } else {
+          if (item.singlepay) {
+            item.buttons.push({id: 2, name: '去支付'})
           }
         }
         break
@@ -462,6 +403,9 @@ export default class extends wepy.page {
           arr1.push({id: 9, name: '查看售后进度'})
         }
         item.buttons = arr1
+        break
+      case 102:
+        item.buttons = [{id: 10, name: '去支付'}]
         break
     }
     return item
@@ -581,28 +525,22 @@ export default class extends wepy.page {
     },
     searchKeyword (e) {
       if (e.detail.value !== '') this.keyword = e.detail.value
-      this.disObject = {0: false, 2: false, 3: false, 4: false}
+      this.disObject = {0: false, 1: false}
       this.flagParams = {
-        0: {flag: 0, page: 1, history: false},
-        2: {flag: 2, page: 1, history: false},
-        3: {flag: 3, page: 1, history: false},
-        4: {flag: 4, page: 1, history: false},
-        101: {flag: 101, page: 1, history: false}
+        0: {flag: 0, page: 1},
+        1: {flag: 1, page: 1}
       }
-      this.tabDataObject = {0: [], 2: [], 3: [], 4: [], 5: []}
+      this.tabDataObject = {0: [], 1: []}
       this.getOrderData()
     },
     cancelSearch () {
       this.keyword = ''
-      this.disObject = {0: false, 2: false, 3: false, 4: false, 101: false}
+      this.disObject = {0: false, 1: false}
       this.flagParams = {
-        0: {flag: 0, page: 1, history: false},
-        2: {flag: 2, page: 1, history: false},
-        3: {flag: 3, page: 1, history: false},
-        4: {flag: 4, page: 1, history: false},
-        101: {flag: 101, page: 1, history: false}
+        0: {flag: 0, page: 1},
+        1: {flag: 1, page: 1}
       }
-      this.tabDataObject = {0: [], 2: [], 3: [], 4: [], 101: []}
+      this.tabDataObject = {0: [], 1: []}
       this.getOrderData()
     },
     clickTab (e) {
@@ -616,9 +554,6 @@ export default class extends wepy.page {
       const dataset = e.currentTarget.dataset
       const data = dataset.data
       let url = `/packageD/pages/orderDetail?id=${data.id}&fromType=user`
-      if (data._history) {
-        url = `${url}&history=1`
-      }
       wepy.navigateTo({url: url})
     },
     buttonEvent (e) {
@@ -634,7 +569,14 @@ export default class extends wepy.page {
           this.cancelEvent()
           break
         case 2:
-          wepy.navigateTo({url: `/packageB/pages/pay?id=${order.id}`})
+          if (order.ordertype === 3) {
+            wepy.navigateTo({url: `/pages/qypay?orderid=${order.id}`})
+          } else {
+            wepy.navigateTo({url: `/packageB/pages/pay?id=${order.id}`})
+          }
+          break
+        case 10:
+          wepy.navigateTo({url: `/pages/pay?id=${order.id}`})
           break
         case 3:
           // 订单退款通知、退款失败通知、售后受理通知
@@ -673,13 +615,7 @@ export default class extends wepy.page {
           break
         case 9:
           let url = `/packageD/pages/orderDetail?id=${order.id}&fromType=user`
-          if (order._history) {
-            url = `${url}&history=1`
-          }
           wepy.navigateTo({url: url})
-          break
-        case 10:
-          wepy.reLaunch({url: `/pages/qyshop?orderid=${order.id}`})
           break
       }
     },

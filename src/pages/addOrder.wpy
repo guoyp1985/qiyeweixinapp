@@ -65,6 +65,7 @@
   }
 }
 .add-order{
+  padding:20rpx 0;box-sizing:border-box;width:100%;height:100%;overflow-y:auto;
   .blank-area{height:120rpx;}
   .hidden{color: #fff;}
   .visiable{color: #ccc;}
@@ -132,6 +133,25 @@
       image{width:140rpx;height:140rpx;border-radius:10rpx;}
     }
   }
+  .order-list{
+    .list-item{
+      width:100%;padding:20rpx;position:relative;display:flex;box-sizing: border-box;
+      .pic{
+        margin-right:20rpx;
+        image{width:140rpx;height:140rpx;border-radius:10rpx;}
+      }
+      .al{font-size:50rpx;font-weight:bold;}
+      .btn{
+        border-width:2rpx;border-style:solid;padding:5rpx 10rpx;border-radius:10rpx;
+      }
+    }
+    .r-cell{
+      float:right;display:flex;justify-content: flex-end;align-items: center;
+      .ico{width:50rpx;height:50rpx;border-radius:50%;text-align:center;line-height:45rpx;box-sizing:border-box;font-size:32rpx;}
+      .border-ico{border-style:solid;border-width:2rpx;}
+      .txt{width:60rpx;height:50rpx;display:flex;justify-content:center;align-items:center;}
+    }
+  }
 }
 .tip-confirm-modal{
   .modal-inner{width:80%;}
@@ -144,21 +164,16 @@
   position: fixed;left: 0;right: 0;bottom: 0;height:100rpx;z-index:10;
   background-color: #fff;box-shadow: 0px 4rpx 18rpx rgba(0, 0, 0, 0.2);
   .box-btn{
-    margin-left:20rpx;margin-right:20rpx;padding:10rpx 20rpx;border-radius:60rpx;
+    margin-left:20rpx;margin-right:20rpx;
+    width:200rpx;height:70rpx;border-radius:60rpx;font-size:36rpx;
+    display:flex;justify-content: center;align-items: center;
   }
 }
 .page-box-bottom.iphone{bottom:68rpx;}
 </style>
 <template>
-  <view class="add-order font14">
-    <block wx:if="{{sellerUser && sellerUser.uid}}">
-      <view class="box-area">
-        <view class="box-item align_center" style="word-break:break-word;">
-          <text class="color-theme bold" style="{{themeObject.colorStyle}}">{{sellerUser.linkman}}</text>
-          <text class="bold">为您推荐</text></view>
-      </view>
-    </block>
-    <view class="box-area" @tap="showAddress">
+  <view class="add-order bg-page">
+    <view wx:if="{{options.ordertype != 4}}" class="box-area" @tap="showAddress">
       <view class="box-item">
         <view class="flex_left">
           <view class="pr10">
@@ -179,37 +194,58 @@
         </view>
       </view>
     </view>
-    <view class="box-area">
-      <view class="box-item">
-        <view class="flex_left">
-            <image class="app-photo" src="{{MiniInfo.photo}}" mode="aspectFill"></image>
-            <text class="ml10">{{MiniInfo.title}}</text>
-        </view>
-        <view class="db-flex mt10 w_100 product-area b_bottom_after pb10">
-          <view class="pic flex_left">
-            <block wx:if="{{product.id}}">
-              <image wx:if="{{curOrder.options && curOrder.options.id && curOrder.options.photo != ''}}" mode="aspectFill" class="v_middle imgcover" src="{{curOrder.options.photo}}"/>
-              <image wx:else mode="aspectFill" class="v_middle imgcover" src="{{product.photo}}"/>
-            </block>
-          </view>
-          <view class="flex_cell">
-            <view class="w_100">
-              <view class="name color-black font15 clamp1">{{product.name}}</view>
-              <view class="mt5 color-gray font12 clamp1" wx:if="{{curOrder.options && curOrder.options.id}}">{{curOrder.options.title}}</view>
-            </view>
-          </view>
-          <view>
-            <view class="align_right bold font16">¥{{product.commonprice}}</view>
-            <view class="align_right color-gray mt5">×{{quantity}}</view>
-          </view>
-        </view>
-        <view class="pt10 flex_right">
-          <text class="color-gray">共{{quantity}}件商品</text>
-          <text class="ml10">小计:</text>
-          <text class="ml10 color-theme" style="{{themeObject.colorStyle}}">¥{{truePrice}}</text>
+    <view class="box-area" wx:if="{{selectedMd && curOrder}}">
+      <view class="box-inner">
+        <view class="padding10">
+          <view class="font16 bold">{{selectedMd.title}}</view>
         </view>
       </view>
     </view>
+    <view class="box-area mt10" wx:if="{{product && product.id}}">
+      <view class="box-inner">
+        <view class="order-list">
+          <view class="list-item">
+            <view class="pic flex_left">
+              <image wx:if="{{product.options && product.options.id && product.options.photo != ''}}" mode="aspectFill" src="{{product.options.photo}}"/>
+              <image wx:else mode="aspectFill" src="{{product.photo}}"/>
+            </view>
+            <view class="flex_cell">
+              <view class="w_100">
+                <view class="flex_left">
+                  <view class="flex_cell">
+                    <view class="w_100 name color-black font15 clamp1">{{product.name}}</view>
+                  </view>
+                  <view class="flex_right bold font16 ml5">¥{{product.listprice}}</view>
+                </view>
+                <view class="flex_left pt10 pb10">
+                  <view class="flex_cell">
+                    <view class="mt5 color-gray font12 clamp1" wx:if="{{product.options && product.options.id}}">{{product.options.title}}</view>
+                  </view>
+                  <view class="r-cell">
+                    <view wx:if="{{product.quantity && product.quantity > 1}}" class="ico border-ico" style="{{themeObject.borderStyle}}{{themeObject.colorStyle}}" catchtap="updateEvent('cut')">-</view>
+                    <view class="txt">{{product.quantity}}</view>
+                    <view class="ico color-white" style="{{themeObject.bgStyle}}" catchtap="updateEvent('add')">+</view>
+                  </view>
+                </view>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+    <view class="box-area mt10" wx:if="{{commCardList.length}}">
+      <view class="box-inner">
+        <view class="flex_left padding10" @tap="popupCommCardList">
+          <view class="color-gray mr10 flex_left color-gray">优惠券</view>
+          <view class="flex_cell flex_right" style="{{themeObject.colorStyle}}">
+            <text wx:if="{{clickCommCard}}">满{{clickCommCard.ordermoney}}减{{clickCommCard.money}}</text>
+            <text wx:else>请选择</text>
+            <text class="al al-mjiantou-copy2 font20 bold"></text>
+          </view>
+        </view>
+      </view>
+    </view>
+    <!--
     <view class="box-area">
       <view class="box-item">
         <view class="row-item flex_left">
@@ -268,13 +304,24 @@
         </view>
       </view>
     </view>
+    -->
     <view class="blank-area"></view>
   </view>
-  <view wx:if="{{disPostageArea}}" class="page-box-bottom flex_right" :class="{'iphone' : isIpx}">
+  <!-- <view wx:if="{{disPostageArea}}" class="page-box-bottom flex_right" :class="{'iphone' : isIpx}">
     <view><text>合计</text><text class="color-theme" style="{{themeObject.colorStyle}}">￥{{payPrice}}</text></view>
     <view class="box-btn bg-theme color-white" style="{{themeObject.bgStyle}}" wx:if="{{allowSend}}" @tap="submitOrder">确认订单</view>
     <view class="box-btn bg-gray color-white" wx:else>该地区无法派送</view>
-  </view>
+  </view> -->
+  <block wx:if="{{product && product.id}}">
+    <view wx:if="{{isClose}}" class="page-box-bottom flex_center" :class="{'iphone' : isIpx}" style="background-color:#434345;color:#fff;">很抱歉，本店已打烊</view>
+    <view wx:else class="page-box-bottom flex_right" :class="{'iphone' : isIpx}">
+      <view>
+        <text class="font16">合计</text>
+        <text class="font20 bold color-theme" style="{{themeObject.colorStyle}}">￥{{payPrice}}</text>
+      </view>
+      <view class="box-btn" style="{{themeObject.bgStyle}}" @tap="submitOrder">确认下单</view>
+    </view>
+  </block>
   <popup :show.sync="popupShow" @close.user="cancel" height="60%">
     <popup-header
       :leftText.sync="closeTxt"
@@ -319,6 +366,49 @@
       </view>
     </scroll-view>
   </popup>
+  <popup1 :show.sync="showCommCard" @close.user="closeCommPop" height="60%">
+    <popup-header1
+      leftText="关闭"
+      @on-click-left.user="closeCommPop"
+      rightText="确定"
+      @on-click-right.user="closeCommPop">
+    </popup-header1>
+    <scroll-view scroll-y="true">
+      <view class="cardlist">
+        <repeat for="{{commCardList}}" item="item" index="index">
+          <block wx:if="{{orderTruePrice >= item.ordermoney && orderTruePrice - product.quantity * 0.01 > item.money}}">
+            <view @tap.stop="commCardClick({{item}},{{index}})" class="scroll_item radio_check" style="{{themeObject.bgStyle}}">
+              <view class="flex_cell txt-cell" style="overflow:visible">
+                <view class="font20 mb5 clamp1 txt">满{{item.ordermoney}}减{{item.money}}</view>
+                <view class="font12">到期时间 {{item.deadline_str}}</view>
+                <view class="ball ball-up"></view>
+                <view class="ball ball-down"></view>
+              </view>
+              <view class="btn-cell flex_center">
+                <view class="vux-check-icon font14 pl10 color-gray">
+                  <view class="circle-icon">
+                    <icon type="success_no_circle" size="16" color="#eb6b5e" wx:if="{{clickCommCard && clickCommCard.id == item.id}}"></icon>
+                  </view>
+                </view>
+              </view>
+            </view>
+          </block>
+          <block wx:else>
+            <view class="scroll_item radio_check disabled-state" style="{{themeObject.bgStyle}}">
+              <view class="flex_cell txt-cell" style="overflow:visible">
+                <view class="font20 mb5 clamp1 txt">满{{item.ordermoney}}减{{item.money}}</view>
+                <view class="font14 mb5 clamp1 txt">订单金额不满足使用条件</view>
+                <view class="font12">到期时间 {{item.deadline_str}}</view>
+                <view class="ball ball-up"></view>
+                <view class="ball ball-down"></view>
+              </view>
+              <view class="btn-cell flex_center"></view>
+            </view>
+          </block>
+        </repeat>
+      </view>
+    </scroll-view>
+  </popup1>
 </template>
 <script>
   import Util from '@/libs/util'
@@ -338,10 +428,13 @@
       'x-number1': XNumber,
       'x-number2': XNumber,
       'popup': Popup,
-      'popup-header': PopupHeader
+      'popup-header': PopupHeader,
+      'popup1': Popup,
+      'popup-header1': PopupHeader
     }
 
     data = {
+      options: {},
       userInfo: {},
       postage: null,
       postPostage: 0,
@@ -360,7 +453,6 @@
       cardPrice: '0.00',
       allowSend: true,
       disPostageArea: false,
-      sellerUser: null,
       cardInfo: null,
       afterCard: false,
       showRemark: false,
@@ -373,13 +465,35 @@
       clickedCredit: false,
       useCredit: 0,
       deductMoney: 0,
-      saveMoneyMode: false
+      saveMoneyMode: false,
+      selectedMd: null,
+      isClose: false,
+      commCardList: [],
+      clickCommCard: null,
+      showCommCard: false,
+      orderPrice: 0,
+      orderTruePrice: 0
     }
-
+    getCommList () {
+      wepy.request({
+        url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/card/canUseCard`,
+        method: 'post'
+      }).then(res => {
+        const data = res.data
+        let retdata = data.data ? data.data : data
+        for (let i = 0; i < retdata.length; i++) {
+          retdata[i].deadline_str = new Time(retdata[i].deadline * 1000).dateFormat('yyyy-MM-dd hh:mm')
+        }
+        this.commCardList = retdata
+        this.$apply()
+      })
+    }
     ajaxOrder (postData) {
       postData.postage = this.postPostage
-      if (this.query.ordertype) {
-        postData.ordertype = this.query.ordertype
+      console.log('当前的ordertype参数')
+      console.log(this.options.ordertype)
+      if (this.options.ordertype) {
+        postData.ordertype = this.options.ordertype
       }
       if (this.query.fromfid) {
         postData.fromfid = this.query.fromfid
@@ -390,13 +504,15 @@
       if (this.query.liveid) {
         postData.liveid = this.query.liveid
       }
-      if (this.selectedCard) {
-        postData.cardid = this.selectedCard.id
+      // if (this.selectedCard) {
+      //   postData.cardid = this.selectedCard.id
+      // }
+      if (this.clickCommCard) {
+        postData.cardid = this.clickCommCard.id
       }
       if (this.options.clickBuytype) {
         this.clickBuytype = this.options.clickBuytype
       }
-      postData.ordertype = this.globalData.SystemParams.OrderType
       wepy.request({
         url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/order/addOrder`,
         data: postData,
@@ -411,15 +527,20 @@
         })
         if (data.code === 0) {
           setTimeout(() => {
-            if (this.globalData.SystemParams.OrderType === '10' || this.globalData.SystemParams.OrderType === 10) {
-              wepy.redirectTo({url: `/packageB/pages/paySuccess?orderno=${data.orderno}&ordermoney=${this.payPrice}`})
+            if (data.id) {
+              wepy.redirectTo({url: `/pages/pay?id=${data.id}`})
             } else {
-              if (data.id) {
-                wepy.redirectTo({url: `/packageB/pages/pay?id=${data.id}&clickBuytype=${this.clickBuytype}`})
-              } else {
-                wepy.redirectTo({url: `/packageB/pages/paySuccess`})
-              }
+              wepy.redirectTo({url: `/packageB/pages/paySuccess`})
             }
+            // if (this.globalData.SystemParams.OrderType === '10' || this.globalData.SystemParams.OrderType === 10) {
+            //   wepy.redirectTo({url: `/packageB/pages/paySuccess?orderno=${data.orderno}&ordermoney=${this.payPrice}`})
+            // } else {
+            //   if (data.id) {
+            //     wepy.redirectTo({url: `/packageB/pages/pay?id=${data.id}&clickBuytype=${this.clickBuytype}`})
+            //   } else {
+            //     wepy.redirectTo({url: `/packageB/pages/paySuccess`})
+            //   }
+            // }
             this.submiting = false
             this.$apply()
           }, timeout)
@@ -427,107 +548,6 @@
           this.submiting = false
         }
       })
-    }
-    methods = {
-      clickCredit () {
-        this.clickedCredit = !this.clickedCredit
-        this.selectedCard = null
-        this.cardInfo = null
-        this.$apply()
-        this.changeAddress()
-      },
-      keyupContent (e) {
-        this.contentVal = e.detail.value
-      },
-      cancel () {
-        this.popupShow = false
-      },
-      popupCardList () {
-        this.popupShow = true
-      },
-      cardClick (item, index) {
-        for (let i = 0; i < this.cardList.length; i++) {
-          if (this.cardList[i].checked) {
-            this.cardList[i].checked = false
-            break
-          }
-        }
-        let checked = !item.checked
-        if (checked) {
-          this.selectedCard = item
-          let cha = parseFloat(this.orderPrice) - parseFloat(this.postage) - parseFloat(item.money)
-          cha = cha < 0 ? 0 : cha
-          this.payPrice = (cha + parseFloat(this.postage)).toFixed(2)
-        } else {
-          this.selectedCard = null
-          this.payPrice = this.orderPrice.toFixed(2)
-        }
-        this.cardList[index].checked = checked
-        this.cardInfo = this.selectedCard
-        this.$apply()
-      },
-      changeNumber (quantity) {
-        this.truePrice = (parseFloat(this.product.commonprice.replace(/,/g, '')) * parseInt(quantity)).toFixed(2)
-        this.selectedCard = null
-        this.cardInfo = null
-        // for (let i = 0; i < this.cardList.length; i++) {
-        //   if (this.cardList[i].checked) {
-        //     this.cardList[i].checked = false
-        //     break
-        //   }
-        // }
-        if (this.curOrder.sheng && this.curOrder.sheng !== '' && this.curOrder.sheng !== '0.00') {
-          let sheng = parseFloat(this.curOrder.sheng.replace(/,/g, '')) * quantity
-          this.shengPrice = sheng.toFixed(2)
-        }
-        this.handleCredit()
-        this.$apply()
-        this.changeAddress()
-      },
-      showAddress (e) {
-        wepy.navigateTo({url: '/packageB/pages/address?mod=inner'})
-      },
-      submitOrder () {
-        if (!this.allowSend) {
-          wepy.showToast({
-            title: '该地区不在派送范围内',
-            icon: 'none'
-          })
-          return
-        }
-        if (!this.quantity || this.quantity === '0') {
-          wepy.showToast({
-            title: '商品数量不正确,请重新填写',
-            icon: 'none'
-          })
-          return
-        }
-        if (!this.submiting) {
-          let params = {
-            quantity: this.quantity,
-            shopid: this.shopid,
-            content: this.contentVal
-          }
-          if (this.cardid) {
-            params.cardid = this.cardid
-          }
-          if (this.clickedCredit) {
-            params.credit = this.useCredit
-          }
-          if (!this.selectAddress) {
-            wepy.showToast({
-              title: '请选择地址',
-              icon: 'none'
-            })
-            return false
-          }
-          this.submiting = true
-          this.isShowLoading = true
-          params.addressid = this.selectAddress.id
-          this.ajaxOrder(params)
-          this.$apply()
-        }
-      }
     }
 
     uploadAddress (address) {
@@ -620,11 +640,18 @@
         if (!res) return
         const data = res.data
         const retdata = data.data ? data.data : data
-        const order = retdata
+        let order = retdata
         if (!order) {
           return false
         }
         this.curOrder = order
+        for (let i = 0; i < this.mdList.length; i++) {
+          let curMd = this.mdList[i]
+          if (order.storeid === curMd.id) {
+            this.selectedMd = curMd
+          }
+        }
+        this.isVip = this.userInfo.isvip[this.selectedMd.id]
         if (this.curOrder.sheng && this.curOrder.sheng !== '' && this.curOrder.sheng !== '0.00') {
           let sheng = parseFloat(this.curOrder.sheng.replace(/,/g, '')) * this.curOrder.quantity
           this.shengPrice = sheng.toFixed(2)
@@ -634,21 +661,34 @@
           curstorage = this.curOrder.activityinfo.everybuy
         }
         this.maxQuantity = curstorage
+        if (order.options) {
+          if (this.isVip) {
+            order.listprice = order.options.memberprice
+          } else {
+            order.listprice = order.options.price
+          }
+        } else {
+          if (this.isVip) {
+            order.listprice = order.memberprice
+          } else {
+            order.listprice = order.special
+          }
+        }
         this.product = order
         this.quantity = this.product.quantity
         this.handleCredit()
-        this.truePrice = (parseFloat(this.product.commonprice.replace(/,/g, '')) * this.quantity).toFixed(2)
+        this.truePrice = (parseFloat(this.product.listprice.replace(/,/g, '')) * this.quantity).toFixed(2)
         this.shopid = this.product.id
         this.postPostage = parseFloat(order.postage.replace(/,/g, '')).toFixed(2)
         this.postage = parseFloat(order.postage.replace(/,/g, ''))
-        let total1 = parseFloat(order.special.replace(/,/g, '')) * order.quantity
+        let total1 = parseFloat(order.listprice.replace(/,/g, '')) * order.quantity
         if (order.postage) {
           total1 += parseFloat(order.postage.replace(/,/g, ''))
         }
         this.cardPrice = total1
         this.computePrice()
-        this.getCanUseCard()
-        if (this.isFirst) {
+        // this.getCanUseCard()
+        if (this.isFirst && (!this.options.ordertype || (this.options.ordertype && parseInt(this.options.ordertype) !== 4))) {
           this.getAddressList()
           this.isFirst = false
         }
@@ -657,8 +697,14 @@
     }
     computePrice () {
       let total = 0
+      let trueTotal = 0
       if (this.product) {
-        total += parseFloat(this.product.special.replace(/,/g, '')) * this.quantity
+        total += parseFloat(this.product.listprice.replace(/,/g, '')) * this.quantity
+        trueTotal = parseFloat(this.product.listprice.replace(/,/g, '')) * this.quantity
+      }
+      this.orderTruePrice = trueTotal
+      if (this.clickCommCard) {
+        total = (total - parseFloat(this.clickCommCard.money.toString().replace(/,/g, ''))).toFixed(2)
       }
       this.cardPrice = total
       if (this.postPostage) {
@@ -675,7 +721,7 @@
           cha = cha < 0 ? 0 : cha
           this.payPrice = (cha + parseFloat(postageStr.replace(/,/g, ''))).toFixed(2)
         } else {
-          this.payPrice = total.toFixed(2)
+          this.payPrice = parseFloat(total).toFixed(2)
         }
         this.initCheckedCard()
       }
@@ -754,24 +800,15 @@
     }
     handleShowData () {
       this.contentVal = ''
-      this.getAddressList()
+      if (!this.options.ordertype || (this.options.ordertype && parseInt(this.options.ordertype) !== 4)) {
+        this.getAddressList()
+      }
+      if (this.inHide) {
+        this.inHide = false
+        this.isClose = Util.checkClose(this.sysParams.closestore)
+      }
+      this.$apply()
     }
-
-    getRetailer () {
-      // if (Config.Wid !== this.globalData.Wid) {
-      //   wepy.request({
-      //     url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/retailer/info`,
-      //     data: {uid: this.globalData.Wid, appid: Config.AppId}
-      //   }).then(res => {
-      //     const data = res.data
-      //     if (data.code === 0) {
-      //       this.sellerUser = data.data
-      //       this.$apply()
-      //     }
-      //   })
-      // }
-    }
-
     async onLoad (options) {
       this.closeTxt = '关闭'
       this.confirmTxt = '确定'
@@ -799,12 +836,15 @@
       Util.appInit(this.globalData, this)
       this.userInfo = this.globalData.userInfo
       this.MiniInfo = this.globalData.MiniInfo
+      this.sysParams = this.globalData.SystemParams
+      this.isClose = Util.checkClose(this.sysParams.closestore)
+      this.mdList = this.globalData.Store
       let orderRemark = this.globalData.SystemParams.OrderRemark
       this.showRemark = orderRemark ? parseInt(orderRemark) : false
       let saveMoneyMode = this.globalData.SystemParams.SaveMoneyMode
       this.saveMoneyMode = saveMoneyMode ? parseInt(saveMoneyMode) : false
       this.getData()
-      this.getRetailer()
+      this.getCommList()
       wepy.getSystemInfo().then(res => {
         if (res.model.substring(0, res.model.indexOf('X')) + 'X' === 'iPhone X') {
           this.isIpx = true
@@ -822,11 +862,148 @@
         }
       }
     }
-
+    onHide () {
+      this.inHide = true
+    }
     onUnload () {
+      this.inHide = true
       this.selectedCard = null
       this.cardInfo = null
       this.$apply()
+    }
+
+    methods = {
+      clickCredit () {
+        this.clickedCredit = !this.clickedCredit
+        this.selectedCard = null
+        this.cardInfo = null
+        this.$apply()
+        this.changeAddress()
+      },
+      keyupContent (e) {
+        this.contentVal = e.detail.value
+      },
+      cancel () {
+        this.popupShow = false
+      },
+      popupCardList () {
+        this.popupShow = true
+      },
+      cardClick (item, index) {
+        for (let i = 0; i < this.cardList.length; i++) {
+          if (this.cardList[i].checked) {
+            this.cardList[i].checked = false
+            break
+          }
+        }
+        let checked = !item.checked
+        if (checked) {
+          this.selectedCard = item
+          let cha = parseFloat(this.orderPrice) - parseFloat(this.postage) - parseFloat(item.money)
+          cha = cha < 0 ? 0 : cha
+          this.payPrice = (cha + parseFloat(this.postage)).toFixed(2)
+        } else {
+          this.selectedCard = null
+          this.payPrice = this.orderPrice.toFixed(2)
+        }
+        this.cardList[index].checked = checked
+        this.cardInfo = this.selectedCard
+        this.$apply()
+      },
+      changeNumber (quantity) {
+        this.truePrice = (parseFloat(this.product.listprice.replace(/,/g, '')) * parseInt(quantity)).toFixed(2)
+        this.selectedCard = null
+        this.cardInfo = null
+        // for (let i = 0; i < this.cardList.length; i++) {
+        //   if (this.cardList[i].checked) {
+        //     this.cardList[i].checked = false
+        //     break
+        //   }
+        // }
+        if (this.curOrder.sheng && this.curOrder.sheng !== '' && this.curOrder.sheng !== '0.00') {
+          let sheng = parseFloat(this.curOrder.sheng.replace(/,/g, '')) * quantity
+          this.shengPrice = sheng.toFixed(2)
+        }
+        this.handleCredit()
+        this.$apply()
+        this.changeAddress()
+      },
+      showAddress (e) {
+        wepy.navigateTo({url: '/packageB/pages/address?mod=inner'})
+      },
+      submitOrder () {
+        if (!this.allowSend) {
+          wepy.showToast({
+            title: '该地区不在派送范围内',
+            icon: 'none'
+          })
+          return
+        }
+        if (!this.quantity || this.quantity === '0') {
+          wepy.showToast({
+            title: '商品数量不正确,请重新填写',
+            icon: 'none'
+          })
+          return
+        }
+        if (this.submiting) return false
+        let params = {
+          quantity: this.quantity,
+          shopid: this.shopid,
+          content: this.contentVal
+        }
+        if (this.cardid) {
+          params.cardid = this.cardid
+        }
+        if (this.clickedCredit) {
+          params.credit = this.useCredit
+        }
+        if (!this.options.ordertype || (this.options.ordertype && parseInt(this.options.ordertype) !== 4)) {
+          if (!this.selectAddress) {
+            wepy.showToast({
+              title: '请选择地址',
+              icon: 'none'
+            })
+            return false
+          }
+          params.addressid = this.selectAddress.id
+        }
+        this.submiting = true
+        this.isShowLoading = true
+        this.ajaxOrder(params)
+        this.$apply()
+      },
+      updateEvent (type) {
+        if (this.updateIng) return false
+        this.updateIng = true
+        let newQ = this.product.quantity
+        if (type === 'add') {
+          newQ = newQ + 1
+        } else {
+          newQ = newQ - 1
+          if (newQ < 0) newQ = 0
+        }
+        this.updateIng = false
+        this.product.quantity = newQ
+        this.quantity = newQ
+        this.computePrice()
+        this.$apply()
+      },
+      closeCommPop () {
+        this.showCommCard = false
+      },
+      popupCommCardList () {
+        this.showCommCard = true
+      },
+      commCardClick (item, index) {
+        if (!this.clickCommCard || this.clickCommCard.id !== item.id) {
+          this.clickCommCard = item
+        } else {
+          this.clickCommCard = null
+        }
+        this.computePrice()
+        this.$apply()
+      }
     }
   }
 </script>

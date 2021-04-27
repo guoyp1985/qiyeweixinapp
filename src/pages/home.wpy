@@ -1928,13 +1928,13 @@ export default class Home extends wepy.page {
           })
           return false
         }
-        if (this.selectedOption.storage <= 0) {
-          wepy.showToast({
-            title: '该规格商品库存不足',
-            icon: 'none'
-          })
-          return false
-        }
+        // if (this.selectedOption.storage <= 0) {
+        //   wepy.showToast({
+        //     title: '该规格商品库存不足',
+        //     icon: 'none'
+        //   })
+        //   return false
+        // }
         this.hiddePage = false
         this.$apply()
         wepy.pageScrollTo({

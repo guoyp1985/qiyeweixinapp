@@ -1,0 +1,468 @@
+<style lang="less">
+.store-activity-page{
+  width:100%;height:100%;padding-bottom:80rpx;box-sizing: border-box;overflow-y:auto;
+  background:linear-gradient(#ff6a61, #f63f3d);
+  .top-box{
+    background-color:#f5f9fe;text-align:left;padding:20rpx;box-sizing: border-box;position:relative;
+    .avatar{width:160rpx;height:160rpx;border-radius:50%;margin-right:20rpx;}
+    .txt{font-size:32rpx;font-weight:bold;}
+  }
+  .qy-tab{
+    width:100%;box-sizing: border-box;display:flex;
+    .tab-item{
+      flex:1;font-size:32rpx;
+      display:flex;justify-content: center;align-items: center;
+      .inner{
+        width:80%;height:60rpx;background-color:#659af2;color:#fff;border-radius:10rpx;
+        display:flex;justify-content: center;align-items: center;
+      }
+    }
+  }
+  .qrcode-area{
+    padding:20rpx;box-sizing: border-box;
+    .pic-outer{
+      display:flex;justify-content: center;align-items: center;
+      .pic{
+        display:block;width:80%;position:relative;
+        .img{width:100%;}
+        .qrcode{
+          position:absolute;right:0;bottom:0;width:30%;z-index:1;
+        }
+      }
+    }
+  }
+  .btn-share{
+    background-color:#fff;border-radius:60rpx;padding:20rpx 30rpx;font-size:32rpx;
+    color:#f6536e;font-weight:bold;box-sizing:border-box;
+  }
+  .txt-list{
+    padding:0 20rpx;box-sizing: border-box;
+    .txt-item:not(:last-child):after{
+      content:"";display:block;
+    	background-color:#ddd;height:2rpx;overflow:hidden;
+    	position: absolute;left: 0;right: 0;bottom:0px;
+    	-webkit-transform: scaleY(0.5) translateY(1rpx);
+    	transform: scaleY(0.5) translateY(1rpx);
+    	-webkit-transform-origin: 0% 0%;
+    	transform-origin: 0% 0%;
+    }
+    .txt-item{
+      display:flex;padding:20rpx 0;position:relative;
+      .cell1{flex:1;}
+      .cell2{
+        margin-left:10rpx;
+        .btn{
+          width:100rpx;height:50rpx;box-sizing: border-box;
+          display:flex;justify-content: center;align-items: center;
+        }
+      }
+    }
+  }
+  .btn-apply{
+    background-color:#659af2;color:#fff;border-radius:10rpx;
+    padding:0 20rpx;height:50rpx;
+    display:flex;justify-content: center;align-items: center;
+  }
+  .card-area{
+    position:relative;padding:20rpx;box-sizing: border-box;
+    background-color:#eb6b5e;color:#fff;
+  }
+  .card-area:before{
+    content:'';display:block;width:40rpx;height:40rpx;border-radius:50%;background-color:#f5f9fa;
+    position:absolute;left:-20rpx;top:50%;margin-top:-20rpx;
+  }
+  .card-area:after{
+    content:'';display:block;width:40rpx;height:40rpx;border-radius:50%;background-color:#f5f9fa;
+    position:absolute;right:-20rpx;top:50%;margin-top:-20rpx;
+  }
+
+  .top-txt1{
+    width:100%;padding-top:20rpx;display:flex;justify-content:center;align-items:center;
+    .txt{position:relative;padding:0 40rpx;font-size:60rpx;color:#fff;font-weight:bold;letter-spacing:8rpx;}
+    .txt:before,.txt:after{
+      content:'';display:block;width:20rpx;height:20rpx;background-color:#fff;border-radius:50%;
+      position:absolute;top:50%;margin-top:-10rpx;
+    }
+    .txt:before{left:0;}
+    .txt:after{right:0;}
+  }
+  .top-txt2{
+    display:flex;justify-content:center;align-items:center;
+    margin-top:20rpx;font-size:120rpx;font-weight:bold;color:#fff;letter-spacing:8rpx;
+    text-shadow: 0 2rpx 0 #999, 0 4rpx 0 #888, 0 6rpx 0 #777, 0 8rpx 0 #666, 0 10rpx 0 #555, 0 12rpx 0 #444, 0 14rpx 0 #333, 0 16rpx 14rpx #001135;
+  }
+  .top-txt3{
+    width:100%;margin-top:-20rpx;display:flex;justify-content:center;align-items:center;
+    .inner{position:relative;padding:0 40rpx;}
+    .txt{
+      color:#fff;letter-spacing:4rpx;padding:0 30rpx;font-size:44rpx;
+    }
+    .line:before,.line:after{
+      content:'';display:block;width:40rpx;height:4rpx;background-color:#fff;border-radius:4rpx;
+      position:absolute;top:50%;margin-top:-2rpx;
+    }
+    .line:before{left:0;}
+    .line:after{right:0;}
+  }
+  .con-box{
+    width:85%;margin:40rpx auto 0;background-color:#fff;
+    border-radius:40rpx;padding:40rpx 0;box-sizing: border-box;
+    .card-box{
+      width:100%;padding:20rpx;box-sizing:border-box;position:relative;
+      background: linear-gradient(to right,#ea5976, #f7d961);
+      display:flex;
+    }
+    .card-box:before, .card-box:after {
+      content: "";
+      position: absolute;
+      top: -40rpx;
+      display: block;
+      width: 20rpx;
+      height: 100%;
+      margin-top: 40rpx;
+      background-size: 40rpx 20rpx;
+    }
+    .card-box:before {
+      left: -16rpx;
+      background-color: #fff;
+      background-position: 100% 35%;
+      background-image: linear-gradient(-45deg, #ea5976 25%, transparent 25%, transparent),
+                      linear-gradient(-135deg, #ea5976 25%, transparent 25%, transparent),
+                      linear-gradient(-45deg, transparent 75%, #ea5976 75%),
+                      linear-gradient(-135deg, transparent 75%, #ea5976 75%);
+    }
+    .card-box:after {
+      right: -18px;
+      background-color: #f7d961;
+      background-position: 100% 15%;
+      background-image: linear-gradient(-45deg, #fff 25%, transparent 25%, transparent),
+                     linear-gradient(-135deg, #fff 25%, transparent 25%, transparent),
+                     linear-gradient(-45deg, transparent 75%, #fff 75%),
+                     linear-gradient(-135deg, transparent 75%, #fff 75%);
+    }
+    .cell1{
+      background-color:#fff;border-radius:20rpx;color:#ea5976;
+      .txt1{font-weight:bold;margin-left:20rpx;}
+      .txt2{font-size:60rpx;font-weight:bold;}
+      .txt3{font-size:24rpx;margin-left:20rpx;}
+    }
+    .radius{
+      margin-left:20rpx;width:100rpx;height:100rpx;border-radius:50%;background-color:#fff;
+      font-size:56rpx;color:#ea5976;font-weight:bold;
+      display:flex;justify-content: center;align-items: center;
+    }
+  }
+  .title-box{
+    width:70%;height:70rpx;margin:20rpx auto 0;display:flex;justify-content: center;align-items: center;
+    background:linear-gradient(#fcc836, #f8851a);letter-spacing: 8rpx;color:#fff;
+    border-radius:120rpx;font-size:32rpx;font-weight:bold;
+  }
+  .pic-list{
+    width:100%;overflow-x:auto;overflow-y:hidden;
+    display:flex;
+    .pic-item:not(:first-child){margin-left:20rpx;}
+    .pic-item{
+      width:200rpx;background-color:#fffdf0;padding:20rpx;box-sizing:border-box;
+      border-radius:20rpx;box-shadow: 0 4rpx 8rpx 0 rgba(255, 253, 240, 0.07);
+      .pic{
+        box-sizing:border-box;margin-bottom:10rpx;
+        img{
+          width:160rpx;height:160rpx;object-fit:cover;display:block;
+          border:#ecdbcb 4rpx solid;box-sizing:border-box;border-radius:50%;
+        }
+      }
+      .txt{color:#ff8388;font-size:24rpx;font-weight:bold;}
+    }
+  }
+  .new-area{
+    .line{
+      position:relative;padding:20rpx;box-sizing: border-box;
+      background-color:#fff;color:#fff;margin-top:30rpx;
+      display:flex;justify-content: center;align-items: center;
+    }
+    .line:before{
+      content:'';display:block;width:40rpx;height:40rpx;border-radius:50%;background-color:#f66068;
+      position:absolute;left:-20rpx;top:50%;margin-top:-20rpx;
+    }
+    .line:after{
+      content:'';display:block;width:40rpx;height:40rpx;border-radius:50%;background-color:#f66068;
+      position:absolute;right:-20rpx;top:50%;margin-top:-20rpx;
+    }
+    .line-boder{width:100%;height:2rpx;border-top:#ffd2c4 2rpx dashed;}
+    .txt-area{
+      padding:40rpx 40rpx 0;color:#dd6878;
+    }
+  }
+  .qrcode{width:160rpx;height:160rpx;object-fit: cover;margin-left:20rpx;display:block;}
+  .pic-swiper:after{content:"";padding-top:100%;display:block;}
+  .pic-swiper{
+    overflow:inherit;
+    box-sizing: border-box;width:100%;max-height:700rpx;
+    .img{border-radius:20rpx;}
+    .qrcode{
+      position:absolute;right:0;bottom:0;width:30%;z-index:1;
+    }
+    .ico{
+      width:160rpx;height:160rpx;border-radius:50%;background-color:#f94929;color:#fff;
+      display:flex;justify-content:center;align-items:center;
+      position:absolute;left:50%;margin-left:-80rpx;top:50%;margin-top:-80rpx;
+    }
+    .txt{
+      position:absolute;left:0;bottom:0;width:70%;padding:10rpx;box-sizing: border-box;font-size:28rpx;
+      background-color:rgba(0,0,0,0.5);color:#fff;border-top-right-radius:20rpx;
+    }
+    .vux-swiper{
+      position:absolute !important;left:0;top:0;right:0;bottom:0;height:100% !important;
+    }
+    /*
+    .wx-swiper-dots{
+      position:absolute;left:0;right:0;bottom:0;z-index:100;
+      display:flex;flex-wrap:wrap;justify-content:center;align-items:center;
+    }
+    .wx-swiper-dot{
+      width:70rpx;height:70rpx;border-radius:50%;font-style:normal;
+      display:flex;justify-content: center;align-items: center;
+      background-color:transparent !important;
+    }
+    .wx-swiper-dots .wx-swiper-dot-active{background-color:transparent !important;color:#f94929;}
+    .wx-swiper-dots .wx-swiper-dot:nth-child(1):after{content: '周一';font-size:24rpx;}
+    .wx-swiper-dots .wx-swiper-dot:nth-child(2):after{content: '周二';font-size:24rpx;}
+    .wx-swiper-dots .wx-swiper-dot:nth-child(3):after{content: '周三';font-size:24rpx;}
+    .wx-swiper-dots .wx-swiper-dot:nth-child(4):after{content: '周四';font-size:24rpx;}
+    .wx-swiper-dots .wx-swiper-dot:nth-child(5):after{content: '周五';font-size:24rpx;}
+    .wx-swiper-dots .wx-swiper-dot:nth-child(6):after{content: '周六';font-size:24rpx;}
+    .wx-swiper-dots .wx-swiper-dot:nth-child(7):after{content: '周日';font-size:24rpx;}
+    */
+  }
+  .dot-list{
+    padding-top:20rpx;
+    width:100%;display:flex;flex-wrap:wrap;justify-content:center;align-items:center;
+    .dot:not(:first-child){margin-left:12rpx;}
+    .dot{
+      padding:0 10rpx;height:70rpx;font-style:normal;
+      display:flex;justify-content: center;align-items: center;
+      background-color:transparent !important;
+    }
+    .dot.active{background-color:transparent !important;color:#f94929;}
+    .dot:nth-child(1):after{content: '周一';font-size:24rpx;}
+    .dot:nth-child(2):after{content: '周二';font-size:24rpx;}
+    .dot:nth-child(3):after{content: '周三';font-size:24rpx;}
+    .dot:nth-child(4):after{content: '周四';font-size:24rpx;}
+    .dot:nth-child(5):after{content: '周五';font-size:24rpx;}
+    .dot:nth-child(6):after{content: '周六';font-size:24rpx;}
+    .dot:nth-child(7):after{content: '周日';font-size:24rpx;}
+  }
+}
+</style>
+<template>
+  <view class="store-activity-page bg-page">
+    <view class="top-txt1">
+      <view class="txt">顾湘餐饮</view>
+    </view>
+    <view class="top-txt2">新人送菜</view>
+    <view class="con-box">
+      <view class="title-box" style="letter-spacing:1px;">新客免费送</view>
+      <view class="mt20 pl20 pr20" style="box-sizing:border-box;" wx:if="{{disProduct}}">
+        <swiper
+          class="pic-swiper notitle"
+          autoplay
+          current="{{current}}"
+          indicator-dots="{{1==0}}"
+          indicator-color="#d0cdd1"
+          indicator-active-color="#ff9900"
+          interval="6000"
+          circular
+          bindchange="swiperChange">
+          <repeat for="{{productData}}" index="index" item="item">
+            <swiper-item>
+              <image class="imgcover w_100 h_100" mode="aspectFill" src="{{item.photo}}"></image>
+              <image wx:if="{{qrcode && qrcode != ''}}" class="qrcode" src="{{qrcode}}"></image>
+              <view class="ico">免费送</view>
+              <view class="txt">
+                <view class="clamp1">{{item.title}}</view>
+                <view style="color:#f94929;font-weight:bold;">￥{{item.price}}</view>
+              </view>
+            </swiper-item>
+          </repeat>
+        </swiper>
+        <view class="dot-list">
+          <repeat for="{{productData}}" index="index" item="item">
+            <view :class="{active: (current == index)}" class="dot" @tap="clickDot({{index}})"></view>
+          </repeat>
+        </view>
+      </view>
+      <view class="new-area" wx:if="{{isNew}}">
+        <view class="line">
+          <view class="line-boder"></view>
+        </view>
+        <view class="txt-area flex_left">
+          <view class="flex_left">
+            <view>
+              <view class="font18 bold" wx:if="{{qrcode && qrcode != ''}}">扫描二维码加专属客服免费领菜</view>
+              <view class="font12">{{storeInfo.address}}</view>
+            </view>
+          </view>
+          <view class="flex_right" wx:if="{{qrcode && qrcode != ''}}">
+            <img class="qrcode" src="{{qrcode}}" />
+          </view>
+        </view>
+      </view>
+      <view class="new-area" wx:else>
+        <view class="line">
+          <view class="line-boder"></view>
+        </view>
+        <view class="txt-area flex_left font12">{{storeInfo.address}}</view>
+      </view>
+    </view>
+    <view class="padding20 flex_center">
+      <view wx:if="{{this.userInfo.subscribe == 0}}" class="btn-share" @tap="clickShare">告诉朋友，一起薅老板羊毛</view>
+      <button wx:else class="btn-share" open-type="share">告诉朋友，一起薅老板羊毛</button>
+    </view>
+    <view wx:if="{{storeInfo}}">
+      <map
+        style="width:100%;"
+        longitude="{{storeInfo.longitude}}"
+        latitude="{{storeInfo.latitude}}"
+        markers="{{markerData}}"
+        show-location="{{1==1}}"
+        slot="callout">
+        <cover-view marker-id="1"></cover-view>
+      </map>
+    </view>
+  </view>
+  <block wx:if="{{showAuth}}">
+    <auth :pageurl.sync="pageurl" :themeObject.sync="themeObject" :globalData.sync="globalData"></auth>
+  </block>
+</template>
+<script>
+  import wepy from 'wepy'
+  import Config from '@/config'
+  import Util from '@/libs/util'
+  import Auth from '@/components/auth'
+  export default class extends wepy.page {
+    components = {
+      auth: Auth
+    }
+    data = {
+      options: {},
+      globalData: {},
+      userInfo: {},
+      themeObject: {},
+      loadStore: false,
+      storeInfo: {},
+      qrcode: '',
+      disProduct: false,
+      productData: [],
+      weekObject: {0: '周一', 1: '周二', 2: '周三', 3: '周四', 4: '周五', 5: '周六', 6: '周日'},
+      current: 0,
+      markerData: [],
+      pageurl: ''
+    }
+    getData () {
+      wepy.request({
+        url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/tableindex/index`,
+        data: {storeid: this.options.storeid, tableid: this.options.tableid}
+      }).then(res => {
+        let data = res.data
+        if (data.code === 0) {
+          let retdata = data.data
+          if (retdata.sendproducts) {
+            let sendproducts = retdata.sendproducts
+            for (let i = 0; i < sendproducts.length; i++) {
+              sendproducts[i].week = this.weekObject[i]
+              if (sendproducts[i].selected) {
+                this.todayProduct = sendproducts[i]
+              }
+            }
+            this.productData = sendproducts
+            this.disProduct = true
+          }
+          if (retdata.qrcode) this.qrcode = retdata.qrcode
+          if (retdata.storeinfo) {
+            let retStoreInfo = retdata.storeinfo
+            retStoreInfo.longitude = parseFloat(retStoreInfo.longitude)
+            retStoreInfo.latitude = parseFloat(retStoreInfo.latitude)
+            this.storeInfo = retStoreInfo
+            this.markerData = [{
+              id: 1,
+              longitude: retStoreInfo.longitude,
+              latitude: retStoreInfo.latitude,
+              title: retStoreInfo.title,
+              callout: {
+                content: retStoreInfo.title
+              }
+            }]
+            this.loadStore = true
+          }
+          this.$apply()
+        }
+      })
+    }
+    handlePageData () {
+      this.globalData = this.$parent.globalData
+      Util.appInit(this.globalData, this)
+      this.pageurl = Util.objectToUrl('/package/pages/storeActivity', this.options)
+      this.userInfo = this.globalData.userInfo
+      if (this.userInfo.subscribe === 0) {
+        wepy.hideShareMenu()
+      }
+      this.getData()
+      this.$apply()
+    }
+    onLoad (options) {
+      this.options = options
+      if (this.$parent.globalData.flag.bokaAuth) {
+        this.handlePageData()
+      } else {
+        this.$parent.loadCallback = () => {
+          this.handlePageData()
+        }
+      }
+    }
+    async handleShare () {
+      const lastshareuid = this.options.share_uid
+      let shareurl = `/package/pages/storeActivity?share_uid=${this.userInfo.uid}&share_wid=${this.globalData.Wid}&wid=${this.globalData.Wid}&comefrom=${Config.AppName}`
+      if (this.options.storeid) shareurl = `${shareurl}&storeid=${this.options.storeid}`
+      if (this.options.tableid) shareurl = `${shareurl}&tableid=${this.options.tableid}`
+      if (lastshareuid) {
+        shareurl = `${shareurl}&lastshareuid=${lastshareuid}`
+      }
+      let backUrl = encodeURIComponent(shareurl)
+      shareurl = `${shareurl}&currentUrl=${backUrl}`
+      this.shareParams = {
+        title: `${this.userInfo.linkman}送你一个菜`,
+        path: shareurl
+      }
+    }
+    async onShareAppMessage (res) {
+      await this.handleShare()
+      return this.shareParams
+    }
+    async onShareTimeline () {
+      this.handleShare()
+      return this.shareParams
+    }
+    methods = {
+      swiperChange (e) {
+        this.current = e.detail.current
+        this.$apply()
+      },
+      clickDot (index) {
+        this.current = parseInt(index)
+        this.$apply()
+      }
+    }
+    events = {
+      cancelLogin () {
+        this.showAuth = false
+        this.$apply()
+      },
+      afterAuth () {
+        this.globalData = this.$parent.globalData
+        this.userInfo = this.globalData.userInfo
+        this.showAuth = false
+        this.$apply()
+      }
+    }
+  }
+</script>

@@ -480,6 +480,102 @@
           "pathName": "pages/qyshop",
           "query": "orderid=2",
           "scene": null
+        },
+        {
+          "name": "去支付页面",
+          "pathName": "pages/qypay",
+          "query": "orderid=1&storeid=1&tableid=1",
+          "scene": null
+        },
+        {
+          "name": "充值页面",
+          "pathName": "pages/recharge",
+          "query": "storeid=1&tableid=1",
+          "scene": null
+        },
+        {
+          "name": "扫桌码过来的链接 ",
+          "pathName": "pages/qyshop",
+          "query": "storeid=1&tableid=1",
+          "scene": null
+        },
+        {
+          "name": "\b下单成功页面",
+          "pathName": "packageB/pages/paySuccess",
+          "query": "orderid=9&tableid=1&storeid=1",
+          "scene": null
+        },
+        {
+          "name": "支付页面",
+          "pathName": "pages/pay",
+          "query": "id=9",
+          "scene": null
+        },
+        {
+          "name": "确认下单页",
+          "pathName": "pages/qypay",
+          "query": "orderid=30&xiadan=1",
+          "scene": null
+        },
+        {
+          "name": "外卖确认下单页",
+          "pathName": "pages/qypay",
+          "query": "orderid=31",
+          "scene": null
+        },
+        {
+          "name": "我的优惠券",
+          "pathName": "packageD/pages/cardList",
+          "query": "",
+          "scene": null
+        },
+        {
+          "name": "确认订单页面使用优惠券",
+          "pathName": "pages/qypay",
+          "query": "orderid=35&xiadan=1",
+          "scene": null
+        },
+        {
+          "name": "\b确认订单页",
+          "pathName": "pages/qypay",
+          "query": "orderid=43&xiadan=1",
+          "scene": null
+        },
+        {
+          "name": "分享过来的二维码商品",
+          "pathName": "pages/index",
+          "query": "scene=posterid%3A61",
+          "scene": null
+        },
+        {
+          "name": "\b会员认证",
+          "pathName": "package/pages/memberAuth",
+          "query": "",
+          "scene": null
+        },
+        {
+          "name": "新客分享页",
+          "pathName": "package/pages/storeActivity",
+          "query": "storeid=1&tableid=1",
+          "scene": null
+        },
+        {
+          "name": "\b支付页面",
+          "pathName": "pages/pay",
+          "query": "id=37",
+          "scene": null
+        },
+        {
+          "name": "ordertype=4的商品详情",
+          "pathName": "pages/product",
+          "query": "id=441421787&ordertype=4",
+          "scene": null
+        },
+        {
+          "name": "ordertype=4的确认订单页",
+          "pathName": "pages/addOrder",
+          "query": "shop_id=2&ordertype=4",
+          "scene": null
         }
       ]
     }

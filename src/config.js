@@ -3,14 +3,15 @@ const Config = {
   DebugMode: false, // 输出调试，正式环境不需要配置
   version: ExtConfig.version ? ExtConfig.version : '1.0.0.1',
   AppName: ExtConfig.appName ? ExtConfig.appName : '博卡供销社',
-  WeixinName: ExtConfig.appName,
   AppId: ExtConfig.appId ? ExtConfig.appId : 'wx9f7339af150e0b6f', // 博卡供销社 wx9f7339af150e0b6f
-  // AppId: ExtConfig.appId ? ExtConfig.appId : 'wx1b22fe75584085ee', // 灰太狼 wx1b22fe75584085ee
-  // AppId: ExtConfig.appId ? ExtConfig.appId : 'wx72131ab2cb77663d', // 共销汇 wx72131ab2cb77663d
-  // AppId: ExtConfig.appId ? ExtConfig.appId : 'wxd0e66d0c646cb8a9', // 柽柽哥 wxd0e66d0c646cb8a9
+  BokaApi: ExtConfig.bokaApi ? ExtConfig.bokaApi : 'https://qy.boka.cn',
+  // AppName: ExtConfig.appName ? ExtConfig.appName : '顾湘饭店',
+  // AppId: ExtConfig.appId ? ExtConfig.appId : 'wx1426b52fd313ddbc', // 顾湘 wx1b22fe75584085ee
+  // BokaApi: ExtConfig.bokaApi ? ExtConfig.bokaApi : 'https://guxiang.boka.cn',
+  RecommendClass: 53747124,
+  WeixinName: ExtConfig.appName,
   AppLogo: ExtConfig.appLogo,
   FeedChars: 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789',
-  BokaApi: ExtConfig.bokaApi ? ExtConfig.bokaApi : 'https://qy.boka.cn',
   GxkApi: ExtConfig.gxkApi ? ExtConfig.gxkApi : 'https://laravel.boka.cn',
   WebViewApi: ExtConfig.webViewUrl ? ExtConfig.webViewUrl : 'https://vue.boka.cn',
   AdminApi: ExtConfig.adminApi ? ExtConfig.adminApi : 'http://laravelcms.boka.cn', //http://laravelcms.boka.cn // http://sharingadmin.boka.cn
@@ -18,13 +19,13 @@ const Config = {
   SourceFid: ExtConfig.sourceFid ? ExtConfig.sourceFid : 105, // 托管厂家的fid，开发版 105 鲲鹏 ，正式版 73 博卡先锋
   Fid: ExtConfig.fid ? ExtConfig.fid : 39, // 共销汇 101, 灰太狼 39, 柽柽哥 61, 晚八 78
   Wid: ExtConfig.wid ? ExtConfig.wid : 14,
-  GxkAppId: ExtConfig.gxkAppId ? ExtConfig.gxkAppId : 'wx52f62bbdcf1ee04f', // 共销客: wx1d33c39033d3f785, 开发版共销客: wx52f62bbdcf1ee04f
+  GxkAppId: ExtConfig.gxkAppId ? ExtConfig.gxkAppId : 'wx1426b52fd313ddbc', // 共销客: wx1d33c39033d3f785, 开发版共销客: wx52f62bbdcf1ee04f
   Accept: ExtConfig.Accept ? ExtConfig.Accept : 'application/vnd.factorydev.v2+json',
   HqAppId: 'wx018f0c4c2a1ee727',
   // HomePage: '/pages/index',
   HomePage: '/pages/qyshop',
   V1: 'api',
-  V2: ExtConfig.appId ? 'api/' + ExtConfig.appId : 'api/wx1b22fe75584085ee',
+  V2: ExtConfig.appId ? 'api/' + ExtConfig.appId : 'api/wx9f7339af150e0b6f',
   ApiVersion: ExtConfig.ApiVersion ? ExtConfig.ApiVersion : 'V1',
   ApiAccept: 'application/vnd.factorydev.v2+json',
   SDKAppID: 1400278262,

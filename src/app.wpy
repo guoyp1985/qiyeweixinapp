@@ -24,18 +24,18 @@
         'pages/index',
         'pages/auth',
         'pages/home',
-        'pages/addModule',
         'pages/addOrder',
         'pages/class',
         'pages/liveList',
         'pages/mark',
-        'pages/moduleDetail',
-        'pages/moduleList',
         'pages/own',
+        'pages/pay',
         'pages/product',
         'pages/qyhome',
         'pages/qyorder',
+        'pages/qypay',
         'pages/qyshop',
+        'pages/recharge',
         'pages/shop',
         'pages/shop1',
         'pages/sos',
@@ -43,14 +43,14 @@
         'pages/webview'
       ],
       'plugins': {
-        'live-player-plugin': {
-          'version': '1.2.10', // 注意填写该直播组件最新版本号，微信开发者工具调试时可获取最新版本号
-          'provider': 'wx2b03c6e691cd7370' // 必须填该直播组件appid，该示例值即为直播组件appid
-        },
-        'contactPlugin': {
-          'version': '1.3.1',
-          'provider': 'wx104a1a20c3f81ec2' // cd23f2bb207cb7ee3a8765dd80b52db3
-        }
+        // 'live-player-plugin': {
+        //   'version': '1.2.10', // 注意填写该直播组件最新版本号，微信开发者工具调试时可获取最新版本号
+        //   'provider': 'wx2b03c6e691cd7370' // 必须填该直播组件appid，该示例值即为直播组件appid
+        // },
+        // 'contactPlugin': {
+        //   'version': '1.3.1',
+        //   'provider': 'wx104a1a20c3f81ec2' // cd23f2bb207cb7ee3a8765dd80b52db3
+        // }
       },
       subPackages: [
         {
@@ -62,7 +62,9 @@
             'pages/customerList',
             'pages/customerView',
             'pages/functionList',
-            'pages/materialBank'
+            'pages/materialBank',
+            'pages/memberAuth',
+            'pages/storeActivity'
           ]
         },
         {
@@ -114,6 +116,7 @@
           root: 'packageD',
           pages: [
             'pages/about',
+            'pages/addModule',
             'pages/buyUserList',
             'pages/cardList',
             'pages/chat',
@@ -123,6 +126,8 @@
             'pages/factoryIncomeList',
             'pages/helpCenter',
             'pages/helpDetail',
+            'pages/moduleDetail',
+            'pages/moduleList',
             'pages/notice',
             'pages/noticeList',
             'pages/orderApplyC',
@@ -145,7 +150,8 @@
         }
       },
       window: {
-        navigationBarTitleText: '博卡供销社',
+        navigationBarTitleText: '博卡供销社', // 博卡供销社
+        // navigationBarTitleText: '顾湘饭店', // 顾湘饭店
         backgroundTextStyle: 'dark',
         navigationBarBackgroundColor: '#ffffff',
         navigationBarTextStyle: 'white',
@@ -167,6 +173,7 @@
       AuthInfo: {},
       MiniInfo: {},
       SystemParams: {},
+      StoreSetting: {},
       Store: [],
       Templates: {},
       giveCredit: false,
@@ -341,6 +348,7 @@
         if (settingRes) {
           const data = settingRes.data
           if (data.code === 0) {
+            this.globalData.StoreSetting = data
             this.globalData.SystemParams = {...data.syspara, BackgroundColor: '#ff6a61', TopicColor: '#ff6a61', OnlyRetailerBuy: 0, ShowSaled: 0}
             this.globalData.Store = data.store
           }
@@ -477,9 +485,9 @@
     }
     async handleOptions (options, callback) {
       // 有直播组件调用
-      this.handleLive(options, callback)
+      // this.handleLive(options, callback)
       // 无直播组件调用
-      // this.handleNoLive(options, callback)
+      this.handleNoLive(options, callback)
     }
 
     async onLaunch (options) {
@@ -519,45 +527,19 @@
             wepy.request({
               url: `${BokaApi}/${Config[Config.ApiVersion]}/user/show`
             }).then(res => {
-              if (res) {
-                let retuser = res.data
-                retuser.bindstatus = 1
+              let data = res.data
+              if (data.code === 0) {
+                let retuser = data.data
                 this.globalData.userInfo = retuser
                 console.log(`当前用户的uid=${retuser.uid}`)
                 Log.info(`当前用户的uid=${retuser.uid}`)
                 wepy.setStorageSync('user', this.globalData.userInfo)
                 this.globalData.flag.bokaAuth = true
-                if (retuser.regwid && retuser.bindstatus) {
-                  this.globalData.Wid = retuser.regwid
-                } else if (retuser.lastbuywid && !options.query.share_wid) {
-                  this.globalData.Wid = retuser.lastbuywid
-                  console.log('app页面 async onShow wid赋值lastbuywid', this.globalData.Wid)
-                }
-                console.log('当前用户的wid globalData.Wid')
-                console.log(this.globalData.Wid)
-                if (this.globalData.customParams) {
-                  let customParams = this.globalData.customParams
-                  if (customParams.wid && customParams.share_uid) {
-                    wepy.request({
-                      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/common/shareClick`,
-                      data: {wid: customParams.wid, share_uid: customParams.share_uid, module: 'minilive', moduleid: customParams.liveid},
-                      method: 'post'
-                    })
-                  }
-                }
                 if (Config.AllowWxgroups) {
                   console.log('=== 输出globaldata ===')
                   console.log(this.globalData.options)
                   this.shareHandle(this.globalData.options)
                 }
-                // if (this.loadCallback) {
-                //   this.loadCallback()
-                //   delete this.loadCallback
-                // }
-                // if (this.showCallback) {
-                //   this.showCallback()
-                //   delete this.showCallback
-                // }
               }
               this.getSettingInfo()
             })

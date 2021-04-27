@@ -8,7 +8,6 @@
 <template>
   <view :class="{'iphone' : isIpx}" class="center-user havemenu">
     <view class="page-inner columnarea">
-      <!-- <creditSwiper :listData.sync="creditData" :themeObject.sync="themeObject"></creditSwiper> -->
       <centerUser
         :globalData.sync="globalData"
         :userInfo.sync="userInfo"
@@ -16,7 +15,6 @@
         :userName.sync="userName"
         :systemInfo.sync="systemInfo"
         :bannerData.sync="bannerData"
-        :moduleListData.sync="moduleListData"
         :manageData.sync="manageData"
         :cancelLogin.sync="cancelLogin"
         :channelInfo.sync="channelInfo"
@@ -45,7 +43,6 @@ import Config from '@/config'
 import CenterUser from '@/components/centerUser'
 import BottomMenu from '@/components/bottomMenu'
 import Auth from '@/components/auth'
-import CreditSwiper from '@/components/creditSwiper'
 export default class Own extends wepy.page {
   config = {
     enablePullDownRefresh: true,
@@ -54,8 +51,7 @@ export default class Own extends wepy.page {
   components = {
     centerUser: CenterUser,
     bottomMenu: BottomMenu,
-    auth: Auth,
-    creditSwiper: CreditSwiper
+    auth: Auth
   }
   data = {
     options: {},
@@ -67,7 +63,6 @@ export default class Own extends wepy.page {
     systemInfo: {},
     showQuery: {},
     bannerData: [],
-    moduleListData: [],
     manageData: [],
     isIpx: false,
     channelInfo: {},
@@ -112,23 +107,6 @@ export default class Own extends wepy.page {
     this.noticeCount = parseInt(this.userInfo.newmessages)
     this.$apply()
     this.getBanner()
-    // if (this.userInfo.fid) {
-    //   this.getSettingList()
-    // }
-    // if (this.options.gxkfid && parseInt(this.options.gxkfid) === parseInt(Config.Fid)) {
-    //   wepy.request({
-    //     url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/miniopen/bindFactoryManager`,
-    //     data: {appid: Config.AppId, factoryuid: this.userInfo.uid},
-    //     method: 'post'
-    //   }).then(res => {
-    //     const data = res.data
-    //     if (data.code === 0) {
-    //       this.userInfo.fid = Config.Fid
-    //       this.getSettingList()
-    //       this.$apply()
-    //     }
-    //   })
-    // }
   }
   getSettingList () {
     Cached.request({

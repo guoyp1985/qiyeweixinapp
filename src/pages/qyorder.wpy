@@ -202,7 +202,17 @@
 <template>
   <view class="qyorder-page font14">
     <view class="box-area">
-      <view class="box-item">
+      <view wx:if="{{selectedMd && selectedMd.id}}" class="box-item b_bottom_after">
+        <view class="flex_left flex_cell">
+          <view class="flex_cell flex_left">
+            <view>
+              <view class="font16 bold">{{selectedMd.title}}</view>
+              <view class="color-gray">距您{{selectedMd.distance}}</view>
+            </view>
+          </view>
+        </view>
+      </view>
+      <view class="box-item b_bottom_after">
         <view class="flex_right address-area">
           <view wx:if="{{dcType == 1}}" class="flex_left flex_cell" @tap="showAddress">
             <view class="pr10">
@@ -221,20 +231,17 @@
               <icon class="al al-mjiantou-copy2 font18 color-gray"></icon>
             </view>
           </view>
-          <view wx:else class="flex_left flex_cell" @tap="chooseMd">
+          <!-- <view wx:else class="flex_left flex_cell" @tap="chooseMd">
             <view class="flex_cell flex_left">
               <view>
                 <view class="font16 bold">{{selectedMd.title}}</view>
                 <view class="color-gray">距您{{selectedMd.distance}}</view>
               </view>
             </view>
-            <view class="flex_right pl10">
-              <icon class="al al-mjiantou-copy2 font18 color-gray"></icon>
-            </view>
-          </view>
+          </view> -->
         </view>
       </view>
-      <view class="padding10">
+      <!-- <view class="padding10">
         <view class="qy-tab" style="{{themeObject.borderStyle}}">
           <view class="tab-item {{dcType == 1 ? 'active' : ''}}" style="{{dcType == 1 ? themeObject.bgStyle : themeObject.colorStyle}}" @tap="switchType(1)">
             <text>外卖</text>
@@ -246,7 +253,7 @@
             <text>堂食</text>
           </view>
         </view>
-      </view>
+      </view> -->
     </view>
     <block wx:if="{{disList}}">
       <repeat for="{{listData}}" item="item" index="cindex">
@@ -296,7 +303,7 @@
                 </view>
               </view>
             </view>
-            <block wx:if="{{!clickCommCard && item.afterCard}}">
+            <!-- <block wx:if="{{!clickCommCard && item.afterCard}}">
               <view wx:if="{{item.cards.length}}" class="row-item flex_left card-area" data-data="{{item}}" data-index="{{cindex}}" @tap.stop="popupCardList">
                 <view class="flex_left color-gray">优惠券</view>
                 <view class="flex_cell flex_right" style="{{themeObject.colorStyle}}" wx:if="{{item.cardInfo}}">满{{item.cardInfo.ordermoney}}减{{item.cardInfo.money}}<text class="al al-mjiantou-copy2"></text></view>
@@ -306,7 +313,7 @@
                 <view class="flex_left color-gray">优惠券</view>
                 <view class="flex_cell flex_right">无可用</view>
               </view>
-            </block>
+            </block> -->
             <block wx:if="{{item.disPostageArea && dcType == 1}}">
               <view class="row-item db-flex" wx:if="{{item.postPostage && item.postPostage != '' && item.allowSend}}">
                 <view class="color-gray">运费</view>
@@ -317,12 +324,12 @@
               </view>
               <view class="row-item color-theme flex_right" style="{{themeObject.colorStyle}}" wx:if="{{!item.allowSend}}">该地区不在派送范围内</view>
             </block>
-            <block wx:if="{{saveMoneyMode && userInfo.regwid && userInfo.bindstatus && item.shengPrice && item.shengPrice != '' && item.shengPrice != '0.00'}}">
+            <!-- <block wx:if="{{saveMoneyMode && userInfo.regwid && userInfo.bindstatus && item.shengPrice && item.shengPrice != '' && item.shengPrice != '0.00'}}">
               <view class="row-item db-flex">
                 <view class="color-gray">合伙人省</view>
                 <view class="flex_cell flex_right" style="{{themeObject.colorStyle}}">-￥{{item.shengPrice}}</view>
               </view>
-            </block>
+            </block> -->
             <view class="row-item flex_left" wx:if="{{showRemark && !popupShow}}">
               <view class="color-gray pr10">备注</view>
               <view class="flex_cell flex_left">
@@ -332,15 +339,24 @@
           </view>
         </view>
       </repeat>
-      <view class="box-area mt10" wx:if="{{commCardList.length}}">
+      <view class="box-area mt10" wx:if="{{dcType === 3}}">
+        <view class="row-item flex_left">
+          <view class="color-gray pr10">桌号</view>
+          <view class="flex_cell flex_left">
+            <text wx:if="{{options.tableid}}">{{options.tableid}}</text>
+            <input wx:else class="w_100" bindinput="keyupZhuohao" placeholder="桌号" maxlength="30"/>
+          </view>
+        </view>
+      </view>
+      <view class="box-area mt10" wx:if="{{commCardList.length && dcType != 3}}">
         <view class="box-item">
           <view wx:if="{{commCardList.length}}" class="row-item flex_left card-area" @tap.stop="popupCommCardList">
-            <view class="flex_left color-gray">平台优惠券</view>
+            <view class="flex_left color-gray">优惠券</view>
             <view class="flex_cell flex_right" style="{{themeObject.colorStyle}}" wx:if="{{clickCommCard}}">满{{clickCommCard.ordermoney}}减{{clickCommCard.money}}<text class="al al-mjiantou-copy2"></text></view>
             <view class="flex_cell flex_right" style="{{themeObject.colorStyle}}" wx:else>请选择<text class="al al-mjiantou-copy2"></text></view>
           </view>
           <view wx:else class="row-item flex_left card-area">
-            <view class="flex_left color-gray">平台优惠券</view>
+            <view class="flex_left color-gray">优惠券</view>
             <view class="flex_cell flex_right">无可用</view>
           </view>
         </view>
@@ -360,14 +376,17 @@
     </block>
     <view class="blank-area"></view>
   </view>
-  <view wx:if="{{disPostageArea || dcType}}" class="page-box-bottom flex_right" :class="{'iphone' : isIpx}">
-    <view>
-      <text>合计</text>
-      <text class="color-theme" style="{{themeObject.colorStyle}}">￥{{payPrice}}</text>
+  <block wx:if="{{afterLoad}}">
+    <view wx:if="{{isClose}}" class="page-box-bottom flex_center" :class="{'iphone' : isIpx}" style="background-color:#434345;color:#fff;">很抱歉，本店已打烊</view>
+    <view wx:elif="{{disPostageArea || dcType}}" class="page-box-bottom flex_right" :class="{'iphone' : isIpx}">
+      <view>
+        <text>合计</text>
+        <text class="color-theme" style="{{themeObject.colorStyle}}">￥{{payPrice}}</text>
+      </view>
+      <view class="box-btn bg-theme color-white" style="{{themeObject.bgStyle}}" wx:if="{{allowSend}}" @tap="submitOrder">下单</view>
+      <view class="box-btn bg-gray color-white" wx:else>该地区无法派送</view>
     </view>
-    <view class="box-btn bg-theme color-white" style="{{themeObject.bgStyle}}" wx:if="{{allowSend}}" @tap="submitOrder">下单</view>
-    <view class="box-btn bg-gray color-white" wx:else>该地区无法派送</view>
-  </view>
+  </block>
   <popup :show.sync="popupShow" @close.user="cancel" height="60%">
     <popup-header
       leftText="关闭"
@@ -514,6 +533,7 @@ export default class AddOrder extends wepy.page {
   data = {
     userInfo: {},
     retailerInfo: {},
+    options: {},
     query: {},
     postage: null,
     postPostage: 0,
@@ -572,28 +592,20 @@ export default class AddOrder extends wepy.page {
     useCredit: 0,
     deductMoney: 0,
     saveMoneyMode: false,
-    dcType: 3, // 1: 外卖 2: 自取  3: 堂食
+    dcType: 1, // 1: 外卖 2: 自取  3: 堂食
     distance: 0,
-    SystemParams: {},
+    sysParams: {},
     showMdPop: false,
     mdList: [],
     selectedMd: null,
-    userLocation: {}
+    userLocation: {},
+    isClose: false,
+    afterLoad: false
   }
-
   ajaxOrder (postData) {
     postData.ordertype = this.dcType
-    if (this.dcType) {
+    if (this.selectedMd) {
       postData.storeid = this.selectedMd.id
-    }
-    if (this.query.fromfid) {
-      postData.fromfid = this.query.fromfid
-    }
-    if (this.query.agentfid) {
-      postData.agentfid = this.query.agentfid
-    }
-    if (this.query.liveid) {
-      postData.liveid = this.query.liveid
     }
     if (this.selectedCard) {
       postData.cardid = this.selectedCard.id
@@ -618,16 +630,10 @@ export default class AddOrder extends wepy.page {
       }
       shops.push(pushParama)
     }
-    let ajaxUrl = `${Config.BokaApi}/${Config[Config.ApiVersion]}/cart/cartToOrder`
-    let ajaxData = {}
-    if (this.options.orderid) {
-      ajaxUrl = `${Config.BokaApi}/${Config[Config.ApiVersion]}/order/orderAddItem`
-      ajaxData = {shops: shops, orderid: this.options.orderid}
-    } else {
-      ajaxData = {...postData, shops: shops, wid: this.globalData.Wid}
-    }
+    let ajaxData = {...postData, shops: shops, wid: this.globalData.Wid}
+    if (this.dcType === 3) ajaxData.tableid = this.tableid
     wepy.request({
-      url: ajaxUrl,
+      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/cart/cartToOrder`,
       data: ajaxData,
       method: 'POST'
     }).then(res => {
@@ -706,6 +712,7 @@ export default class AddOrder extends wepy.page {
       if (!res) return
       const data = res.data
       let retdata = data.data ? data.data : data
+      this.afterLoad = true
       this.totalQuantity = 0
       for (let i = 0; i < retdata.length; i++) {
         let curd = retdata[i]
@@ -738,10 +745,10 @@ export default class AddOrder extends wepy.page {
           }
         }
         retdata[i].truePrice = (parseFloat(curd.commonprice.replace(/,/g, '')) * curd.quantity).toFixed(2)
-        if (curd.sheng && curd.sheng !== '' && curd.sheng !== '0.00') {
-          let sheng = parseFloat(curd.sheng.replace(/,/g, '')) * curd.quantity
-          retdata[i].shengPrice = sheng.toFixed(2)
-        }
+        // if (curd.sheng && curd.sheng !== '' && curd.sheng !== '0.00') {
+        //   let sheng = parseFloat(curd.sheng.replace(/,/g, '')) * curd.quantity
+        //   retdata[i].shengPrice = sheng.toFixed(2)
+        // }
         retdata[i].postPostage = parseFloat(curd.postage.replace(/,/g, '')).toFixed(2)
         let total1 = parseFloat(curd.memberprice.replace(/,/g, '')) * curd.quantity
         if (curd.postage) {
@@ -916,12 +923,6 @@ export default class AddOrder extends wepy.page {
       })
     }
   }
-  handleShowData () {
-    this.clickCommCard = null
-    this.contentVal = ''
-    this.getAddressList()
-  }
-
   getRetailer () {
     // if (Config.Wid !== this.globalData.Wid) {
     //   wepy.request({
@@ -939,6 +940,7 @@ export default class AddOrder extends wepy.page {
   async onLoad (options) {
     this.query = options
     this.options = options
+    if (this.options.tableid) this.tableid = this.options.tableid
     this.$parent.globalData.address = null
     if (options.dctype) {
       this.dcType = parseInt(options.dctype)
@@ -957,56 +959,82 @@ export default class AddOrder extends wepy.page {
     Util.appInit(this.globalData, this)
     this.userInfo = this.globalData.userInfo
     this.MiniInfo = this.globalData.MiniInfo
-    this.SystemParams = this.globalData.SystemParams
+    this.sysParams = this.globalData.SystemParams
+    this.isClose = Util.checkClose(this.sysParams.closestore)
     this.mdList = this.globalData.Store
     let orderRemark = this.globalData.SystemParams.OrderRemark
     this.showRemark = orderRemark ? parseInt(orderRemark) : false
     let saveMoneyMode = this.globalData.SystemParams.SaveMoneyMode
     this.saveMoneyMode = saveMoneyMode ? parseInt(saveMoneyMode) : false
-    wepy.getLocation({
-      type: 'gcj02'
-    }).then(res => {
-      console.log('======================获取微信位置***************************8')
-      // 我的位置 {accuracy: 65, errMsg: 'getLocation:ok', horizontalAccuracy: 65, latitude: 28.24595, longitude: 113.08093, speed: -1 verticalAccuracy: 65}
-      console.log(res)
-      if (res.errMsg.indexOf('getLocation:fail:') > -1) {
-        wepy.showToast({
-          title: '获取位置信息失败，请查看您的手机定位是否开启',
-          icon: 'none',
-          duration: 2000
-        })
-        this.selectedMd = this.mdList[0]
-      } else {
-        this.userLocation = {latitude: res.latitude, longitude: res.longitude}
-        let minIndex = 0
-        let minDistance = 0
+    if (this.options.tableid) {
+      if (this.options.storeid) {
+        let storeid = parseInt(this.options.storeid)
         for (let i = 0; i < this.mdList.length; i++) {
           let curMd = this.mdList[i]
-          curMd.distance = Util.getDistance(res.latitude, res.longitude, curMd.latitude, curMd.longitude)
-          let dis = parseFloat(curMd.distance.replace('m', ''))
-          if (curMd.distance.indexOf('km') > -1) {
-            dis = parseFloat(curMd.distance.replace('km', '')) * 1000
-          }
-          if (i === 0) {
-            minIndex = 0
-            minDistance = dis
-          } else if (dis < minDistance) {
-            minIndex = i
-            minDistance = dis
-          }
-          if (this.options.storeid && parseInt(this.options.storeid) === curMd.id) {
+          if (curMd.id === storeid) {
             this.selectedMd = curMd
+            break
           }
         }
-        if (!this.selectedMd) this.selectedMd = this.mdList[minIndex]
+      } else {
+        this.selectedMd = this.mdList[0]
       }
-    }, error => {
-      wepy.showToast({
-        title: '获取位置信息失败，请查看您的手机定位是否开启',
-        icon: 'none',
-        duration: 2000
+    } else {
+      wx.getLocation({
+        type: 'gcj02',
+        success: (res) => {
+          console.log('======================获取微信位置***************************8')
+          // 我的位置 {accuracy: 65, errMsg: 'getLocation:ok', horizontalAccuracy: 65, latitude: 28.24595, longitude: 113.08093, speed: -1 verticalAccuracy: 65}
+          console.log(res)
+          this.userLocation = {latitude: res.latitude, longitude: res.longitude}
+          let minIndex = 0
+          let minDistance = 0
+          for (let i = 0; i < this.mdList.length; i++) {
+            let curMd = this.mdList[i]
+            curMd.distance = Util.getDistance(res.latitude, res.longitude, curMd.latitude, curMd.longitude)
+            let dis = parseFloat(curMd.distance.replace('m', ''))
+            if (curMd.distance.indexOf('km') > -1) {
+              dis = parseFloat(curMd.distance.replace('km', '')) * 1000
+            }
+            if (i === 0) {
+              minIndex = 0
+              minDistance = dis
+            } else if (dis < minDistance) {
+              minIndex = i
+              minDistance = dis
+            }
+            if (this.options.storeid && parseInt(this.options.storeid) === curMd.id) {
+              this.selectedMd = curMd
+            }
+          }
+          if (!this.selectedMd) this.selectedMd = this.mdList[minIndex]
+        },
+        fail: (res) => {
+          console.log('======================获取微信位置失败***************************8')
+          // 我的位置 {accuracy: 65, errMsg: 'getLocation:ok', horizontalAccuracy: 65, latitude: 28.24595, longitude: 113.08093, speed: -1 verticalAccuracy: 65}
+          console.log(res)
+          if (res.errMsg.indexOf('getLocation:fail') > -1) {
+            wepy.showToast({
+              title: '获取位置信息失败，请查看您的手机定位是否开启',
+              icon: 'none',
+              duration: 2000
+            })
+          }
+          if (this.options.storeid) {
+            let storeid = parseInt(this.options.storeid)
+            for (let i = 0; i < this.mdList.length; i++) {
+              let curMd = this.mdList[i]
+              if (curMd.id === storeid) {
+                this.selectedMd = curMd
+                break
+              }
+            }
+          } else {
+            this.selectedMd = this.mdList[0]
+          }
+        }
       })
-    })
+    }
     this.getData()
     this.getRetailer()
     this.getCommList()
@@ -1017,7 +1045,16 @@ export default class AddOrder extends wepy.page {
       this.$apply()
     })
   }
-
+  handleShowData () {
+    this.clickCommCard = null
+    this.contentVal = ''
+    this.getAddressList()
+    if (this.inHide) {
+      this.inHide = false
+      this.isClose = Util.checkClose(this.sysParams.closestore)
+    }
+    this.$apply()
+  }
   onShow () {
     if (this.$parent.globalData.flag.bokaAuth) {
       this.handleShowData()
@@ -1027,8 +1064,14 @@ export default class AddOrder extends wepy.page {
       }
     }
   }
-
   onUnload () {
+    this.inHide = true
+    this.selectedCard = null
+    this.cardInfo = null
+    this.$apply()
+  }
+  onHide () {
+    this.inHide = true
     this.selectedCard = null
     this.cardInfo = null
     this.$apply()
@@ -1064,10 +1107,10 @@ export default class AddOrder extends wepy.page {
       }
     }
     item.truePrice = (parseFloat(item.commonprice.replace(/,/g, '')) * item.quantity).toFixed(2)
-    if (item.sheng && item.sheng !== '' && item.sheng !== '0.00') {
-      let sheng = parseFloat(item.sheng.replace(/,/g, '')) * item.quantity
-      item.shengPrice = sheng.toFixed(2)
-    }
+    // if (item.sheng && item.sheng !== '' && item.sheng !== '0.00') {
+    //   let sheng = parseFloat(item.sheng.replace(/,/g, '')) * item.quantity
+    //   item.shengPrice = sheng.toFixed(2)
+    // }
     item.selectedCard = null
     item.cardInfo = null
     this.listData[index] = item
@@ -1124,16 +1167,19 @@ export default class AddOrder extends wepy.page {
       for (let i = 0; i < this.listData.length; i++) {
         let item = this.listData[i]
         item.truePrice = (parseFloat(item.commonprice.replace(/,/g, '')) * item.quantity).toFixed(2)
-        if (item.sheng && item.sheng !== '' && item.sheng !== '0.00') {
-          let sheng = parseFloat(item.sheng.replace(/,/g, '')) * item.quantity
-          item.shengPrice = sheng.toFixed(2)
-        }
+        // if (item.sheng && item.sheng !== '' && item.sheng !== '0.00') {
+        //   let sheng = parseFloat(item.sheng.replace(/,/g, '')) * item.quantity
+        //   item.shengPrice = sheng.toFixed(2)
+        // }
         item.selectedCard = null
         item.cardInfo = null
       }
       this.afterClickCard = true
       this.changeAddress()
       this.$apply()
+    },
+    keyupZhuohao (e) {
+      this.tableid = e.detail.value
     },
     keyupContent (e) {
       const dataset = e.currentTarget.dataset
@@ -1212,22 +1258,28 @@ export default class AddOrder extends wepy.page {
       wepy.navigateTo({url: '/packageB/pages/address?mod=inner'})
     },
     submitOrder () {
-      if (!this.submiting) {
-        let params = {}
-        if (!this.selectAddress) {
-          wepy.showToast({
-            title: '请选择地址',
-            icon: 'none'
-          })
-          return false
-        }
-        this.submiting = true
-        this.isShowLoading = true
-        params.addressid = this.selectAddress.id
-        this.payData = params
-        this.ajaxOrder(this.payData)
-        this.$apply()
+      if (this.submiting) return false
+      let params = {}
+      if (this.dcType === 1 && !this.selectAddress) {
+        wepy.showToast({
+          title: '请选择地址',
+          icon: 'none'
+        })
+        return false
       }
+      if (this.dcType === 3 && (!this.tableid || this.tableid === '')) {
+        wepy.showToast({
+          title: '请输入桌号',
+          icon: 'none'
+        })
+        return false
+      }
+      this.submiting = true
+      this.isShowLoading = true
+      if (this.dcType === 1) params.addressid = this.selectAddress.id
+      this.payData = params
+      this.ajaxOrder(this.payData)
+      this.$apply()
     },
     subNumber (e) {
       const dataset = e.currentTarget.dataset

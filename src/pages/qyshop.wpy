@@ -20,20 +20,22 @@
     background-color:#fff;
     .news-swiper-outer{top:20rpx;}
   }
-  .list-container{}
-  .list-container.normal{display:flex;padding-top:20rpx;}
-  .list-container.fixed{}
-  .left-area.fixed{top:0;position:fixed;left:0;;bottom:0;}
-  .left-area.havebanner{
-    /*top:240rpx;*/
+  .list-container{
+    .list-container-inner.normal{display:flex;padding-top:20rpx;}
+    .list-container-inner.fixed{}
+    .v-search-area.fixed{position:fixed;left:0;top:0;right:0;background-color:#fff;z-index:1;}
   }
-  .left-area.fixed.havebanner{top:0;position:fixed;left:0;bottom:0;}
+  .left-area.fixed{top:100rpx;position:fixed;left:0;bottom:116rpx;overflow-y:auto;}
+  .left-area.fixed.havecart{bottom:232rpx;}
   .left-area{
     /*position:fixed;left:0;top:130rpx;bottom:0;*/
     overflow-y:auto;
     width:200rpx;
     .class-list{
       width:100%;
+      .item.search{
+        .al{font-size:40rpx;margin-right:10rpx;}
+      }
       .item{
         position:relative;width:100%;padding:20rpx 0;background-color:#f2f2f2;
         .txt{
@@ -57,37 +59,11 @@
     .c-txt{line-height:50rpx;font-weight:bold;padding-top:20rpx;font-size:30rpx;}
   }
   .product-list{
-    .item:not(:first-child){margin-top:20rpx;}
     .item{
-      /*
-      position:relative;padding-bottom:55%;
+      display:flex;margin-top:20rpx;
       .pic{
-        position:absolute;left:0;top:0;right:0;bottom:0;
-        box-shadow: 0 2rpx 6rpx rgba(0, 0, 0, 0.5);border-radius:10rpx;
-        image{width:100%;height:100%;border-radius:10rpx;}
-      }
-      .txt{
-        position:absolute;left:0;right:0;bottom:0;
-        padding:0 20rpx;box-sizing: border-box;
-        overflow: hidden;display: block;white-space: nowrap;text-overflow: ellipsis;
-        background-color:rgba(0,0,0,0.5);color:#fff;
-        text-align:left;line-height:60rpx;
-      }
-      .ico-txt{
-        position:absolute;left:0;top:0;right:0;bottom:0;z-index:2;
-        background-color:rgba(255,255,255,0.5);color:#fff;
-        display:flex;justify-content:center;align-items: center;
-        .ico{
-          width:100rpx;height:100rpx;border-radius:50%;
-          background-color:rgba(0,0,0,0.5);color:#fff;
-          display:flex;justify-content:center;align-items: center;
-        }
-      }
-      */
-      display:flex;
-      .pic{
-        width:175rpx;margin-right:20rpx;position:relative;
-        image{width:175rpx;height:175rpx;border-radius:10rpx;border:#ccc 2rpx solid;box-sizing: border-box;}
+        width:185rpx;margin-right:20rpx;position:relative;
+        image{width:185rpx;height:185rpx;border-radius:10rpx;border:#ccc 2rpx solid;box-sizing: border-box;}
         .ico-txt{
           position:absolute;left:0;top:0;right:0;bottom:0;z-index:2;
           background-color:rgba(255,255,255,0.5);color:#fff;
@@ -117,13 +93,13 @@
           content:'';display:block;clear:both;width:0;overflow:hidden;
         }
         .row3{
-          width:100%;height:40rpx;margin-top:10rpx;padding-bottom:5rpx;box-sizing: border-box;
+          width:100%;height:50rpx;margin-top:10rpx;padding-bottom:5rpx;box-sizing: border-box;
           .l-cell{float:left;font-weight:bold;}
           .r-cell{
             float:right;display:flex;justify-content: flex-end;align-items: center;
-            .ico{width:40rpx;height:40rpx;border-radius:50%;text-align:center;line-height:35rpx;}
+            .ico{width:50rpx;height:50rpx;border-radius:50%;text-align:center;line-height:45rpx;box-sizing:border-box;font-size:32rpx;}
             .border-ico{border-style:solid;border-width:2rpx;}
-            .txt{width:60rpx;height:40rpx;display:flex;justify-content:center;align-items:center;}
+            .txt{width:60rpx;height:50rpx;display:flex;justify-content:center;align-items:center;}
           }
         }
       }
@@ -182,8 +158,8 @@
     .item{
       display:flex;width:100%;
       .pic{
-        width:175rpx;margin-right:20rpx;position:relative;
-        image{width:175rpx;height:175rpx;border-radius:10rpx;border:#ccc 2rpx solid;box-sizing: border-box;}
+        width:185rpx;margin-right:20rpx;position:relative;
+        image{width:185rpx;height:185rpx;border-radius:10rpx;border:#ccc 2rpx solid;box-sizing: border-box;}
         .ico-txt{
           position:absolute;left:0;top:0;right:0;bottom:0;z-index:2;
           background-color:rgba(255,255,255,0.5);color:#fff;
@@ -217,9 +193,9 @@
           .l-cell{float:left;font-weight:bold;}
           .r-cell{
             float:right;display:flex;justify-content: flex-end;align-items: center;
-            .ico{width:40rpx;height:40rpx;border-radius:50%;text-align:center;line-height:35rpx;}
+            .ico{width:50rpx;height:50rpx;border-radius:50%;text-align:center;line-height:45rpx;box-sizing:border-box;font-size:32rpx;}
             .border-ico{border-style:solid;border-width:2rpx;}
-            .txt{width:60rpx;height:40rpx;display:flex;justify-content:center;align-items:center;}
+            .txt{width:60rpx;height:50rpx;display:flex;justify-content:center;align-items:center;}
           }
         }
       }
@@ -241,7 +217,7 @@
         <view class="flex_cell flex_left" @tap="chooseMd">
           <view>
             <view class="font16 bold">{{selectedMd.title}}</view>
-            <view class="color-gray">距您{{selectedMd.distance}}</view>
+            <view class="color-gray" wx:if="{{selectedMd.distance}}">距您{{selectedMd.distance}}</view>
           </view>
         </view>
         <view class="flex_right pl10">
@@ -277,72 +253,123 @@
           </view>
         </view>
       </block>
-      <view class="list-container {{isScroll ? 'fixed' : 'normal'}}">
-        <view class="left-area {{isScroll ? 'fixed' : ''}} {{bannerData.length ? 'havebanner' : ''}}">
+      <view class="list-container" id="list-container">
+        <view id="search-container" class="v-search-area flex_center {{isScroll ? 'fixed' : ''}}">
+          <view class="search-outer flex_left">
+            <view class="flex_left flex_cell">
+              <input class="input" placeholder="搜索" bindinput="setKeyword" value="{{keyword}}" bindconfirm="searchKeyword" confirm-type="search" />
+            </view>
+            <view wx:if="{{keyword}}" class="flex_center color-gray font12 pl10 pr10" bindtap="cancelSearch">取消</view>
+            <view wx:else class="flex_center color-gray font12 pl10 pr10"><text class="al al-sousuo font20"></text></view>
+          </view>
+        </view>
+        <!-- <view wx:if="{{isScroll}}" class="left-area fixed {{cartList.length ? 'havecart' : ''}} {{bannerData.length ? 'havebanner' : ''}}">
           <view wx:if="disClass" class="class-list">
             <repeat for="{{classData}}" item="item" index="index">
-              <view id="class-{{item.id}}" class="item {{item.clicked ? 'active' : ''}}" bindtap="clickClass({{item}}, {{index}})">
-                <view class="line" style="{{item.clicked ? themeObject.bgStyle : ''}}"></view>
-                <view class="txt" style="{{item.clicked ? themeObject.colorStyle : ''}}">{{item.title}}</view>
+              <view id="class-{{item.id}}" class="item {{classid == item.id ? 'active' : ''}}" bindtap="clickClass({{item}}, {{index}})">
+                <view class="line" style="{{classid == item.id ? themeObject.bgStyle : ''}}"></view>
+                <view class="txt" style="{{classid == item.id ? themeObject.colorStyle : ''}}">{{item.title}}</view>
               </view>
             </repeat>
           </view>
-        </view>
-        <view id="right-container" class="right-area {{isScroll ? 'fixed' : 'normal'}}">
-          <block wx:if="disList">
-            <repeat for="{{classData}}" item="citem" index="cindex">
-              <view id="product-{{citem.id}}" class="class-container">
-                <view class="c-txt">{{citem.title}}</view>
-                <view class="product-list">
-                  <!-- <repeat for="{{listObject[citem.id]}}" item="item" index="index"> -->
-                  <repeat for="{{productList}}" item="item" index="index">
-                    <!-- <view class="item" bindtap="toProduct({{item}},{{index}})">
-                      <view class="ico-txt" wx:if="{{item.storage <= 0}}">
-                        <view class="ico">已售罄</view>
-                      </view>
-                      <view class="pic">
-                        <image mode="aspectFill" src="{{item.photo}}"></image>
-                      </view>
-                      <view class="txt">{{item.title}}</view>
-                    </view> -->
-                    <view class="item" wx:if="{{item.classid == citem.id}}">
-                      <view class="pic" @tap="toProduct({{item}},{{index}})">
-                        <view class="ico-txt" wx:if="{{item.storage <= 0}}">
-                          <view class="ico">已售罄</view>
-                        </view>
-                        <image mode="aspectFill" src="{{item.photo}}"></image>
-                      </view>
-                      <view class="txt-cell">
-                        <view class="row1" @tap="toProduct({{item}},{{index}})">{{item.title}}</view>
-                        <view class="row2" @tap="toProduct({{item}},{{index}})">
-                          <view class="txt-btn" wx:if="{{item.minmemberprice && item.minmemberprice != 0 && item.minmemberprice != '0.00' && item.minmemberprice != item.minprice}}">
-                            <view class="l-btn">￥{{item.minmemberprice}}</view>
-                            <view class="r-btn" style="{{themeObject.bgStyle}}">会员</view>
-                          </view>
-                        </view>
-                        <view class="row3">
-                          <view class="l-cell" style="{{themeObject.colorStyle}}" @tap="toProduct({{item}},{{index}})">
-                            <span>￥</span><span class="font16">{{item.minprice}}</span>
-                          </view>
-                          <view class="r-cell" wx:if="{{item.storage && !isClose}}">
-                            <view wx:if="{{item.cart_quantity}}" class="ico border-ico" style="{{themeObject.borderStyle}}{{themeObject.colorStyle}}" catchtap="cutToCart({{item}},{{index}})">-</view>
-                            <view wx:if="{{item.cart_quantity}}" class="txt">{{item.cart_quantity}}</view>
-                            <view class="ico color-white" style="{{item.cart_quantity ? themeObject.bgStyle : 'background-color:#ccc;'}}" catchtap="addToCart({{item}},{{index}})">+</view>
-                          </view>
-                        </view>
-                      </view>
-                    </view>
-                  </repeat>
+        </view> -->
+        <view class="list-container-inner {{isScroll ? 'fixed' : 'normal'}}">
+          <view class="left-area {{isScroll ? 'fixed' : ''}} {{cartList.length ? 'havecart' : ''}} {{bannerData.length ? 'havebanner' : ''}}">
+            <view wx:if="disClass" class="class-list">
+              <repeat for="{{classData}}" item="item" index="index">
+                <view id="class-{{item.id}}" class="item {{classid == item.id ? 'active' : ''}}" bindtap="clickClass({{item}}, {{index}})">
+                  <view class="line" style="{{classid == item.id ? themeObject.bgStyle : ''}}"></view>
+                  <view class="txt" style="{{classid == item.id ? themeObject.colorStyle : ''}}">{{item.title}}</view>
                 </view>
+              </repeat>
+            </view>
+          </view>
+          <view id="right-container" class="right-area {{isScroll ? 'fixed' : 'normal'}}">
+            <block wx:if="{{afterSearch}}">
+              <block wx:if="{{disSearch}}">
+                <view class="product-list">
+                  <view class="item" wx:if="{{!searchData.length}}">暂无搜索结果</view>
+                  <block wx:else>
+                    <repeat for="{{searchData}}" item="item" index="index">
+                      <view class="item">
+                        <view class="pic" @tap="toProduct({{item}},{{index}})">
+                          <view class="ico-txt" wx:if="{{item.moderate != 1}}">
+                            <view class="ico">已下架</view>
+                          </view>
+                          <image mode="aspectFill" src="{{item.photo}}"></image>
+                        </view>
+                        <view class="txt-cell">
+                          <view class="row1" @tap="toProduct({{item}},{{index}})">{{item.title}}</view>
+                          <view class="row2" @tap="toProduct({{item}},{{index}})">
+                            <view class="txt-btn" wx:if="{{item.minmemberprice && item.minmemberprice != 0 && item.minmemberprice != '0.00' && item.minmemberprice != item.minprice}}">
+                              <view class="l-btn">￥{{item.minmemberprice}}</view>
+                              <view class="r-btn" style="{{themeObject.bgStyle}}">会员</view>
+                            </view>
+                          </view>
+                          <view class="row3">
+                            <view class="l-cell" style="{{themeObject.colorStyle}}" @tap="toProduct({{item}},{{index}})">
+                              <span>￥</span><span class="font16">{{item.minprice}}</span>
+                            </view>
+                            <view class="r-cell" wx:if="{{item.moderate == 1 && !isClose}}">
+                              <view wx:if="{{item.cart_quantity}}" class="ico border-ico" style="{{themeObject.borderStyle}}{{themeObject.colorStyle}}" catchtap="cutToCart({{item}},{{index}})">-</view>
+                              <view wx:if="{{item.cart_quantity}}" class="txt">{{item.cart_quantity}}</view>
+                              <view class="ico color-white" style="{{themeObject.bgStyle}}" catchtap="addToCart({{item}},{{index}})">+</view>
+                            </view>
+                          </view>
+                        </view>
+                      </view>
+                    </repeat>
+                  </block>
+                </view>
+              </block>
+            </block>
+            <block wx:else>
+              <view class="product-list" wx:if="{{disList}}">
+                <repeat for="{{classData}}" item="citem" index="cindex">
+                  <view id="product-{{citem.id}}" class="class-container">
+                    <view class="c-txt">{{citem.title}}</view>
+                    <view class="product-list">
+                      <repeat for="{{productList}}" item="item" index="index">
+                        <view class="item" wx:if="{{item.classid == citem.id}}">
+                          <view class="pic" @tap="toProduct({{item}},{{index}})">
+                            <view class="ico-txt" wx:if="{{item.moderate != 1}}">
+                              <view class="ico">已下架</view>
+                            </view>
+                            <image mode="aspectFill" src="{{item.photo}}"></image>
+                          </view>
+                          <view class="txt-cell">
+                            <view class="row1" @tap="toProduct({{item}},{{index}})">{{item.title}}</view>
+                            <view class="row2" @tap="toProduct({{item}},{{index}})">
+                              <view class="txt-btn" wx:if="{{item.minmemberprice && item.minmemberprice != 0 && item.minmemberprice != '0.00' && item.minmemberprice != item.minprice}}">
+                                <view class="l-btn">￥{{item.minmemberprice}}</view>
+                                <view class="r-btn" style="{{themeObject.bgStyle}}">会员</view>
+                              </view>
+                            </view>
+                            <view class="row3">
+                              <view class="l-cell" style="{{themeObject.colorStyle}}" @tap="toProduct({{item}},{{index}})">
+                                <span>￥</span><span class="font16">{{item.minprice}}</span>
+                              </view>
+                              <view class="r-cell" wx:if="{{item.moderate == 1 && !isClose}}">
+                                <view wx:if="{{item.cart_quantity}}" class="ico border-ico" style="{{themeObject.borderStyle}}{{themeObject.colorStyle}}" catchtap="cutToCart({{item}},{{index}})">-</view>
+                                <view wx:if="{{item.cart_quantity}}" class="txt">{{item.cart_quantity}}</view>
+                                <view class="ico color-white" style="{{themeObject.bgStyle}}" catchtap="addToCart({{item}},{{index}})">+</view>
+                              </view>
+                            </view>
+                          </view>
+                        </view>
+                      </repeat>
+                    </view>
+                  </view>
+                </repeat>
               </view>
-            </repeat>
-          </block>
+            </block>
+          </view>
         </view>
       </view>
     </block>
   </view>
   <bottomMenu
-    current="qyshop"
+    current="home"
     :allowNav.sync="allowNav"
     :globalData.sync="globalData"
     :isIpx.sync="isIpx"
@@ -390,7 +417,7 @@
           <repeat for="{{cartList}}" item="item" index="index">
             <view class="item">
               <view class="pic" @tap="toProduct({{item}},{{index}})">
-                <image wx:if="{{item.cartOption}}" mode="aspectFill" src="{{item.cartOption.photo}}"></image>
+                <image wx:if="{{item.cartOption && item.cartOption.photo && item.cartOption.photo != ''}}" mode="aspectFill" src="{{item.cartOption.photo}}"></image>
                 <image wx:else mode="aspectFill" src="{{item.photo}}"></image>
               </view>
               <view class="txt-cell">
@@ -398,11 +425,20 @@
                 <view class="row2 color-gray" wx:if="{{item.cartOption}}" @tap="toProduct({{item}},{{index}})">{{item.cartOption.title}}</view>
                 <view class="row3">
                   <view class="l-cell" style="{{themeObject.colorStyle}}" @tap="toProduct({{item}},{{index}})">
-                    <span>￥</span><span class="font16">{{item.minprice}}</span>
+                    <span>￥</span>
+                    <span class="font16">{{item.cartprice}}</span>
+                    <!-- <span class="font16" wx:if="{{item.cartOption}}">{{item.cartOption.price}}</span>
+                    <span class="font16" wx:else>{{item.minprice}}</span> -->
                   </view>
-                  <view class="r-cell" wx:if="{{item.storage && !isClose}}">
-                    <view wx:if="{{item.cart_quantity}}" class="ico border-ico" style="{{themeObject.borderStyle}}{{themeObject.colorStyle}}" catchtap="cutToCart1({{item}},{{index}})">-</view>
-                    <view wx:if="{{item.cart_quantity}}" class="txt">{{item.cart_quantity}}</view>
+                  <view class="r-cell" wx:if="{{!isClose}}">
+                    <block wx:if="{{item.cartOption}}">
+                      <view wx:if="{{item.cartOption.cart_quantity}}" class="ico border-ico" style="{{themeObject.borderStyle}}{{themeObject.colorStyle}}" catchtap="cutToCart1({{item}},{{index}})">-</view>
+                      <view wx:if="{{item.cartOption.cart_quantity}}" class="txt">{{item.cartOption.cart_quantity}}</view>
+                    </block>
+                    <block wx:else>
+                      <view wx:if="{{item.cart_quantity}}" class="ico border-ico" style="{{themeObject.borderStyle}}{{themeObject.colorStyle}}" catchtap="cutToCart1({{item}},{{index}})">-</view>
+                      <view wx:if="{{item.cart_quantity}}" class="txt">{{item.cart_quantity}}</view>
+                    </block>
                     <view class="ico color-white" style="{{item.cart_quantity ? themeObject.bgStyle : 'background-color:#ccc;'}}" catchtap="addToCart1({{item}},{{index}})">+</view>
                   </view>
                 </view>
@@ -449,7 +485,6 @@
 import wepy from 'wepy'
 import Config from '@/config'
 import Util from '@/libs/util'
-import Time from '@/libs/time'
 import BottomMenu from '@/components/bottomMenu'
 import Auth from '@/components/auth'
 import QyproductOptions from '@/components/store/qyproduct-options'
@@ -474,7 +509,6 @@ export default class extends wepy.page {
     disClass: false,
     classid: 0,
     classIndex: 0,
-    listObject: {},
     isScroll: false,
     allowNav: false,
     isIpx: false,
@@ -496,104 +530,196 @@ export default class extends wepy.page {
     mdList: [],
     selectedMd: null,
     userLocation: {},
-    showMdPop: false
+    showMdPop: false,
+    classObject: {},
+    homeData: {},
+    scrollDistance: 42,
+    searchData: [],
+    afterSearch: false,
+    keyword: '',
+    disSearch: false
   }
   setClassActive (index) {
-    for (let i = 0; i < this.classData.length; i++) {
-      if (i !== index && this.classData[i].clicked) {
-        this.classData[i].clicked = false
-        break
-      }
-    }
     this.classid = this.classData[index].id
     this.classIndex = index
-    this.classData[index].clicked = true
+  }
+  computeArea () {
+    let _this = this
+    let query = wx.createSelectorQuery()
+    for (let i = 0; i < _this.classData.length; i++) {
+      query.select(`#product-${_this.classData[i].id}`).boundingClientRect()
+    }
+    // query.select(`#right-container`).boundingClientRect()
+    // query.select(`#search-container`).boundingClientRect()
+    // query.select(`#list-container`).boundingClientRect()
+    query.select(`#list-container`).boundingClientRect()
+    query.select(`#search-container`).boundingClientRect()
+    _this.eleArea = {}
+    query.exec(function (res) {
+      console.log('after computeArea')
+      console.log(res)
+      for (let i = 0; i < _this.classData.length; i++) {
+        _this.eleArea[_this.classData[i].id] = {
+          classid: _this.classData.id,
+          height: res[i].height
+        }
+      }
+      // _this.rcontainerTop = res[_this.classData.length + 1].top
+      // _this.scrollDistance = res[_this.classData.length + 1].height
+      // console.log(res[_this.classData.length + 1])
+      // console.log(_this.rcontainerTop)
+      _this.scrollDistance = res[_this.classData.length].top
+      _this.searchHeight = res[_this.classData.length + 1].height
+      console.log('内容区域')
+      console.log(res[_this.classData.length])
+    })
+  }
+  scrollToClass (e) {
+    let _this = this
+    if (_this.afterSearch) return false
+    _this.scrollIndex = _this.classIndex
+    _this.scrollToClassIng = true
+    let eleHeight = 0
+    if (_this.classIndex > 0) {
+      for (let i = 0; i < _this.classIndex; i++) {
+        eleHeight += _this.eleArea[_this.classData[i].id].height
+      }
+    }
+    wepy.pageScrollTo({
+      // scrollTop: eleHeight + _this.rcontainerTop - _this.scrollDistance,
+      scrollTop: eleHeight - _this.searchHeight + _this.scrollDistance,
+      duration: 300,
+      success: () => {
+      }
+    })
+    setTimeout(() => {
+      console.log('滚动到分类结束了')
+      let query = wx.createSelectorQuery()
+      query.select(`#right-container`).boundingClientRect()
+      // query.select(`#search-container`).boundingClientRect()
+      query.exec(function (res) {
+        let rightContainer = res[0]
+        console.log(rightContainer)
+        if (rightContainer.top <= _this.scrollDistance) {
+          _this.isScroll = true
+        } else {
+          _this.isScroll = false
+        }
+        _this.$apply()
+      })
+      _this.afterClickClass = false
+      _this.scrollToClassIng = false
+      _this.$apply()
+    }, 400)
+    _this.$apply()
   }
   onPageScroll (e) {
     let _this = this
+    if (_this.afterClickClass || _this.disSearch) return false
     let query = wx.createSelectorQuery()
     query.select(`#right-container`).boundingClientRect()
-    query.select(`#product-${_this.classid}`).boundingClientRect()
-    query.select(`#product-${_this.classData[_this.scrollIndex].id}`).boundingClientRect()
+    let eleData = []
+    for (let i = 0; i < _this.classData.length; i++) {
+      let curid = _this.classData[i].id
+      if (_this.listObject[curid].length) {
+        query.select(`#product-${curid}`).boundingClientRect()
+        eleData.push({classid: curid})
+      }
+    }
+    query.select(`#list-container`).boundingClientRect()
+    query.select(`#search-container`).boundingClientRect()
     query.exec(function (res) {
       let rightContainer = res[0]
-      let productContainer = res[1]
-      let scrollContainer = res[2]
-      let scrollTop = productContainer.top - rightContainer.top
-      _this.topObject[_this.classid].top = productContainer.top
-      if (_this.afterClickClass) {
-        if (scrollTop > rightContainer.top) {
+      let listContainer = res[eleData.length + 1]
+      let searchContainer = res[eleData.length + 2]
+      // console.log('in onPageScroll')
+      console.log(rightContainer)
+      console.log(listContainer)
+      console.log(searchContainer)
+      if (_this.afterClickClass || _this.afterSearch) {
+        console.log('来滚动了')
+        if (listContainer.top <= 0) {
           _this.isScroll = true
         } else {
           _this.isScroll = false
         }
+        // if (rightContainer.top <= _this.scrollDistance) {
+        //   _this.isScroll = true
+        // } else {
+        //   _this.isScroll = false
+        // }
       } else {
-        // console.log('in pagescroll')
-        // console.log('this.scrollIndex=', _this.scrollIndex)
-        // console.log(e)
-        // console.log(_this.topObject)
-        // console.log(rightContainer)
-        // console.log(productContainer)
-        // console.log(scrollContainer)
-        // console.log(_this.afterClickClass)
-        // console.log('this.classid=', _this.classid)
-        if (e.scrollTop > rightContainer.top) {
-          let est = e.scrollTop
+        console.log('进入到了滚动事件里来了')
+        if (listContainer.top <= 0) {
           _this.isScroll = true
-          let prevClass = {}
-          let nextClass = {}
-          let prevIndex = _this.scrollIndex - 1
-          if (prevIndex >= 0) {
-            let prevClassid = _this.classData[prevIndex].id
-            prevClass = _this.topObject[prevClassid]
-          }
-          let nextIndex = _this.scrollIndex + 1
-          if (nextIndex < _this.classData.length) {
-            let nextClassid = _this.classData[nextIndex].id
-            nextClass = _this.topObject[nextClassid]
-          }
-          // console.log(prevClass)
-          // console.log(nextClass)
-          if (prevClass && prevClass.top) {
-            if (est < scrollContainer.top) {
-              _this.scrollIndex = prevClass.index
-              _this.classid = prevClass.id
-              _this.classIndex = prevIndex
-              _this.setClassActive(_this.classIndex)
-            }
-          } else if (nextClass && nextClass.top) {
-            if (est >= nextClass.top) {
-              _this.scrollIndex = nextClass.index
-              _this.classid = nextClass.id
-              _this.classIndex = nextIndex
-              _this.setClassActive(_this.classIndex)
-            }
-          }
         } else {
           _this.isScroll = false
-          _this.scrollIndex = 0
-          _this.classid = _this.classData[0].id
-          _this.setClassActive(0)
+        }
+        // if (rightContainer.top <= _this.scrollDistance) {
+        //   _this.isScroll = true
+        // } else {
+        //   _this.isScroll = false
+        // }
+        for (let i = 1; i <= eleData.length; i++) {
+          let eleContainer = res[i]
+          if (eleContainer.top < _this.scrollDistance + _this.searchHeight) {
+            _this.classid = eleData[i - 1].classid
+            _this.classIndex = _this.topObject[_this.classid].index
+            _this.setClassActive(_this.classIndex)
+          }
         }
       }
-      // console.log('\n\n\n\n')
+      console.log('\n\n\n\n')
       _this.$apply()
     })
+  }
+  handleSearch () {
+    wepy.showLoading()
+    this.searchData = []
+    for (let i = 0; i < this.productList.length; i++) {
+      let curd = {...this.productList[i]}
+      console.log(curd.title.search(this.keyword))
+      if (curd.title.search(this.keyword) > -1) {
+        curd.pindex = i
+        this.disSearch = true
+        this.searchData.push(curd)
+      }
+    }
+    wepy.hideLoading()
+    this.disSearch = true
+    this.afterSearch = true
+    this.$apply()
+    // wepy.request({
+    //   url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/miniprogram/productlist`,
+    //   data: {limit: 1000, keyword: this.keyword}
+    // }).then(res => {
+    //   wepy.hideLoading()
+    //   const data = res.data
+    //   this.isLoading = false
+    //   if (data.code === 0) {
+    //     let retdata = data.data
+    //     this.searchData = retdata
+    //     this.disSearch = true
+    //     this.$apply()
+    //   }
+    // })
   }
   getProductList (toClass, callback) {
     wepy.request({
       url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/miniprogram/productlist`,
-      data: {classid: this.classid, limit: this.limit, page: this.pageObject[this.classid].page}
+      // data: {classid: this.classid, limit: this.limit, page: this.pageObject[this.classid].page}
+      data: {limit: this.limit, page: this.pageStart}
     }).then(res => {
-      const retdata = res.data
+      const data = res.data
       this.isLoading = false
       this.allowNav = true
-      if (retdata.code === 0) {
-        if (this.listObject[this.classid]) {
-          this.listObject[this.classid] = this.listObject[this.classid].concat(retdata.data)
-        } else {
-          this.listObject[this.classid] = retdata.data
+      if (data.code === 0) {
+        let retdata = data.data
+        for (let i = 0; i < retdata.length; i++) {
+          let curp = retdata[i]
+          this.listObject[curp.classid].push(curp)
         }
+        this.productList = this.productList.concat(retdata)
         callback && callback()
         this.$apply()
         if (toClass) {
@@ -615,134 +741,186 @@ export default class extends wepy.page {
       }
     })
   }
-  checkClose () {
-    let now = new Date().getTime()
-    let nowstr = new Time(now).dateFormat('hh:mm:ss')
-    console.log('当前时间=', nowstr)
-    let closestr = this.sysParams.closestore
-    console.log('闭店时间=', closestr)
-    let curTime = new Date(`2021/01/01 ${nowstr}`).getTime()
-    console.log('当前时间=', curTime)
-    let closeTime = new Date(`2021/01/01 ${closestr}`).getTime()
-    console.log('闭店时间=', closeTime)
-    if (curTime >= closeTime) {
-      this.isClose = true
+  handleHomeData (retdata) {
+    this.totalPrice = 0
+    this.orderPrice = '0.00'
+    this.cartNumber = 0
+    this.cartList = []
+    this.listObject = {}
+    let fpclass = retdata.fpclass
+    if (fpclass.length) {
+      this.classid = fpclass[0].id
+      this.classIndex = 0
+      for (let i = 0; i < fpclass.length; i++) {
+        let curFpc = fpclass[i]
+        this.topObject[curFpc.id] = {index: i, id: fpclass[i].id}
+        this.pageObject[curFpc.id] = {page: 1}
+        this.classObject[curFpc.id] = fpclass[i]
+        this.listObject[curFpc.id] = []
+      }
     }
-    this.afterLoad = true
+    this.classData = fpclass
+    this.disClass = true
+    let fpdata = retdata.fpdata
+    for (let i = 0; i < fpdata.length; i++) {
+      let curd = fpdata[i]
+      this.listObject[curd.classid].push(curd)
+      if (curd.options && curd.options.length) {
+        for (let j = 0; j < curd.options.length; j++) {
+          let curo = curd.options[j]
+          if (curo.cart_id) {
+            let pushData = {...curd, cartOption: curo, productindex: i, optionindex: j}
+            if (this.userInfo.isvip[this.selectedMd.id]) {
+              pushData.cartprice = curo.memberprice
+            } else {
+              pushData.cartprice = curo.price
+            }
+            this.cartList.push(pushData)
+          }
+        }
+      } else if (curd.cart_id) {
+        let pushData = {...curd}
+        if (this.userInfo.isvip[this.selectedMd.id]) {
+          pushData.cartprice = curd.memberprice
+        } else {
+          pushData.cartprice = curd.minprice
+        }
+        this.cartList.push(pushData)
+      }
+    }
+    this.computeCartNum()
+    this.productList = fpdata
+    this.disList = true
+    this.allowNav = true
+    this.computeOrder()
+    this.$apply()
+    setTimeout(() => {
+      this.computeArea()
+    }, 100)
   }
   getHomeData () {
+    let stime = new Date().getTime()
     wepy.request({
       url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/miniprogram/home`,
       data: {limit: 1000, storeid: this.selectedMd.id}
     }).then(res => {
+      let etime = new Date().getTime()
+      console.log('********miniprogram/home请求用时', (etime - stime) / 1000 + '秒')
       const retdata = res.data
       if (retdata.code === 0) {
-        this.homeData = retdata
-        let fpclass = retdata.fpclass
-        if (fpclass.length) {
-          this.classid = fpclass[0].id
-          this.classIndex = 0
-          for (let i = 0; i < fpclass.length; i++) {
-            this.topObject[fpclass[i].id] = {index: i, id: fpclass[i].id}
-            this.pageObject[fpclass[i].id] = {page: 1}
-          }
-          fpclass[0].clicked = true
-        }
-        this.classData = fpclass
-        this.disClass = true
-        let fpdata = retdata.fpdata
-        for (let i = 0; i < fpdata.length; i++) {
-          let curd = fpdata[i]
-          if (curd.options && curd.options.length) {
-            for (let j = 0; j < curd.options.length; j++) {
-              let curo = curd.options[j]
-              if (curo.cart_id) {
-                this.cartList.push({...curd, cartOption: curo, productindex: i, optionindex: j})
-              }
-            }
-          } else if (curd.cart_id) {
-            this.cartList.push(curd)
-          }
-        }
-        this.computeCartNum()
-        this.productList = fpdata
-        this.disList = true
-        this.allowNav = true
-        this.computeOrder()
-        // this.getProductList()
-        this.$apply()
+        this.homeData[this.selectedMd.id] = retdata
+        this.handleHomeData(retdata)
       }
     })
   }
-  handlePageData () {
+  handlePageData (options) {
     this.globalData = this.$parent.globalData
+    this.options = {...this.globalData.options.query, ...options}
+    this.pageurl = Util.objectToUrl('/pages/qyshop', this.options)
+    console.log('点餐首页的参数', this.options)
     Util.appInit(this.globalData, this)
     this.userInfo = this.globalData.userInfo
     this.sysParams = this.globalData.SystemParams
     this.mdList = this.globalData.Store
-    wepy.getLocation({
-      type: 'gcj02'
-    }).then(res => {
-      console.log('======================获取微信位置***************************8')
-      // 我的位置 {accuracy: 65, errMsg: 'getLocation:ok', horizontalAccuracy: 65, latitude: 28.24595, longitude: 113.08093, speed: -1 verticalAccuracy: 65}
-      console.log(res)
-      if (res.errMsg.indexOf('getLocation:fail:') > -1) {
-        wepy.showToast({
-          title: '获取位置信息失败，请查看您的手机定位是否开启',
-          icon: 'none',
-          duration: 2000
-        })
-        this.selectedMd = this.mdList[0]
-      } else {
-        this.userLocation = {latitude: res.latitude, longitude: res.longitude}
-        let minIndex = 0
-        let minDistance = 0
+    console.log('设置参数', this.sysParams)
+    if (this.options.tableid) {
+      if (this.options.storeid) {
+        let storeid = parseInt(this.options.storeid)
         for (let i = 0; i < this.mdList.length; i++) {
           let curMd = this.mdList[i]
-          curMd.distance = Util.getDistance(res.latitude, res.longitude, curMd.latitude, curMd.longitude)
-          let dis = parseFloat(curMd.distance.replace('m', ''))
-          if (curMd.distance.indexOf('km') > -1) {
-            dis = parseFloat(curMd.distance.replace('km', '')) * 1000
-          }
-          if (i === 0) {
-            minIndex = 0
-            minDistance = dis
-          } else if (dis < minDistance) {
-            minIndex = i
-            minDistance = dis
+          if (curMd.id === storeid) {
+            this.selectedMd = curMd
+            break
           }
         }
-        this.selectedMd = this.mdList[minIndex]
+      } else {
+        this.selectedMd = this.mdList[0]
       }
       this.getHomeData()
-    }, error => {
-      wepy.showToast({
-        title: '获取位置信息失败，请查看您的手机定位是否开启',
-        icon: 'none',
-        duration: 2000
+    } else {
+      wx.getLocation({
+        type: 'gcj02',
+        success: (res) => {
+          console.log('======================获取微信位置***************************8')
+          // 我的位置 {accuracy: 65, errMsg: 'getLocation:ok', horizontalAccuracy: 65, latitude: 28.24595, longitude: 113.08093, speed: -1 verticalAccuracy: 65}
+          console.log(res)
+          this.userLocation = {latitude: res.latitude, longitude: res.longitude}
+          let minIndex = 0
+          let minDistance = 0
+          for (let i = 0; i < this.mdList.length; i++) {
+            let curMd = this.mdList[i]
+            curMd.distance = Util.getDistance(res.latitude, res.longitude, curMd.latitude, curMd.longitude)
+            let dis = parseFloat(curMd.distance.replace('m', ''))
+            if (curMd.distance.indexOf('km') > -1) {
+              dis = parseFloat(curMd.distance.replace('km', '')) * 1000
+            }
+            if (i === 0) {
+              minIndex = 0
+              minDistance = dis
+            } else if (dis < minDistance) {
+              minIndex = i
+              minDistance = dis
+            }
+            if (this.options.storeid && parseInt(this.options.storeid) === curMd.id) {
+              this.selectedMd = curMd
+            }
+          }
+          if (!this.selectedMd) this.selectedMd = this.mdList[minIndex]
+          this.getHomeData()
+        },
+        fail: (res) => {
+          console.log('======================获取微信位置失败***************************8')
+          // 我的位置 {accuracy: 65, errMsg: 'getLocation:ok', horizontalAccuracy: 65, latitude: 28.24595, longitude: 113.08093, speed: -1 verticalAccuracy: 65}
+          console.log(res)
+          if (res.errMsg.indexOf('getLocation:fail') > -1) {
+            wepy.showToast({
+              title: '获取位置信息失败，请查看您的手机定位是否开启',
+              icon: 'none',
+              duration: 2000
+            })
+          }
+          if (this.options.storeid) {
+            let storeid = parseInt(this.options.storeid)
+            for (let i = 0; i < this.mdList.length; i++) {
+              let curMd = this.mdList[i]
+              if (curMd.id === storeid) {
+                this.selectedMd = curMd
+                break
+              }
+            }
+          } else {
+            this.selectedMd = this.mdList[0]
+          }
+          this.getHomeData()
+        }
       })
-    })
-    this.checkClose()
+    }
+    this.isClose = Util.checkClose(this.sysParams.closestore)
+    this.afterLoad = true
     this.getBanner()
   }
   onLoad (options) {
     this.options = options
-    this.pageurl = Util.objectToUrl('/pages/qyshop', this.options)
-    this.limit = 5
+    this.limit = 15
+    this.pageStart = 1
     this.pageObject = {}
     this.afterClickClass = false
     this.scrollToClassIng = false
     this.topObject = {}
     this.scrollIndex = 0
     this.isLoading = false
+    this.afterSearch = false
     if (this.$parent.globalData.flag.bokaAuth) {
-      this.handlePageData()
+      this.handlePageData(options)
     } else {
       this.$parent.loadCallback = () => {
-        this.handlePageData()
+        this.handlePageData(options)
       }
     }
     wepy.getSystemInfo().then(res => {
+      console.log('获取到了设备信息')
+      console.log(res)
+      this.windowHeight = res.windowHeight
       if (res.model.substring(0, res.model.indexOf('X')) + 'X' === 'iPhone X') {
         this.isIpx = true
       }
@@ -750,31 +928,27 @@ export default class extends wepy.page {
     })
     this.$apply()
   }
-  scrollToClass (e) {
-    let _this = this
-    this.scrollIndex = this.classIndex
-    let query = wx.createSelectorQuery()
-    query.selectViewport().scrollOffset()
-    query.select(`#page-container`).boundingClientRect()
-    query.select(`#right-container`).boundingClientRect()
-    query.select(`#product-${this.classid}`).boundingClientRect()
-    query.exec(function (res) {
-      // console.log('in scrolltoclass')
-      // console.log(res[3])
-      // console.log(res[2])
-      // console.log('\n\n\n')
-      _this.scrollToClassIng = true
-      wepy.pageScrollTo({
-        scrollTop: res[3].top - res[2].top,
-        duration: 300,
-        success: () => {
-          _this.afterClickClass = false
-          _this.scrollToClassIng = false
-          _this.$apply()
-        }
-      })
-      _this.$apply()
-    })
+  handleShowData () {
+    if (this.inHide) {
+      this.inHide = false
+      this.isClose = Util.checkClose(this.sysParams.closestore)
+      this.$apply()
+    }
+  }
+  onShow (options) {
+    if (this.$parent.globalData.flag.bokaAuth) {
+      this.handleShowData(options)
+    } else {
+      this.$parent.showCallback = () => {
+        this.handleShowData(options)
+      }
+    }
+  }
+  onHide () {
+    this.inHide = true
+  }
+  onUnload () {
+    this.inHide = true
   }
   onShareAppMessage () {
     const lastshareuid = this.options.share_uid
@@ -836,6 +1010,11 @@ export default class extends wepy.page {
           item.cart_quantity = item.cart_quantity + 1
           item.cartOption = this.selectedOption
           item.optionindex = this.selectedOptionIndex
+          if (this.userInfo.isvip[this.selectedMd.id]) {
+            item.cartprice = this.selectedOption.memberprice
+          } else {
+            item.cartprice = this.selectedOption.price
+          }
           this.$invoke('qyproductOptions', 'closeOptions')
         } else {
           if (item.cart_id) {
@@ -844,9 +1023,19 @@ export default class extends wepy.page {
             item.cart_id = data.id
             item.cart_quantity = 1
           }
+          if (this.userInfo.isvip[this.selectedMd.id]) {
+            item.cartprice = item.memberprice
+          } else {
+            item.cartprice = item.minprice
+          }
         }
         item.productindex = this.clickIndex
-        this.productList[index] = item
+        if (this.disSearch) {
+          this.searchData[index] = item
+          this.productList[item.pindex] = item
+        } else {
+          this.productList[index] = item
+        }
         if (type === 'add') {
           this.cartList.push(item)
         } else {
@@ -888,11 +1077,23 @@ export default class extends wepy.page {
       const data = res.data
       this.isCarting = false
       if (data.code === 0) {
-        if (item.cart_quantity > 1) {
-          this.productList[index].cart_quantity = ajaxParams.quantity
+        if (this.disSearch) {
+          if (item.cart_quantity > 1) {
+            this.searchData[index].cart_quantity = ajaxParams.quantity
+            this.productList[item.pindex].cart_quantity = ajaxParams.quantity
+          } else {
+            this.searchData[index].cart_quantity = 0
+            this.searchData[index].cart_id = 0
+            this.productList[item.pindex].cart_quantity = 0
+            this.productList[item.pindex].cart_id = 0
+          }
         } else {
-          this.productList[index].cart_quantity = 0
-          this.productList[index].cart_id = 0
+          if (item.cart_quantity > 1) {
+            this.productList[index].cart_quantity = ajaxParams.quantity
+          } else {
+            this.productList[index].cart_quantity = 0
+            this.productList[index].cart_id = 0
+          }
         }
         this.computeOrder()
         this.computeCartNum()
@@ -907,19 +1108,17 @@ export default class extends wepy.page {
   }
   computeOrder () {
     let total = 0
-    for (let i = 0; i < this.productList.length; i++) {
-      let curd = this.productList[i]
-      if (curd.options && curd.options.length) {
-        for (let j = 0; j < curd.options.length; j++) {
-          let curo = curd.options[j]
-          if (curo.cart_id && curo.cart_quantity) {
-            total += parseFloat(curo.price) * curo.cart_quantity
-          }
-        }
-      } else if (curd.cart_id && curd.cart_quantity) {
-        total += parseFloat(curd.minprice) * curd.cart_quantity
+    console.log('进入到了结算金额')
+    for (let i = 0; i < this.cartList.length; i++) {
+      let curd = this.cartList[i]
+      console.log(curd)
+      if (curd.cartOption) {
+        total += parseFloat(curd.cartprice) * curd.cartOption.cart_quantity
+      } else {
+        total += parseFloat(curd.cartprice) * curd.cart_quantity
       }
     }
+    console.log('\n\n\n\n')
     this.orderPrice = total.toFixed(2)
     this.totalPrice = total
   }
@@ -930,35 +1129,57 @@ export default class extends wepy.page {
       if (!curd.cart_quantity) {
         this.cartList.splice(i, 1)
       } else {
-        if (curd.cartOption) {
-          num += curd.cartOption.cart_quantity
-        } else {
+        if (curd.cart_id) {
           num += curd.cart_quantity
+        } else if (curd.cartOption && curd.cartOption.cart_id) {
+          num += curd.cartOption.cart_quantity
         }
       }
     }
     this.cartNumber = num
   }
   methods = {
+    setKeyword (e) {
+      this.keyword = e.detail.value
+    },
+    searchKeyword (e) {
+      if (this.keyword !== '') {
+        this.keyword = e.detail.value
+        this.classid = 0
+        this.handleSearch()
+      } else {
+        this.afterSearch = false
+        this.disSearch = false
+        this.classIndex = 0
+        this.classid = this.classData[0].id
+      }
+      this.$apply()
+    },
+    cancelSearch () {
+      this.afterSearch = false
+      this.disSearch = false
+      this.keyword = ''
+      this.classIndex = 0
+      this.classid = this.classData[0].id
+      this.$apply()
+    },
     switchType (val) {
-      this.dcType = val
+      this.dcType = parseInt(val)
       this.$apply()
     },
     clickClass (item, index) {
-      if (!item.clicked) {
+      if (!this.classid || this.classid !== item.id) {
         this.setClassActive(index)
         this.afterClickClass = true
-        if (!this.listObject[item.id] || !this.listObject[item.id].length) {
-          this.pageObject[item.id] = {page: 1}
-          this.getProductList(true)
-        } else {
-          this.scrollToClass()
-        }
+        this.scrollToClass()
         this.$apply()
       }
     },
     toProduct (item, index) {
-      wepy.navigateTo({url: `/pages/product?id=${item.id}`})
+      // let url = `/pages/product?id=${item.id}&storeid=${this.selectedMd.id}`
+      let url = `/pages/product?id=${item.id}&storeid=${this.selectedMd.id}&ordertype=4`
+      if (this.options.tableid) url = `${url}&tableid=${this.options.tableid}`
+      wepy.navigateTo({url: url})
     },
     clickBanner (e) {
       Util.clickBanner(e, this)
@@ -974,15 +1195,26 @@ export default class extends wepy.page {
         }
         this.selectedOption = item.selectedOption
         this.selectedOptionIndex = item.selectedOptionIndex
-        this.$invoke('qyproductOptions', 'showOptions')
+        if (item.options.length > 1) {
+          this.$invoke('qyproductOptions', 'showOptions')
+        } else {
+          this.addOption = true
+          this.cartType = 'add'
+          // if (this.userInfo.subscribe === 0) {
+          //   this.showAuth = true
+          //   this.$apply()
+          //   return false
+          // }
+          this.addCartEvent()
+        }
       } else {
         this.addOption = false
         this.cartType = 'add'
-        if (this.userInfo.subscribe === 0) {
-          this.showAuth = true
-          this.$apply()
-          return false
-        }
+        // if (this.userInfo.subscribe === 0) {
+        //   this.showAuth = true
+        //   this.$apply()
+        //   return false
+        // }
         this.addCartEvent()
       }
     },
@@ -994,11 +1226,11 @@ export default class extends wepy.page {
         this.showCart = true
       } else {
         this.cartType = 'cut'
-        if (this.userInfo.subscribe === 0) {
-          this.showAuth = true
-          this.$apply()
-          return false
-        }
+        // if (this.userInfo.subscribe === 0) {
+        //   this.showAuth = true
+        //   this.$apply()
+        //   return false
+        // }
         this.cutCartEvent()
       }
     },
@@ -1103,7 +1335,9 @@ export default class extends wepy.page {
       })
     },
     toOrder () {
+      if (this.submiting) return false
       let ids = []
+      let shops = []
       for (let i = 0; i < this.cartList.length; i++) {
         let curd = this.cartList[i]
         if (curd.cart_id) {
@@ -1111,6 +1345,7 @@ export default class extends wepy.page {
         } else if (curd.cartOption) {
           ids.push(curd.cartOption.cart_id)
         }
+        shops.push({id: ids[i], quantity: curd.cart_quantity})
       }
       if (!ids.length) {
         wepy.showToast({
@@ -1118,10 +1353,56 @@ export default class extends wepy.page {
           icon: 'none'
         })
       }
-      let idstr = encodeURIComponent(ids.join(','))
-      let url = `/pages/qyorder?cartid=${idstr}&dctype=${this.dcType}&storeid=${this.selectedMd.id}`
-      if (this.options.orderid) url = `${url}&orderid=${this.options.orderid}`
-      wepy.navigateTo({url: url})
+      // if (this.dcType === 1) {
+      //   let idstr = encodeURIComponent(ids.join(','))
+      //   wepy.navigateTo({url: `/pages/qyorder?cartid=${idstr}&dctype=${this.dcType}&storeid=${this.selectedMd.id}`})
+      // }
+      this.submiting = true
+      let postData = {storeid: this.selectedMd.id, shops: shops, ordertype: this.dcType}
+      if (this.options.tableid) postData.tableid = this.options.tableid
+      wepy.request({
+        url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/cart/cartToOrder`,
+        data: postData,
+        method: 'POST'
+      }).then(res => {
+        const data = res.data
+        console.log('下单完成')
+        console.log(data)
+        const timeout = Util.delay(data.msg)
+        wepy.showToast({
+          title: data.msg,
+          icon: 'none',
+          duration: timeout
+        })
+        this.submiting = false
+        if (data.code === 0) {
+          if (data.isnew) {
+            wepy.redirectTo({url: `/pages/qypay?orderid=${data.id}`})
+          } else {
+            wepy.redirectTo({url: `/pages/qypay?orderid=${data.id}&xiadan=1`})
+            // wepy.redirectTo({url: `/packageD/pages/userOrders`})
+            // this.cartList = []
+            // for (let i = 0; i < this.productList.length; i++) {
+            //   let curp = this.productList[i]
+            //   curp.cart_id = 0
+            //   curp.cart_quantity = 0
+            //   if (curp.options && curp.options.length) {
+            //     for (let j = 0; j < curp.options.length; j++) {
+            //       curp.options[j].cart_id = 0
+            //       curp.options[j].cart_quantity = 0
+            //     }
+            //   }
+            // }
+            // this.cartNumber = 0
+            // this.orderPrice = '0.00'
+            // this.totalPrice = 0
+          }
+          this.$apply()
+        }
+        setTimeout(() => {
+          // wepy.reLaunch({url: '/pages/qyshop'})
+        }, timeout)
+      })
     },
     closeCart () {
       this.showCart = false
@@ -1209,6 +1490,11 @@ export default class extends wepy.page {
         this.selectedMd = this.clickedMd
         this.distance = Util.getDistance(this.userLocation.latitude, this.userLocation.longitude, this.selectedMd.latitude, this.selectedMd.longitude)
       }
+      if (this.homeData[this.selectedMd.id]) {
+        this.handleHomeData(this.homeData[this.selectedMd.id])
+      } else {
+        this.getHomeData()
+      }
       this.showMdPop = false
       this.$apply()
     }
@@ -1232,12 +1518,17 @@ export default class extends wepy.page {
     optionToCart () {
       this.addOption = true
       this.cartType = 'add'
-      if (this.userInfo.subscribe === 0) {
-        this.showAuth = true
-        this.$apply()
-        return false
-      }
+      // if (this.userInfo.subscribe === 0) {
+      //   this.showAuth = true
+      //   this.$apply()
+      //   return false
+      // }
       this.addCartEvent()
+    },
+    clickOptions (dataset) {
+      this.selectedOption = dataset.data
+      this.selectedOptionIndex = dataset.index
+      this.$apply()
     }
   }
 }

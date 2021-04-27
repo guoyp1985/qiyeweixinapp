@@ -387,7 +387,6 @@
       clickwechat (e) {
         this.wechatShow = true
         this.$apply()
-        // }
       },
       closeWechat (e) {
         this.wechatShow = false

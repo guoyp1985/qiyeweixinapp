@@ -68,7 +68,8 @@
             <view class="txt">完成登录体验更多精彩！</view>
           </block>
           <view class="auth-btn btn1">
-            <button class="flex_center" style="{{themeObject.bgStyle}}" open-type="getUserInfo" @getuserinfo="onGotUserInfo">马上登录</button>
+            <button class="flex_center" style="{{themeObject.bgStyle}}" bindtap="getUserProfile">马上登录</button>
+            <!-- <button class="flex_center" style="{{themeObject.bgStyle}}" open-type="getUserProfile" @getuserprofile="onGotUserInfo">马上登录</button> -->
           </view>
           <form class="auth-btn btn2" bindsubmit="cancelLogin">
             <button class="flex_center" style="{{themeObject.colorStyle}}" form-type="submit">暂不登录</button>
@@ -123,7 +124,49 @@ export default class extends wepy.component {
     cancelLogin () {
       this.$emit('cancelLogin')
     },
+    getUserProfile () {
+      wx.getUserProfile({
+        desc: '更新资料', // 声明获取用户个人信息后的用途，后续会展示在弹窗中，请谨慎填写
+        success: (res) => {
+          console.log('更新到的用户资料')
+          console.log(res)
+          let getUser = res.userInfo
+          wepy.showLoading()
+          wepy.request({
+            url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/user/miniUpdate`,
+            data: {
+              ...getUser,
+              token: this.$parent.globalData.miniData.token,
+              openid: this.$parent.globalData.miniData.openid,
+              sessionkey: this.$parent.globalData.miniData.session_key,
+              iv: getUser.iv,
+              encryptedData: getUser.encryptedData,
+              appid: Config.AppId
+            },
+            method: 'POST'
+          }).then(res => {
+            wepy.hideLoading()
+            const data = res.data
+            if (data.code === 0) {
+              let retuser = data.data
+              this.$parent.globalData.userInfo = retuser
+              wepy.setStorageSync('user', retuser)
+              wepy.setStorageSync('version', Config.version)
+              this.$parent.globalData.flag.bokaAuth = true
+              if (this.globalData.giveCredit) {
+                this.showCredit = true
+                this.$apply()
+              } else {
+                this.$emit('afterAuth')
+              }
+            }
+          })
+        }
+      })
+    },
     async onGotUserInfo (user) {
+      console.log('同意授权后的用户信息')
+      console.log(user)
       const userDetail = user.detail
       this.userInfo = user.detail.userInfo
       if (user.detail.userInfo) {

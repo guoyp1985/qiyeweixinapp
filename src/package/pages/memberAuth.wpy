@@ -1,0 +1,214 @@
+<style lang="less">
+.member-auth-page{
+  width:100%;height:100%;box-sizing: border-box;padding:20rpx 0;
+  .input-list{
+    padding:0 20rpx;box-sizing: border-box;
+    .item{
+      height:100rpx;display:flex;align-items:center;justify-content:flex-start;
+      .title-cell{width:80rpx;height:100%;display: flex;align-items: left;justify-content:flex-start;align-items: center;text-align:left;}
+      .input-cell{
+        flex:1;height:100%;display:flex;justify-content: flex-start; align-items: center;position:relative;
+        .input{
+          width:100%;padding:0 10rpx;box-sizing: border-box;
+          color: #333333;justify-content:flex-start;align-items: center;
+        }
+        .input-placeholder{color:rgba(153,153,153,0.65)}
+      }
+    }
+  }
+  .btn-code.disabled{color: #999;}
+  .btn-list{
+    .btn{
+      width:80%;height:70rpx;border-radius:60rpx;font-size:32rpx;
+      display:flex;align-items:center;justify-content:center;
+    }
+  }
+}
+</style>
+<template>
+  <view class="member-auth-page bg-page">
+    <view class="box-area">
+      <view class="box-inner">
+        <view class="title b_bottom_after flex_center bold font18">会员认证</view>
+        <view class="input-list">
+          <view class="item flex_left">
+            <view class="title-cell">手机</view>
+            <view class="input-cell">
+              <input class="input" type="number" placeholder="手机" data-name="mobile" bindinput="keyupFormInput" />
+            </view>
+          </view>
+          <view class="item flex_left">
+            <view class="title-cell">验证码</view>
+            <view class="input-cell">
+              <input class="input" type="number" placeholder="验证码" data-name="xcode" bindinput="keyupFormInput" />
+            </view>
+            <view class="btn-cell">
+              <view class="btn-code" :class="{'disabled' : count !== countNum}" disabled="{{count !== countNum}}" @tap.stop="getXcode" style="{{count == countNum ? themeObject.colorStyle : ''}}">{{codeTxt}}</view>
+            </view>
+          </view>
+        </view>
+        <view class="flex_center pt20 pb20 b_top_after btn-list">
+          <view class="flex_cell flex_center">
+            <view class="btn bg-gray color-white" bindtap="cancelEvent">继续下单</view>
+          </view>
+          <view class="flex_cell flex_center">
+            <view class="btn" style="{{themeObject.bgStyle}}" bindtap="submitEvent">验证</view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+</template>
+<script>
+  import wepy from 'wepy'
+  import Config from '@/config'
+  import Util from '@/libs/util'
+  import Reg from '@/libs/reg'
+  const TimeCount = 60
+  export default class Vip extends wepy.page {
+    data = {
+      options: {},
+      globalData: {},
+      userInfo: {},
+      themeObject: {},
+      mobile: '',
+      xcode: '',
+      codeTxt: '获取验证码',
+      count: 60,
+      countNum: 60,
+      intervalId: null
+    }
+    handlePageData () {
+      this.globalData = this.$parent.globalData
+      Util.appInit(this.globalData, this)
+      this.userInfo = this.globalData.userInfo
+      this.$apply()
+    }
+    onLoad (options) {
+      this.options = options
+      if (this.$parent.globalData.flag.bokaAuth) {
+        this.handlePageData()
+      } else {
+        this.$parent.loadCallback = () => {
+          this.handlePageData()
+        }
+      }
+    }
+    methods = {
+      keyupFormInput (e) {
+        const dataset = e.currentTarget.dataset
+        this[dataset.name] = e.detail.value
+        this.$apply()
+      },
+      cancelEvent () {
+        wepy.navigateBack()
+      },
+      submitEvent () {
+        if (this.submitIng) return false
+        if (!this.mobile || this.mobile === '') {
+          wepy.showToast({
+            title: '请输入手机号码',
+            icon: 'none'
+          })
+          return false
+        }
+        if (!Reg.rPhone.test(this.mobile)) {
+          wepy.showToast({
+            title: '请输入正确的手机号',
+            icon: 'none'
+          })
+          return false
+        }
+        if (!this.xcode || this.xcode === '') {
+          wepy.showToast({
+            title: '请输入验证码',
+            icon: 'none'
+          })
+          return false
+        }
+        if (this.xcode !== this.xcode1) {
+          wepy.showToast({
+            title: '请输入正确的验证码',
+            icon: 'none'
+          })
+          return false
+        }
+        this.submitIng = true
+        wepy.request({
+          url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/user/queryMemberCard`,
+          data: {
+            mobile: this.mobile,
+            storeid: this.options.storeid,
+            orderid: this.options.orderid,
+            securecode: this.xcode
+          }
+        }).then(res => {
+          wepy.hideLoading()
+          this.submitIng = false
+          const data = res.data
+          let timeout = Util.delay(data.msg)
+          wepy.showToast({
+            title: data.msg,
+            icon: 'none'
+          })
+          setTimeout(() => {
+            if (data.code === 0) {
+              wepy.navigateBack()
+            }
+          }, timeout)
+        })
+      },
+      getXcode () {
+        if (this.getXcodeFlag) return
+        clearInterval(this.intervalId)
+        if (Reg.rPhone.test(this.mobile)) {
+          wepy.showLoading()
+          wepy.request({
+            url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/user/verifyMobile`,
+            data: {mobile: this.mobile}
+          }).then(res => {
+            wepy.hideLoading()
+            const data = res.data
+            if (data.code === 0) {
+              wepy.showToast({
+                title: data.msg,
+                icon: 'none'
+              })
+              this.xcode1 = data.data
+              console.log(typeof this.xcode1)
+              this.applyMobile = this.mobile
+              this.getXcodeFlag = 1
+              this.intervalId = setInterval(() => {
+                console.log('进入到了倒计时方法')
+                this.count--
+                if (!this.count) {
+                  this.count = TimeCount
+                  this.codeTxt = '获取验证码'
+                  clearInterval(this.intervalId)
+                  this.getXcodeFlag = false
+                } else {
+                  this.codeTxt = `${this.count}秒`
+                }
+                this.$apply()
+              }, 1000)
+            } else {
+              this.getXcodeFlag = 0
+              this.applyMobile = null
+              wepy.showToast({
+                title: data.msg,
+                icon: 'none',
+                duration: Util.delay(data.msg)
+              })
+              clearInterval(this.intervalId)
+            }
+          })
+        } else {
+          wepy.showToast({
+            title: '请输入正确的手机号',
+            icon: 'none'
+          })
+        }
+      }
+    }
+  }
+</script>

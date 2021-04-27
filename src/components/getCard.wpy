@@ -191,10 +191,10 @@ export default class extends wepy.component {
   }
   methods = {
     openEvent () {
-      if (this.userInfo.subscribe === 0) {
-        this.$emit('authEvent')
-        return false
-      }
+      // if (this.userInfo.subscribe === 0) {
+      //   this.$emit('authEvent')
+      //   return false
+      // }
       if (this.openIng) return false
       this.openIng = true
       let params = {frommini: 1, wid: this.userInfo.ownid}

@@ -85,44 +85,18 @@
       <view class="message" style="{{themeObject.linearBgStyle}}">
         <view class="flex_center">
           <view class="icon-success flex_center" style="margin-bottom:0;"><text style="{{themeObject.colorStyle}}" class="al al-duihao2 font30"></text></view>
-          <text class="color-white font20 ml10">支付成功</text>
+          <text wx:if="options.ordertype && options.ordertype == 3" class="color-white font20 ml10">下单成功</text>
+          <text wx:else class="color-white font20 ml10">支付成功</text>
         </view>
         <view class="btns mt10">
           <view class="btn-item">
             <view class="btn" data-url="/packageD/pages/userOrders" @tap="formSubmit">查看订单</view>
           </view>
-          <view class="btn-item">
+          <!-- <view class="btn-item">
             <view class="btn" data-url="/pages/own" data-urltype="relaunch" @tap="formSubmit">个人中心</view>
-          </view>
+          </view> -->
           <view class="btn-item">
             <view class="btn" data-url="/pages/index" data-urltype="relaunch" @tap="formSubmit">回到首页</view>
-          </view>
-        </view>
-      </view>
-      <view class="app-box-area">
-        <view class="box-inner list-item">
-          <view class="item" data-url="/packageD/pages/creditList" @tap="formSubmit">
-            <view class="flex_left pr10">
-              <text class="al al-jinbi font25 color-orange"></text>
-            </view>
-            <view class="flex_cell flex_left">
-              <view class="w_100">
-                <view class="font16">恭喜您获得{{creditCount}}个金币奖励！</view>
-                <view class="color-gray font12">金币可在下单时抵扣商品金额哦</view>
-              </view>
-            </view>
-            <view class="pl10 flex_right">
-              <view class="btn circle-btn" style="{{themeObject.bgStyle}}">立即查看</view>
-            </view>
-          </view>
-          <view class="item" @tap="toCreateOrder">
-            <view class="flex_left pr10">
-              <text class="al al-ziliao font25 color-red"></text>
-            </view>
-            <view class="flex_cell flex_left font16">生成下单回执，分享给朋友吧！</view>
-            <view class="pl10 flex_right">
-              <view class="btn circle-btn" style="{{themeObject.bgStyle}}">立即生成</view>
-            </view>
           </view>
         </view>
       </view>
@@ -133,48 +107,26 @@
           <view class="blank"></view>
         </view>
         <view class="productlist squarepic">
-          <repeat for="{{productData}}" key="index" item="item">
-            <product :item="item" :globalData.sync="globalData" :isAdmin="isAdmin" navType="reLaunch"></product>
-          </repeat>
+            <view class="left-cell">
+              <repeat for="{{productData}}" key="index" item="item">
+                <block wx:if="{{index == 0 || index % 2 != 0}}">
+                  <product :item="item" :globalData.sync="globalData" navType="reLaunch" :options.sync="options"></product>
+                </block>
+              </repeat>
+            </view>
+            <view class="right-cell">
+              <repeat for="{{productData}}" key="index" item="item">
+                <block wx:if="{{index != 0 && index % 2 == 0}}">
+                  <product :item="item" :globalData.sync="globalData" navType="reLaunch" :options.sync="options"></product>
+                </block>
+              </repeat>
+            </view>
         </view>
         <view class="load-end-area loading" wx:if="{{isLoading}}"></view>
         <view class="load-end-area done" wx:elif="{{isDone}}"></view>
       </view>
     </view>
     <retailerWechat :userInfo.sync="userInfo" :retailerInfo.sync="retailerInfo" :module.sync="wechatModule" :themeObject.sync="themeObject"></retailerWechat>
-  </block>
-  <block wx:if="{{showArea2}}">
-    <view class="pay-success">
-      <view class="message" style="{{themeObject.linearBgStyle}}">
-        <view class="icon-success flex_center"><text style="{{themeObject.colorStyle}}" class="al al-duihao2"></text></view>
-        <view class="font20">订单提交成功</view>
-        <view class="font16 align_center mt20" wx:if="{{ordermoney && ordermoney != ''}}">
-          <text>订单金额: </text><text class="font20">￥{{ordermoney}}</text>
-        </view>
-        <view class="font16" wx:if="{{orderno && orderno != ''}}">订单号: {{orderno}}</view>
-      </view>
-      <view style="{{themeObject.colorStyle}}" class="padding20 align_center font18">通知卖家接单，享极速发货特权！</view>
-      <button open-type="share" class="btn-area" style="{{themeObject.linearBgStyle}}">通知卖家接单</button>
-      <view class="box-area">
-        <view class="box-inner">
-          <view class="flex_center color-gray pt10 pb10">没有卖家微信？添加卖家为好友！</view>
-          <view class="db-flex top-pic">
-            <view class="pic-cell flex_left">
-              <image mode="aspectFill" src="{{sellerUser.avatar}}"></image>
-            </view>
-            <view class="flex_cell flex_left">
-              <view class="w_100">
-                <view class="font16 bold">卖家: {{sellerUser.linkman}}</view>
-                <view class="mt5 font16 flex_left" wx:if="{{sellerUser.weixinaccount && sellerUser.weixinaccount != ''}}">
-                  <view>微信: {{sellerUser.weixinaccount}}</view>
-                  <view class="box-txt" @tap="copyWechat">复制微信号</view>
-                </view>
-              </view>
-            </view>
-          </view>
-        </view>
-      </view>
-    </view>
   </block>
   <block wx:if="{{showCanvas}}">
     <view class="order-canvas" style="top:0px;" catchtouchmove="onTouchmove">
@@ -192,7 +144,7 @@
   </block>
 </template>
 <script>
-  import Product from '@/components/store/product'
+  import Product from '@/components/store/product4'
   import RetailerWechat from '@/components/retailerWechat'
   import Util from '@/libs/util'
   import Time from '@/libs/time'
@@ -217,10 +169,7 @@
       isLoading: false,
       isDone: false,
       disProduct: false,
-      AdminUids: Config.AdminUids,
-      isAdmin: false,
       showArea1: false,
-      showArea2: false,
       sellerUser: {},
       orderno: null,
       ordermoney: '',
@@ -237,45 +186,11 @@
       Util.appInit(this.globalData, this)
       this.userInfo = this.globalData.userInfo
       this.wid = this.globalData.Wid
-      if (this.globalData.SystemParams.OrderType === '10' || this.globalData.SystemParams.OrderType === 10) {
-        this.showArea1 = false
-        this.showArea2 = true
-        this.orderno = this.options.orderno
-        this.ordermoney = this.options.ordermoney
-        this.$apply()
-        // if (!this.userInfo.regwid || !this.userInfo.bindstatus) {
-        //   wepy.request({
-        //     url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/retailer/info`,
-        //     data: {uid: this.globalData.Wid, appid: Config.AppId}
-        //   }).then(res => {
-        //     const data = res.data
-        //     if (data.code === 0) {
-        //       this.sellerUser = data.data
-        //     }
-        //     this.$apply()
-        //   })
-        // } else {
-        //   this.sellerUser = this.userInfo
-        // }
-      } else {
-        this.showArea2 = false
-        this.showArea1 = true
-        if (this.userInfo.fid === Config.Fid) {
-          this.isAdmin = true
-        } else if (this.AdminUids[Config.Fid]) {
-          let curArr = this.AdminUids[Config.Fid]
-          for (let i in curArr) {
-            if (curArr[i] === this.userInfo.regwid) {
-              this.isAdmin = true
-              break
-            }
-          }
-        }
-        this.getOrderData()
-        this.$apply()
-        if (!this.productData.length) {
-          this.getProduct()
-        }
+      this.showArea1 = true
+      this.getOrderData()
+      this.$apply()
+      if (!this.productData.length) {
+        this.getProduct()
       }
     }
     onReachBottom () {
@@ -289,7 +204,7 @@
     getProduct () {
       wepy.request({
         url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/miniprogram/productlist`,
-        data: {fid: Config.Fid, page: this.pagestart, limit: this.limit},
+        data: {page: this.pagestart, limit: this.limit, classid: Config.RecommendClass},
         method: 'post'
       }).then(res => {
         const data = res.data

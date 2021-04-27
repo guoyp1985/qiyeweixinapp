@@ -1,0 +1,108 @@
+<style lang="less">
+.recharge-page{
+  .list-area{
+    width:100%;display:flex;flex-wrap:wrap;
+    .list-item{
+      width:50%;padding:20rpx;box-sizing: border-box;
+      display:flex;justify-content: center;align-items: center;
+      .inner{
+        border-style: solid;border-width:2rpx;border-radius:10rpx;
+        width:100%;box-sizing: border-box;padding:20rpx 0;
+        .txt1{
+          width:100%;text-align:center;font-size:40rpx;font-weight:bold;
+        }
+        .txt2{
+          width:100%;text-align:center;color:#999;
+        }
+      }
+    }
+    .list-item.active{
+      .txt2{color:#fff;}
+    }
+  }
+  .btn{
+    width:70%;height:90rpx;border-radius:10rpx;
+    display:flex;justify-content:center;align-items:center;
+    font-size:40rpx;
+  }
+}
+</style>
+<template>
+  <view class="recharge-page">
+    <block wx:if="{{listData.length}}">
+      <view class="list-area">
+        <repeat for="{{listData}}" item="item" index="index">
+          <view @tap="clickItem({{item}},{{index}})" :class="{'active': item.checked}" class="list-item">
+            <view class="inner" style="{{item.checked ? themeObject.bgStyle : themeObject.borderStyle}}">
+              <view class="txt1" style="{{item.checked ? 'color:#fff;' : themeObject.colorStyle}}">{{item.addmoney}}</view>
+              <view class="txt2">送{{item.givemoney}}</view>
+            </view>
+          </view>
+        </repeat>
+      </view>
+      <view class="flex_center mt20">
+        <view class="btn" style="{{themeObject.bgStyle}}">充值</view>
+      </view>
+    </block>
+  </view>
+</template>
+<script>
+  import wepy from 'wepy'
+  import Config from '@/config'
+  import Util from '@/libs/util'
+  export default class Recharge extends wepy.page {
+    components = {
+    }
+    data = {
+      options: {},
+      themeObject: {},
+      listData: []
+    }
+    getData () {
+      wepy.request({
+        url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/tableindex/index`,
+        data: {storeid: this.options.storeid, tableid: this.options.tableid}
+      }).then(res => {
+        const data = res.data
+        if (data.code === 0) {
+          let retdata = data.data
+          this.listData = retdata.prestoresetting
+          this.$apply()
+        }
+      })
+    }
+    handlePageData () {
+      this.globalData = this.$parent.globalData
+      Util.appInit(this.globalData, this)
+      this.userInfo = this.globalData.userInfo
+      this.getData()
+    }
+    onLoad (options) {
+      this.options = options
+      this.allPages = []
+      if (this.$parent.globalData.flag.bokaAuth) {
+        this.handlePageData()
+      } else {
+        this.$parent.loadCallback = () => {
+          this.handlePageData()
+        }
+      }
+      this.$apply()
+    }
+    methods = {
+      clickItem (item, index) {
+        let curIndex = parseInt(index)
+        if (!item.checked) {
+          for (let i = 0; i < this.listData.length; i++) {
+            if (i !== curIndex && this.listData[i].checked) {
+              this.listData[i].checked = false
+              break
+            }
+          }
+          this.listData[curIndex].checked = true
+          this.$apply()
+        }
+      }
+    }
+  }
+</script>

@@ -20,7 +20,7 @@
           <view class="flex_cell flex_left">
             <view class="w_100">
               <view class="color-theme" style="{{themeObject.colorStyle}}"><text>￥</text><text class="bold font16">{{selectedOption.price}}</text></view>
-              <view class="mt10 color-gray">库存{{selectedOption.storage}}{{clickProduct.unit}}</view>
+              <!-- <view class="mt10 color-gray">库存{{selectedOption.storage}}{{clickProduct.unit}}</view> -->
               <view class="mt10 clamp2" style="-webkit-line-clamp: 4;" wx:if="{{selectedOption.title}}">已选: {{selectedOption.title}}</view>
               <view class="mt10" wx:else>请选择规格</view>
             </view>
@@ -32,8 +32,8 @@
             <view class="options-list">
               <repeat for="{{clickProduct.options}}" item="item" index="index">
                 <view
-                  class="options-item {{(selectedOptionIndex == index && item.storage > 0) ? 'active' : ''}} {{item.storage <= 0 ? 'disabled' : ''}}"
-                  style="{{(selectedOptionIndex == index && item.storage > 0) ? themeObject.borderStyle + themeObject.colorStyle : ''}}"
+                  class="options-item {{(selectedOptionIndex == index) ? 'active' : ''}}"
+                  style="{{(selectedOptionIndex == index) ? themeObject.borderStyle + themeObject.colorStyle : ''}}"
                   @tap="clickOptions" data-index="{{index}}" data-data="{{item}}">
                   <view class="flex_center">
                     <view class="img">
@@ -45,7 +45,7 @@
                 </view>
               </repeat>
             </view>
-            <block wx:if="{{saveMoneyMode && fromModule == 'product' && userInfo.regwid && userInfo.bindstatus && (fromPage != 'home' || showRebate) && selectedOption.memberprice && selectedOption.memberprice != ''}}">
+            <block wx:if="{{selectedOption.memberprice && selectedOption.memberprice != 0 && selectedOption.memberprice != '0.00' && selectedOption.memberprice != selectedOption.price}}">
               <view class="pt10 pb10 b_bottom_after levelarea">
                 <view class="db-flex">
                   <view class="flex_cell flex_left">会员价: <text style="{{themeObject.colorStyle}}">￥{{ selectedOption.memberprice }}</text></view>
@@ -55,15 +55,14 @@
           </scroll-view>
         </view>
       </view>
-      <block wx:if="{{selectedOption.storage}}">
-        <view class="options-bottom">
-          <view class="w_100 h_100 flex_center">
-            <view class="flex_cell h_100 flex_center">
-              <button class="bg-theme color-white flex_center btn" style="{{themeObject.bgStyle}}" @tap="optionToCart">选好了</button>
-            </view>
+      <view class="options-bottom">
+        <view class="w_100 h_100 flex_center">
+          <view class="flex_cell h_100 flex_center">
+            <button wx:if="{{options.ordertype == 4}}" class="bg-theme color-white flex_center btn" style="{{themeObject.bgStyle}}" @tap="optionToBuy">预购</button>
+            <button wx:else class="bg-theme color-white flex_center btn" style="{{themeObject.bgStyle}}" @tap="optionToCart">选好了</button>
           </view>
         </view>
-      </block>
+      </view>
     </view>
   </view>
 </template>
@@ -91,25 +90,9 @@
         type: Object,
         default: {}
       },
-      clickCart: {
-        type: Boolean,
-        default: false
-      },
-      fromModule: {
-        type: String,
-        default: ''
-      },
-      showRebate: {
-        type: Boolean,
-        default: false
-      },
-      fromPage: {
-        type: String,
-        default: ''
-      },
-      saveMoneyMode: {
-        type: Boolean,
-        default: false
+      options: {
+        type: Object,
+        default: {}
       }
     }
     data = {
@@ -166,6 +149,9 @@
       },
       optionToCart () {
         this.$emit('optionToCart')
+      },
+      optionToBuy () {
+        this.$emit('buyOption')
       }
     }
   }

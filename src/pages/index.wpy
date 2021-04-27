@@ -67,6 +67,8 @@ export default class Index extends wepy.page {
       this.$parent.globalData = this.globalData
     }
     this.$apply()
+    console.log('进入到了Index页面')
+    console.log(this.options)
     if (this.options.scene) {
       let queryScene = Util.queryScene(this.options.scene)
       if (queryScene.posterid) {

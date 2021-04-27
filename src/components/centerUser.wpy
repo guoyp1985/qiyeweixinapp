@@ -170,7 +170,7 @@
 <template>
   <scroll-view class="column-content" scroll-y="1">
     <view class="tophead" style="{{themeObject.linearBgStyle}}">
-      <view class="w_100 flex_center" @tap="toProfile" style="position:relative;">
+      <view class="w_100 flex_center" @tap="updateUser" style="position:relative;">
         <view class="avatar">
           <view class="inner">
             <open-data class="photo-pic" type="userAvatarUrl"></open-data>
@@ -179,17 +179,7 @@
         <view class="color-white flex_cell flex_left">
           <view class="w_100">
             <view class="font16">{{userInfo.linkman}}</view>
-            <view wx:if="{{userInfo.gxkuid}}">ID: {{userInfo.gxkuid}}</view>
           </view>
-        </view>
-        <!-- <view class="color-white jinbinumber" catchtap="toCredit">{{userInfo.credit}}<text class="al al-icon-64-jinbi font16"></text></view> -->
-        <!-- <view class="flex_center flex_cell color-white" catchtap="toCredit">金币任务</view> -->
-        <view class="fix-notice" catchtap="toNotice">
-          <text class="al al-tongzhi1 color-white font24"></text>
-          <block wx:if="{{noticeCount > 0}}">
-            <view class="ico" style="{{themeObject.colorStyle}}" wx:if="{{noticeCount > 99}}"><text class="al al-asmkticon0165 font10"></text></view>
-            <view class="ico" style="{{themeObject.colorStyle}}" wx:else>{{noticeCount}}</view>
-          </block>
         </view>
       </view>
     </view>
@@ -274,10 +264,7 @@
           <form class="item" bindsubmit="updateUser" report-submit="true">
             <button formType="submit" class="item-inner">
               <view class="w_100">
-                <view wx:if="{{AppId == 'wx46317f562509ab24'}}" class="pic">
-                  <image src="https://tossharingsales.boka.cn/laolingwei/wdzl.png"></image>
-                </view>
-                <view wx:else class="radius"><text class="al al-user-profile color-profile"></text></view>
+                <view class="radius"><text class="al al-user-profile color-profile"></text></view>
                 <view>更新资料</view>
               </view>
             </button>
@@ -285,10 +272,7 @@
           <form class="item" data-url="/packageD/pages/userView" data-auth="1" bindsubmit="formSubmit" report-submit="true">
             <button formType="submit" class="item-inner">
               <view class="w_100">
-                <view wx:if="{{AppId == 'wx46317f562509ab24'}}" class="pic">
-                  <image src="https://tossharingsales.boka.cn/laolingwei/wdll.png"></image>
-                </view>
-                <view wx:else class="radius"><text class="al al-user-views color-views"></text></view>
+                <view class="radius"><text class="al al-user-views color-views"></text></view>
                 <view>我的浏览</view>
               </view>
             </button>
@@ -296,10 +280,7 @@
           <form class="item" data-url="/packageD/pages/userOrders" data-auth="1" bindsubmit="formSubmit" report-submit="true">
             <button formType="submit" class="item-inner">
               <view class="w_100">
-                <view wx:if="{{AppId == 'wx46317f562509ab24'}}" class="pic">
-                  <image src="https://tossharingsales.boka.cn/laolingwei/wddd.png"></image>
-                </view>
-                <view wx:else class="radius"><text class="al al-user-orders1 color-orders1"></text></view>
+                <view class="radius"><text class="al al-user-orders1 color-orders1"></text></view>
                 <view>我的订单</view>
               </view>
             </button>
@@ -314,65 +295,14 @@
               </view>
             </button>
           </form>
-          <!-- <form class="item mt20" data-url="/packageD/pages/about" bindsubmit="formSubmit" report-submit="true">
+          <form class="item mt20" data-url="/packageD/pages/cardList?flag=1" bindsubmit="formSubmit" report-submit="true" wx:if="{{AppId != 'wx46317f562509ab24'}}">
             <button formType="submit" class="item-inner">
               <view class="w_100">
-                <view wx:if="{{AppId == 'wx46317f562509ab24'}}" class="pic">
-                  <image src="https://tossharingsales.boka.cn/laolingwei/gywm.png"></image>
-                </view>
-                <view wx:else class="radius"><text class="al al-user-about color-about"></text></view>
-                <view>关于我们</view>
-              </view>
-            </button>
-          </form> -->
-          <form class="item mt20" bindsubmit="clickQrcode" wx:if="{{userInfo.factoryinfo && userInfo.factoryinfo.publicqrcode && userInfo.factoryinfo.publicqrcode != ''}}" report-submit="true">
-            <button formType="submit" class="item-inner">
-              <view class="w_100">
-                <view wx:if="{{AppId == 'wx46317f562509ab24'}}" class="pic">
-                  <image src="https://tossharingsales.boka.cn/laolingwei/gzgzh.png"></image>
-                </view>
-                <view wx:else class="radius"><text class="al al-user-gzh color-gzh"></text></view>
-                <view>关注公众号</view>
+                <view class="radius"><text class="al al-huodong" style="color:#ff6a61;"></text></view>
+                <view>我的礼品</view>
               </view>
             </button>
           </form>
-          <repeat for="{{moduleListData}}" item="item" index="index">
-            <form class="item mt20" data-url="/pages/moduleList?module={{item.module}}" data-auth="1" bindsubmit="formSubmit" report-submit="true">
-              <button formType="submit" class="item-inner">
-                <view class="w_100">
-                  <view wx:if="{{AppId == 'wx46317f562509ab24'}}" class="pic">
-                    <image src="https://tossharingsales.boka.cn/laolingwei/codemaker.png"></image>
-                  </view>
-                  <view wx:else class="radius"><text class="al al-user-codemarker color-codemarker"></text></view>
-                  <view>{{item.value}}</view>
-                </view>
-              </button>
-            </form>
-          </repeat>
-          <!-- <form class="item mt20" data-url="/packageD/pages/helpCenter" bindsubmit="formSubmit" report-submit="true">
-            <button formType="submit" class="item-inner">
-              <view class="w_100">
-                <view class="radius"><text class="al al-wenda color-theme" style="{{themeObject.colorStyle}}"></text></view>
-                <view>帮助中心</view>
-              </view>
-            </button>
-          </form> -->
-          <view class="item mt20" wx:if="{{userInfo.regwid}}" @tap="clickSet">
-            <button class="item-inner">
-              <view class="w_100">
-                <view class="radius"><text class="al al-set color-blue font40"></text></view>
-                <view>卖家设置</view>
-              </view>
-            </button>
-          </view>
-          <view class="item mt20" wx:if="{{CreateOrderUser && ((CreateOrderUser.regwid && CreateOrderUser.regwid[userInfo.regwid]) || (CreateOrderUser.fuid && CreateOrderUser.fuid[userInfo.uid]))}}" @tap="createOrder">
-            <button class="item-inner">
-              <view class="w_100">
-                <view class="radius"><text class="al al-user-orders1 font30" style="{{themeObject.colorStyle}}"></text></view>
-                <view>下单回执</view>
-              </view>
-            </button>
-          </view>
           <form class="item mt20" data-url="/packageB/pages/address" bindsubmit="formSubmit" report-submit="true">
             <button class="item-inner" formType="submit">
               <view class="w_100">
@@ -539,10 +469,6 @@ export default class CenterUser extends wepy.component {
       type: Array,
       default: []
     },
-    moduleListData: {
-      type: Array,
-      default: []
-    },
     manageData: {
       type: Array,
       default: []
@@ -583,10 +509,6 @@ export default class CenterUser extends wepy.component {
   methods = {
     clickBanner (e) {
       Util.clickBanner(e, this)
-    },
-    toProfile (e) {
-      let minibackurl = encodeURIComponent(`/pages/own?from=profile&backtype=relaunch`)
-      wepy.navigateTo({url: `/pages/webview?url=profile&minibackurl=${minibackurl}`})
     },
     updateUser (e) {
       this.$emit('updateUser')

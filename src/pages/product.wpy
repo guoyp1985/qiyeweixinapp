@@ -421,37 +421,9 @@
          </swiper>
        </block>
      </view>
-     <view class="group-title flex_left" wx:if="{{activityInfo.id && activityInfo.type == 'groupbuy'}}">
-       <view class="col1">
-         <text>￥</text>
-         <text class="font20 bold">{{activityInfo.groupprice}}</text>
-       </view>
-       <view class="col2">
-         <view class="colicon">{{activityInfo.numbers}}人团</view>
-         <text class="db-in">限购{{activityInfo.everybuy}}{{product.unit}}</text>
-       </view>
-       <view class="col3">已团{{product.havetuan}}{{product.unit}}</view>
-     </view>
-     <view class="group-title flex_left" wx:elif="{{afterInfo && showTimer}}">
-       <view class="col1">
-         <text>￥</text>
-         <text class="font20 bold" wx:if="{{product.minprice && product.maxprice && product.minprice != '' && product.maxprice != '' && product.minprice != product.maxprice}}">{{product.minprice}}-{{product.maxprice}}</text>
-         <text class="font20 bold" wx:elif="{{product.minprice && product.minprice != ''}}">{{product.minprice}}</text>
-         <text class="font20 bold" wx:else>{{product.price}}</text>
-         <text class="font16 ml5" style="text-decoration:line-through" wx:if="{{oripriceShow}}">￥{{product.oriprice}}</text>
-       </view>
-       <view class="timer-col">
-         <text>距截团</text>
-         <text :class="{big: (product.lefthour.length > 2 || product.lefthour >= 100)}" class="num ml5">{{product.lefthour}}</text>
-         <text class="txt">:</text>
-         <text class="num">{{product.leftminute}}</text>
-         <text class="txt">:</text>
-         <text class="num">{{product.leftsecond}}</text>
-       </view>
-     </view>
      <view class="pt10 pb10 bg-white pl10 pr10 b_bottom_after" style="position:relative;">
        <view class="clamp2" bindtap="copyTxt">
-         <text wx:if="{{!product.onshelftime && (product.isshow == 0 || (product.fromfid && product.originmoderate == 0)) && product.id}}" class="v_middle db-in bold color-gray bold">【已下架】</text>
+         <text wx:if="{{product.moderate == 0 && product.id}}" class="v_middle db-in bold color-gray bold">【已下架】</text>
          <text class="v_middle db-in bold">{{product.title}}</text>
        </view>
        <view wx:if="{{product.sellingpoint && product.sellingpoint != ''}}" class="color-theme" style="{{themeObject.colorStyle}}">{{product.sellingpoint}}</view>
@@ -476,51 +448,10 @@
            </view>
          </block>
        </block>
-       <view class="flex_left mt5 color-gray" wx:if="{{product.showJdPrice || product.showTbPrice}}">
-         <text wx:if="{{product.showTbPrice}}">猫价: ￥{{product.tb_price}}</text>
-         <text :class="{'ml10': product.showJdPrice}" wx:if="{{product.showJdPrice}}">狗价: ￥{{product.jd_price}}</text>
-       </view>
-       <view class="flex_left font12 mt5 color-gray2">
-         <view wx:if="{{product.postage == 0}}" class="flex_left w90">运费: 包邮</view>
-         <view wx:else class="flex_left w90">运费: ￥{{ product.postage }}</view>
-         <view wx:if="{{globalData.SystemParams.ShowSaled != 0}}" class="flex_cell flex_right">销量: {{ product.saled }}{{ product.unit }}</view>
-       </view>
      </view>
-     <!-- 需判断 该商品有没有优惠券 -->
-     <view wx:if="{{showCardInfo}}" class="flex_left card-info" bindtap="getProductCard">
-       <view class="pr10">专属福利</view>
-       <view class="db-flex">
-         <view class="card-item" style="{{themeObject.colorStyle}}{{themeObject.borderStyle}}">立减{{cardInfo.cardmoney}}元，点击领取</view>
-       </view>
-     </view>
-     <view wx:if="{{cardList.length > 0}}" class="flex_left card-list" style="position:relative;" bindtap="getCard(false)">
-       <view class="pr10">优惠</view>
-       <view class="db-flex" style="box-sizing:border-box;width:75%;">
-         <repeat for="{{cardList}}" item="item" index="index">
-           <view wx:if="{{index < 2}}" class="mr10 card-item clamp1">满{{ item.ordermoney }}减{{ item.facemoney }}优惠券</view>
-           <view wx:if="{{index == 2}}">...</view>
-         </repeat>
-       </view>
-       <view class="color-gray flex_cell flex_right" bindtap="getCard(false)">领券 > </view>
-     </view>
-     <block wx:if="{{saveMoneyMode && userInfo.regwid && userInfo.bindstatus && (options.from != 'home' || showRebate) && (product.minmemberprice || product.maxmemberprice)}}">
-       <view class="bg-page" style="height:10px;"></view>
-       <view class="b_top_after"></view>
-       <view class="padding10 b_bottom_after levelarea">
-         <view class="db-flex">
-           <view class="flex_cell flex_left">
-             <text>合伙人价格: </text>
-             <text style="{{themeObject.colorStyle}}" wx:if="{{product.maxmemberprice && product.minmemberprice && product.minmemberprice != product.maxmemberprice}}">￥{{ product.minmemberprice }}-{{product.maxmemberprice}}</text>
-             <text style="{{themeObject.colorStyle}}" wx:elif="{{product.options.length && product.minmemberprice && product.minmemberprice != ''}}">￥{{ product.minmemberprice }}</text>
-             <text style="{{themeObject.colorStyle}}" wx:else>￥{{ product.maxmemberprice }}</text>
-           </view>
-           <view class="pl10 flex_right color-gray font12">仅自己可见</view>
-         </view>
-       </view>
-     </block>
      <block wx:if="{{product.options && product.options.length}}">
        <view class="bg-page" style="height:10px;"></view>
-       <form class="b_bottom_after bg-white padding10 db" @tap="toBuy">
+       <form class="b_bottom_after bg-white padding10 db" @tap="toCart">
          <button class="w_100">
            <view class="flex_left">
              <view class="w40 flex_left">规格</view>
@@ -541,21 +472,6 @@
          </button>
        </form>
      </block>
-     <block wx:if="{{defaultWid != globalData.Wid && 0 == 1}}">
-       <view class="bg-page" style="height:10px;"></view>
-       <view class="b_top_after"></view>
-       <form class="padding10 b_bottom_after bg-white db" bindsubmit="toStoreMark" report-submit="true">
-         <button class="flex_left seller-area" form-type="submit">
-           <view class="flex_left flex_cell">
-             <image mode="aspectFill" src="{{sellerUser.avatar}}"></image>
-             <text class="ml5 font16 bold">{{sellerUser.linkman}}</text>
-           </view>
-           <view class="flex_right w100">
-             <view style="{{themeObject.colorStyle}}{{themeObject.borderStyle}}" class="btn flex_center">进店逛逛</view>
-           </view>
-         </button>
-       </form>
-     </block>
      <!-- <view class="bg-page" style="height:10px;"></view>
      <view class="bg-white padding10">
        <cell
@@ -567,41 +483,37 @@
         @completemessage="completemessage"
         plugid='dd14b023deed2e3530096276caa9a52e' />
      </view> -->
-     <view class="flex_center pt10 pb10 bg-page color-gray">—— 详情 ——</view>
-     <view class="product-content bg-white">
-       <view class="detail-box" style="{{themeObject.borderStyle}}" wx:if="{{product.options.length || (product.deliverdesc_json && product.deliverdesc_json.length)}}">
-         <view class="font18 bold align_center">{{product.title}}</view>
-         <view class="db-flex pt5 pb5 {{(product.deliverdesc_json && product.deliverdesc_json.length) ? 'b_bottom_after' : ''}}" wx:if="{{product.options.length}}">
-           <view class="align_left">【规  格】</view>
-           <view class="flex_cell flex_left">
-             <repeat for="{{product.options}}" item="o" index="oindex">
-               {{o.title}}<block wx:if="{{oindex < product.options.length - 1}}" class="ml3 mr3"> | </block>
-             </repeat>
-           </view>
-         </view>
-         <block wx:if="{{product.deliverdesc_json && product.deliverdesc_json.length}}">
-           <repeat for="{{product.deliverdesc_json}}" item="s" index="sindex">
-             <view class="db-flex pt5 pb5 {{sindex < product.deliverdesc_json.length - 1 ? 'b_bottom_after' : ''}}">
-               <view class="align_left">{{s.title}}</view>
-               <view class="flex_cell flex_left">{{s.content}}</view>
+     <block wx:if="{{(product.content && product.content != '') || (previewGallery && previewGallery.length)}}">
+       <view class="flex_center pt10 pb10 bg-page color-gray">—— 详情 ——</view>
+       <view class="product-content bg-white">
+         <view class="detail-box" style="{{themeObject.borderStyle}}" wx:if="{{product.options.length || (product.deliverdesc_json && product.deliverdesc_json.length)}}">
+           <view class="font18 bold align_center">{{product.title}}</view>
+           <view class="db-flex pt5 pb5 {{(product.deliverdesc_json && product.deliverdesc_json.length) ? 'b_bottom_after' : ''}}" wx:if="{{product.options.length}}">
+             <view class="align_left">【规  格】</view>
+             <view class="flex_cell flex_left">
+               <repeat for="{{product.options}}" item="o" index="oindex">
+                 {{o.title}}<block wx:if="{{oindex < product.options.length - 1}}" class="ml3 mr3"> | </block>
+               </repeat>
              </view>
-           </repeat>
-         </block>
+           </view>
+           <block wx:if="{{product.deliverdesc_json && product.deliverdesc_json.length}}">
+             <repeat for="{{product.deliverdesc_json}}" item="s" index="sindex">
+               <view class="db-flex pt5 pb5 {{sindex < product.deliverdesc_json.length - 1 ? 'b_bottom_after' : ''}}">
+                 <view class="align_left">{{s.title}}</view>
+                 <view class="flex_cell flex_left">{{s.content}}</view>
+               </view>
+             </repeat>
+           </block>
+         </view>
+         <div wx:if="{{product.content && product.content != ''}}">
+           <text>{{product.content}}</text>
+         </div>
+         <repeat for="{{previewGallery}}" key="index" item="image">
+           <image class="imgcover w_100" style="vertical-align:middle;" src="{{image}}" mode="widthFix" lazy-load @tap="previewImg({{index}})"></image>
+         </repeat>
+         <view style="margin-top:20rpx;text-align:center;color:#ccc;font-size:24rpx;">———— 已经到底了 ————</view>
        </view>
-       <div>
-         <text>{{product.content}}</text>
-       </div>
-       <repeat for="{{previewGallery}}" key="index" item="image">
-         <image class="imgcover w_100" style="vertical-align:middle;" src="{{image}}" mode="widthFix" lazy-load @tap="previewImg({{index}})"></image>
-       </repeat>
-       <block wx:if="{{globalData.SystemParams.saleconvention && globalData.SystemParams.saleconvention != ''}}">
-         <image class="imgcover w_100" style="vertical-align:middle;" src="{{globalData.SystemParams.saleconvention}}" data-url="{{globalData.SystemParams.saleconvention}}" mode="widthFix" lazy-load @tap="viewBigImg"></image>
-       </block>
-       <block wx:if="{{globalData.SystemParams.salehelp && globalData.SystemParams.salehelp != ''}}">
-         <image class="imgcover w_100" style="vertical-align:middle;" src="{{globalData.SystemParams.salehelp}}" data-url="{{globalData.SystemParams.salehelp}}" mode="widthFix" lazy-load @tap="viewBigImg"></image>
-       </block>
-       <view style="margin-top:20rpx;text-align:center;color:#ccc;font-size:24rpx;">———— 已经到底了 ————</view>
-     </view>
+     </block>
      <view class="product-area scrollendarea scroll-end" style="background-color:#f6f6f6;"></view>
    </view>
  </view>
@@ -614,152 +526,64 @@
            <view class="font10">首页</view>
          </button>
        </form>
-       <form class="w50 flex_center h_100 share flex_form" bindsubmit="onShareTap" report-submit="true">
-         <button class="nav-item" form-type="submit">
+       <form class="w50 flex_center h_100 share flex_form">
+         <button class="nav-item" bindtap="onShareTap">
            <view class="al font18"></view>
            <view class="font10">分享</view>
          </button>
        </form>
-       <block wx:if="{{afterSys}}">
-         <form class="w50 flex_center h_100 flex_form cart" wx:if="{{openCart}}" style="box-sizing:border-box" bindsubmit="navCart" report-submit="true">
-           <button class="nav-item" form-type="submit">
-             <view class="al font18 al-cart"></view>
-             <view class="font10">购物车</view>
-           </button>
-           <block wx:if="{{cartCount != '0' && cartCount > 0}}">
-             <view class="ico" style="{{themeObject.colorStyle}}" wx:if="{{cartCount > 99}}"><text class="al al-asmkticon0165 font10"></text></view>
-             <view class="ico" style="{{themeObject.colorStyle}}" wx:else>{{cartCount}}</view>
-           </block>
-         </form>
-         <form wx:else class="w80 flex_center h_100 user flex_form"  style="box-sizing:border-box" bindsubmit="onPersonalTap" report-submit="true">
-           <button class="nav-item" form-type="submit">
-             <view class="al font18 al-gerenzhongxin6" style="color:#FF5100;"></view>
-             <view class="font10">个人中心</view>
-           </button>
-         </form>
-       </block>
-       <view class="flex_cell h_100 flex_left">
-         <!--从home页导航进入-->
-         <block wx:if="{{fromNavPage}}">
-           <block wx:if="{{product.activityid}}">
-             <form wx:if="{{ShowChat}}" class="w50 flex_center h_100 personal flex_form" bindsubmit="toChat" report-submit="true">
-               <button class="nav-item" form-type="submit">
-                 <view class="al font18"></view>
-                 <view class="font10">咨询</view>
-               </button>
-             </form>
-             <block wx:if="{{product.isshow == 1 && (!product.fromfid || (product.fromfid && product.originmoderate != 0))}}">
-               <form wx:if="{{product.storage > 0}}" class="flex_cell flex_center color-white h_100 bg-orange1 flex_form" @tap="toBuy">
-                 <button class="w_100 nav-item">
-                   <view class="w_100 align_center">￥{{product.price}}</view>
-                   <view class="w_100 align_center">原价购买</view>
-                 </button>
-               </form>
-               <form class="flex_cell flex_center color-white h_100 bg-red2 flex_form" data-type="groupbuy" @tap="toBuy">
-                 <button class="w_100 nav-item">
-                   <view class="w_100 align_center">￥{{activityInfo.groupprice}}</view>
-                   <view class="w_100 align_center">一键拼团</view>
-                 </button>
-               </form>
-             </block>
-             <view wx:elif="{{product.onshelftime}}" class="flex_cell flex_center color-white h_100 bg-gray11">即将开团</view>
-             <view wx:elif="{{product.isshow == 0 || (product.fromfid && product.originmoderate == 0)}}" class="flex_cell flex_center color-white h_100 bg-gray11">已下架</view>
-           </block>
-           <block wx:else>
-             <form wx:if="{{ShowChat}}" class="flex_cell flex_center color-white h_100 bg-orange flex_form" style="background-color:#FFA401;" bindsubmit="toChat" report-submit="true">
-               <button class="flex_center" form-type="submit">我要咨询</button>
-             </form>
-             <view wx:if="{{product.storage <= 0}}" class="flex_cell flex_center color-white h_100 bg-gray">已售罄</view>
-             <block wx:elif="{{product.isshow == 1 && (!product.fromfid || (product.fromfid && product.originmoderate != 0))}}">
-               <block if="{{afterSys}}">
-                 <block wx:if="{{(OnlyRetailerBuy && userInfo.regwid && userInfo.bindstatus) || !OnlyRetailerBuy}}">
-                   <form class="flex_cell flex_center color-white h_100 bg-red2 flex_form" style="{{themeObject.bgStyle}}" bindsubmit="toBuy" report-submit="true">
-                     <button class="flex_center" form-type="submit">立即购买</button>
-                   </form>
-                   <form class="flex_cell flex_center color-white h_100 bg-orange flex_form" wx:if="{{openCart && !product.retailerbuy}}" bindsubmit="toCart" report-submit="true">
-                     <button class="flex_center" form-type="submit">加入购物车</button>
-                   </form>
-                 </block>
-                 <block wx:if="{{OnlyRetailerBuy && (!userInfo.regwid || !userInfo.bindstatus)}}">
-                   <view class="flex_cell flex_center color-white h_100 bg-red2 flex_form" style="background-color:#FF5100;" @tap="retailerBuy">
-                     <button class="flex_center">找店主下单</button>
-                   </view>
-                 </block>
-               </block>
-             </block>
-             <view wx:elif="{{product.onshelftime}}" class="flex_cell flex_center color-white h_100 bg-gray11">即将开团</view>
-             <view wx:elif="{{product.isshow == 0 || (product.fromfid && product.originmoderate == 0)}}" class="flex_cell flex_center color-white h_100 bg-gray11">已下架</view>
-           </block>
+       <form class="w50 flex_center h_100 flex_form cart" style="box-sizing:border-box" bindsubmit="navCart" report-submit="true">
+         <button class="nav-item" form-type="submit">
+           <view class="al font18 al-cart"></view>
+           <view class="font10">购物车</view>
+         </button>
+         <block wx:if="{{cartCount != '0' && cartCount > 0}}">
+           <view class="ico" style="{{themeObject.colorStyle}}" wx:if="{{cartCount > 99}}"><text class="al al-asmkticon0165 font10"></text></view>
+           <view class="ico" style="{{themeObject.colorStyle}}" wx:else>{{cartCount}}</view>
          </block>
-         <block wx:else>
-           <block wx:if="{{product.id}}">
-             <block wx:if="{{product.activityid && product.activityinfo.type == 'groupbuy'}}">
-               <form wx:if="{{ShowChat}}" class="w50 flex_center h_100 personal flex_form" bindsubmit="toChat" report-submit="true">
-                 <button class="nav-item" form-type="submit">
-                   <text class="al font18"></text>
-                   <text class="font10">咨询</text>
-                 </button>
-               </form>
-               <form wx:if="{{product.storage > 0}}" class="flex_cell flex_center color-white h_100 bg-orange1 flex_form" @tap="toBuy">
-                 <button class="w_100 nav-item">
-                   <view class="w_100 align_center">￥{{product.price}}</view>
-                   <view class="w_100 align_center">原价购买</view>
-                 </button>
-               </form>
-               <form class="flex_cell flex_center color-white h_100 bg-red2 flex_form" data-type="groupbuy" @tap="toBuy">
-                 <button class="w_100 nav-item">
-                   <view class="w_100 align_center">￥{{activityInfo.groupprice}}</view>
-                   <view class="w_100 align_center">一键拼团</view>
-                 </button>
-               </form>
-             </block>
+       </form>
+       <view class="flex_cell h_100 flex_left">
+         <block wx:if="{{product.id}}">
+           <block wx:if="{{product.moderate == 1}}">
+             <form wx:if="{{isClose}}" class="flex_cell flex_center color-white h_100 flex_form" style="background-color:#434345;">
+               <button class="flex_center">很抱歉，本店已打烊</button>
+             </form>
              <block wx:else>
-               <form wx:if="{{ShowChat}}" class="flex_cell flex_center color-white h_100 bg-orange flex_form" style="background-color:#FFA401;" bindsubmit="toChat" report-submit="true">
-                 <button class="flex_center" form-type="submit">我要咨询</button>
+               <form wx:if="{{options.ordertype == 4}}" class="flex_cell flex_center color-white h_100 bg-orange flex_form" @tap="toBuy">
+                 <button class="flex_center">预购</button>
                </form>
-               <view wx:if="{{product.storage <= 0}}" class="flex_cell flex_center color-white h_100 bg-gray">已售罄</view>
-               <block wx:elif="{{product.isshow == 1 && (!product.fromfid || (product.fromfid && product.originmoderate != 0))}}">
-                 <block if="{{afterSys}}">
-                   <block wx:if="{{(OnlyRetailerBuy && userInfo.regwid && userInfo.bindstatus) || !OnlyRetailerBuy}}">
-                     <form class="flex_cell flex_center color-white h_100 bg-red2 flex_form" style="{{themeObject.bgStyle}}" @tap="toBuy">
-                       <button class="flex_center">立即购买</button>
-                     </form>
-                     <form class="flex_cell flex_center color-white h_100 bg-orange flex_form" wx:if="{{openCart && !product.retailerbuy}}" @tap="toCart">
-                       <button class="flex_center">加入购物车</button>
-                     </form>
-                   </block>
-                   <block wx:if="{{OnlyRetailerBuy && (!userInfo.regwid || !userInfo.bindstatus)}}">
-                     <form class="flex_cell flex_center color-white h_100 bg-red2 flex_form" style="background-color:#FF5100;" @tap="retailerBuy">
-                       <button class="flex_center">找店主下单</button>
-                     </form>
-                   </block>
-                 </block>
-               </block>
-               <view wx:elif="{{product.onshelftime}}" class="flex_cell flex_center color-white h_100 bg-gray11">即将开团</view>
-               <view wx:elif="{{product.isshow == 0 || (product.fromfid && product.originmoderate == 0)}}" class="flex_cell flex_center color-white h_100 bg-gray11">已下架</view>
+               <form wx:else class="flex_cell flex_center color-white h_100 bg-orange flex_form" @tap="toCart">
+                 <button class="flex_center">加入购物车</button>
+               </form>
              </block>
            </block>
-           <view wx:else class="flex_cell"></view>
+           <view wx:else class="flex_cell flex_center color-white h_100 bg-gray11">已下架</view>
          </block>
        </view>
      </view>
    </view>
  </block>
- <productOptions
+ <qyproductOptions
    :selectedOption.sync="selectedOption"
    :selectedOptionIndex.sync="selectedOptionIndex"
    :clickProduct.sync="product"
    :themeObject.sync="themeObject"
-   :afterSys.sync="afterSys"
-   :OnlyRetailerBuy.sync="OnlyRetailerBuy"
    :userInfo.sync="userInfo"
-   :clickCart.sync="clickCart"
-   fromModule="product"
-   :showRebate.sync="showRebate"
-   :fromPage.sync="fromPage"
-   :saveMoneyMode.sync="saveMoneyMode">
- </productOptions>
- <share :themeObject.sync="themeObject" :globalData.sync="globalData" :viewData.sync="product" :userInfo.sync="userInfo" :wid.sync="retailerInfo" opacity="1" :photo.sync="photo" :title.sync="title" :retailerInfo.sync="retailerInfo" :id.sync="productId" :module.sync="module"></share>
+   :options.sync="options">
+ </qyproductOptions>
+ <share
+  :themeObject.sync="themeObject"
+  :globalData.sync="globalData"
+  :viewData.sync="product"
+  :userInfo.sync="userInfo"
+  :wid.sync="retailerInfo"
+  opacity="1"
+  :photo.sync="photo"
+  :title.sync="title"
+  :retailerInfo.sync="retailerInfo"
+  :id.sync="productId"
+  :module.sync="module">
+ </share>
  <view class="videoarea" wx:if="{{videoShow}}">
    <view class="btn-area flex_center">
      <form class="btn-item" bindsubmit="saveVideo" report-submit="true">
@@ -778,64 +602,6 @@
    <view class="padding10">
      <view>1. 点击左下角“分享”按钮分享到微信群</view>
      <view class="mt10">2. 群成员点击查看或购买都可获得收入</view>
-   </view>
- </view>
- <form :class="{'iphone' : isIpx}" class="fix-icon-radius" style="{{themeObject.bgStyle}}" report-submit="true" bindsubmit="onShareTap" wx:if="{{showZhuan}}">
-   <view class="w_100 h_100 flex_center">
-     <button form-type="submit">
-       <view class="al al-shangchuan font20 bold"></view>
-       <view wx:if="{{product.zhuan && product.zhuan != ''}}" class="font10">赚￥{{product.zhuan}}</view>
-     </button>
-   </view>
- </form>
- <view class="auto-modal flex_center" wx:if="{{(options.share_uid && !options.custom_params && showCardModal) || showCardModal1 || showCardModal2}}">
-   <view
-     class="modal-inner border-box pb10 {{cardList.length > 3 ? 'lengthLgThree' : ''}} {{(showCardInfo && cardList.length > 2) ? 'lengthLgThree' : ''}}"
-     style="width:80%;{{themeObject.linearBgStyle}}">
-     <view wx:if="{{showHead || (options.share_uid && !userInfo.regwid)}}" class="avatar">
-       <image mode="aspectFill" src="{{sellerUser.avatar}}"/>
-     </view>
-     <view wx:if="{{options.share_uid && !userInfo.regwid}}" class="flex_center bold mt10 mb10" style="color:#fff">{{sellerUser.linkman}}送你的优惠券</view>
-     <view wx:else class="flex_center bold font16 mt10 mb10" style="color:#fff;height:30px;">恭喜您，获得专属礼包</view>
-     <scroll-view scroll-y bindscrolltolower="handleScrollPage" style="height:80%;">
-       <form wx:if="{{showCardInfo}}" class="db mb10 pr20 pl20" @tap="getProductCard">
-         <button class="yhq-outter">
-           <view class="yhq-left pt10 pl10 pb10" style="{{themeObject.colorStyle}}{{themeObject.borderStyle}}">
-               <view class="money">￥{{ cardInfo.cardmoney }}</view>
-               <view class="font15" style="margin-left:15px;color:#666;">仅限该商品使用</view>
-           </view>
-           <view class="yhq-right flex_center">
-             <view class="padding5 align_center ljlq" style="background-color:#ccc !important;" wx:if="{{!cardInfo.leftcount || cardInfo.leftcount === '0'}}">已抢光</view>
-             <view wx:else class="padding5 align_center ljlq" style="{{themeObject.bgStyle}}">立即领取</view>
-           </view>
-           <view class="ball ball-left" style="{{themeObject.bgStyle}}"></view>
-           <view class="ball ball-right" style="{{themeObject.bgStyle}}"></view>
-           <view class="ball ball-top" style="{{themeObject.bgStyle}}"></view>
-           <view class="ball ball-bottom" style="{{themeObject.bgStyle}}"></view>
-         </button>
-       </form>
-       <repeat for="{{cardList}}" item="item" index="index">
-         <form class="db mb10 pr20 pl20" data-data="{{item}}" data-index="{{index}}" @tap="recive">
-           <button class="yhq-outter">
-             <view class="yhq-left pt10 pl10 pb10" style="{{themeObject.colorStyle}}{{themeObject.borderStyle}}">
-                 <view class="money">￥{{ item.facemoney }}</view>
-                 <view class="font15" style="margin-left:15px;color:#666;">满{{ item.ordermoney }}元使用</view>
-             </view>
-             <view class="yhq-right flex_center">
-               <view class="padding5 align_center ljlq" style="background-color:#ccc !important;" wx:if="{{!item.leftcount || item.leftcount === '0'}}">已抢光</view>
-               <view wx:else class="padding5 align_center ljlq" style="{{themeObject.bgStyle}}">{{item.txt}}</view>
-             </view>
-             <view class="ball ball-left" style="{{themeObject.bgStyle}}"></view>
-             <view class="ball ball-right" style="{{themeObject.bgStyle}}"></view>
-             <view class="ball ball-top" style="{{themeObject.bgStyle}}"></view>
-             <view class="ball ball-bottom" style="{{themeObject.bgStyle}}"></view>
-           </button>
-         </form>
-       </repeat>
-     </scroll-view>
-     <form class="close-area flex_center" bindsubmit="closeCardModal" report-submit="true">
-       <button formType="submit" class="al al-close1"></button>
-     </form>
    </view>
  </view>
  <block wx:if="{{showAuth}}">
@@ -891,13 +657,13 @@ import Time from '@/libs/time'
 import Util from '@/libs/util'
 import Config from '@/config'
 import Cached from '@/libs/cached'
-import ProductOptions from '@/components/store/product-options'
+import QyproductOptions from '@/components/store/qyproduct-options'
 import BuyTip from '@/components/buyTip'
 import CreditSwiper from '@/components/creditSwiper'
 export default class Product extends wepy.page {
   config = {
     usingComponents: {
-      cell: 'plugin://contactPlugin/cell'
+      // cell: 'plugin://contactPlugin/cell'
     }
   }
   components = {
@@ -906,7 +672,7 @@ export default class Product extends wepy.page {
     tipBgLayer: TipBgLayer,
     auth: Auth,
     sellerInfo: SellerInfo,
-    productOptions: ProductOptions,
+    qyproductOptions: QyproductOptions,
     buyTip: BuyTip,
     buyTip1: BuyTip,
     creditSwiper: CreditSwiper
@@ -964,16 +730,8 @@ export default class Product extends wepy.page {
     clickBuytype: null,
     clickGoupData: null,
     Fid: Config.Fid,
-    ShowChat: Config.ShowChat,
-    AdminUids: Config.AdminUids,
-    isAdmin: false,
-    disAdmin: false,
     sellerUser: {},
     fromNavPage: false,
-    showCardModal: false,
-    showCardModal1: false,
-    showCardModal2: false,
-    cardList: [],
     pageStart1: 0,
     limit: 10,
     showHead: false,
@@ -992,7 +750,6 @@ export default class Product extends wepy.page {
     Wid: 0,
     showSellerModal: false,
     cardInfo: {},
-    showCardInfo: false,
     allowScroll: 0,
     backScrollTop: 0,
     hiddePage: false,
@@ -1006,27 +763,14 @@ export default class Product extends wepy.page {
     showCardTip: false,
     creditData: [],
     saveMoneyMode: false,
-    ismuted: true
+    ismuted: true,
+    isClose: false
   }
   computed = {
     dot: function () {
       this.showDot = this.images.length > 1
       return this.showDot
     }
-  }
-  getSeller () {
-    // if (Config.Wid !== this.globalData.Wid || this.cardList.length) {
-    //   wepy.request({
-    //     url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/retailer/info`,
-    //     data: {uid: this.globalData.Wid, appid: Config.AppId}
-    //   }).then(res => {
-    //     const data = res.data
-    //     if (data.code === 0) {
-    //       this.sellerUser = data.data
-    //     }
-    //     this.$apply()
-    //   })
-    // }
   }
   dateFormat (value) {
     return new Time(value * 1000).dateFormat('yyyy-MM-dd')
@@ -1066,6 +810,7 @@ export default class Product extends wepy.page {
         params.poid = this.selectedOption.id
       }
     }
+    if (this.options.storeid) params.storeid = this.options.storeid
     wepy.request({
       url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/cart/addCart`,
       data: params,
@@ -1094,7 +839,7 @@ export default class Product extends wepy.page {
       }
       this.$apply()
       this.disOptionsArea()
-      this.$invoke('productOptions', 'showOptions')
+      this.$invoke('qyproductOptions', 'showOptions')
     } else {
       this.addCartEvent()
     }
@@ -1108,72 +853,18 @@ export default class Product extends wepy.page {
       }
       this.disOptionsArea()
       this.buyIng = false
-      this.$invoke('productOptions', 'showOptions')
+      this.$invoke('qyproductOptions', 'showOptions')
     } else {
       if (this.genOrder) return
-      let isgroup = false
-      if (this.activityInfo.id && (this.clickBuytype === 'groupbuy' || this.clickBuytype === 'group')) {
-        isgroup = true
-        this.submitData.activityid = this.activityInfo.id
-        if (this.clickBuytype === 'group') {
-          this.submitData.crowdowner = this.clickGoupData.uid
-        }
-      } else {
-        delete this.submitData.activityid
-        delete this.submitData.crowdowner
-      }
-      if (this.retailerInfo.uid) {
-        this.submitData.wid = this.retailerInfo.uid
-      }
-      if (this.userInfo.subscribe === 0) {
-        this.showAuth = true
-        this.addShopParams = this.submitData
-        this.buyIng = false
-        this.$apply()
-        return false
-      }
-      let iscontinue = true
-      if (this.product.retailerbuy) {
-        if (!this.options.custom_params) {
-          if ((!this.userInfo.regwid || !this.userInfo.bindstatus) && (!this.options.share_uid || this.options.shareuser !== 'self')) {
-            iscontinue = false
-            this.showBuyTip = true
-          }
-        }
-      }
-      if (!iscontinue) {
-        this.buyIng = false
-        return false
-      }
-      if (isgroup) {
-        Util.checkTmpMsg({
-          systeminfo: this.globalData.systemInfo,
-          tmplIds: [this.globalData.Templates.groupbuy_success],
-          callback: () => {
-            this.addShop(this.submitData)
-          }
-        })
-      } else {
-        this.addShop(this.submitData)
-      }
+      // if (this.userInfo.subscribe === 0) {
+      //   this.showAuth = true
+      //   this.addShopParams = this.submitData
+      //   this.buyIng = false
+      //   this.$apply()
+      //   return false
+      // }
+      this.addShop(this.submitData)
     }
-  }
-  afterBuyGroup () {
-    this.submitData.activityid = this.activityInfo.id
-    if (this.clickBuytype === 'group') {
-      this.submitData.crowdowner = this.clickGoupData.uid
-    } else {
-      delete this.submitData.crowdowner
-    }
-    if (this.retailerInfo.uid) {
-      this.submitData.wid = this.retailerInfo.uid
-    }
-    if (this.query.fromwid) {
-      this.submitData.wid = parseInt(this.query.fromwid)
-      this.submitData.fid = Config.Fid
-    }
-    this.hideOptionsArea()
-    this.addShop(this.submitData)
   }
   events = {
     cancelLogin () {
@@ -1211,44 +902,15 @@ export default class Product extends wepy.page {
         })
         return false
       }
-      if (this.selectedOption.storage <= 0) {
-        wepy.showToast({
-          title: '该规格商品库存不足',
-          icon: 'none'
-        })
-        return false
-      }
-      delete this.submitData.activityid
-      delete this.submitData.crowdowner
-      if (this.retailerInfo.uid) {
-        this.submitData.wid = this.retailerInfo.uid
-      }
-      if (this.query.fromwid) {
-        this.submitData.wid = parseInt(this.query.fromwid)
-        this.submitData.fid = Config.Fid
-      }
       this.hideOptionsArea()
-      this.$invoke('productOptions', 'closeOptions')
-      if (this.userInfo.subscribe === 0) {
-        this.showAuth = true
-        this.addShopParams = this.submitData
-        this.buyIng = false
-        this.$apply()
-        return false
-      }
-      let iscontinue = true
-      if (this.product.retailerbuy) {
-        if (!this.options.custom_params) {
-          if ((!this.userInfo.regwid || !this.userInfo.bindstatus) && (!this.options.share_uid || this.options.shareuser !== 'self')) {
-            iscontinue = false
-            this.showBuyTip = true
-          }
-        }
-      }
-      if (!iscontinue) {
-        this.buyIng = false
-        return false
-      }
+      this.$invoke('qyproductOptions', 'closeOptions')
+      // if (this.userInfo.subscribe === 0) {
+      //   this.showAuth = true
+      //   this.addShopParams = this.submitData
+      //   this.buyIng = false
+      //   this.$apply()
+      //   return false
+      // }
       this.buyIng = true
       this.addShop(this.submitData)
     },
@@ -1261,16 +923,9 @@ export default class Product extends wepy.page {
         })
         return false
       }
-      if (this.selectedOption.storage <= 0) {
-        wepy.showToast({
-          title: '该规格商品库存不足',
-          icon: 'none'
-        })
-        return false
-      }
       this.addCartEvent(() => {
         this.hideOptionsArea()
-        this.$invoke('productOptions', 'closeOptions')
+        this.$invoke('qyproductOptions', 'closeOptions')
       })
     },
     closeOptions () {
@@ -1386,39 +1041,14 @@ export default class Product extends wepy.page {
         urls: images
       })
     },
-    buyGroup (e) {
-      if (this.genOrder) return
-      if (!this.selectedOption.id) {
-        wepy.showToast({
-          title: '请选择商品规格',
-          icon: 'none'
-        })
-        return false
-      }
-      if (this.selectedOption.storage <= 0) {
-        wepy.showToast({
-          title: '该规格商品库存不足',
-          icon: 'none'
-        })
-        return false
-      }
-      // 拼团结果通知、拼团成功提醒
-      Util.checkTmpMsg({
-        systeminfo: this.globalData.systemInfo,
-        tmplIds: [this.globalData.Templates.groupbuy_success],
-        callback: () => {
-          this.afterBuyGroup()
-        }
-      })
-    },
     toCart (e) {
       this.clickCart = true
       if (this.genOrder) return
-      if (this.userInfo.subscribe === 0) {
-        this.showAuth = true
-        this.$apply()
-        return false
-      }
+      // if (this.userInfo.subscribe === 0) {
+      //   this.showAuth = true
+      //   this.$apply()
+      //   return false
+      // }
       this.cartEvent()
     },
     toBuy (e) {
@@ -1479,9 +1109,6 @@ export default class Product extends wepy.page {
       this.showModalarea1 = false
       this.showSuccessModal = false
     },
-    toStore (e) {
-      wepy.navigateTo({url: `/${Config.Router.store}?wid=${this.retailerInfo.uid}`})
-    },
     toStoreMark (e) {
       wepy.reLaunch({url: Config.HomePage})
     },
@@ -1490,113 +1117,8 @@ export default class Product extends wepy.page {
         data: this.product.title
       })
     },
-    getProductCard () {
-      if (!this.options.custom_params) {
-        if ((!this.userInfo.regwid || !this.userInfo.bindstatus) && (!this.options.share_uid || this.options.shareuser !== 'self')) {
-          this.showCardTip = true
-          return false
-        }
-      }
-      if (this.options.share_wid && this.options.shareuser === 'self') {
-        if (this.isIng) return false
-        wepy.showLoading()
-        this.showCardModal = false
-        this.showCardModal1 = false
-        this.showCardModal2 = false
-        this.isIng = true
-        // 合伙人创建的优惠券
-        wepy.request({
-          url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/card/getRetailerCard`,
-          data: {id: this.product.cardinfo.id},
-          method: 'post'
-        }).then(res => {
-          wepy.hideLoading()
-          this.isIng = false
-          const data = res.data
-          wepy.showToast({
-            title: data.msg,
-            icon: 'none'
-          })
-        })
-      } else {
-        this.showCardModal = false
-        this.showCardModal1 = false
-        this.showCardModal2 = false
-        this.showSellerModal = true
-        this.$apply()
-      }
-    },
     closeSellerEvent () {
       this.showSellerModal = false
-      this.$apply()
-    },
-    getCard (flag) {
-      console.log('====用户去领取优惠券=====')
-      let iscontinue = false
-      if (this.options.custom_params) {
-        iscontinue = true
-      } else {
-        if (this.userInfo.regwid && this.userInfo.bindstatus) {
-          iscontinue = true
-        } else if (this.options.share_uid && this.options.shareuser === 'self') {
-          iscontinue = true
-        }
-      }
-      if (!iscontinue) {
-        this.showCardTip = true
-        return false
-      }
-      if (flag) {
-        this.showHead = false
-      } else {
-        this.showHead = true
-      }
-      this.showCardModal1 = true
-      this.$apply()
-    },
-    closeCardModal (e) {
-      this.showCardModal = false
-      this.showCardModal1 = false
-      this.showCardModal2 = false
-      this.$apply()
-    },
-    recive (e) {
-      const dataset = e.currentTarget.dataset
-      const card = dataset.data
-      const index = dataset.index
-      if (!card.leftcount || card.leftcount === '0' || card.leftcount <= 0 || card.isreceived) return false
-      wepy.request({
-        url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/card/getCard`,
-        data: {id: card.id},
-        method: 'post'
-      }).then(res => {
-        const data = res.data
-        if (data.code === 0) {
-          wepy.showToast({
-            title: data.msg,
-            icon: 'none'
-          })
-          // 礼品领取成功通知
-          Util.checkTmpMsg({
-            systeminfo: this.globalData.systemInfo,
-            tmplIds: [this.globalData.Templates.card_receive],
-            callback: () => {
-              this.cardList[index].txt = '领取成功'
-            }
-          })
-        } else {
-          this.cardList[index].isreceived = true
-          this.cardList[index].txt = '领取失败'
-          wepy.showToast({
-            title: data.msg,
-            icon: 'none'
-          })
-        }
-        this.$apply()
-      })
-    },
-    retailerBuy () {
-      this.showRetailerModal = true
       this.$apply()
     },
     clickMobile () {
@@ -1656,19 +1178,12 @@ export default class Product extends wepy.page {
   async addShop (params) {
     this.genOrder = true
     wepy.showLoading()
-    if (this.query.wechatorderid) {
-      params.wechatorderid = this.query.wechatorderid
-    }
     if (this.product.options.length && this.selectedOption && this.selectedOption.id) {
       params.poid = this.selectedOption.id
     }
-    if (this.options.room_id) {
-      params.liveid = this.options.room_id
-    } else if (this.options.lid) {
-      params.liveid = this.options.lid
+    if (this.options.ordertype && parseInt(this.options.ordertype) === 4) {
+      params.ordertype = this.options.ordertype
     }
-    // let postData = {...params, wid: this.globalData.Wid, external: 1, sessionkey: `factory_${this.userInfo.uid}`, gxkuid: this.userInfo.gxkuid, module: this.module, fid: this.Fid}
-    // postData.id = this.product.moduleid
     let postData = {...params, wid: this.globalData.Wid, gxkuid: this.userInfo.gxkuid, module: this.module}
     postData.id = this.product.id
     const res = await wepy.request({
@@ -1679,15 +1194,9 @@ export default class Product extends wepy.page {
     const data = res.data
     wepy.hideLoading()
     if (data.code === 0) {
-      let url = `/pages/addOrder?wid=${this.globalData.Wid}&shop_id=${data.data}&fromfid=${this.Fid}`
-      if (this.product.agentfid) {
-        url = `${url}&agentfid=${this.product.agentfid}`
-      }
-      if (this.options.lid) {
-        url = `${url}&liveid=${this.options.lid}`
-      }
-      if (this.clickBuytype) {
-        url = `${url}&clickBuytype=${this.clickBuytype}`
+      let url = `/pages/addOrder?wid=${this.globalData.Wid}&shop_id=${data.data}`
+      if (this.options.ordertype) {
+        url = `${url}&ordertype=${this.options.ordertype}`
       }
       wepy.navigateTo({url: url})
     } else {
@@ -1748,7 +1257,6 @@ export default class Product extends wepy.page {
       const data = res.data
       if (data.code === 0) {
         let retdata = data.data
-        retdata.isshow = retdata.moderate
         if (retdata.jd_price && retdata.jd_price !== '' && parseFloat(retdata.jd_price.replace(/,/g, '')) > 0) {
           retdata.showJdPrice = true
         } else {
@@ -1771,97 +1279,10 @@ export default class Product extends wepy.page {
       }
     })
   }
-  getCardListData () {
-    let params = {fpid: this.product.moduleid, fid: this.Fid, pagestart: this.pageStart1, limit: this.limit}
-    // 厂家创建的优惠券
-    wepy.request({
-      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/card/factoryCardList`,
-      data: params,
-      method: 'post'
-    }).then(res => {
-      const data = res.data
-      if (data.code === 0) {
-        let retdata = data.data ? data.data : data
-        for (var i = 0; i < retdata.length; i++) {
-          retdata[i].txt = '立即领取'
-          retdata[i].starttime_str = new Time(retdata[i].starttime * 1000).dateFormat('yyyy-MM-dd hh:mm')
-          retdata[i].endtime_str = new Time(retdata[i].endtime * 1000).dateFormat('yyyy-MM-dd hh:mm')
-        }
-        if (retdata.length) {
-          if (this.options.custom_params) {
-            let str = `card-${this.product.id}`
-            if (!wepy.getStorageSync(str) || wepy.getStorageSync(str) === '') {
-              this.showCardModal2 = true
-              wepy.setStorageSync(str, 1)
-            }
-          } else if (this.options.share_uid) {
-            this.showCardModal = true
-          }
-        }
-        this.cardList = this.cardList.concat(retdata)
-        this.$apply()
-      }
-    })
-  }
-  handleScrollPage () {
-    if (this.cardList.length === (this.pageStart1 + 1) * this.limit) {
-      this.pageStart1 ++
-      this.getCardListData()
-      this.$apply()
-    }
-  }
-  handleTimer () {
-    let offshelftime = this.product.offshelftime
-    if (offshelftime && offshelftime !== '') {
-      let now = parseInt((new Date().getTime()) / 1000)
-      let lefttime = offshelftime - now
-      if (lefttime > 0) {
-        let hour = Math.floor(lefttime / 60 / 60)
-        console.log('倒计时的hour', hour)
-        if (hour < 100) {
-          if (hour < 10) {
-            hour = `0${hour}`
-          }
-          let minute = Math.floor((lefttime - hour * 60 * 60) / 60)
-          if (minute < 10) {
-            minute = `0${minute}`
-          }
-          let second = lefttime - hour * 60 * 60 - minute * 60
-          if (second < 10) {
-            second = `0${second}`
-          }
-          this.product.lefthour = hour
-          this.product.leftminute = minute
-          this.product.leftsecond = second
-          this.product.interval = null
-          this.showTimer = true
-          this.cutDown(this.product, this.product.interval)
-        }
-      }
-      this.afterInfo = true
-    } else {
-      this.showTimer = false
-      this.afterInfo = true
-      this.$apply()
-    }
-  }
   processData (product) {
     this.product = {...this.product, ...product}
-    if (this.userInfo.regwid && this.userInfo.bindstatus && this.product.salesrebate) {
-      this.showZhuan = true
-    }
     if (this.product.cardinfo && this.product.cardinfo.id) {
       this.cardInfo = this.product.cardinfo
-    }
-    if (this.cardInfo && this.cardInfo.wid === this.Wid && this.cardInfo.wid !== this.userInfo.regwid) {
-      this.showCardInfo = true
-      this.showCardModal = true
-    } else {
-      this.showCardInfo = false
-    }
-    this.handleTimer()
-    if (!this.product.fromfid) {
-      // this.getCardListData()
     }
     this.productId = this.product.id
     this.title = this.product.title
@@ -1921,6 +1342,8 @@ export default class Product extends wepy.page {
     this.$apply()
     const lastshareuid = this.options.share_uid
     let shareurl = `/${Config.Router.product}?id=${this.options.id}&type=${this.productType}&module=${this.module}&share_uid=${this.userInfo.uid}&share_wid=${this.globalData.Wid}&wid=${this.globalData.Wid}&comefrom=${Config.AppName}`
+    if (this.options.storeid) shareurl = `${shareurl}&storeid=${this.options.storeid}`
+    if (this.options.tableid) shareurl = `${shareurl}&tableid=${this.options.tableid}`
     if (this.userInfo.regwid && this.userInfo.bindstatus === 1) {
       shareurl = `${shareurl}&shareuser=self`
     }
@@ -1937,7 +1360,6 @@ export default class Product extends wepy.page {
       shareTitle = `团购: ${shareTitle}`
     }
     let imageUrl = this.product.photo.split(',')[0]
-    shareurl = `${shareurl}&title=${this.product.title}&photo=${imageUrl}&price=${this.product.price}&sellingpoint=${this.product.sellingpoint}&activityid=${this.product.activityid}&storage=${this.product.storage}`
     imageUrl = await this.drawShareImg(imageUrl)
     console.log('========商品分享的图片路径=========')
     console.log(imageUrl)
@@ -2233,6 +1655,8 @@ export default class Product extends wepy.page {
   onUnload () {
     this.inHide = true
     this.afterProduct = false
+    this.product.interval = null
+    clearInterval(this.product.interval)
     this.showTimer = false
   }
   onHide () {
@@ -2245,10 +1669,11 @@ export default class Product extends wepy.page {
   handleShowData () {
     if (this.inHide) {
       this.inHide = false
-      this.getSeller()
       if (!this.product || !this.product.id) {
         this.getData()
       }
+      this.isClose = Util.checkClose(this.sysParams.closestore)
+      this.$apply()
     }
   }
   getGlobalData () {
@@ -2263,11 +1688,6 @@ export default class Product extends wepy.page {
   }
   onShow () {
     this.buyIng = false
-    if (!this.afterProduct && this.product.id) {
-      this.product.interval = null
-      clearInterval(this.product.interval)
-      this.handleTimer(this.product, this.product.interval)
-    }
     if (this.$parent.globalData.flag.bokaAuth) {
       this.getGlobalData()
       this.handleShowData()
@@ -2355,38 +1775,15 @@ export default class Product extends wepy.page {
     this.userInfo = this.globalData.userInfo
     this.cartCount = this.userInfo.cartcount
     this.factoryInfo = this.globalData.FactoryInfo
-    let SystemParams = this.globalData.SystemParams
-    this.SystemParams = SystemParams
-    if (SystemParams.OnlyRetailerBuy === '0' || SystemParams.OnlyRetailerBuy === 0) {
-      this.OnlyRetailerBuy = false
-    } else {
-      this.OnlyRetailerBuy = true
-    }
+    this.sysParams = this.globalData.SystemParams
+    this.isClose = Util.checkClose(this.sysParams.closestore)
     this.afterSys = true
-    if (SystemParams.OrderType === '10' || SystemParams.OrderType === 10) {
-      this.showRebate = true
-    } else {
-      this.showRebate = false
-    }
     if (this.options.wid) {
       if (this.options.scene && (!this.userInfo.regwid || !this.userInfo.bindstatus)) {
         this.globalData.Wid = this.options.wid
         this.$parent.globalData.Wid = this.options.wid
       }
     }
-    if (this.userInfo.fid === this.Fid) {
-      this.isAdmin = true
-    } else if (this.AdminUids[this.Fid]) {
-      let curArr = this.AdminUids[this.Fid]
-      for (let i in curArr) {
-        if (curArr[i] === this.userInfo.regwid) {
-          this.isAdmin = true
-          break
-        }
-      }
-    }
-    this.disAdmin = true
-    this.getSeller()
     this.getData()
   }
 }

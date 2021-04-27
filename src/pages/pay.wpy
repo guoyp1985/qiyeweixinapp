@@ -1,0 +1,362 @@
+<style lang="less">
+@import '../styles/variable.less';
+.qypay-page{
+  width:100%;height:100%;box-sizing:border-box;padding:20rpx 0 130rpx;
+  .btn-pay{
+    background-color:#1AAD19;color:#fff;
+    border-radius: 5px;
+    font-size: 16px;
+    width: 100%;
+    padding-top:10px;
+    padding-bottom:10px;
+  }
+  .money-list{
+    .m-item:not(:last-child):after {
+      content:"";display:block !important;
+    	background-color:#eaeaea;height:1px;overflow:hidden;
+    	position: absolute;left: 0;right: 0;bottom:0px;
+    	-webkit-transform: scaleY(0.5) translateY(0.5px);
+    	transform: scaleY(0.5) translateY(0.5px);
+    	-webkit-transform-origin: 0% 0%;
+    	transform-origin: 0% 0%;
+    }
+    .m-item{
+      position:relative;
+      .item-inner{
+        width:100%;display:flex;justify-content:flex-start;align-items:center;
+        padding:20rpx;box-sizing: border-box;
+        font-size:28rpx !important;
+      }
+      .txt1{padding:0 10rpx;}
+      .txt2{padding:0 10rpx;}
+      .ico{
+        width:40rpx;height:40rpx;border-radius:50%;border:#ccc 2rpx solid;position:relative;
+      }
+    }
+    .m-item.active .dot{
+      width:20rpx;height:20rpx;border-radius:50%;
+      position:absolute;left:50%;top:50%;margin-top:-11rpx;margin-left:-11rpx;
+    }
+  }
+  .input-list{
+    padding:0 20rpx;box-sizing: border-box;
+    .item{
+      height:100rpx;display:flex;align-items:center;justify-content:flex-start;
+      .title-cell{width:145rpx;height:100%;display: flex;align-items: left;justify-content:flex-start;align-items: center;text-align:left;}
+      .input-cell{
+        flex:1;height:100%;display:flex;justify-content: flex-start; align-items: center;position:relative;
+        .input{
+          width:100%;padding:0 10rpx;box-sizing: border-box;
+          color: #333333;justify-content:flex-start;align-items: center;
+        }
+        .input-placeholder{color:rgba(153,153,153,0.65)}
+      }
+    }
+  }
+}
+.fix-bottom{
+  position:fixed;left:0;bottom:0;right:0;padding:20rpx;z-index:10;
+  .inner{
+    width:100%;border-radius:60rpx;height:90rpx;
+    display:flex;justify-content:center;align-items:center;
+  }
+}
+</style>
+<template>
+  <view class="qypay-page bg-page">
+    <view class="box-area">
+      <view class="box-inner">
+        <view class="title flex_center font30 bold" style="{{themeObject.colorStyle}}">¥{{orderPrice}}</view>
+      </view>
+    </view>
+    <view class="box-area mt10" wx:if="{{afterLoad && isMember}}">
+      <view class="box-inner">
+        <view class="title flex_left">
+          <view>会员卡余额</view>
+          <view class="flex_cell flex_right bold" style="{{themeObject.colorStyle}}">{{savedMoney}}</view>
+        </view>
+      </view>
+    </view>
+    <block wx:if="{{moneyData && moneyData.length}}">
+      <view class="box-area mt10">
+        <view class="box-inner">
+          <view class="title b_bottom_after">储值套餐</view>
+          <view class="money-list">
+            <repeat for="{{moneyData}}" item="item" index="index">
+              <view @tap="clickMoney({{item}},{{index}})" :class="{'active': (clickData && clickData.id == item.id)}" class="m-item">
+                <view class="item-inner">
+                  <view>储值</view>
+                  <view class="txt1" style="{{themeObject.colorStyle}}">
+                    <text>￥</text><text class="font20 bold">{{item.addmoney}}</text>
+                  </view>
+                  <view>送</view>
+                  <view class="txt2" style="{{themeObject.colorStyle}}">
+                    <text>￥</text><text class="font20 bold">{{item.givemoney}}</text>
+                  </view>
+                  <view class="flex_cell flex_right">
+                    <view class="ico" style="{{(clickData && clickData.id == item.id) ? themeObject.borderStyle : ''}}">
+                      <view wx:if="{{clickData && clickData.id == item.id}}" class="dot" style="{{(clickData && clickData.id == item.id) ? themeObject.bgStyle : ''}}"></view>
+                    </view>
+                  </view>
+                </view>
+              </view>
+            </repeat>
+          </view>
+        </view>
+      </view>
+      <view class="box-area mt10" wx:if="{{clickData && !userInfo.ismember}}">
+        <view class="box-inner">
+          <view class="title b_bottom_after">会员信息</view>
+          <view class="input-list">
+            <view class="item b_bottom_after">
+              <view class="title-cell">姓名</view>
+              <view class="input-cell">
+                <input class="input" type="text" placeholder="姓名" data-name="name" bindinput="keyupFormInput" />
+              </view>
+            </view>
+            <view class="item flex_left">
+              <view class="title-cell">手机</view>
+              <view class="input-cell">
+                <input class="input" type="number" placeholder="手机" data-name="mobile" bindinput="keyupFormInput" />
+              </view>
+            </view>
+            <view class="item flex_left">
+              <view class="title-cell">出生日期</view>
+              <view class="input-cell">
+                <picker style="width:100%;" mode="date" value="{{birthday}}" start="{{startDate}}" end="{{endDate}}" bindchange="bindDateChange">
+                  <view class="picker" style="width:100%;">{{(birthday && birthday != '') ? birthday : '请选择'}}</view>
+                </picker>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+    </block>
+  </view>
+  <view class="fix-bottom">
+    <view class="inner" style="{{themeObject.bgStyle}}" @tap="toPay">
+      <view class="bold"><text>¥</text><text class="font18">{{payPrice}}</text></view>
+      <view class="ml10 font18">确认支付</view>
+    </view>
+  </view>
+</template>
+<script>
+import wepy from 'wepy'
+import Config from '@/config'
+import Util from '@/libs/util'
+import Reg from '@/libs/reg'
+import Time from '@/libs/time'
+export default class Pay extends wepy.page {
+  config = {
+    navigationBarTitleText: '微信安全支付'
+  }
+  data = {
+    options: {},
+    userInfo: {},
+    globalData: {},
+    payPrice: '0.00',
+    payParams: null,
+    disabled: false,
+    themeObject: {},
+    moneyData: [],
+    orderPrice: '0.00',
+    afterLoad: false,
+    memberPay: false,
+    isMember: false,
+    savedMoney: '0.00',
+    vipInfo: {},
+    clickData: null,
+    birthday: '',
+    startDate: '',
+    endDate: ''
+  }
+  afterPay () {
+    setTimeout(() => {
+      this.isIng = false
+      if (this.options.weburl) {
+        let backurl = `/pages/webview?url=${this.options.weburl}`
+        if (this.this.webquery) {
+          let webquery = decodeURIComponent(this.options.webquery)
+          backurl = `${backurl}&${webquery}&webquery=${this.options.webquery}`
+        }
+        wepy.navigateTo({url: backurl})
+      } else if (this.options.backurl) {
+        const backurl = decodeURIComponent(this.options.backurl)
+        if (this.options.backtype === 'relaunch') {
+          wepy.reLaunch({url: backurl})
+        } else if (this.options.backtype === 'navigate') {
+          wepy.navigateTo({url: backurl})
+        } else if (this.options.backtype === 'redirect') {
+          wepy.redirectTo({url: backurl})
+        } else {
+          wepy.redirectTo({url: `${backurl}`})
+        }
+      } else {
+        wepy.navigateTo({url: `/packageB/pages/paySuccess?orderid=${this.options.id}&ordertype=3`})
+      }
+    }, 1800)
+  }
+  payEvent () {
+    const params = this.payParams
+    wepy.requestPayment({
+      timeStamp: params.timeStamp,
+      nonceStr: params.nonceStr,
+      package: params.package,
+      signType: 'MD5',
+      paySign: params.paySign
+    }).then(res => {
+      wepy.showToast({
+        title: '支付成功',
+        icon: 'success',
+        duration: 2000
+      })
+      this.afterPay()
+    }, res => {
+      this.isIng = false
+      wepy.showToast({
+        title: '支付失败',
+        icon: 'none'
+      })
+    })
+  }
+  getOrderData () {
+    wepy.showLoading({
+      title: '正在获取结账数据...'
+    })
+    wepy.request({
+      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/order/beforePay`,
+      data: {orderid: this.options.id}
+    }).then(res => {
+      wepy.hideLoading()
+      const data = res.data
+      if (data.code === 0) {
+        this.orderPrice = data.ordermoney
+        this.payPrice = data.ordermoney
+        this.moneyData = data.prestoresetting
+        this.afterLoad = true
+        this.isMember = data.ismember
+        this.savedMoney = data.savedmoney
+      } else {
+        wepy.showToast({
+          title: data.msg,
+          icon: 'none'
+        })
+      }
+      this.$apply()
+    })
+  }
+  handlePageData () {
+    this.globalData = this.$parent.globalData
+    Util.appInit(this.globalData, this)
+    this.userInfo = this.globalData.userInfo
+    this.getOrderData()
+  }
+  onLoad (options) {
+    wepy.setNavigationBarTitle({
+      title: '微信安全支付'
+    })
+    this.options = options
+    this.clickData = null
+    let now = new Date().getTime()
+    let start = now - 100 * 365 * 24 * 60 * 60 * 1000
+    let startYear = new Time(start).dateFormat('yyyy')
+    this.startDate = `${startYear}-01-01`
+    this.endDate = new Time(now).dateFormat('yyyy-MM-dd')
+    if (this.$parent.globalData.flag.bokaAuth) {
+      this.handlePageData()
+    } else {
+      this.$parent.loadCallback = () => {
+        this.handlePageData()
+      }
+    }
+  }
+  methods = {
+    bindDateChange (e) {
+      console.log(e)
+      this.birthday = e.detail.value
+      this.vipInfo.birthday = this.birthday
+      this.$apply()
+    },
+    keyupFormInput (e) {
+      const dataset = e.currentTarget.dataset
+      this.vipInfo[dataset.name] = e.detail.value
+      this.$apply()
+    },
+    changeSwitch () {
+      this.memberPay = !this.memberPay
+      this.$apply()
+    },
+    toPay (e) {
+      if (this.isIng) return false
+      let params = {orderid: this.options.id, from: Config.AppId}
+      if (this.clickData && !this.userInfo.ismember) {
+        params.prestoreid = this.clickData.id
+        if (!this.vipInfo.name || !this.vipInfo.mobile || !this.vipInfo.birthday || this.vipInfo.name === '' || this.vipInfo.mobile === '' || this.vipInfo.birthday === '') {
+          wepy.showToast({
+            title: '请输入会员信息',
+            icon: 'none'
+          })
+          return false
+        }
+        if (!Reg.rPhone.test(this.vipInfo.mobile)) {
+          wepy.showToast({
+            title: '请输入正确的手机号',
+            icon: 'none'
+          })
+          return false
+        }
+        params.name = this.vipInfo.name
+        params.mobile = this.vipInfo.mobile
+        params.birthday = this.vipInfo.birthday
+      }
+      this.isIng = true
+      wepy.request({
+        url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/order/unify`,
+        data: params
+      }).then(res => {
+        const data = res.data
+        if (data.code === -1) {
+          this.isIng = false
+          let retMsg = data.msg
+          let errorTip = retMsg
+          if (retMsg) {
+            if (retMsg.err_code_des) {
+              errorTip = retMsg.err_code_des
+            } else if (retMsg.return_msg) {
+              errorTip = retMsg.return_msg
+            }
+          }
+          wepy.showToast({
+            title: errorTip,
+            icon: 'none'
+          })
+        } else if (data.code === 0) {
+          this.payParams = data.data
+          this.payEvent()
+        } else {
+          wepy.navigateTo({url: `/packageB/pages/paySuccess?orderid=${this.options.id}`})
+        }
+        this.$apply()
+      })
+    },
+    clickMoney (item, index) {
+      if (!this.clickData || !item.id !== this.clickData.id) {
+        // for (let i = 0; i < this.moneyData.length; i++) {
+        //   if (this.moneyData[i].checked && i !== parseInt(index)) {
+        //     this.moneyData[i].checked = false
+        //     break
+        //   }
+        // }
+        this.clickData = item
+        this.payPrice = item.addmoney
+      } else {
+        this.clickData = null
+        this.payPrice = this.orderPrice
+      }
+      console.log(this.clickData)
+      // this.moneyData[index].checked = !item.checked
+      this.$apply()
+    }
+  }
+}
+</script>

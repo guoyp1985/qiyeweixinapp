@@ -73,7 +73,7 @@
 <template>
   <!-- <view class="fixed-help bg-theme color-white" style="{{themeObject.bgStyle}}" @tap="toHelp">帮助</view> -->
   <view class="order-detail-page">
-    <view class="padding10 flex_left bg-white b_bottom_after">
+    <!-- <view class="padding10 flex_left bg-white b_bottom_after">
       <view wx:if="{{options.fromType == 'user'}}" class="flex_cell flex_left">
         <view class="font14 clamp1 w_100">卖家: {{orderData.retailer.title}}</view>
       </view>
@@ -86,8 +86,8 @@
       <form class="db" bindsubmit="toChat" report-submit="true">
         <button class="bg-theme color-white btn-chat" style="{{themeObject.bgStyle}}" form-type="submit">联系客服</button>
       </form>
-    </view>
-    <view class="bg-white b_bottom_after padding10">
+    </view> -->
+    <view class="bg-white b_bottom_after padding10" wx:if="{{orderData.ordertype == 1}}">
       <view wx:if="{{orderData.flag != 0 && orderData.flag != 1 && orderData.flag != 2}}" class="flex_left mb10">
         <view class="flex_left flex_cell">{{ orderData.delivercompanyname }} {{ orderData.delivercode }}</view>
         <form class="flex_right color-theme" style="{{themeObject.colorStyle}}" bindsubmit="viewDeliver" wx:if="{{!options.history}}">
@@ -120,7 +120,7 @@
       </repeat>
     </view>
     <view class="b_top_after padding10 bg-white">
-      <view class="flex_left font12 color-gray">
+      <view class="flex_left font12 color-gray" wx:if="{{orderData.ordertype == 1}}">
         <view class="flex_left">运费</view>
         <view class="flex_right flex_cell">
           <block wx:if="{{orderData.postage == 0 || orderData.postage <= 0}}">包邮</block>
@@ -137,11 +137,11 @@
       </view>
     </view>
     <view class="b_top_after padding10 bg-white flex_right">
-      <text class="font12">实际支付: </text>
+      <text class="font12">订单金额: </text>
       <text class="ml5 font16 color-orange">¥{{orderData.needpaymoney}}</text>
-      <block wx:if="{{saveMoneyMode && userInfo.regwid && userInfo.bindstatus}}">
+      <!-- <block wx:if="{{saveMoneyMode && userInfo.regwid && userInfo.bindstatus}}">
         <text class="color-gray ml5">(省{{orderData.savemoney}}元)</text>
-      </block>
+      </block> -->
     </view>
     <view class="b_top_after padding10 bg-white">
       <view class="font12 color-gray flex_left">
@@ -164,9 +164,9 @@
             <button class="btn">{{button.name}}</button>
           </form>
         </repeat>
-        <form class="btn-item" @tap="createImg" wx:if="{{orderData.flag != 0 && orderData.flag != 1}}">
+        <!-- <form class="btn-item" @tap="createImg" wx:if="{{orderData.flag != 0 && orderData.flag != 1}}">
           <button class="btn">下单回执</button>
-        </form>
+        </form> -->
       </view>
     </block>
     <view class="mt12" wx:if="{{serviceData.length}}">
@@ -419,10 +419,14 @@ export default class extends wepy.page {
       case 1:
         if (this.options.fromType === 'user') {
           this.orderData.buttons = [
-            {id: 1, name: '取消订单'}
+            // {id: 1, name: '取消订单'}
           ]
-          if (this.orderData.singlepay) {
-            this.orderData.buttons.push({id: 2, name: '去支付'})
+          if (this.orderData.ordertype === 3) {
+            this.orderData.buttons.push({id: 2, name: '去下单'})
+          } else {
+            if (this.orderData.singlepay) {
+              this.orderData.buttons.push({id: 2, name: '去支付'})
+            }
           }
         }
         break
@@ -454,6 +458,9 @@ export default class extends wepy.page {
           arr1.push({id: 5, name: '申请售后'})
         }
         this.orderData.buttons = arr1
+        break
+      case 102:
+        this.orderData.buttons = [{id: 10, name: '去支付'}]
         break
     }
     // if (this.orderData.canreply) {
@@ -619,7 +626,14 @@ export default class extends wepy.page {
           this.cancelEvent()
           break
         case 2:
-          wepy.navigateTo({url: `/packageB/pages/pay?id=${this.orderData.id}`})
+          if (this.orderData.ordertype === 3) {
+            wepy.navigateTo({url: `/pages/qypay?orderid=${this.orderData.id}`})
+          } else {
+            wepy.navigateTo({url: `/packageB/pages/pay?id=${this.orderData.id}`})
+          }
+          break
+        case 10:
+          wepy.navigateTo({url: `/pages/pay?id=${this.orderData.id}`})
           break
         case 3:
           // 订单退款通知、退款失败通知、售后受理通知

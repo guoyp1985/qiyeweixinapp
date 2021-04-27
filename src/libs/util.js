@@ -681,6 +681,44 @@ const Util = {
     }
     console.log('经纬度计算的距离', s)
     return s
+  },
+  checkClose: (closestr) => {
+    let isClose = false
+    let now = new Date().getTime()
+    console.log('闭店时间=', closestr)
+    let closeArr = closestr.split('-')
+    let start = closeArr[0]
+    let end = closeArr[1]
+    let startArr = start.split(':')
+    let endArr = end.split(':')
+    let startHour = parseInt(startArr[0])
+    let startMinute = parseInt(startArr[1])
+    let endHour = parseInt(endArr[0])
+    let endMinute = parseInt(endArr[1])
+    let nowstr = new Time(now).dateFormat('hh:mm')
+    let nowarr = nowstr.split(':')
+    let nowHour = parseInt(nowarr[0])
+    let nowMinute = parseInt(nowarr[1])
+    if (nowHour === startHour) {
+      if (nowMinute >= startMinute) {
+        isClose = true
+      }
+    } else if (nowHour === endHour) {
+      if (nowMinute <= endMinute) {
+        isClose = true
+      }
+    } else if (startHour >= endHour) {
+      if (nowHour >= startHour) {
+        isClose = true
+      } else if (nowHour <= endHour) {
+        isClose = true
+      }
+    } else {
+      if (nowHour > startHour && nowHour < endHour) {
+        isClose = true
+      }
+    }
+    return isClose
   }
 }
 
