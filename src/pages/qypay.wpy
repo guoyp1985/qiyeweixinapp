@@ -218,9 +218,9 @@
           </view>
         </view>
       </view>
-      <!-- <view wx:if="{{orderData && !orderData.ismember && query.xiadan != 1}}" class="box-area mt10" bindtap="toMemberAuth">
+      <view wx:if="{{orderData && !orderData.ismember && query.xiadan != 1}}" class="box-area mt10" bindtap="toMemberAuth">
         <view class="box-inner flex_center padding10" style="{{themeObject.colorStyle}}box-sizing:border-box;">我是本店会员。去认证 >></view>
-      </view> -->
+      </view>
       <view class="box-area mt10" wx:if="{{disList}}">
         <view class="box-inner">
           <view class="order-list">

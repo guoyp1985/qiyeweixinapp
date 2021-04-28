@@ -1176,8 +1176,7 @@ export default class extends wepy.page {
       }
     },
     toProduct (item, index) {
-      // let url = `/pages/product?id=${item.id}&storeid=${this.selectedMd.id}`
-      let url = `/pages/product?id=${item.id}&storeid=${this.selectedMd.id}&ordertype=4`
+      let url = `/pages/product?id=${item.id}&storeid=${this.selectedMd.id}`
       if (this.options.tableid) url = `${url}&tableid=${this.options.tableid}`
       wepy.navigateTo({url: url})
     },
