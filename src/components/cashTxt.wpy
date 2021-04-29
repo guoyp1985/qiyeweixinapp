@@ -3,17 +3,13 @@
 <template>
   <view>
     <view class="bold mt5">第一条 提现规则</view>
-    <view>1. 线上交易的订单，需待买家确认收货后，订单7天售后结束并未进行全额退款时，订单的佣金收入即可提现。</view>
-    <view>2. 待提现金额不足1元时无法进行提现。</view>
-    <view>3. 微信规定每日提现至微信零钱的最高额度为5千元。</view>
-    <view>4. 订单售后周期未结束时，可通过【待结算】查询佣金收入明细。</view>
-    <view class="bold mt5">第二条 退款订单处理规则</view>
-    <view>1. 当买家对订单申请退款，或对订单申请售后，平台进行全额退款时，合伙人将无法获得该笔订单带来的佣金。</view>
-    <view class="bold mt5">第三条 确认收货规则</view>
-    <view>1. 线上交易的订单，若买家没有主动确认收货，系统将在订单发货后的第7天自动确认收货。</view>
+    <view>1. 微信规定单笔提现金额不得低于1元。</view>
+    <view>2. 微信规定每日提现至微信零钱的最高额度为5千元。</view>
+    <view>3. 堂食订单，用户结账后佣金即可提现；外卖、自取订单需在用户确认收货后方可提现，确认收货前，可通过【待结算】查询佣金收入明细。</view>
+    <view class="bold mt5">第二条 佣金的产生</view>
+    <view>1. 订单用户必须是您的企业微信客户，您方可得到因他消费而产生的订单佣金。</view>
   </view>
 </template>
-
 <script>
 import wepy from 'wepy'
 export default class extends wepy.component {

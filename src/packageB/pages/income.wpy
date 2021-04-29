@@ -79,9 +79,9 @@
     <view class="inhead" style="{{themeObject.linearBgStyle}}">
       <view class="flex_left pl10 pr10 pt10 pb20">
         <view class="flex_left flex_cell">可提现金额（元）</view>
-        <form class="flex_right w100" bindsubmit="toBank" report-submit="true">
+        <!-- <form class="flex_right w100" bindsubmit="toBank" report-submit="true">
           <button class="al al-yinhangka color-white font16" form-type="submit"></button>
-        </form>
+        </form> -->
       </view>
       <view class="flex_center font40 bold">{{cashInfo.ketixian}}</view>
       <form class="db pt20 pb20" bindsubmit="clickwechat" report-submit="true">
@@ -118,7 +118,7 @@
         </view>
         <view class="al al-mjiantou-copy2"></view>
       </view>
-      <view class="txt-item" data-flag="3" bindtap="toIncome">
+      <!-- <view class="txt-item" data-flag="3" bindtap="toIncome">
         <view>
           <view class="txt1">{{cashInfo.apply}}</view>
           <view class="txt2">待审核(元)</view>
@@ -131,7 +131,7 @@
           <view class="txt2">为您节省(元)</view>
         </view>
         <view class="al al-mjiantou-copy2"></view>
-      </view>
+      </view> -->
     </view>
     <view class="padding20">
       <view class="flex_center">
@@ -146,7 +146,7 @@
   <view class="mceng" wx:if="{{wechatShow}}">
     <view class="flex_center">
       <view class="wechatShow" wx:if="{{wechatShow}}">
-        <view class="align_center b_bottom_after pb10">提现至微信零钱'</view>
+        <view class="align_center b_bottom_after pb10">提现至微信零钱</view>
         <view class="pt10 pb10 pr10 pl10">
           <view class="flex_table">
             <view class="align_left color-gray2">到账时间</view>
@@ -278,16 +278,24 @@
       this.$apply()
     }
     getData () {
-      wepy.request({
-        url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/user/cashInfo`
-      }).then(res => {
-        const data = res.data
-        if (data.code === 0) {
-          this.cashInfo = data.data
-          this.pendingmoney = data.data
-          this.$apply()
-        }
-      })
+      this.cashInfo = {
+        ketixian: this.userInfo.waitcashmoney,
+        zongshouru: this.userInfo.moneyin,
+        yijiesuan: this.userInfo.jiesuanmoney,
+        daijiesuan: this.userInfo.pendingmoney,
+        yitixian: this.userInfo.moneyout
+      }
+      this.$apply()
+      // wepy.request({
+      //   url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/user/cashInfo`
+      // }).then(res => {
+      //   const data = res.data
+      //   if (data.code === 0) {
+      //     this.cashInfo = data.data
+      //     this.pendingmoney = data.data
+      //     this.$apply()
+      //   }
+      // })
     }
     handlePageData () {
       this.globalData = this.$parent.globalData
@@ -342,7 +350,7 @@
         this.submitIng = true
         wepy.showLoading()
         wepy.request({
-          url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/accounting/cashMoney`,
+          url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/account/cashMoney`,
           data: {money: inputMoney, type: type, appid: Config.AppId},
           method: 'post'
         }).then(res => {
@@ -442,24 +450,26 @@
         this.cashMoney = e.detail.value
       },
       getWechatCash (e) {
+        this.cashEvent(this.cashMoney, 'lingqian')
         // 审核状态通知
-        Util.checkTmpMsg({
-          systeminfo: this.globalData.systemInfo,
-          tmplIds: [this.globalData.Templates.censor_check],
-          callback: () => {
-            this.cashEvent(this.cashMoney, 'lingqian')
-          }
-        })
+        // Util.checkTmpMsg({
+        //   systeminfo: this.globalData.systemInfo,
+        //   tmplIds: [this.globalData.Templates.censor_check],
+        //   callback: () => {
+        //     this.cashEvent(this.cashMoney, 'lingqian')
+        //   }
+        // })
       },
       getBankCash (e) {
+        this.cashEvent(this.cashBankMoney, 'yinhang')
         // 审核状态通知
-        Util.checkTmpMsg({
-          systeminfo: this.globalData.systemInfo,
-          tmplIds: [this.globalData.Templates.censor_check],
-          callback: () => {
-            this.cashEvent(this.cashBankMoney, 'yinhang')
-          }
-        })
+        // Util.checkTmpMsg({
+        //   systeminfo: this.globalData.systemInfo,
+        //   tmplIds: [this.globalData.Templates.censor_check],
+        //   callback: () => {
+        //     this.cashEvent(this.cashBankMoney, 'yinhang')
+        //   }
+        // })
       },
       clickAll (e) {
         const dataset = e.currentTarget.dataset

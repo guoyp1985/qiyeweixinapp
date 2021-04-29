@@ -581,8 +581,8 @@
   :photo.sync="photo"
   :title.sync="title"
   :retailerInfo.sync="retailerInfo"
-  :id.sync="productId"
-  :module.sync="module">
+  :module.sync="module"
+  :pagePath.sync="pagePath">
  </share>
  <view class="videoarea" wx:if="{{videoShow}}">
    <view class="btn-area flex_center">
@@ -764,7 +764,8 @@ export default class Product extends wepy.page {
     creditData: [],
     saveMoneyMode: false,
     ismuted: true,
-    isClose: false
+    isClose: false,
+    pagePath: ''
   }
   computed = {
     dot: function () {
@@ -1341,9 +1342,11 @@ export default class Product extends wepy.page {
     this.showPopup = false
     this.$apply()
     const lastshareuid = this.options.share_uid
-    let shareurl = `/${Config.Router.product}?id=${this.options.id}&type=${this.productType}&module=${this.module}&share_uid=${this.userInfo.uid}&share_wid=${this.globalData.Wid}&wid=${this.globalData.Wid}&comefrom=${Config.AppName}`
+    // let shareurl = `/${Config.Router.product}?id=${this.options.id}&type=${this.productType}&module=${this.module}&share_uid=${this.userInfo.uid}&share_wid=${this.globalData.Wid}&wid=${this.globalData.Wid}&comefrom=${Config.AppName}`
+    let shareurl = `/${Config.Router.product}?id=${this.options.id}&type=${this.productType}&module=${this.module}&share_uid=${this.userInfo.uid}&comefrom=${Config.AppName}`
     if (this.options.storeid) shareurl = `${shareurl}&storeid=${this.options.storeid}`
     if (this.options.tableid) shareurl = `${shareurl}&tableid=${this.options.tableid}`
+    if (this.options.ordertype) shareurl = `${shareurl}&ordertype=${this.options.ordertype}`
     if (this.userInfo.regwid && this.userInfo.bindstatus === 1) {
       shareurl = `${shareurl}&shareuser=self`
     }
@@ -1729,6 +1732,11 @@ export default class Product extends wepy.page {
       }
       options.type = 'fpimport'
     }
+    let pagepath = `${Config.Router.product}?id=${options.id}`
+    if (options.ordertype) pagepath = `${pagepath}&ordertype=${options.ordertype}`
+    if (options.tableid) pagepath = `${pagepath}&tableid=${options.tableid}`
+    if (options.storeid) pagepath = `${pagepath}&storeid=${options.storeid}`
+    this.pagePath = pagepath
     if (options.scene) {
       let sceneOptions = Util.queryScene(options.scene)
       options = {...options, ...sceneOptions}
@@ -1748,6 +1756,7 @@ export default class Product extends wepy.page {
     if (this.options.iswechat) {
       this.showTip = true
     }
+    this.$apply()
     wepy.showShareMenu({
       withShareTicket: true
     })

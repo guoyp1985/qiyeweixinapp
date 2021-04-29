@@ -576,6 +576,12 @@
           "pathName": "pages/addOrder",
           "query": "shop_id=2&ordertype=4",
           "scene": null
+        },
+        {
+          "name": "\b合伙人页面",
+          "pathName": "pages/mark",
+          "query": "",
+          "scene": null
         }
       ]
     }

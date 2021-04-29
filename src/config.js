@@ -2,12 +2,12 @@ const ExtConfig = wx.getExtConfigSync ? wx.getExtConfigSync() : {}
 const Config = {
   DebugMode: false, // 输出调试，正式环境不需要配置
   version: ExtConfig.version ? ExtConfig.version : '1.0.0.1',
-  // AppName: ExtConfig.appName ? ExtConfig.appName : '博卡供销社',
-  // AppId: ExtConfig.appId ? ExtConfig.appId : 'wx9f7339af150e0b6f', // 博卡供销社 wx9f7339af150e0b6f
-  // BokaApi: ExtConfig.bokaApi ? ExtConfig.bokaApi : 'https://qy.boka.cn',
-  AppName: ExtConfig.appName ? ExtConfig.appName : '顾湘饭店',
-  AppId: ExtConfig.appId ? ExtConfig.appId : 'wx1426b52fd313ddbc', // 顾湘 wx1b22fe75584085ee
-  BokaApi: ExtConfig.bokaApi ? ExtConfig.bokaApi : 'https://guxiang.boka.cn',
+  AppName: ExtConfig.appName ? ExtConfig.appName : '博卡供销社',
+  AppId: ExtConfig.appId ? ExtConfig.appId : 'wx9f7339af150e0b6f', // 博卡供销社 wx9f7339af150e0b6f
+  BokaApi: ExtConfig.bokaApi ? ExtConfig.bokaApi : 'https://qy.boka.cn',
+  // AppName: ExtConfig.appName ? ExtConfig.appName : '顾湘饭店',
+  // AppId: ExtConfig.appId ? ExtConfig.appId : 'wx1426b52fd313ddbc', // 顾湘 wx1b22fe75584085ee
+  // BokaApi: ExtConfig.bokaApi ? ExtConfig.bokaApi : 'https://guxiang.boka.cn',
   RecommendClass: 53747124,
   WeixinName: ExtConfig.appName,
   AppLogo: ExtConfig.appLogo,
@@ -25,7 +25,7 @@ const Config = {
   // HomePage: '/pages/index',
   HomePage: '/pages/qyshop',
   V1: 'api',
-  V2: ExtConfig.appId ? 'api/' + ExtConfig.appId : 'api/wx1426b52fd313ddbc',
+  V2: ExtConfig.appId ? 'api/' + ExtConfig.appId : 'api/wx9f7339af150e0b6f',
   ApiVersion: ExtConfig.ApiVersion ? ExtConfig.ApiVersion : 'V1',
   ApiAccept: 'application/vnd.factorydev.v2+json',
   SDKAppID: 1400278262,
@@ -118,6 +118,7 @@ const Config = {
   // ],
   MenuData: [
     {id: 1, title: '首页', module: 'home', type: '0', miniprogramurl: '/pages/qyshop'},
+    {id: 2, title: '合伙人', module: 'mark', type: '0', miniprogramurl: '/pages/mark'},
     {id: 2, title: '订单', module: 'order', type: '0', miniprogramurl: '/packageD/pages/userOrders'},
     {id: 3, title: '我', module: 'own', type: '0', miniprogramurl: '/pages/own'}
   ],

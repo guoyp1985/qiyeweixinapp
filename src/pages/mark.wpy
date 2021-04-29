@@ -65,17 +65,14 @@
 </style>
 <template>
   <view :class="{'iphone' : isIpx}" class="mark-page havemenu">
-    <view class="page-inner columnarea">
+    <view class="page-inner">
       <block wx:if="{{showContainer}}">
         <block wx:if="{{showUser}}">
-          <user
-            :options.sync="options"
-            :factoryInfo.sync="factoryInfo"
+          <apply
             :userInfo.sync="userInfo"
             :globalData.sync="globalData"
-            :showMark.sync="showMark"
             :themeObject.sync="themeObject">
-          </user>
+          </apply>
         </block>
         <block wx:if="{{showRetailer}}">
           <retailer
@@ -197,6 +194,9 @@
       <view class="al al-hongbao3 color-white"></view>
     </view>
   </navigator>
+  <block wx:if="{{showAuth}}">
+    <auth :pageurl.sync="pageurl" :themeObject.sync="themeObject" :globalData.sync="globalData"></auth>
+  </block>
 </template>
 <script>
   import wepy from 'wepy'
@@ -205,16 +205,20 @@
   import Time from '@/libs/time'
   import Cached from '@/libs/cached'
   import User from '@/components/user'
+  import Apply from '@/components/apply'
   import Retailer from '@/components/retailer'
   import BottomMenu from '@/components/bottomMenu'
   import Share from '@/components/store/share'
+  import Auth from '@/components/auth'
   export default class Mark extends wepy.page {
     config = {
       enablePullDownRefresh: true,
       backgroundTextStyle: 'dark'
     }
     components = {
+      auth: Auth,
       user: User,
+      apply: Apply,
       retailer: Retailer,
       bottomMenu: BottomMenu,
       share: Share
@@ -269,7 +273,8 @@
       maxnum: 9,
       exceed: '',
       haveTask: false,
-      saveMoneyMode: false
+      saveMoneyMode: false,
+      showAuth: false
     }
     refreshPage () {
       this.userInfo = {}
@@ -277,7 +282,7 @@
       this.taskData = []
       this.loadingComplete = false
       this.factoryInfo = {}
-      this.pageStart = 0
+      this.pageStart = 1
       this.products = []
       this.isLoading = false
       this.disList = false
@@ -288,7 +293,7 @@
       this.isFirst = true
       this.tabIndex = 0
       this.disTabList = false
-      this.pageStart2 = 0
+      this.pageStart2 = 1
       this.tabData2 = []
       this.isLoading2 = false
       this.isDone2 = false
@@ -307,14 +312,14 @@
       if (this.isLoading || this.isLoading2 || this.isFactoryCommission) return false
       switch (this.tabIndex) {
         case 0:
-          if (this.products.length === (this.pageStart + 1) * this.limit) {
+          if (this.products.length === this.pageStart * this.limit) {
             this.pageStart++
             this.isLoading = true
             this.getData()
           }
           break
         case 1:
-          // if (this.tabData2.length === (this.pageStart2 + 1) * this.limit) {
+          // if (this.tabData2.length === this.pageStart2 * this.limit) {
           //   this.pageStart2++
           //   this.isLoading2 = true
           //   this.getNewsData()
@@ -335,8 +340,8 @@
       if (this.inAjax) return false
       this.inAjax = true
       Cached.pagingRequest({
-        url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/factory/factoryproductList`,
-        data: {fid: Config.Fid, pagestart: this.pageStart, limit: this.limit, showcustomers: 1},
+        url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/miniprogram/productlist`,
+        data: {fid: Config.Fid, page: this.pageStart, limit: this.limit, showcustomers: 1},
         method: 'post'
       }, 'mark.products', Config.URT.H,
       cacheData => {
@@ -386,7 +391,7 @@
       this.inAjax = true
       wepy.request({
         url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/moduleList`,
-        data: {pagestart: this.pageStart2, limit: 1, module: 'factorynews', fid: Config.Fid}
+        data: {page: this.pageStart2, limit: 1, module: 'factorynews', fid: Config.Fid}
       }).then(res => {
         this.inAjax = false
         this.loadingComplete = true
@@ -502,15 +507,21 @@
           method: 'post'
         })
       }
-      if (this.userInfo.regwid && this.userInfo.bindstatus) {
+      if (this.userInfo.isretailer) {
         this.showUser = false
         this.showRetailer = true
         this.showContainer = true
-        this.handleRetailer()
+        // this.handleRetailer()
+        if (!this.products.length && !this.inAjax) {
+          wepy.showLoading()
+          this.getData()
+        } else {
+          this.allowNav = true
+        }
       } else {
         this.showUser = true
         this.showRetailer = false
-        this.getFactoryInfo()
+        // this.getFactoryInfo()
         this.allowNav = true
       }
     }
@@ -563,8 +574,8 @@
     }
     onLoad (options) {
       wepy.hideShareMenu()
-      this.pageStart = 0
-      this.pageStart2 = 0
+      this.pageStart = 1
+      this.pageStart2 = 1
       this.limit = Config.Limit
       this.isFirst = true
       this.isIng = false
@@ -915,6 +926,20 @@
       }
     }
     events = {
+      authEvent () {
+        this.showAuth = true
+        this.$apply()
+      },
+      cancelLogin () {
+        this.showAuth = false
+        this.$apply()
+      },
+      afterAuth () {
+        this.globalData = this.$parent.globalData
+        this.userInfo = this.globalData.userInfo
+        this.showAuth = false
+        this.$apply()
+      },
       clickShare (data) {
         this.module = 'factoryproduct'
         this.clickProduct = data
@@ -986,6 +1011,13 @@
         this.clickTaskIndex = index
         this.taskPhotoArr = []
         this.showPhotoTask = true
+      },
+      afterApply () {
+        this.userInfo.isretailer = 1
+        this.globalData.userInfo = this.userInfo
+        this.$parent.globalData = this.globalData
+        this.afterGetUser()
+        this.$apply()
       }
     }
   }

@@ -668,9 +668,9 @@ export default class extends wepy.component {
         queryArr.push(`id=${this.id}`)
       }
       sceneArr.push(`sd:${this.userInfo.uid}`)
-      sceneArr.push(`wd:${this.globalData.Wid}`)
+      // sceneArr.push(`wd:${this.globalData.Wid}`)
       queryArr.push(`share_uid=${this.userInfo.uid}`)
-      queryArr.push(`wid=${this.globalData.Wid}`)
+      // queryArr.push(`wid=${this.globalData.Wid}`)
       if (this.addmodule && this.addmodule !== '') {
         sceneArr.push(`m:${this.addmodule}`)
         queryArr.push(`module=${this.addmodule}`)
@@ -736,7 +736,11 @@ export default class extends wepy.component {
       let sourceurl = `/${optionalPage}`
       if (queryArr.length) {
         let querystr = queryArr.join('&')
-        sourceurl = `${sourceurl}?${querystr}`
+        if (sourceurl.indexOf('?') > -1) {
+          sourceurl = `${sourceurl}&${querystr}`
+        } else {
+          sourceurl = `${sourceurl}?${querystr}`
+        }
       }
       return wepy.request({
         url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/wxa/createPoster`,

@@ -150,8 +150,8 @@
         }
       },
       window: {
-        // navigationBarTitleText: '博卡供销社', // 博卡供销社
-        navigationBarTitleText: '顾湘饭店', // 顾湘饭店
+        navigationBarTitleText: '博卡供销社', // 博卡供销社
+        // navigationBarTitleText: '顾湘饭店', // 顾湘饭店
         backgroundTextStyle: 'dark',
         navigationBarBackgroundColor: '#ffffff',
         navigationBarTextStyle: 'white',

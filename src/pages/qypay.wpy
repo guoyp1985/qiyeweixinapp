@@ -1197,13 +1197,13 @@ export default class AddOrder extends wepy.page {
         })
         return false
       }
-      if (this.xcode !== this.xcode1) {
-        wepy.showToast({
-          title: '请输入正确的验证码',
-          icon: 'none'
-        })
-        return false
-      }
+      // if (this.xcode !== this.xcode1) {
+      //   wepy.showToast({
+      //     title: '请输入正确的验证码',
+      //     icon: 'none'
+      //   })
+      //   return false
+      // }
       this.submitIng1 = true
       wepy.request({
         url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/user/queryMemberCard`,
