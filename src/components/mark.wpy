@@ -52,23 +52,34 @@
   .btn-share{
     width:300rpx;height:80rpx;border-radius:60rpx;margin:0 auto;font-size:36rpx;font-weight:bold;
   }
-  .result-area{
-    padding:40rpx 20rpx 20rpx;border-radius:10rpx;box-sizing:border-box;position:relative;
-    box-shadow: 0rpx 4rpx 12rpx rgba(0,0,0,0.1);
-    .theme{
-      width:440rpx;position: absolute;left:50%;margin-left:-220rpx;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 10rpx 40rpx;
-      box-sizing: border-box;
-      border-radius:10rpx;
-      background: linear-gradient(to bottom, #f8817a 0%,#f53232 100%);
+  .result-outer{
+    padding:60rpx 40rpx 40rpx;
+    .result-area{
+      padding:40rpx 20rpx 20rpx;border-radius:10rpx;box-sizing:border-box;position:relative;
+      box-shadow: 0rpx 4rpx 12rpx rgba(0,0,0,0.1);
+      .theme{
+        width:440rpx;position: absolute;left:50%;margin-left:-220rpx;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10rpx 40rpx;
+        box-sizing: border-box;
+        border-radius:10rpx;
+        background: linear-gradient(to bottom, #f8817a 0%,#f53232 100%);
+      }
+      .zqtx{top: 10rpx;}
+      .wdyq{top: -30rpx;}
+      .title{border-radius: 30rpx;width: 50%;background-color: #FF6B63;color: white;padding:10rpx 0 10rpx 20rpx;}
+      .circle{width: 10rpx;height: 10rpx;border-radius: 90rpx;background-color: #ffff00;}
+      .scroll_item{
+        padding:20rpx 20rpx;box-sizing: border-box;
+        .pic{
+          width:100rpx;
+          image{width:80rpx;height:80rpx;border-radius:50%;}
+        }
+        .r-cell{width:200rpx;}
+      }
     }
-    .zqtx{top: 10rpx;}
-    .wdyq{top: -30rpx;}
-    .title{border-radius: 30rpx;width: 50%;background-color: #FF6B63;color: white;padding:10rpx 0 10rpx 20rpx;}
-    .circle{width: 10rpx;height: 10rpx;border-radius: 90rpx;background-color: #ffff00;}
   }
 }
 .mceng{
@@ -148,17 +159,25 @@
     </view>
     <view class="padding20">
       <view class="flex_center">
+        <view class="plan-txt font16 color-theme" style="{{themeObject.colorStyle}}" @tap="clickTxt"><text>提现说明</text><text :class="{active: showTxt}" class="al jiantou font16"></text></view>
+      </view>
+      <block wx:if="{{showTxt}}">
+        <cashTxt :themeObject.sync="themeObject"></cashTxt>
+      </block>
+    </view>
+    <view class="padding20">
+      <view class="flex_center">
         <button open-type="share" class="btn-share flex_center" style="{{themeObject.bgStyle}}">分享邀请</button>
       </view>
     </view>
-    <view class="padding20 mt20" style="background-color:#f2f2f2;box-sizing:border-box;" wx:if="{{disRecord}}">
+    <view class="result-outer" style="background-color:#f2f2f2;box-sizing:border-box;" wx:if="{{disRecord}}">
       <view class="scroll_list bg-white box-yy result-area">
         <view class="theme wdyq" style="{{themeObject.linearBgStyle}}">
-          <view class="circle"></view><view class="bold color-white">我的邀请({{count}}人)</view><view class="circle"></view>
+          <view class="circle"></view><view class="bold color-white">我的邀请({{recordCount}}人)</view><view class="circle"></view>
         </view>
-        <view class="padding20 align_center" wx:if="{{!listData.length}}">暂无邀请记录</view>
+        <view class="padding20 align_center" wx:if="{{!recordData.length}}">暂无邀请记录</view>
         <block wx:else>
-          <repeat for="{{listData}}" item="item" index="index">
+          <repeat for="{{recordData}}" item="item" index="index">
             <view class="scroll_item flex_left">
               <view class="pic flex_left">
                 <image wx:if="{{item.avatar && item.avatar != ''}}" src="{{item.avatar}}"></image>
@@ -175,14 +194,7 @@
         </block>
       </view>
     </view>
-    <view class="padding20">
-      <view class="flex_center">
-        <view class="plan-txt font16 color-theme" style="{{themeObject.colorStyle}}" @tap="clickTxt"><text>提现说明</text><text :class="{active: showTxt}" class="al jiantou font16"></text></view>
-      </view>
-      <block wx:if="{{showTxt}}">
-        <cashTxt :themeObject.sync="themeObject"></cashTxt>
-      </block>
-    </view>
+    <view class="blank-area"></view>
   </view>
   <!-- 提现至微信零钱 -->
   <view class="mceng" wx:if="{{wechatShow}}">

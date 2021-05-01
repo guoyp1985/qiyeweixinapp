@@ -5,19 +5,28 @@
 }
 .fixed-hb.iphone{bottom:194rpx;}
 .mark-page.iphone{
+  /*
   bottom:184rpx;
   .bottom-area{bottom:220rpx;}
+  */
+  padding-bottom:184rpx;
 }
 .mark-page{
+  /*
   left:0;right:0;top:0;bottom:116rpx;position:absolute;
-  .page-inner{width:100%;height:100%;position:relative;overflow-y:auto;}
+  */
+  .page-inner{
+    /*
+    width:100%;height:100%;position:relative;overflow-y:auto;
+    */
+  }
   image{width:100%;}
   .bottom-area{
     width:100%;height:120rpx;display:block;position:fixed;left:0;bottom:136rpx;right:0;background-color:transparent;
     .btn{width:80%;height:80rpx;border-radius:40rpx;box-shadow: rgba(0, 0, 0, 0.1) 0 0 8rpx 2rpx;}
   }
-  .blank-area{width:100%;height:40rpx;}
-  .blank-area.iphone{width:100%;height:108rpx;}
+  .blank-area{width:100%;height:116rpx;}
+  .blank-area.iphone{width:100%;height:184rpx;}
 }
 .xinfeng-modal{
   position:fixed;left:0;top:0;right:0;bottom:0;background-color:rgba(0,0,0,0.6);
@@ -324,6 +333,7 @@
       }
     }
     onReachBottom () {
+      console.log('in reach bottome')
       if (this.userInfo.isretailer && this.recordData.length === this.recordPage * this.limit) {
         this.recordPage++
         this.getRecord()
@@ -331,9 +341,9 @@
     }
     getRecord () {
       wepy.request({
-        // url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/factory/myRecommend`,
-        url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/miniprogram/productlist`,
-        data: {pagestart: this.recordPage, limit: this.limit, wid: this.userInfo.regwid, fid: this.Fid},
+        url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/user/myRecommend`,
+        // url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/miniprogram/productlist`,
+        data: {page: this.recordPage, limit: this.limit},
         method: 'post'
       }).then(res => {
         const data = res.data
