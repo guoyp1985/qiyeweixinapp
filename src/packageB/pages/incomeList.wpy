@@ -51,28 +51,16 @@
 <template>
   <view class="app-tab income-app-tab">
     <view class="tab-item {{selectedIndex==0 ? 'active' : ''}}" data-current="0" bindtap="clickTab">
-      <text style="{{selectedIndex == 0 ? themeObject.colorStyle : ''}}">全部</text>
+      <text style="{{selectedIndex == 0 ? themeObject.colorStyle : ''}}">未结算</text>
       <view class="line" style="{{selectedIndex == 0 ? themeObject.bgStyle : ''}}"></view>
     </view>
     <view class="tab-item {{selectedIndex==1 ? 'active' : ''}}" data-current="1" bindtap="clickTab">
-      <text style="{{selectedIndex == 1 ? themeObject.colorStyle : ''}}">待结算</text>
+      <text style="{{selectedIndex == 1 ? themeObject.colorStyle : ''}}">已结算</text>
       <view class="line" style="{{selectedIndex == 1 ? themeObject.bgStyle : ''}}"></view>
     </view>
     <view class="tab-item {{selectedIndex==2 ? 'active' : ''}}" data-current="2" bindtap="clickTab">
-      <text style="{{selectedIndex == 2 ? themeObject.colorStyle : ''}}">已结算</text>
+      <text style="{{selectedIndex == 2 ? themeObject.colorStyle : ''}}">提现明细</text>
       <view class="line" style="{{selectedIndex == 2 ? themeObject.bgStyle : ''}}"></view>
-    </view>
-    <view wx:if="{{from == 'factory'}}" class="tab-item {{selectedIndex == 3 ? 'active' : ''}}" data-current="3" bindtap="clickTab">
-      <text style="{{selectedIndex == 3 ? themeObject.colorStyle : ''}}">手工分账</text>
-      <view class="line" style="{{selectedIndex == 3 ? themeObject.bgStyle : ''}}"></view>
-    </view>
-    <view wx:else class="tab-item {{selectedIndex == 3 ? 'active' : ''}}" data-current="3" bindtap="clickTab">
-      <text style="{{selectedIndex == 3 ? themeObject.colorStyle : ''}}">已提现</text>
-      <view class="line" style="{{selectedIndex == 3 ? themeObject.bgStyle : ''}}"></view>
-    </view>
-    <view class="tab-item {{selectedIndex == 4 ? 'active' : ''}}" data-current="4" bindtap="clickTab">
-      <text style="{{selectedIndex == 4 ? themeObject.colorStyle : ''}}">已退款</text>
-      <view class="line" style="{{selectedIndex == 4 ? themeObject.bgStyle : ''}}"></view>
     </view>
   </view>
   <view class="income-list-page">
@@ -98,30 +86,11 @@
     </block>
     <block wx:if="{{selectedIndex == 2}}">
       <block wx:if="{{disList3}}">
-        <view wx:if="{{!tabData3.length}}" class="flex_empty">暂无相关数据</view>
-        <scroll-view wx:else scroll-y="true" class="scroll-h" bindscrolltolower="scrollEvent3" scroll-into-view="{{toView3}}">
-          <incomeItem3 :listData.sync="listData3" :from.sync="from" :themeObject.sync="themeObject"></incomeItem3>
-          <view class="load-end-area loading" wx:if="{{isLoading3}}"></view>
-          <view class="load-end-area done" wx:elif="{{isDone3}}"></view>
-        </scroll-view>
-      </block>
-    </block>
-    <block wx:if="{{selectedIndex == 3}}">
-      <block wx:if="{{disList4}}">
-        <scroll-view scroll-y="true" class="scroll-h" bindscrolltolower="scrollEvent4" scroll-into-view="{{toView4}}">
-          <view wx:if="{{from == 'factory'}}" class="v-search-area flex_center bg-white">
-            <view class="search-outer flex_left">
-              <view class="flex_cell">
-                <input class="input" bindinput="keyupKeyword" type="text" value="{{searchword}}"/>
-              </view>
-              <view wx:if="{{searchword != ''}}" class="icon-cell flex_center color-gray font12" bindtap="cancelSearch">取消</view>
-              <view class="icon-cell flex_right" bindtap="searchEvent"><text class="al al-sousuo"></text></view>
-            </view>
-          </view>
-          <view wx:if="{{!tabData4.length && !applyData.length}}" class="flex_empty"><block wx:if="{{isSearch}}">暂无搜索结果</block><block wx:else>暂无相关数据</block></view>
+        <scroll-view scroll-y="true" class="scroll-h" bindscrolltolower="scrollEvent3" scroll-into-view="{{toView3}}">
+          <view wx:if="{{!tabData3.length}}" class="flex_empty">暂无相关数据</view>
           <block wx:else>
-            <repeat for="{{applyData}}" item="item" index="index">
-              <view wx:if="{{from != 'factory'}}" class="scroll_item padding10 bg-white mt10 list-shadow">
+            <repeat for="{{listData3}}" item="item" index="index">
+              <view class="scroll_item padding10 bg-white mt10 list-shadow">
                 <view class="db-flex">
                   <view class="pic-cell" wx:if="{{item.photo && item.photo != ''}}">
                     <image mode="aspectFill" src="{{item.photo}}" data-url="{{item.photo}}" bindtap="viewBigImg" />
@@ -140,56 +109,9 @@
                 </view>
               </view>
             </repeat>
-            <repeat for="{{listData4}}" item="item" index="index">
-              <view wx:if="{{from == 'factory'}}" class="scroll_item padding10 bg-white mt10 list-shadow">
-                <view class="db-flex">
-                  <view class="pic-cell flex_left">
-                    <image src="{{item.avatar}}"></image>
-                  </view>
-                  <view class="flex_cell flex_left">
-                    <view class="w_100">
-                      <view>{{item.linkman}}</view>
-                      <view class="mt5 color-gray"><text>可提现:</text><text class="color-theme ml5" style="{{themeObject.colorStyle}}">￥{{item.waitcashmoney}}</text></view>
-                      <view class="mt5 font12 clamp1 color-gray">卖家等级 {{item.identity}}</view>
-                    </view>
-                  </view>
-                  <view class="w100 flex_right">
-                    <view class="bg-theme color-white btn" style="{{themeObject.bgStyle}}" data-data="{{item}}" data-index="{{index}}" bindtap="clickCash">手工分账</view>
-                  </view>
-                </view>
-              </view>
-              <view wx:else class="scroll_item padding10 bg-white mt10 list-shadow">
-                <view class="db-flex">
-                  <view class="pic-cell" wx:if="{{item.photo && item.photo != ''}}">
-                    <image mode="aspectFill" src="{{item.photo}}" data-url="{{item.photo}}" bindtap="viewBigImg" />
-                  </view>
-                  <view class="flex_cell flex_left">
-                    <view class="w_100">
-                      <view><text>{{item.cashtypetext}}</text><text wx:if="{{item.status == 1}}" class="color-green2">【{{item.statustext}}】</text><text wx:else class="color-theme" style="{{themeObject.colorStyle}}">【{{item.statustext}}】</text></view>
-                      <view class="mt5 color-gray" wx:if="{{item.cmms && item.cmms > 0}}">手续费: ￥{{item.cmms}}</view>
-                      <view class="color-theme mt5" style="{{themeObject.colorStyle}}" wx:if="{{item.reason && item.reason != ''}}">{{item.reason}}</view>
-                      <view class="mt5 font12 clamp1 color-gray">{{item.dateline_str}}</view>
-                    </view>
-                  </view>
-                  <view class="w100 flex_right">
-                    <view class="clamp1">￥{{item.money}}</view>
-                  </view>
-                </view>
-              </view>
-            </repeat>
-            <view class="load-end-area loading" wx:if="{{isLoading4}}"></view>
-            <view class="load-end-area done" wx:elif="{{isDone4}}"></view>
+            <view class="load-end-area loading" wx:if="{{isLoading3}}"></view>
+            <view class="load-end-area done" wx:elif="{{isDone3}}"></view>
           </block>
-        </scroll-view>
-      </block>
-    </block>
-    <block wx:if="{{selectedIndex == 4}}">
-      <block wx:if="{{disList5}}">
-        <view wx:if="{{!tabData5.length}}" class="flex_empty">暂无相关数据</view>
-        <scroll-view wx:else scroll-y="true" class="scroll-h" bindscrolltolower="scrollEvent5" scroll-into-view="{{toView5}}">
-          <incomeItem5 :listData.sync="listData5" :from.sync="from" :themeObject.sync="themeObject"></incomeItem5>
-          <view class="load-end-area loading" wx:if="{{isLoading5}}"></view>
-          <view class="load-end-area done" wx:elif="{{isDone5}}"></view>
         </scroll-view>
       </block>
     </block>
@@ -396,21 +318,15 @@ export default class extends wepy.page {
     switch (this.selectedIndex) {
       case 0:
         if (this.isLoading1) return false
-        if (this.dataParams[0].history && !this.isDone1) {
+        if (this.tabData1.length === this.pageStart1 * this.limit) {
           this.pageStart1++
           this.isLoading1 = true
           this.getData1()
-        } else {
-          if (this.tabData1.length === (this.pageStart1 + 1) * this.limit) {
-            this.pageStart1++
-            this.isLoading1 = true
-            this.getData1()
-          }
         }
         break
       case 1:
         if (this.isLoading2) return false
-        if (this.tabData2.length === (this.pageStart2 + 1) * this.limit) {
+        if (this.tabData2.length === this.pageStart2 * this.limit) {
           this.isLoading2 = true
           this.pageStart2++
           this.getData2()
@@ -418,16 +334,10 @@ export default class extends wepy.page {
         break
       case 2:
         if (this.isLoading3) return false
-        if (this.dataParams[2].history && !this.isDone3) {
+        if (this.tabData3.length === this.pageStart3 * this.limit) {
           this.pageStart3++
           this.isLoading3 = true
           this.getData3()
-        } else {
-          if (this.tabData3.length === (this.pageStart3 + 1) * this.limit) {
-            this.pageStart3++
-            this.isLoading3 = true
-            this.getData3()
-          }
         }
         break
       case 3:
@@ -454,100 +364,64 @@ export default class extends wepy.page {
         break
     }
   }
+  handleListData (data) {
+    let retdata = data
+    for (let i = 0; i < retdata.length; i++) {
+      retdata[i].dateline_str = new Time(retdata[i].dateline * 1000).dateFormat('yyyy-MM-dd hh:mm')
+      retdata[i].viewId = `member-view-1-${retdata[i].id}`
+      if (retdata[i].incomedetail) {
+        if (retdata[i].incomedetail.xiaoshou) {
+          let xslinkman = retdata[i].incomedetail.xiaoshou.linkman
+          if (xslinkman.length > 6) {
+            xslinkman = xslinkman.substr(0, 6)
+            xslinkman = `${xslinkman}...`
+          }
+          retdata[i].xslinkman = xslinkman
+        }
+        if (retdata[i].incomedetail.tuijian) {
+          let tjlinkman = retdata[i].incomedetail.tuijian.linkman
+          if (tjlinkman.length > 6) {
+            tjlinkman = tjlinkman.substr(0, 6)
+            tjlinkman = `${tjlinkman}...`
+          }
+          retdata[i].tjlinkman = tjlinkman
+        }
+      }
+    }
+    return retdata
+  }
   getData1 = function () {
-    let params = {pagestart: this.pageStart1, limit: this.limit, from: this.from, cashed: 100, appid: Config.AppId, starttime: this.starttime, endtime: this.endtime}
-    if (this.from === 'factory') {
-      params.fid = this.Fid
-    }
-    if (this.dataParams[0].history) {
-      params.history = 1
-    }
+    let params = {page: this.pageStart1, limit: this.limit, cashed: 0}
     wepy.request({
-      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/accounting/list`,
+      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/account/getList`,
       data: params
     }).then(res => {
       const data = res.data
       let retdata = data.data ? data.data : data
-      for (let i = 0; i < retdata.length; i++) {
-        retdata[i].dateline_str = new Time(retdata[i].dateline * 1000).dateFormat('yyyy-MM-dd hh:mm')
-        retdata[i].viewId = `member-view-1-${retdata[i].id}`
-        if (retdata[i].incomedetail) {
-          if (retdata[i].incomedetail.xiaoshou) {
-            let xslinkman = retdata[i].incomedetail.xiaoshou.linkman
-            if (xslinkman.length > 6) {
-              xslinkman = xslinkman.substr(0, 6)
-              xslinkman = `${xslinkman}...`
-            }
-            retdata[i].xslinkman = xslinkman
-          }
-          if (retdata[i].incomedetail.tuijian) {
-            let tjlinkman = retdata[i].incomedetail.tuijian.linkman
-            if (tjlinkman.length > 6) {
-              tjlinkman = tjlinkman.substr(0, 6)
-              tjlinkman = `${tjlinkman}...`
-            }
-            retdata[i].tjlinkman = tjlinkman
-          }
-        }
-      }
+      retdata = this.handleListData(retdata)
       this.tabData1 = this.tabData1.concat(retdata)
       let copyretdata = Util.uniqArray(this.listData1, retdata, 'id')
       this.listData1 = this.listData1.concat(copyretdata)
       this.isLoading1 = false
-      if (!retdata.length && !this.tabData1.length && !this.dataParams[0].history) {
-        this.dataParams[0].history = true
-        this.pageStart1 = 0
-        this.getData1()
+      if (retdata.length < this.limit && this.tabData1.length) {
+        this.isDone1 = true
       } else {
-        if (retdata.length < this.limit && this.tabData1.length) {
-          if (this.dataParams[0].history) {
-            this.isDone1 = true
-          } else {
-            this.dataParams[0].history = true
-            this.pageStart1 = -1
-          }
-        } else {
-          this.isDone1 = false
-        }
-        this.disList1 = true
+        this.isDone1 = false
       }
+      this.disList1 = true
       wepy.stopPullDownRefresh()
       this.$apply()
     })
   }
   getData2 = function () {
-    let params = {pagestart: this.pageStart2, limit: this.limit, from: this.from, cashed: 2, appid: Config.AppId, starttime: this.starttime, endtime: this.endtime}
-    if (this.from === 'factory') {
-      params.fid = this.Fid
-    }
+    let params = {page: this.pageStart2, limit: this.limit, cashed: 1}
     wepy.request({
-      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/accounting/list`,
+      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/account/getList`,
       data: params
     }).then(res => {
       const data = res.data
       let retdata = data.data ? data.data : data
-      for (let i = 0; i < retdata.length; i++) {
-        retdata[i].dateline_str = new Time(retdata[i].dateline * 1000).dateFormat('yyyy-MM-dd hh:mm')
-        retdata[i].viewId = `member-view-2-${retdata[i].id}`
-        if (retdata[i].incomedetail) {
-          if (retdata[i].incomedetail.xiaoshou) {
-            let xslinkman = retdata[i].incomedetail.xiaoshou.linkman
-            if (xslinkman.length > 6) {
-              xslinkman = xslinkman.substr(0, 6)
-              xslinkman = `${xslinkman}...`
-            }
-            retdata[i].xslinkman = xslinkman
-          }
-          if (retdata[i].incomedetail.tuijian) {
-            let tjlinkman = retdata[i].incomedetail.tuijian.linkman
-            if (tjlinkman.length > 6) {
-              tjlinkman = tjlinkman.substr(0, 6)
-              tjlinkman = `${tjlinkman}...`
-            }
-            retdata[i].tjlinkman = tjlinkman
-          }
-        }
-      }
+      retdata = this.handleListData(retdata)
       this.tabData2 = this.tabData2.concat(retdata)
       let copyretdata = Util.uniqArray(this.listData2, retdata, 'id')
       this.listData2 = this.listData2.concat(copyretdata)
@@ -563,62 +437,24 @@ export default class extends wepy.page {
     })
   }
   getData3 = function () {
-    let params = {pagestart: this.pageStart3, limit: this.limit, from: this.from, cashed: 0, appid: Config.AppId, starttime: this.starttime, endtime: this.endtime}
-    if (this.from === 'factory') {
-      params.fid = this.Fid
-    }
-    if (this.dataParams[2].history) {
-      params.history = 1
-    }
+    let params = {page: this.pageStart3, limit: this.limit}
     wepy.request({
-      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/accounting/list`,
+      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/account/cashList`,
       data: params
     }).then(res => {
       const data = res.data
       let retdata = data.data ? data.data : data
-      for (let i = 0; i < retdata.length; i++) {
-        retdata[i].dateline_str = new Time(retdata[i].dateline * 1000).dateFormat('yyyy-MM-dd hh:mm')
-        retdata[i].viewId = `member-view-3-${retdata[i].id}`
-        if (retdata[i].incomedetail) {
-          if (retdata[i].incomedetail.xiaoshou) {
-            let xslinkman = retdata[i].incomedetail.xiaoshou.linkman
-            if (xslinkman.length > 6) {
-              xslinkman = xslinkman.substr(0, 6)
-              xslinkman = `${xslinkman}...`
-            }
-            retdata[i].xslinkman = xslinkman
-          }
-          if (retdata[i].incomedetail.tuijian) {
-            let tjlinkman = retdata[i].incomedetail.tuijian.linkman
-            if (tjlinkman.length > 6) {
-              tjlinkman = tjlinkman.substr(0, 6)
-              tjlinkman = `${tjlinkman}...`
-            }
-            retdata[i].tjlinkman = tjlinkman
-          }
-        }
-      }
+      retdata = this.handleListData(retdata)
       this.tabData3 = this.tabData3.concat(retdata)
       let copyretdata = Util.uniqArray(this.listData3, retdata, 'id')
       this.listData3 = this.listData3.concat(copyretdata)
       this.isLoading3 = false
-      if (!retdata.length && !this.tabData3.length && !this.dataParams[2].history) {
-        this.dataParams[2].history = true
-        this.pageStart3 = 0
-        this.getData3()
+      if (retdata.length < this.limit && this.tabData3.length) {
+        this.isDone3 = true
       } else {
-        if (retdata.length < this.limit && this.tabData3.length) {
-          if (this.dataParams[2].history) {
-            this.isDone3 = true
-          } else {
-            this.dataParams[2].history = true
-            this.pageStart3 = -1
-          }
-        } else {
-          this.isDone3 = false
-        }
-        this.disList3 = true
+        this.isDone3 = false
       }
+      this.disList3 = true
       wepy.stopPullDownRefresh()
       this.$apply()
     })

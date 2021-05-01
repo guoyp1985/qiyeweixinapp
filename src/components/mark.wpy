@@ -1,0 +1,475 @@
+<style lang="less">
+.mark-income-page{
+  background-color:#fff;
+  .inhead{
+    width:100%;position:relative;color:#fff;
+    .wave-pic{display:block;position:relative;width:100%;z-index:1;}
+    .item{width:200rpx;height:60rpx;color:#fff;border-radius:40rpx;border:2rpx solid #fff;font-size:24rpx;box-sizing:border-box;}
+    .item:not(:last-child){margin-right:30rpx;}
+    .btn-cash{
+      width:300rpx;height:80rpx;border-radius:60rpx;margin:0 auto;background-color:#fff;
+      font-size:36rpx;font-weight:bold;
+    }
+  }
+  .txt-list{
+    margin-top:-2rpx;display:flex;flex-wrap: wrap;position:relative;width:100%;box-sizing:border-box;
+    .txt-item{
+      width:50%;position:relative;box-sizing:border-box;display:flex;justify-content: center; align-items: center;
+      padding-top:40rpx;padding-bottom:40rpx;
+      .al{color:#999;font-size:32rpx;margin-left:10rpx;}
+      .txt1{font-size:32rpx;font-weight:bold;color:#000;text-align: center;}
+      .txt2{color:#999;text-align: center;}
+    }
+    .txt-item:nth-child(odd):after{
+      content:"";position:absolute;right:0;top:15%;bottom:15%;width:1rpx;background-color:#ccc;
+    	-webkit-transform: scaleX(0.5) translateX(1rpx);
+    	transform: scaleX(0.5) translateX(1rpx);
+    	-webkit-transform-origin: 0% 0%;
+    	transform-origin: 0% 0%;
+    }
+    .txt-item:nth-child(1):before,.txt-item:nth-child(2):before,.txt-item:nth-child(3):before,.txt-item:nth-child(4):before{
+      content:"";display:block;
+      position:absolute;left:15%;right:15%;bottom:0;height:2rpx;background-color:#ccc;
+    	-webkit-transform: scaleY(0.5) translateY(1rpx);
+    	transform: scaleY(0.5) translateY(1rpx);
+    	-webkit-transform-origin: 0% 0%;
+    	transform-origin: 0% 0%;
+    }
+  }
+  .plan-txt{position:relative;}
+  .plan-txt:before{
+    content:"";display:block;
+    position:absolute;left:0;right:0;bottom:0;height:2rpx;background-color:#ccc;
+  }
+  .plan-txt .jiantou:before{content: "\e744";}
+  .plan-txt .jiantou.active:before{content: "\e73e";}
+  .btom-content{
+    .list{
+      width:100%;padding:20rpx 40rpx;background-color:#fff;box-sizing:border-box;
+      .moneyNum{margin-left:auto;}
+    }
+  }
+  .btn-share{
+    width:300rpx;height:80rpx;border-radius:60rpx;margin:0 auto;font-size:36rpx;font-weight:bold;
+  }
+  .result-area{
+    padding:40rpx 20rpx 20rpx;border-radius:10rpx;box-sizing:border-box;position:relative;
+    box-shadow: 0rpx 4rpx 12rpx rgba(0,0,0,0.1);
+    .theme{
+      width:440rpx;position: absolute;left:50%;margin-left:-220rpx;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10rpx 40rpx;
+      box-sizing: border-box;
+      border-radius:10rpx;
+      background: linear-gradient(to bottom, #f8817a 0%,#f53232 100%);
+    }
+    .zqtx{top: 10rpx;}
+    .wdyq{top: -30rpx;}
+    .title{border-radius: 30rpx;width: 50%;background-color: #FF6B63;color: white;padding:10rpx 0 10rpx 20rpx;}
+    .circle{width: 10rpx;height: 10rpx;border-radius: 90rpx;background-color: #ffff00;}
+  }
+}
+.mceng{
+  position:fixed;top:0;bottom:0;left:0;right:0;background-color:rgba(0, 0, 0, 0.3);overflow:hidden;z-index:10;
+  .btnSubmit{
+    width:90%;height:70rpx;margin:100rpx auto 0;
+    button{border-radius:10rpx;}
+  }
+  .close-area{text-align:center;}
+  .wechatShow{
+    width:75%;padding:20rpx 0;background-color:#fff;border-radius:20rpx;margin:0 auto;box-sizing:border-box;margin-top:40%;
+    input {color:#FF6B63;}
+  }
+}
+.pop-modal{
+  position: fixed;left: 0;top:100%;right:0;bottom:0;overflow:hidden;
+  width:100%;background-color: #fff;z-index: 10000;
+  .pop-top{width:100%;height:90rpx;font-size:32rpx;font-weight:bold;}
+  .pop-bottom{width:100%;height:90rpx;font-size:32rpx;display:block;}
+}
+</style>
+<template>
+  <view class="mark-income-page">
+    <view class="inhead" style="{{themeObject.linearBgStyle}}">
+      <view class="flex_left pl10 pr10 pt10 pb20">
+        <view class="flex_left flex_cell">可提现金额（元）</view>
+      </view>
+      <view class="flex_center font40 bold">{{cashInfo.ketixian}}</view>
+      <form class="db pt20 pb20" bindsubmit="clickwechat" report-submit="true">
+        <button class="btn-cash color-theme flex_center" style="{{themeObject.colorStyle}}" form-type="submit">提现</button>
+      </form>
+      <image class="wave-pic" mode="widthFix" src="https://tossharingsales.boka.cn/minigxk/wave.png"></image>
+    </view>
+    <view class="txt-list bg-white">
+      <view class="txt-item" data-flag="0" bindtap="toIncome">
+        <view>
+          <view class="txt1">{{cashInfo.zongshouru}}</view>
+          <view class="txt2">总收入(元)</view>
+        </view>
+        <view class="al al-mjiantou-copy2"></view>
+      </view>
+      <view class="txt-item" data-flag="2" bindtap="toIncome">
+        <view>
+          <view class="txt1">{{cashInfo.yijiesuan}}</view>
+          <view class="txt2">已结算(元)</view>
+        </view>
+        <view class="al al-mjiantou-copy2"></view>
+      </view>
+      <view class="txt-item" data-flag="1" bindtap="toIncome">
+        <view>
+          <view class="txt1">{{cashInfo.daijiesuan}}</view>
+          <view class="txt2">待结算(元)</view>
+        </view>
+        <view class="al al-mjiantou-copy2"></view>
+      </view>
+      <view class="txt-item" data-flag="3" bindtap="toIncome">
+        <view>
+          <view class="txt1">{{cashInfo.yitixian}}</view>
+          <view class="txt2">已提现(元)</view>
+        </view>
+        <view class="al al-mjiantou-copy2"></view>
+      </view>
+      <!-- <view class="txt-item" data-flag="3" bindtap="toIncome">
+        <view>
+          <view class="txt1">{{cashInfo.apply}}</view>
+          <view class="txt2">待审核(元)</view>
+        </view>
+        <view class="al al-mjiantou-copy2"></view>
+      </view>
+      <view class="txt-item" data-flag="2" bindtap="toOrders">
+        <view>
+          <view class="txt1">{{cashInfo.savemoney}}</view>
+          <view class="txt2">为您节省(元)</view>
+        </view>
+        <view class="al al-mjiantou-copy2"></view>
+      </view> -->
+    </view>
+    <view class="padding20">
+      <view class="flex_center">
+        <button open-type="share" class="btn-share flex_center" style="{{themeObject.bgStyle}}">分享邀请</button>
+      </view>
+    </view>
+    <view class="padding20 mt20" style="background-color:#f2f2f2;box-sizing:border-box;" wx:if="{{disRecord}}">
+      <view class="scroll_list bg-white box-yy result-area">
+        <view class="theme wdyq" style="{{themeObject.linearBgStyle}}">
+          <view class="circle"></view><view class="bold color-white">我的邀请({{count}}人)</view><view class="circle"></view>
+        </view>
+        <view class="padding20 align_center" wx:if="{{!listData.length}}">暂无邀请记录</view>
+        <block wx:else>
+          <repeat for="{{listData}}" item="item" index="index">
+            <view class="scroll_item flex_left">
+              <view class="pic flex_left">
+                <image wx:if="{{item.avatar && item.avatar != ''}}" src="{{item.avatar}}"></image>
+                <image wx:else src="https://tossharingsales.boka.cn/images/user.jpg"></image>
+              </view>
+              <view class="flex_cell flex_left">
+                <view class="w_100">
+                  <view>{{item.linkman}}</view>
+                  <view class="font12 color-gray">{{item.join_str}}</view>
+                </view>
+              </view>
+            </view>
+          </repeat>
+        </block>
+      </view>
+    </view>
+    <view class="padding20">
+      <view class="flex_center">
+        <view class="plan-txt font16 color-theme" style="{{themeObject.colorStyle}}" @tap="clickTxt"><text>提现说明</text><text :class="{active: showTxt}" class="al jiantou font16"></text></view>
+      </view>
+      <block wx:if="{{showTxt}}">
+        <cashTxt :themeObject.sync="themeObject"></cashTxt>
+      </block>
+    </view>
+  </view>
+  <!-- 提现至微信零钱 -->
+  <view class="mceng" wx:if="{{wechatShow}}">
+    <view class="flex_center">
+      <view class="wechatShow" wx:if="{{wechatShow}}">
+        <view class="align_center b_bottom_after pb10">提现至微信零钱</view>
+        <view class="pt10 pb10 pr10 pl10">
+          <view class="flex_table">
+            <view class="align_left color-gray2">到账时间</view>
+            <view class="pl10">实时到账 (无手续费)</view>
+          </view>
+          <view class="flex_table mt10">
+            <view class="align_left color-gray2">提现金额</view>
+            <view class="pl10">(最低提现1元)</view>
+          </view>
+          <view class="flex_left mt10 pb10 b_bottom_after">
+            <view class="font24 pr10">￥</view>
+            <input class="flex_cell flex_left" bindinput="keyupWechatInput" type="text" placeholder="输入提现金额" value="{{cashMoney}}"/>
+          </view>
+          <view class="pt20 db-flex">
+            <view class="flex_cell color-gray">可提现金额￥{{cashInfo.ketixian}}</view>
+            <form class="w80 color-theme" style="{{themeObject.colorStyle}}" bindsubmit="clickAll" report-submit="true">
+              <button class="w_100 flex_right" form-type="submit">全部提现</button>
+            </form>
+          </view>
+          <form class="btnSubmit db" @tap="getWechatCash">
+            <button class="w_100 h_100 flex_center bg-theme color-white" style="{{themeObject.bgStyle}}">确认提现</button>
+          </form>
+        </view>
+      </view>
+    </view>
+    <form class="flex_center close-area" bindsubmit="closeWechat" report-submit="true">
+      <button class="al al-close1 font40 bold color-white" form-type="submit"></button>
+    </form>
+  </view>
+  <!-- 提现至银行卡 -->
+  <view class="mceng" wx:if="{{bankShow}}">
+    <view class="flex_center">
+      <view class="wechatShow" wx:if="{{bankShow}}">
+        <view class="align_center b_bottom_after pb10">提现至银行卡</view>
+        <view class="pt10 pb10 pr10 pl10">
+          <view class="flex_table">
+            <view class="align_left color-gray2">到账时间</view>
+            <view class="pl10"> 1-3天(1%手续费)</view>
+          </view>
+          <view class="flex_table mt10">
+            <view class="align_left color-gray2">提现金额</view>
+            <view class="pl10">(最低提现1元)</view>
+          </view>
+          <view class="flex_left mt10 pb10 b_bottom_after">
+            <view class="font24 pr10">￥</view>
+            <input class="font20 flex_cell" bindinput="keyupBankInput" type="text" placeholder="输入提现金额" value="{{cashBankMoney}}"/>
+          </view>
+          <view class="pt20 db-flex">
+            <view class="flex_cell color-gray">可提现金额￥{{cashInfo.ketixian}}</view>
+            <form class="w80 color-theme" style="{{themeObject.colorStyle}}" data-type="bank" bindsubmit="clickAll" report-submit="true">
+              <button class="w_100 flex_right" form-type="submit">全部提现</button>
+            </form>
+          </view>
+          <form class="btnSubmit db" @tap="getBankCash">
+            <button class="w_100 h_100 flex_center bg-theme color-white" style="{{themeObject.bgStyle}}">确认提现</button>
+          </form>
+        </view>
+      </view>
+    </view>
+    <form class="flex_center close-area" bindsubmit="closeBank" report-submit="true">
+      <button class="al al-close1 font40 bold color-white" form-type="submit"></button>
+    </form>
+  </view>
+  <view class="pop-modal columnarea" animation="{{animationPop}}">
+    <view class="pop-top flex_center b_bottom_after">提现说明</view>
+    <scroll-view class="column-content" scroll-y="1">
+      <view class="padding20">
+        <cashTxt :themeObject.sync="themeObject"></cashTxt>
+      </view>
+    </scroll-view>
+    <form class="pop-bottom b_top_after" bindsubmit="closePop" report-submit="true">
+      <button class="w_100 h_100 flex_center bg-gray color-white" form-type="submit">知道了</button>
+    </form>
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy'
+import Config from '@/config'
+import Util from '@/libs/util'
+import CashTxt from '@/components/cashTxt'
+export default class extends wepy.component {
+  components = {
+    cashTxt: CashTxt
+  }
+  props = {
+    userInfo: {
+      type: Object,
+      default: {}
+    },
+    globalData: {
+      type: Object,
+      default: {}
+    },
+    themeObject: {
+      type: Object,
+      default: {}
+    },
+    cashInfo: {
+      type: Object,
+      default: {}
+    },
+    disRecord: {
+      type: Boolean,
+      default: false
+    },
+    recordData: {
+      type: Array,
+      default: []
+    },
+    recordCount: {
+      type: Number,
+      default: 0
+    }
+  }
+  data = {
+    animationPop: {},
+    animationFlag: 0,
+    wechatShow: false,
+    bankShow: false,
+    cashMoney: '',
+    cashBankMoney: '',
+    submitIng: false,
+    pendingmoney: '0.00',
+    showTxt: false
+  }
+  cashEvent (inputMoney, type) {
+    if (!this.submitIng) {
+      if (inputMoney) {
+        inputMoney = `${inputMoney}`
+      }
+      if (inputMoney && inputMoney.indexOf(',') > -1) {
+        inputMoney = inputMoney.replace(/,/g, '')
+      }
+      if (!inputMoney || inputMoney === '' || isNaN(inputMoney)) {
+        wepy.showToast({
+          title: '请输入正确的提现金额',
+          icon: 'none'
+        })
+        return false
+      }
+      let money = parseFloat(inputMoney)
+      let curCash = `${this.cashInfo.ketixian}`
+      let waitcash = parseFloat(curCash.replace(/,/g, ''))
+      if (money > waitcash) {
+        wepy.showToast({
+          title: '提现金额不能超过可提现金额',
+          icon: 'none',
+          duration: 2000
+        })
+        return false
+      }
+      if (money < 1) {
+        wepy.showToast({
+          title: '提现金额最低为1元',
+          icon: 'none'
+        })
+        return false
+      }
+      this.submitIng = true
+      wepy.showLoading()
+      wepy.request({
+        url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/account/cashMoney`,
+        data: {money: inputMoney, type: type, appid: Config.AppId},
+        method: 'post'
+      }).then(res => {
+        this.submitIng = false
+        wepy.hideLoading()
+        const data = res.data
+        wepy.showToast({
+          title: data.msg,
+          icon: 'none',
+          duration: Util.delay(data.msg)
+        })
+        if (data.code === 0) {
+          this.userInfo.waitcash = data.waitcash
+          this.cashInfo.ketixian = data.waitcash
+          this.globalData.userInfo = this.userInfo
+          this.$parent.globalData.userInfo = this.userInfo
+          this.getData()
+        }
+        this.bankShow = false
+        this.wechatShow = false
+        this.cashMoney = ''
+        this.cashBankMoney = ''
+        this.$apply()
+      })
+    }
+  }
+  onLoad () {
+  }
+  methods = {
+    clickTxt () {
+      this.showTxt = !this.showTxt
+      this.$apply()
+    },
+    popupExplain (e) {
+      this.createAnimation()
+    },
+    closePop (e) {
+      this.createAnimation()
+    },
+    toIncome (e) {
+      // const dataset = e.currentTarget.dataset
+      // if (this.globalData.AuthInfo.payment) {
+      //   let url = `/packageB/pages/incomeList?flag=${dataset.flag}`
+      //   if (this.options.from) {
+      //     url = `${url}&from=${this.options.from}`
+      //   }
+      //   wepy.navigateTo({url: url})
+      // } else {
+      //   wepy.navigateTo({url: '/pages/webview?url=retailerRevenue'})
+      // }
+      const dataset = e.currentTarget.dataset
+      let url = `/packageB/pages/incomeList?flag=${dataset.flag}`
+      wepy.navigateTo({url: url})
+    },
+    toOrders () {
+      wepy.navigateTo({url: '/packageD/pages/userOrders'})
+    },
+    clickwechat (e) {
+      this.wechatShow = true
+      this.$apply()
+    },
+    closeWechat (e) {
+      this.wechatShow = false
+      this.cashMoney = ''
+      this.$apply()
+    },
+    toBank (e) {
+      let minibackurl = encodeURIComponent('/packageB/pages/income')
+      let url = encodeURIComponent(`bindingBank?minibackurl=${minibackurl}`)
+      wepy.navigateTo({url: `/pages/webview?url=${url}`})
+    },
+    clickbank (e) {
+      this.bankShow = true
+      this.$apply()
+    },
+    closeBank (e) {
+      this.bankShow = false
+      this.cashBankMoney = ''
+      this.$apply()
+    },
+    keyupBankInput (e) {
+      this.cashBankMoney = e.detail.value
+    },
+    keyupWechatInput (e) {
+      this.cashMoney = e.detail.value
+    },
+    getWechatCash (e) {
+      this.cashEvent(this.cashMoney, 'lingqian')
+      // 审核状态通知
+      // Util.checkTmpMsg({
+      //   systeminfo: this.globalData.systemInfo,
+      //   tmplIds: [this.globalData.Templates.censor_check],
+      //   callback: () => {
+      //     this.cashEvent(this.cashMoney, 'lingqian')
+      //   }
+      // })
+    },
+    getBankCash (e) {
+      this.cashEvent(this.cashBankMoney, 'yinhang')
+      // 审核状态通知
+      // Util.checkTmpMsg({
+      //   systeminfo: this.globalData.systemInfo,
+      //   tmplIds: [this.globalData.Templates.censor_check],
+      //   callback: () => {
+      //     this.cashEvent(this.cashBankMoney, 'yinhang')
+      //   }
+      // })
+    },
+    clickAll (e) {
+      const dataset = e.currentTarget.dataset
+      let cash = this.cashInfo.ketixian
+      if (dataset.type === 'bank') {
+        this.cashBankMoney = cash
+      } else {
+        this.cashMoney = cash
+      }
+      this.$apply()
+    }
+  }
+}
+</script>

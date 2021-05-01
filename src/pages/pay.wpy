@@ -192,7 +192,8 @@ export default class Pay extends wepy.page {
           wepy.redirectTo({url: `${backurl}`})
         }
       } else {
-        wepy.navigateTo({url: `/packageB/pages/paySuccess?orderid=${this.options.id}&ordertype=3`})
+        // wepy.navigateTo({url: `/packageB/pages/paySuccess?orderid=${this.options.id}&ordertype=3`})
+        wepy.navigateTo({url: `/packageB/pages/paySuccess?orderid=${this.options.id}`})
       }
     }, 1800)
   }

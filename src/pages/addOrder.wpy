@@ -233,7 +233,7 @@
         </view>
       </view>
     </view>
-    <view class="box-area mt10" wx:if="{{commCardList.length}}">
+    <view class="box-area mt10" wx:if="{{commCardList.length && options.ordertype != 4}}">
       <view class="box-inner">
         <view class="flex_left padding10" @tap="popupCommCardList">
           <view class="color-gray mr10 flex_left color-gray">优惠券</view>

@@ -5,12 +5,12 @@
 }
 .fixed-hb.iphone{bottom:194rpx;}
 .mark-page.iphone{
-  bottom:68rpx;
+  bottom:184rpx;
   .bottom-area{bottom:220rpx;}
 }
 .mark-page{
-  left:0;right:0;top:0;bottom:0;position:absolute;
-  .page-inner{width:100%;height:100%;position:relative;}
+  left:0;right:0;top:0;bottom:116rpx;position:absolute;
+  .page-inner{width:100%;height:100%;position:relative;overflow-y:auto;}
   image{width:100%;}
   .bottom-area{
     width:100%;height:120rpx;display:block;position:fixed;left:0;bottom:136rpx;right:0;background-color:transparent;
@@ -75,31 +75,16 @@
           </apply>
         </block>
         <block wx:if="{{showRetailer}}">
-          <retailer
-            :specialChannelInfo.sync="specialChannelInfo"
-            :hbMoney.sync="hbMoney"
+          <mark
             :globalData.sync="globalData"
-            :userInfo.sync="userInfo"
-            :bannerData.sync="bannerData"
-            :markData.sync="markData"
-            :listData.sync="products"
-            :disList.sync="disList"
-            :isLoading.sync="isLoading"
-            :isDone.sync="isDone"
-            :isIpx.sync="isIpx"
+            :userInfo.sync="loginUser"
+            :cashInfo.sync="cashInfo"
             :themeObject.sync="themeObject"
-            :tabIndex.sync="tabIndex"
-            :disTabList.sync="disTabList"
-            :tabData2.sync="tabData2"
-            :isLoading2.sync="isLoading2"
-            :isDone2.sync="isDone2"
-            :taskIndex.sync="taskIndex"
-            :taskData.sync="taskData"
-            :disTask.sync="disTask"
-            :taskData2.sync="taskData2"
-            :disTask2.sync="disTask2"
-            :saveMoneyMode.sync="saveMoneyMode">
-          </retailer>
+            :disRecord.sync="disRecord"
+            :recordData.sync="recordData"
+            :recordPage.sync="recordPage"
+            :recordCount.sync="recordCount">
+          </mark>
         </block>
       </block>
     </view>
@@ -210,13 +195,15 @@
   import BottomMenu from '@/components/bottomMenu'
   import Share from '@/components/store/share'
   import Auth from '@/components/auth'
-  export default class Mark extends wepy.page {
+  import Mark from '@/components/mark'
+  export default class extends wepy.page {
     config = {
       enablePullDownRefresh: true,
       backgroundTextStyle: 'dark'
     }
     components = {
       auth: Auth,
+      mark: Mark,
       user: User,
       apply: Apply,
       retailer: Retailer,
@@ -227,6 +214,7 @@
       options: {},
       globalData: {},
       userInfo: {},
+      loginUser: {},
       channelInfo: {},
       loadingComplete: false,
       contentArr: [],
@@ -274,7 +262,11 @@
       exceed: '',
       haveTask: false,
       saveMoneyMode: false,
-      showAuth: false
+      showAuth: false,
+      cashInfo: {ketixian: '0.00', zongshouru: '0.00', yijiesuan: '0.00', daijiesuan: '0.00', yitixian: '0.00'},
+      disRecord: false,
+      recordData: [],
+      recordCount: 0
     }
     refreshPage () {
       this.userInfo = {}
@@ -297,6 +289,10 @@
       this.tabData2 = []
       this.isLoading2 = false
       this.isDone2 = false
+      this.disRecord = false
+      this.recordData = []
+      this.recordPage = 1
+      this.recordCount = 0
       this.$apply()
       this.handlePageData()
     }
@@ -308,7 +304,7 @@
         wepy.stopPullDownRefresh()
       }, 500)
     }
-    onReachBottom () {
+    _onReachBottom () {
       if (this.isLoading || this.isLoading2 || this.isFactoryCommission) return false
       switch (this.tabIndex) {
         case 0:
@@ -326,6 +322,30 @@
           // }
           break
       }
+    }
+    onReachBottom () {
+      if (this.userInfo.isretailer && this.recordData.length === this.recordPage * this.limit) {
+        this.recordPage++
+        this.getRecord()
+      }
+    }
+    getRecord () {
+      wepy.request({
+        // url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/factory/myRecommend`,
+        url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/miniprogram/productlist`,
+        data: {pagestart: this.recordPage, limit: this.limit, wid: this.userInfo.regwid, fid: this.Fid},
+        method: 'post'
+      }).then(res => {
+        const data = res.data
+        const retdata = data.data ? data.data : data
+        this.recordCount = data.countdata
+        for (let i = 0; i < retdata.length; i++) {
+          retdata[i].join_str = new Time(retdata[i].jointime * 1000).dateFormat('yyyy-MM-dd hh:mm')
+        }
+        this.recordData = this.recordData.concat(retdata)
+        this.disRecord = true
+        this.$apply()
+      })
     }
     processProducts (retdata) {
       if (this.isFirst) {
@@ -498,6 +518,25 @@
       }
       this.getTask()
     }
+    getUser () {
+      wepy.request({
+        url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/user/show`
+      }).then(res => {
+        let data = res.data
+        if (data.code === 0) {
+          let retuser = data.data
+          this.loginUser = data.data
+          this.cashInfo = {
+            ketixian: retuser.waitcashmoney,
+            zongshouru: retuser.moneyin,
+            yijiesuan: retuser.jiesuanmoney,
+            daijiesuan: retuser.pendingmoney,
+            yitixian: retuser.moneyout
+          }
+          this.$apply()
+        }
+      })
+    }
     afterGetUser () {
       let shareParams = Util.getShareParams(this.options)
       if (shareParams.wid && shareParams.share_uid) {
@@ -512,18 +551,22 @@
         this.showRetailer = true
         this.showContainer = true
         // this.handleRetailer()
-        if (!this.products.length && !this.inAjax) {
-          wepy.showLoading()
-          this.getData()
-        } else {
-          this.allowNav = true
-        }
+        // if (!this.products.length && !this.inAjax) {
+        //   wepy.showLoading()
+        //   this.getData()
+        // } else {
+        //   this.allowNav = true
+        // }
+        this.getUser()
+        this.getRecord()
+        this.allowNav = true
       } else {
         this.showUser = true
         this.showRetailer = false
         // this.getFactoryInfo()
         this.allowNav = true
       }
+      this.$apply()
     }
     handlePageData () {
       if (this.options.share_wid) {
@@ -548,29 +591,30 @@
           this.$parent.globalData.Wid = this.options.wid
         }
       }
-      let shareParams = Util.getShareParams(this.options)
-      let params = {...shareParams, fid: Config.Fid, module: 'mark'}
-      Cached.request({
-        url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/channel/info`,
-        data: params,
-        method: 'post'
-      }, 'mark.channelInfo', Config.URT.H,
-      cacheData => {
-        this.channelInfo = cacheData
-        this.bannerData = cacheData.banner
-        this.afterGetUser()
-      },
-      res => {
-        const data = res.data
-        const retdata = data.data ? data.data : data
-        this.channelInfo = retdata
-        if (retdata.banner && retdata.banner.length) {
-          this.bannerData = retdata.banner
-        }
-        this.afterGetUser()
-        this.$apply()
-        return this.channelInfo
-      })
+      this.afterGetUser()
+      // let shareParams = Util.getShareParams(this.options)
+      // let params = {...shareParams, fid: Config.Fid, module: 'mark'}
+      // Cached.request({
+      //   url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/channel/info`,
+      //   data: params,
+      //   method: 'post'
+      // }, 'mark.channelInfo', Config.URT.H,
+      // cacheData => {
+      //   this.channelInfo = cacheData
+      //   this.bannerData = cacheData.banner
+      //   this.afterGetUser()
+      // },
+      // res => {
+      //   const data = res.data
+      //   const retdata = data.data ? data.data : data
+      //   this.channelInfo = retdata
+      //   if (retdata.banner && retdata.banner.length) {
+      //     this.bannerData = retdata.banner
+      //   }
+      //   this.afterGetUser()
+      //   this.$apply()
+      //   return this.channelInfo
+      // })
     }
     onLoad (options) {
       wepy.hideShareMenu()
@@ -631,7 +675,7 @@
         }
       }
     }
-    async handleShare () {
+    async _handleShare () {
       if (!this.afterProductShare && this.clickProduct && this.clickProductId) {
         const lastshareuid = this.options.share_uid
         let shareurl = ''
@@ -658,19 +702,42 @@
         }
       }
     }
-    async onShareAppMessage (res) {
+    async _onShareAppMessage (res) {
       if (!this.afterProductShare && this.clickProduct && this.clickProductId) {
         await this.handleShare()
         this.clickProduct = null
         return this.shareParams
       }
     }
-    async onShareTimeline () {
+    async _onShareTimeline () {
       if (!this.afterProductShare && this.clickProduct && this.clickProductId) {
         await this.handleShare()
         this.clickProduct = null
         return this.shareParams
       }
+    }
+    handleShare () {
+      const lastshareuid = this.options.share_uid
+      let shareurl = `/pages/mark?share_uid=${this.userInfo.uid}&share_wid=${this.globalData.Wid}&wid=${this.globalData.Wid}&comefrom=${Config.AppName}`
+      if (lastshareuid) {
+        shareurl = `${shareurl}&lastshareuid=${lastshareuid}`
+      }
+      let backUrl = encodeURIComponent(shareurl)
+      shareurl = `${shareurl}&currentUrl=${backUrl}`
+      let txt = '邀你一起躺赚钱！'
+      this.shareParams = {
+        title: `${this.userInfo.linkman}${txt}`,
+        path: shareurl,
+        imageUrl: 'https://tossharingsales.boka.cn/minigxk/factory/share.png'
+      }
+    }
+    async onShareAppMessage (res) {
+      await this.handleShare()
+      return this.shareParams
+    }
+    async onShareTimeline () {
+      await this.handleShare()
+      return this.shareParams
     }
     async drawShareImg (imgUrl) {
       let canvasW = 210

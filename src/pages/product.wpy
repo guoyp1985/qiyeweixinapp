@@ -1195,7 +1195,7 @@ export default class Product extends wepy.page {
     const data = res.data
     wepy.hideLoading()
     if (data.code === 0) {
-      let url = `/pages/addOrder?wid=${this.globalData.Wid}&shop_id=${data.data}`
+      let url = `/pages/addOrder?wid=${this.globalData.Wid}&shop_id=${data.data}&ordertype=4`
       if (this.options.ordertype) {
         url = `${url}&ordertype=${this.options.ordertype}`
       }
@@ -1343,10 +1343,9 @@ export default class Product extends wepy.page {
     this.$apply()
     const lastshareuid = this.options.share_uid
     // let shareurl = `/${Config.Router.product}?id=${this.options.id}&type=${this.productType}&module=${this.module}&share_uid=${this.userInfo.uid}&share_wid=${this.globalData.Wid}&wid=${this.globalData.Wid}&comefrom=${Config.AppName}`
-    let shareurl = `/${Config.Router.product}?id=${this.options.id}&type=${this.productType}&module=${this.module}&share_uid=${this.userInfo.uid}&comefrom=${Config.AppName}`
+    let shareurl = `/${Config.Router.product}?id=${this.options.id}&ordertype=4&share_uid=${this.userInfo.uid}&comefrom=${Config.AppName}`
     if (this.options.storeid) shareurl = `${shareurl}&storeid=${this.options.storeid}`
     if (this.options.tableid) shareurl = `${shareurl}&tableid=${this.options.tableid}`
-    if (this.options.ordertype) shareurl = `${shareurl}&ordertype=${this.options.ordertype}`
     if (this.userInfo.regwid && this.userInfo.bindstatus === 1) {
       shareurl = `${shareurl}&shareuser=self`
     }
@@ -1732,8 +1731,7 @@ export default class Product extends wepy.page {
       }
       options.type = 'fpimport'
     }
-    let pagepath = `${Config.Router.product}?id=${options.id}`
-    if (options.ordertype) pagepath = `${pagepath}&ordertype=${options.ordertype}`
+    let pagepath = `${Config.Router.product}?id=${options.id}&ordertype=4`
     if (options.tableid) pagepath = `${pagepath}&tableid=${options.tableid}`
     if (options.storeid) pagepath = `${pagepath}&storeid=${options.storeid}`
     this.pagePath = pagepath

@@ -33,14 +33,14 @@
               <view class="font14 mt5">生成二维码</view>
             </view>
           </view>
-          <view class="item flex_center b_left_after link" @tap="clickLink" wx:if="{{module == 'news' || module == 'product'}}">
+          <!-- <view class="item flex_center b_left_after link" @tap="clickLink" wx:if="{{module == 'news' || module == 'product'}}">
             <view>
               <view class="bg-radius flex_center">
                 <text class="al al-link"></text>
               </view>
               <view class="font14 mt5">链接分享</view>
             </view>
-          </view>
+          </view> -->
         </view>
       </view>
     </popup>
