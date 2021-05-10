@@ -568,7 +568,7 @@
         {
           "name": "ordertype=4的商品详情",
           "pathName": "pages/product",
-          "query": "id=438032250&ordertype=4",
+          "query": "id=441421787&storeid=1&ordertype=4",
           "scene": null
         },
         {
@@ -581,6 +581,24 @@
           "name": "\b合伙人页面",
           "pathName": "pages/mark",
           "query": "",
+          "scene": null
+        },
+        {
+          "name": "代付款订单",
+          "pathName": "packageD/pages/orderDetail",
+          "query": "id=42&fromType=user",
+          "scene": null
+        },
+        {
+          "name": "代付款页",
+          "pathName": "pages/pay",
+          "query": "id=42&otherpay=1",
+          "scene": null
+        },
+        {
+          "name": "H5跳转的支付页",
+          "pathName": "pages/pay",
+          "query": "storeid=1&tableid=1",
           "scene": null
         }
       ]

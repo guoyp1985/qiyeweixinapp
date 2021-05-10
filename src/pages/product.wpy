@@ -448,6 +448,9 @@
            </view>
          </block>
        </block>
+       <view class="flex_left font12 mt5 color-gray2">
+         <view>销量: {{ product.saled }} {{product.unit}}</view>
+       </view>
      </view>
      <block wx:if="{{product.options && product.options.length}}">
        <view class="bg-page" style="height:10px;"></view>
@@ -915,7 +918,7 @@ export default class Product extends wepy.page {
       this.buyIng = true
       this.addShop(this.submitData)
     },
-    toAddCart () {
+    optionToCart () {
       if (this.genOrder) return
       if (!this.selectedOption || !this.selectedOption.id) {
         wepy.showToast({
@@ -1287,6 +1290,10 @@ export default class Product extends wepy.page {
     }
     this.productId = this.product.id
     this.title = this.product.title
+    let checkClose = Config.NoCloseClassId.includes(this.product.classid)
+    if (!checkClose) {
+      this.isClose = Util.checkClose(this.sysParams.closestore)
+    }
     if (!this.inHide) {
       wepy.setNavigationBarTitle({
         title: this.product.title
@@ -1674,7 +1681,6 @@ export default class Product extends wepy.page {
       if (!this.product || !this.product.id) {
         this.getData()
       }
-      this.isClose = Util.checkClose(this.sysParams.closestore)
       this.$apply()
     }
   }
@@ -1783,7 +1789,6 @@ export default class Product extends wepy.page {
     this.cartCount = this.userInfo.cartcount
     this.factoryInfo = this.globalData.FactoryInfo
     this.sysParams = this.globalData.SystemParams
-    this.isClose = Util.checkClose(this.sysParams.closestore)
     this.afterSys = true
     if (this.options.wid) {
       if (this.options.scene && (!this.userInfo.regwid || !this.userInfo.bindstatus)) {

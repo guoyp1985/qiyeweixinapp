@@ -117,10 +117,11 @@ const Config = {
   //   {id: 2, title: '我的', module: 'own', type: '0', miniprogramurl: '/pages/own'}
   // ],
   MenuData: [
-    {id: 1, title: '首页', module: 'home', type: '0', miniprogramurl: '/pages/qyshop'},
-    {id: 2, title: '合伙人', module: 'mark', type: '0', miniprogramurl: '/pages/mark'},
-    {id: 2, title: '订单', module: 'order', type: '0', miniprogramurl: '/packageD/pages/userOrders'},
-    {id: 3, title: '我', module: 'own', type: '0', miniprogramurl: '/pages/own'}
+    {id: 2, title: '首页', module: 'home', type: '0', miniprogramurl: '/pages/qyshop'},
+    {id: 1, title: '商城', module: 'shop', type: '0', miniprogramurl: '/pages/qyshopping'},
+    {id: 3, title: '合伙人', module: 'mark', type: '0', miniprogramurl: '/pages/mark'},
+    {id: 4, title: '订单', module: 'order', type: '0', miniprogramurl: '/packageD/pages/userOrders'},
+    {id: 5, title: '我', module: 'own', type: '0', miniprogramurl: '/pages/own'}
   ],
   OrderHomeShare: 'https://tossharingsales.boka.cn/minigxk/shxd.png',
   CardClassID: 29,
@@ -133,7 +134,9 @@ const Config = {
       regwid: {44: true, 4903: true, 8: true} // 楚风越韵,gyp,young
     }
   },
-  ContactPluginID: 'cd23f2bb207cb7ee3a8765dd80b52db3' // 在企业微信管理后台配置的唯一插件ID  dd14b023deed2e3530096276caa9a52e
+  ContactPluginID: 'cd23f2bb207cb7ee3a8765dd80b52db3', // 在企业微信管理后台配置的唯一插件ID  dd14b023deed2e3530096276caa9a52e
+  ShopClassId: 53747124, // 商城显示分类：辣椒酱
+  NoCloseClassId: [53747124, 54218868] // 不打烊分类: 辣椒酱 小龙虾
 }
 
 Config.FilterUrls = [

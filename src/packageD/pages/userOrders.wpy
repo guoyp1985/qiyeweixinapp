@@ -44,6 +44,38 @@
   position:fixed;right:30rpx;bottom:30rpx;border-radius:50%;z-index:10;
   width:100rpx;height:100rpx;line-height:100rpx;text-align:center;
 }
+.order-canvas{
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background-color: #222;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  canvas{
+    width: 300px;
+    height: 500px;
+    margin: 0 auto;
+  }
+  .btn{
+    width: 100vw;
+    margin-top: 30rpx;
+    text-align: center;
+    button{
+      display: inline-block;
+      height: 80rpx;
+      line-height: 80rpx;
+      border-radius: 10rpx !important;
+      padding: 0 60rpx !important;
+    }
+    .save{
+      margin-left: 20rpx;
+    }
+  }
+}
 </style>
 <template>
   <!-- <view wx:if="{{userInfo && userInfo.regwid && userInfo.bindstatus}}" class="fixed-share bg-theme color-white" style="{{themeObject.bgStyle}}" @tap="toShare">分享</view> -->
@@ -216,6 +248,19 @@
     :isIpx.sync="isIpx"
     :themeObject.sync="themeObject">
   </bottomMenu>
+  <block wx:if="{{showPayCanvas}}">
+    <view class="order-canvas" style="top:0px;">
+      <canvas canvas-id="myPayCanvas" style="width:{{myCanvasWidth}}px;height:{{myCanvasHeight}}px"></canvas>
+      <view class="btn">
+        <form  report-submit="true" bindsubmit="onCancelPayTap">
+          <button class="cancel bg-white" form-type="submit">取消</button>
+        </form>
+        <form  report-submit="true" bindsubmit="onSavePayTap">
+          <button class="save" style="{{themeObject.bgStyle}}" form-type="submit" wx:if="{{savePayBtnShow}}" >保存到相册</button>
+        </form>
+      </view>
+    </view>
+  </block>
 </template>
 <script>
 import wepy from 'wepy'
@@ -251,7 +296,11 @@ export default class extends wepy.page {
     themeObject: {},
     clickShare: false,
     allowNav: false,
-    isIpx: false
+    isIpx: false,
+    myCanvasWidth: 0,
+    myCanvasHeight: 0,
+    showPayCanvas: false,
+    savePayBtnShow: false
   }
   clearRefund () {
     this.refundContent = ''
@@ -405,7 +454,7 @@ export default class extends wepy.page {
         item.buttons = arr1
         break
       case 102:
-        item.buttons = [{id: 10, name: '去支付'}]
+        item.buttons = [{id: 10, name: '去支付'}, {id: 11, name: '代付款'}]
         break
     }
     return item
@@ -519,6 +568,109 @@ export default class extends wepy.page {
       }
     })
   }
+  setCanvas () {
+    // 870 * 1300
+    let cw = this.globalData.systemInfo.windowWidth * 0.8
+    let ch = cw * 1.494
+    let defaultH = this.globalData.systemInfo.windowHeight * 0.6
+    if (defaultH > 600) defaultH = 600
+    if (ch > defaultH) {
+      ch = defaultH
+      cw = defaultH * 0.6692
+    }
+    cw = cw.toFixed(2)
+    ch = ch.toFixed(2)
+    this.myCanvasWidth = parseInt(cw)
+    this.myCanvasHeight = parseInt(ch)
+  }
+  otherPay (order) {
+    this.setCanvas()
+    let orderId = order.id
+    this.showPayCanvas = true
+    let sceneArr = []
+    let queryArr = []
+    let str = '生成二维码'
+    wepy.showLoading({
+      title: str
+    }).then(res => {
+      sceneArr.push(`id:${orderId}`)
+      queryArr.push(`id=${orderId}`)
+      this.tips = '付款码'
+      let sourceurl = `/pages/pay?id=${orderId}&otherpay=1`
+      if (queryArr.length) {
+        let querystr = queryArr.join('&')
+        if (sourceurl.indexOf('?') > -1) {
+          sourceurl = `${sourceurl}&${querystr}`
+        } else {
+          sourceurl = `${sourceurl}?${querystr}`
+        }
+      }
+      return wepy.request({
+        url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/wxa/createPoster`,
+        method: 'POST',
+        data: {
+          appid: Config.AppId,
+          sourceurl: sourceurl,
+          page: 'pages/index'
+        }
+      })
+    }).then(res => {
+      if (res.data.code === 0) {
+        let retdata = res.data.data
+        retdata = retdata.replace(/http:/g, 'https:')
+        return wepy.downloadFile({
+          url: retdata
+        })
+      }
+    }).then(res => {
+      console.log('after download file 后--------')
+      console.log(res)
+      if (!res.tempFilePath) {
+        return new Promise()
+      }
+      this.miniPayQrcode = res.tempFilePath
+      this.payContext = wepy.createCanvasContext('myPayCanvas')
+      this.payContext.save()
+      this.createPayImage()
+    })
+  }
+  createPayImage () {
+    const context = this.payContext
+    const _canvasWidth = parseFloat(this.myCanvasWidth)
+    const _canvasHeight = parseFloat(this.myCanvasHeight)
+    console.log('画布宽度=', _canvasWidth)
+    console.log('画布高度=', _canvasHeight)
+    const miniQrcode = this.miniPayQrcode
+    // 画图片
+    let fontSize = Math.ceil(14 / 320 * _canvasWidth)
+    // 画背景图
+    context.setFillStyle('#ffffff')
+    context.fillRect(0, 0, _canvasWidth, _canvasHeight)
+
+    let codeWidth = parseInt(_canvasWidth * 0.6)
+    if (codeWidth % 2 !== 0) {
+      codeWidth = codeWidth + 1
+    }
+    let lineY = (_canvasHeight - codeWidth) / 2 - 20
+    let codeR = codeWidth / 2
+    let lineX = (_canvasWidth - codeWidth) / 2
+    context.save()
+    context.beginPath()
+    context.arc(lineX + codeR, lineY + codeR, codeR, 0, 2 * Math.PI, false)
+    context.clip()
+    context.drawImage(miniQrcode, lineX, lineY, codeWidth, codeWidth)
+    context.restore()
+    context.setFillStyle('#000')
+    context.setTextAlign('center')
+    context.font = `bold`
+    context.setFontSize(fontSize + 6)
+    let ltxt = '付款码'
+    context.fillText(ltxt, _canvasWidth / 2, lineY + codeWidth + 60, _canvasWidth)
+    context.draw()
+    wepy.hideLoading()
+    this.savePayBtnShow = true
+    this.$apply()
+  }
   methods = {
     setKeyword (e) {
       this.keyword = e.detail.value
@@ -616,6 +768,9 @@ export default class extends wepy.page {
         case 9:
           let url = `/packageD/pages/orderDetail?id=${order.id}&fromType=user`
           wepy.navigateTo({url: url})
+          break
+        case 11:
+          this.otherPay(order)
           break
       }
     },
@@ -800,6 +955,27 @@ export default class extends wepy.page {
     },
     toShare () {
       this.$invoke('share', 'onCodeTap')
+    },
+    onCancelPayTap () {
+      this.showPayCanvas = false
+    },
+    onSavePayTap () {
+      wepy.canvasToTempFilePath({
+        canvasId: 'myPayCanvas'
+      }).then(res => {
+        Util.savePhoto({
+          path: res.tempFilePath,
+          callback: () => {
+            wepy.hideLoading()
+            this.showPayCanvas = false
+            this.savePayBtnShow = false
+            this.$apply()
+          }
+        })
+      }, res => {
+        console.log('下载画布图片1失败')
+        console.log(res)
+      })
     }
   }
 }

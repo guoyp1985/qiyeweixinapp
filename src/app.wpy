@@ -22,11 +22,9 @@
     config = {
       pages: [
         'pages/index',
-        'pages/auth',
         'pages/home',
         'pages/addOrder',
         'pages/class',
-        'pages/liveList',
         'pages/mark',
         'pages/own',
         'pages/pay',
@@ -35,9 +33,8 @@
         'pages/qyorder',
         'pages/qypay',
         'pages/qyshop',
-        'pages/recharge',
+        'pages/qyshopping',
         'pages/shop',
-        'pages/shop1',
         'pages/sos',
         'pages/vip',
         'pages/webview'

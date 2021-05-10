@@ -80,7 +80,8 @@
           <apply
             :userInfo.sync="userInfo"
             :globalData.sync="globalData"
-            :themeObject.sync="themeObject">
+            :themeObject.sync="themeObject"
+            :options.sync="options">
           </apply>
         </block>
         <block wx:if="{{showRetailer}}">
@@ -341,7 +342,7 @@
     }
     getRecord () {
       wepy.request({
-        url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/user/myRecommend`,
+        url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/user/uploadByMe`,
         // url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/miniprogram/productlist`,
         data: {page: this.recordPage, limit: this.limit},
         method: 'post'
@@ -728,7 +729,7 @@
     }
     handleShare () {
       const lastshareuid = this.options.share_uid
-      let shareurl = `/pages/mark?share_uid=${this.userInfo.uid}&share_wid=${this.globalData.Wid}&wid=${this.globalData.Wid}&comefrom=${Config.AppName}`
+      let shareurl = `/pages/mark?uploader=${this.userInfo.uid}&share_uid=${this.userInfo.uid}&share_wid=${this.globalData.Wid}&wid=${this.globalData.Wid}&comefrom=${Config.AppName}`
       if (lastshareuid) {
         shareurl = `${shareurl}&lastshareuid=${lastshareuid}`
       }

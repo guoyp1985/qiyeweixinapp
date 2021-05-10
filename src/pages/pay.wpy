@@ -224,9 +224,19 @@ export default class Pay extends wepy.page {
     wepy.showLoading({
       title: '正在获取结账数据...'
     })
+    let params = {}
+    this.fromH5 = false
+    if (this.options.otherpay) params.otherpay = this.options.otherpay
+    if (this.options.tableid && this.options.storeid) {
+      this.fromH5 = true
+      params.tableid = this.options.tableid
+      params.storeid = this.options.storeid
+    } else {
+      params.orderid = this.options.id
+    }
     wepy.request({
       url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/order/beforePay`,
-      data: {orderid: this.options.id}
+      data: params
     }).then(res => {
       wepy.hideLoading()
       const data = res.data
@@ -237,6 +247,9 @@ export default class Pay extends wepy.page {
         this.afterLoad = true
         this.isMember = data.ismember
         this.savedMoney = data.savedmoney
+        if (this.fromH5) {
+          this.payOrderid = data.orderid
+        }
       } else {
         wepy.showToast({
           title: data.msg,
@@ -290,6 +303,11 @@ export default class Pay extends wepy.page {
     toPay (e) {
       if (this.isIng) return false
       let params = {orderid: this.options.id, from: Config.AppId}
+      if (this.fromH5) {
+        params.orderid = this.payOrderid
+      } else {
+        params.orderid = this.options.id
+      }
       if (this.clickData && !this.userInfo.ismember) {
         params.prestoreid = this.clickData.id
         if (!this.vipInfo.name || !this.vipInfo.mobile || !this.vipInfo.birthday || this.vipInfo.name === '' || this.vipInfo.mobile === '' || this.vipInfo.birthday === '') {

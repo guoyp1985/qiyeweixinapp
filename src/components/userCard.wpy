@@ -127,12 +127,15 @@ export default class extends wepy.component {
       wepy.navigateTo({url: dataset.url})
     },
     toUse () {
+      if (this.isUsing) return false
       wepy.showLoading()
+      this.isUsing = true
       wepy.request({
         url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/card/useCard`,
         data: {id: this.options.id}
       }).then(res => {
         wepy.hideLoading()
+        this.isUsing = false
         let data = res.data
         wepy.showToast({
           title: data.msg,

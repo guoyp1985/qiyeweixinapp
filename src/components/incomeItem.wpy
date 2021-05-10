@@ -23,7 +23,7 @@
             <image src="{{item.avatar}}"></image>
           </view>
           <view class="flex_cell flex_left">
-            <view class="w_100 clamp1">{{item.buyername}}</view>
+            <view class="w_100 clamp1">{{item.customername}}</view>
           </view>
           <view class="flex_right date-cell">
             <view class="w_100 clamp1 font12 color-gray align_right">{{item.dateline_str}}</view>

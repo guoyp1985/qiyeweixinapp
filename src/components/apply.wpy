@@ -83,6 +83,10 @@ export default class extends wepy.component {
     themeObject: {
       type: Object,
       default: {}
+    },
+    options: {
+      type: Object,
+      default: {}
     }
   }
   data = {
@@ -129,6 +133,7 @@ export default class extends wepy.component {
         })
         return false
       }
+      if (this.options.uploader) postData.uploader = this.options.uploader
       this.submitIng1 = true
       wepy.request({
         url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/user/applyRetailer`,
