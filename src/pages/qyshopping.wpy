@@ -747,7 +747,8 @@ export default class Home extends wepy.page {
     homeBgPhoto: '',
     openCart: false,
     buyIng: false,
-    allowNav: false
+    allowNav: false,
+    productClass: 0
   }
   dateFormat (value) {
     return new Time(value * 1000).dateFormat('hh:mm')
@@ -766,12 +767,12 @@ export default class Home extends wepy.page {
     this.disList = false
     this.disTabList = false
     this.tabData2 = []
-    this.tabPageStart = 0
+    this.tabPageStart = 1
     this.isDoneTab = false
     this.isLoadTab = false
     this.loadingComplete = true
     this.loading = false
-    this.pageStart = 0
+    this.pageStart = 1
     this.products = []
     this.selectedIndex = 0
     this.clickClassId = 0
@@ -789,26 +790,12 @@ export default class Home extends wepy.page {
   }
   onReachBottom (event) {
     if (this.isLoading || !this.loadingComplete || !this.afterNewHomePage) return false
-    if (!this.isLoading) {
-      switch (this.tabIndex) {
-        case 0:
-          if (Array.prototype.concat.apply([], this.products).length === this.pageStart * this.limit) {
-            this.inputFixed = true
-            this.showTop = true
-            this.pageStart++
-            this.isLoading = true
-            this.getData()
-          }
-          break
-        case 1:
-          if (Array.prototype.concat.apply([], this.tabData2).length === this.tabPageStart * this.limit) {
-            this.tabPageStart++
-            this.showTop = true
-            this.isLoadTab = true
-            this.getTabData()
-          }
-          break
-      }
+    if (Array.prototype.concat.apply([], this.products).length === this.pageStart * this.limit) {
+      this.inputFixed = true
+      this.showTop = true
+      this.pageStart++
+      this.isLoading = true
+      this.getData()
     }
   }
   _onPageScroll (e) {
@@ -905,7 +892,7 @@ export default class Home extends wepy.page {
   getData () {
     if (!this.loadingComplete || !this.afterNewHomePage) return false
     this.loadingComplete = false
-    let params = {page: this.pageStart, limit: this.limit, classid: 53747124}
+    let params = {page: this.pageStart, limit: this.limit, classid: this.productClass}
     if (this.clickClassId) {
       params.classid = this.clickClassId
     }
@@ -930,8 +917,7 @@ export default class Home extends wepy.page {
       this.loadingComplete = true
       console.log(this.products)
       this.processProducts(cacheData)
-      let dataarr = cacheData.data[this.pageStart] // .slice(this.pageStart * this.limit, (this.pageStart + 1) * this.limit)
-      // this.products = this.products.concat(dataarr)
+      let dataarr = cacheData.data[this.pageStart - 1] // .slice(this.pageStart * this.limit, (this.pageStart + 1) * this.limit)
       this.products.push(dataarr)
       if (dataarr.length < this.limit && this.products[0].length) {
         this.isDone = true
@@ -944,7 +930,6 @@ export default class Home extends wepy.page {
       wepy.hideLoading()
       const data = res.data
       const retdata = data.data ? data.data : data
-      // this.products = this.products.concat(retdata)
       this.products.push(retdata)
       this.processProducts(data)
       if (retdata.length < this.limit && this.products[0].length) {
@@ -953,7 +938,7 @@ export default class Home extends wepy.page {
         this.isDone = false
       }
       this.setData({
-        [`products[${this.pageStart}]`]: retdata
+        [`products[${this.pageStart - 1}]`]: retdata
       })
       return { data: this.products, prevPage: this.pageStart, count: data.count }
     },
@@ -1029,7 +1014,6 @@ export default class Home extends wepy.page {
       wepy.hideLoading()
       const data = res.data
       const retdata = data.data ? data.data : data
-      // this.products = this.products.concat(retdata)
       this.products.push(retdata)
       this.processProducts(data)
       if (retdata.length < this.limit && this.products[0].length) {
@@ -1038,7 +1022,7 @@ export default class Home extends wepy.page {
         this.isDone = false
       }
       this.setData({
-        [`products[${this.pageStart}]`]: retdata
+        [`products[${this.pageStart - 1}]`]: retdata
       })
       return { data: this.products, prevPage: this.pageStart, count: data.count }
     })
@@ -1106,23 +1090,6 @@ export default class Home extends wepy.page {
       this.productCount = pdata.count
     }
     this.handleProducts(data)
-    // this.scrollTop = 1
-    if (this.options.gxkfid && parseInt(this.options.gxkfid) === parseInt(this.Fid)) {
-      return wepy.request({
-        url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/miniopen/bindFactoryManager`,
-        data: {appid: Config.AppId, factoryuid: this.userInfo.uid},
-        method: 'post'
-      }).then(res => {
-        if (res) {
-          const data = res.data
-          if (data.code === 0) {
-            this.userInfo.fid = this.Fid
-            this.$parent.globalData.userInfo = this.userInfo
-            this.$apply()
-          }
-        }
-      })
-    }
   }
   onShow () {
     this.buyIng = false
@@ -1234,13 +1201,6 @@ export default class Home extends wepy.page {
     }
   }
   afterHomePage () {
-    // this.channelInfo = this.homeData.menudata
-    // this.bannerData = this.channelInfo.banner
-    // if (this.homeData.fpclass.length && this.SystemParams.ShowCategory !== '0' && this.SystemParams.ShowCategory !== 0) {
-    //   let fpclass = [{id: 0, title: '全部', photo: 'https://tossharingsales.boka.cn/minigxk/allclass.png'}]
-    //   fpclass = fpclass.concat(this.homeData.fpclass)
-    //   this.processClasses(fpclass)
-    // }
     this.products = []
     this.products.push(this.homeData.data)
     this.productCount = this.homeData.fpcount
@@ -1261,6 +1221,9 @@ export default class Home extends wepy.page {
   }
   handlePageData () {
     this.globalData = this.$parent.globalData
+    if (this.globalData.StoreSetting.shopclasses && this.globalData.StoreSetting.shopclasses.length) {
+      this.productClass = this.globalData.StoreSetting.shopclasses
+    }
     if (this.globalData.OpenCart) {
       this.openCart = true
     }
@@ -1307,7 +1270,8 @@ export default class Home extends wepy.page {
     let starttime = new Date().getTime()
     Cached.request({
       url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/miniprogram/productlist`,
-      data: {limit: this.limit, page: this.pageStart, classid: 53747124}
+      data: {limit: this.limit, page: this.pageStart, classid: this.productClass},
+      method: 'post'
     }, 'home.homeData', Config.URT.H,
     cacheData => {
       let endtime = new Date().getTime()
@@ -1682,7 +1646,7 @@ export default class Home extends wepy.page {
       this.isLoading = false
       this.isDone = false
       this.products = []
-      this.pageStart = 0
+      this.pageStart = 1
       this.$apply()
       this.searChProData()
     },
@@ -1693,7 +1657,7 @@ export default class Home extends wepy.page {
       this.isLoading = false
       this.isDone = false
       this.products = []
-      this.pageStart = 0
+      this.pageStart = 1
       this.$apply()
       this.searChProData()
     },
@@ -1717,12 +1681,12 @@ export default class Home extends wepy.page {
         this.disList = false
         this.isDone = false
         this.products = []
-        this.pageStart = 0
+        this.pageStart = 1
         this.getData()
       } else {
         this.disTabList = false
         this.tabData2 = []
-        this.tabPageStart = 0
+        this.tabPageStart = 1
         this.isDoneTab = false
         this.isLoadTab = false
         this.getTabData()

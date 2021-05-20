@@ -12,6 +12,7 @@
     .avatar{width:140rpx;overflow:hidden;position:relative;}
     .inner{width:120rpx;height:120rpx;overflow:hidden;border-radius:50%;border:5rpx solid #fff;}
     .photo-pic{height:120rpx;width:120rpx;}
+    .right-txt{position:absolute;right:0;bottom:-20rpx;}
   }
   .part1{
     .bg{position:absolute;left:0;top:0;right:0;height:20rpx;}
@@ -139,7 +140,6 @@
       border-radius:50%;background-color:#fff;
     }
   }
-  .jinbinumber{position:absolute;right:0;bottom:-20rpx;font-size:60rpx;}
 }
 .qrcode-modal{
   .btn-save{padding:10rpx 20rpx;border-radius:10rpx;}
@@ -183,8 +183,15 @@
         </view>
       </view>
     </view>
-    <view class="app-box-area part part1" wx:if="{{userInfo.factoryinfo.trade != 11}}">
+    <view wx:if="{{balanceMoney && balanceMoney != ''}}" class="app-box-area part part1">
       <view class="bg" style="{{themeObject.bgStyle}}"></view>
+      <view class="box-inner flex_left">
+        <view class="flex_left" style="color:#000;">会员卡余额</view>
+        <view class="flex_right flex_cell font18 bold" style="{{themeObject.colorStyle}}">￥{{balanceMoney}}</view>
+      </view>
+    </view>
+    <view :class="{'mt12': (balanceMoney && balanceMoney != ''), 'part1': (!balanceMoney || balanceMoney == '')}" class="app-box-area part">
+      <view wx:if="{{!balanceMoney || balanceMoney == ''}}" class="bg" style="{{themeObject.bgStyle}}"></view>
       <view class="box-inner">
         <form class="txt-item b_bottom_after" data-url="/packageD/pages/userOrders" bindsubmit="formSubmit" report-submit="true">
           <button form-type="submit">我的购买订单</button>
@@ -488,6 +495,10 @@ export default class CenterUser extends wepy.component {
     themeObject: {
       type: Object,
       default: {}
+    },
+    balanceMoney: {
+      type: String,
+      default: ''
     }
   }
   data = {

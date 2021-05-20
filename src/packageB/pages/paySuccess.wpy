@@ -178,10 +178,14 @@
       myCanvasWidth: 0,
       myCanvasHeight: 0,
       saveBtnShow: false,
-      creditCount: 0
+      creditCount: 0,
+      productClass: 0
     }
     handlePageData () {
       this.globalData = this.$parent.globalData
+      if (this.globalData.StoreSetting.recommendclasses && this.globalData.StoreSetting.recommendclasses.length) {
+        this.productClass = this.globalData.StoreSetting.recommendclasses
+      }
       this.MiniInfo = this.globalData.MiniInfo
       Util.appInit(this.globalData, this)
       this.userInfo = this.globalData.userInfo
@@ -204,7 +208,7 @@
     getProduct () {
       wepy.request({
         url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/miniprogram/productlist`,
-        data: {page: this.pagestart, limit: this.limit, classid: Config.RecommendClass},
+        data: {page: this.pagestart, limit: this.limit, classid: this.productClass},
         method: 'post'
       }).then(res => {
         const data = res.data

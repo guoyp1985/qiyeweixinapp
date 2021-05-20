@@ -1290,8 +1290,15 @@ export default class Product extends wepy.page {
     }
     this.productId = this.product.id
     this.title = this.product.title
-    let checkClose = Config.NoCloseClassId.includes(this.product.classid)
-    if (!checkClose) {
+    let checkClose = true
+    if (this.options.ordertype && parseInt(this.options.ordertype) === 4) {
+      checkClose = false
+    } else {
+      if (this.globalData.StoreSetting.shopclasses && this.globalData.StoreSetting.shopclasses.length) {
+        checkClose = !this.globalData.StoreSetting.shopclasses.includes(this.product.classid)
+      }
+    }
+    if (checkClose) {
       this.isClose = Util.checkClose(this.sysParams.closestore)
     }
     if (!this.inHide) {

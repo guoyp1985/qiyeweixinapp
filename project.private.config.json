@@ -600,6 +600,30 @@
           "pathName": "pages/pay",
           "query": "storeid=1&tableid=1",
           "scene": null
+        },
+        {
+          "name": "绑定小程序",
+          "pathName": "pages/index",
+          "query": "combineuid=1",
+          "scene": null
+        },
+        {
+          "name": "商城",
+          "pathName": "pages/qyshopping",
+          "query": "",
+          "scene": null
+        },
+        {
+          "name": "首页商品",
+          "pathName": "pages/product",
+          "query": "id=441421512&from=home&select=product",
+          "scene": null
+        },
+        {
+          "name": "520小龙虾",
+          "pathName": "pages/product",
+          "query": "ordertype=4&id=447212903",
+          "scene": null
         }
       ]
     }

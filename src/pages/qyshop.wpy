@@ -1,7 +1,13 @@
 <style lang="less">
-.qyshop-page.iphone{padding-bottom:180rpx;}
+.qyshop-page.iphone{
+  padding-bottom:180rpx;
+  .right-area{padding-bottom:194rpx;}
+}
 .qyshop-page.havebottom{
   .right-area{padding-bottom:240rpx;}
+}
+.qyshop-page.havebottom.iphone{
+  .right-area{padding-bottom:308rpx;}
 }
 .qyshop-page{
   width:100%;height:100%;position:relative;box-sizing: border-box;padding-bottom:110rpx;
@@ -106,6 +112,7 @@
     }
   }
 }
+.fix-bottom.iphone{bottom:184rpx;}
 .fix-bottom{
   position:fixed;left:0;bottom:116rpx;right:0;background-color:#fff;z-index:10;
   height:130rpx;display:flex;justify-content: center;align-items: center;
@@ -379,8 +386,8 @@
     <auth :pageurl.sync="pageurl" :themeObject.sync="themeObject" :globalData.sync="globalData"></auth>
   </block>
   <block wx:if="{{afterLoad}}">
-    <view class="fix-bottom gray-bottom" wx:if="{{isClose}}"><view class="inner">很抱歉，本店已打烊</view></view>
-    <view class="fix-bottom" wx:elif="{{totalPrice > 0}}">
+    <view :class="{'iphone' : isIpx}" class="fix-bottom gray-bottom" wx:if="{{isClose}}"><view class="inner">很抱歉，本店已打烊</view></view>
+    <view :class="{'iphone' : isIpx}" class="fix-bottom" wx:elif="{{totalPrice > 0}}">
       <view class="inner">
         <view class="ico-cell flex_left">
           <view class="ico" style="{{themeObject.bgStyle}}" @tap="clickCart">
@@ -799,6 +806,8 @@ export default class extends wepy.page {
     }, 100)
   }
   getHomeData () {
+    this.globalData.StoreId = this.selectedMd.id
+    this.$parent.globalData = this.globalData
     let stime = new Date().getTime()
     wepy.request({
       url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/miniprogram/home`,

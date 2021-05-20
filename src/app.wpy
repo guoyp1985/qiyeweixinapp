@@ -147,8 +147,9 @@
         }
       },
       window: {
-        navigationBarTitleText: '博卡供销社', // 博卡供销社
-        // navigationBarTitleText: '顾湘饭店', // 顾湘饭店
+        // navigationBarTitleText: '博卡供销社', // 博卡供销社
+        navigationBarTitleText: '顾湘饭店', // 顾湘饭店
+        // navigationBarTitleText: '四海龙洲', // 四海龙洲
         backgroundTextStyle: 'dark',
         navigationBarBackgroundColor: '#ffffff',
         navigationBarTextStyle: 'white',
@@ -161,6 +162,7 @@
       userInfo: null,
       Wid: Config.Wid,
       Fid: Config.Fid,
+      StoreId: null,
       FactoryInfo: {},
       sharedUrl: null,
       sharedParams: null,
@@ -258,6 +260,9 @@
         if (this.globalData.options.query.from === 'miniapp') {
           loginParams.oldappid = this.globalData.options.query.oldappid
           loginParams.olduid = this.globalData.options.query.olduid
+        }
+        if (this.globalData.options.query.combineuid) {
+          loginParams.combineuid = this.globalData.options.query.combineuid
         }
         const resToken = await wepy.request({
           url: `${BokaApi}/${Config[Config.ApiVersion]}/visitor/miniLogin?code=${resWXLogin.code}`,
@@ -481,6 +486,9 @@
       callback && callback()
     }
     async handleOptions (options, callback) {
+      if (options.query.storeid) {
+        this.globalData.StoreId = options.query.storeid
+      }
       // 有直播组件调用
       // this.handleLive(options, callback)
       // 无直播组件调用

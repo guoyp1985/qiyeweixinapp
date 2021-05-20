@@ -960,7 +960,7 @@ export default class AddOrder extends wepy.page {
     this.userInfo = this.globalData.userInfo
     this.MiniInfo = this.globalData.MiniInfo
     this.sysParams = this.globalData.SystemParams
-    this.isClose = Util.checkClose(this.sysParams.closestore)
+    // this.isClose = Util.checkClose(this.sysParams.closestore)
     this.mdList = this.globalData.Store
     let orderRemark = this.globalData.SystemParams.OrderRemark
     this.showRemark = orderRemark ? parseInt(orderRemark) : false
@@ -1051,7 +1051,7 @@ export default class AddOrder extends wepy.page {
     this.getAddressList()
     if (this.inHide) {
       this.inHide = false
-      this.isClose = Util.checkClose(this.sysParams.closestore)
+      // this.isClose = Util.checkClose(this.sysParams.closestore)
     }
     this.$apply()
   }

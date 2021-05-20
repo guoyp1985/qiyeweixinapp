@@ -20,7 +20,8 @@
         :channelInfo.sync="channelInfo"
         :noticeCount.sync="noticeCount"
         :showTest.sync="showTest"
-        :themeObject.sync="themeObject">
+        :themeObject.sync="themeObject"
+        :balanceMoney.sync="balanceMoney">
       </centerUser>
     </view>
   </view>
@@ -70,7 +71,8 @@ export default class Own extends wepy.page {
     noticeCount: 0,
     showTest: false,
     themeObject: {},
-    creditData: []
+    creditData: [],
+    balanceMoney: ''
   }
   onPullDownRefresh () {
     this.handlePageData()
@@ -100,6 +102,18 @@ export default class Own extends wepy.page {
       }
     })
   }
+  getBalance () {
+    wepy.request({
+      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/user/cardBalance`,
+      data: {storeid: this.globalData.StoreId}
+    }).then(res => {
+      const retdata = res.data
+      if (retdata.code === 0) {
+        this.balanceMoney = retdata.data
+        this.$apply()
+      }
+    })
+  }
   handlePageData () {
     this.globalData = this.$parent.globalData
     Util.appInit(this.globalData, this)
@@ -107,6 +121,7 @@ export default class Own extends wepy.page {
     this.noticeCount = parseInt(this.userInfo.newmessages)
     this.$apply()
     this.getBanner()
+    this.getBalance()
   }
   getSettingList () {
     Cached.request({
