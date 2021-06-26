@@ -105,7 +105,8 @@
         <repeat for="{{tabDataObject[flag]}}" index="index" item="item">
           <view class="order-item b_top_after">
             <view class="flex_left padding10 bg-white" data-data="{{item}}" @tap="toDetail">
-              <view class="flex_left">{{item.dateline_str}}</view>
+              <view class="flex_left">订单编号：{{item.orderno}}</view>
+              <!--<view class="flex_left">{{item.dateline_str}}</view>-->
               <view class="font12 color-orange6 flex_right flex_cell">{{item.flagstr}}</view>
             </view>
             <!-- <view class="product-area flex_left bg-page" data-data="{{item}}" @tap="toDetail">
@@ -723,6 +724,8 @@ export default class extends wepy.page {
         case 2:
           if (order.ordertype === 3) {
             wepy.navigateTo({url: `/pages/qypay?orderid=${order.id}`})
+          } else if (order.ordertype === 5) {
+            wepy.navigateTo({url: `/pages/pay?id=${order.id}&ordertype=5`})
           } else {
             wepy.navigateTo({url: `/packageB/pages/pay?id=${order.id}`})
           }

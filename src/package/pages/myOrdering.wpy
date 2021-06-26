@@ -1,0 +1,241 @@
+<style lang="less">
+.my-ordering-page{
+  .scroll_list{
+    .scroll_item:not(:first-child){padding-top:24rpx;}
+    .scroll_item{
+      box-sizing: border-box;background-color:#eaeaea;
+      .inner{
+        box-sizing: border-box;background-color:#fff;
+      }
+      .btn{
+        padding:0 20rpx;line-height:54rpx;
+        background-color: #07c160;color:#fff;
+        border-radius:10rpx; font-size:28rpx;font-weight:bold;
+      }
+    }
+  }
+  .txt-list{
+    width:100%;padding:20rpx;box-sizing:border-box;
+    .txt-item:not(:last-child){padding-bottom:20rpx;}
+    .txt-item{
+      display:flex;justify-content: flex-start;align-items: center;
+      .txt-cell{
+        display:flex;justify-content: flex-end;align-items: center;
+        flex:1;padding-left:20rpx;box-sizing: border-box;
+        color:#000;font-weight:bold;
+      }
+    }
+  }
+}
+</style>
+<template>
+  <view class="my-ordering-page">
+    <block wx:if="{{disList1}}">
+      <view wx:if="{{!tabData1.length}}" class="flex_empty">暂无相关数据</view>
+      <view wx:else class="scroll_list">
+        <repeat for="{{tabData1}}" index="index" item="item">
+          <view class="scroll_item b_bottom_after" @tap="toDetail({{item}})">
+            <view class="inner">
+              <view class="flex_left b_top_after" style="width:100%;padding:10px;box-sizing:border-box;">
+                <view class="flex_cell bold font16">{{item.storename.title}}</view>
+                <view class="flex_right font12" style="{{themeObject.colorStyle}}">{{item.moderate_name}}</view>
+              </view>
+              <view class="txt-list b_top_after">
+                <view class="txt-item">
+                  <view>{{item.title}} {{item.sex_name}}</view>
+                  <view class="txt-cell" style="color:#659af2;">{{item.mobile}}</view>
+                </view>
+                <view class="txt-item">
+                  <view>餐别</view>
+                  <view class="txt-cell">{{item.canbie_name}}</view>
+                </view>
+                <view class="txt-item">
+                  <view>用餐人数</view>
+                  <view class="txt-cell">{{item.dinners}}人</view>
+                </view>
+                <view class="txt-item">
+                  <view>桌别</view>
+                  <view class="txt-cell">{{item.tabletype_name}}</view>
+                </view>
+                <view class="txt-item">
+                  <view>就餐时间</view>
+                  <view class="txt-cell">{{item.dinnertime}}</view>
+                </view>
+                <view class="txt-item" wx:if="{{item.content && item.content != ''}}">
+                  <view>备注</view>
+                  <text class="txt-cell">{{item.content}}</text>
+                </view>
+              </view>
+              <view class="b_top_after" style="width:100%;padding:10px;box-sizing:border-box;">
+                <view class="flex_left">
+                  <view>预定时间</view>
+                  <view class="flex_cell flex_right color-gray">{{item.dateline_str}}</view>
+                </view>
+                <block wx:if="{{item.moderate != 0}}">
+                  <view class="flex_left pt10" wx:if="{{item.tableid && item.tableid != ''}}">
+                    <view>就餐桌号</view>
+                    <view class="flex_cell flex_right color-red" style="{{themeObject.colorStyle}}">{{item.tableid}}</view>
+                  </view>
+                  <view class="flex_left pt10" wx:if="{{item.rejectreason && item.rejectreason != ''}}">
+                    <view>拒绝原因</view>
+                    <view class="flex_cell flex_right color-red" style="{{themeObject.colorStyle}}">{{item.rejectreason}}</view>
+                  </view>
+                </block>
+                <block wx:if="{{item.cancancel}}">
+                  <view class="flex_right pt10">
+                    <view class="btn" style="{{themeObject.bgStyle}}" catchtap="cancelEvent({{item}},{{index}})">取消预订</view>
+                  </view>
+                </block>
+              </view>
+            </view>
+          </view>
+        </repeat>
+      </view>
+      <view class="load-end-area loading" wx:if="{{isLoading1}}"></view>
+      <view class="load-end-area done" wx:elif="{{isDone1}}"></view>
+    </block>
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy'
+import Util from '@/libs/util'
+import Time from '@/libs/time'
+import Config from '@/config'
+import CustomerItem from '@/components/customerItem'
+export default class extends wepy.page {
+  config = {
+    enablePullDownRefresh: true,
+    backgroundTextStyle: 'dark'
+  }
+  components = {
+    customerItem1: CustomerItem,
+    customerItem2: CustomerItem,
+    customerItem3: CustomerItem
+  }
+  data = {
+    options: {},
+    globalData: {},
+    userInfo: null,
+    lastIndex: 0,
+    selectedIndex: 0,
+    disList1: false,
+    disList3: false,
+    disList2: false,
+    tabData1: [],
+    tabData3: [],
+    tabData2: [],
+    pageStart1: 0,
+    pageStart3: 0,
+    pageStart2: 0,
+    limit: Config.Limit,
+    isLoading1: false,
+    isDone1: false,
+    userView: {},
+    toView1: '',
+    toView2: '',
+    toView3: '',
+    showPercent: false,
+    themeObject: {}
+  }
+  onPullDownRefresh () {
+    wepy.showNavigationBarLoading()
+    setTimeout(function () {
+      wepy.hideNavigationBarLoading()
+      wepy.stopPullDownRefresh()
+    }, 500)
+    this.refreshPage()
+  }
+  onReachBottom () {
+    if (this.tabData1.length === this.pageStart1 * this.limit) {
+      this.pageStart1++
+      this.isLoading1 = true
+      this.getData1()
+    }
+  }
+  getData1 = function () {
+    wepy.request({
+      url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/bookdinner/bookList`,
+      data: {from: 'user', limit: this.limit, page: this.pageStart1}
+    }).then(res => {
+      const data = res.data
+      this.isLoading1 = false
+      let retdata = data.data ? data.data : data
+      for (let i = 0; i < retdata.length; i++) {
+        retdata[i].dateline_str = new Time(retdata[i].dateline * 1000).dateFormat('yyyy-MM-dd hh:mm')
+        retdata[i].viewId = `member-view-1-${retdata[i].id}`
+      }
+      this.tabData1 = this.tabData1.concat(retdata)
+      if (retdata.length < this.limit && this.tabData1.length) {
+        this.isDone1 = true
+      } else {
+        this.isDone1 = false
+      }
+      this.disList1 = true
+      wepy.stopPullDownRefresh()
+      this.$apply()
+    })
+  }
+  refreshPage () {
+    this.globalData = this.$parent.globalData
+    Util.appInit(this.globalData, this)
+    this.userInfo = this.globalData.userInfo
+    this.selectedIndex = 0
+    this.disList1 = false
+    this.tabData1 = []
+    this.pageStart1 = 1
+    this.$apply()
+    this.getData1()
+  }
+  onLoad (options) {
+    this.options = options
+    wepy.showShareMenu({
+      withShareTicket: true
+    })
+    wepy.hideShareMenu()
+    if (this.$parent.globalData.flag.bokaAuth) {
+      this.refreshPage()
+    } else {
+      this.$parent.loadCallback = () => {
+        this.refreshPage()
+      }
+    }
+  }
+  methods = {
+    toDetail (item) {
+      wepy.navigateTo({url: `${Config.BookInfoPage[Config.AppMode]}?id=${item.id}`})
+    },
+    cancelEvent (item, index) {
+      if (this.ing) return false
+      wepy.showModal({
+        title: '确定要取消预订吗？'
+      }).then(res => {
+        if (res.confirm) {
+          this.ing = true
+          wepy.request({
+            url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/bookdinner/cancelBook`,
+            data: {id: item.id},
+            method: 'post'
+          }).then(res => {
+            const data = res.data
+            this.ing = false
+            wepy.showToast({
+              title: data.msg,
+              icon: 'none',
+              duration: Util.delay(data.msg)
+            })
+            if (data.code === 0) {
+              item.moderate = -1
+              item.moderate_name = '预订失败'
+              item.rejectreason = '客户取消'
+              item.cancancel = 0
+              this.tabData1[index] = item
+            }
+            this.$apply()
+          })
+        }
+      })
+    }
+  }
+}
+</script>

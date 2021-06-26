@@ -1,0 +1,125 @@
+<style lang="less">
+.gx-book-page{
+  .pic{width:100%;display:block;}
+  .txt{padding:20rpx;}
+}
+.fix-bottom{
+  position:fixed;left:0;right:0;bottom:0;z-index:1;
+  width:100%;height:90rpx;background-color:#fff;font-size:32rpx;
+  display:flex;justify-content:center;align-items: center;
+}
+</style>
+<template>
+  <view class="gx-book-page">
+    <block wx:if="{{viewData && viewData.id}}">
+      <view class="txt">
+        <view class="font15 bold">尊敬的{{viewData.title}}{{viewData.sex_name}}:</view>
+        <view class="mt5">
+          <text>您好，欢迎您来{{viewData.storename.title}}，</text>
+          <text>您预订的是{{viewData.dinnertime}}{{viewData.canbie_name}}，</text>
+          <text wx:if="{{viewData.moderate == 0}}">{{viewData.tabletype_name}}{{viewData.dinners}}位，请耐心等待工作人员处理。</text>
+          <text wx:elif="{{viewData.moderate == 1}}">已成功预定{{viewData.tabletype_name}}{{viewData.tableid}}，{{viewData.dinners}}位，期待您的到来。</text>
+          <text wx:elif="{{viewData.moderate == -1}}">{{viewData.tabletype_name}}{{viewData.dinners}}位，很遗憾您的预约失败。</text>
+        </view>
+        <view class="mt5" wx:if="{{viewData.moderate == -1}}" style="{{themeObject.colorStyle}}">失败原因：{{viewData.rejectreason}}</view>
+      </view>
+      <view class="txt">
+        <view class="font15 bold">门店地址：</view>
+        <view class="mt5">{{viewData.storename.address}}</view>
+        <view class="mt5">
+          <map
+            style="width:100%;"
+            longitude="{{storeInfo.longitude}}"
+            latitude="{{storeInfo.latitude}}"
+            markers="{{markerData}}"
+            show-location="{{1==1}}"
+            slot="callout">
+            <cover-view marker-id="1"></cover-view>
+          </map>
+        </view>
+      </view>
+      <view>
+        <image class="pic" mode="widthFix" src="https://tosqy.boka.cn/guxiang/month_202105/16199746375102.jpeg"></image>
+      </view>
+      <view>
+        <image class="pic" mode="widthFix" src="https://tosqy.boka.cn/guxiang/month_202105/16199746377155.jpeg"></image>
+      </view>
+      <view>
+        <image class="pic" mode="widthFix" src="https://tosqy.boka.cn/guxiang/month_202105/16199746508866.jpeg"></image>
+      </view>
+      <view>
+        <image class="pic" mode="widthFix" src="https://tosqy.boka.cn/guxiang/month_202105/16199746374123.jpeg"></image>
+      </view>
+      <view>
+        <image class="pic" mode="widthFix" src="https://tosqy.boka.cn/guxiang/month_202105/16199746500895.jpeg"></image>
+      </view>
+      <view>
+        <image class="pic" mode="widthFix" src="https://tosqy.boka.cn/guxiang/month_202105/16199746504980.jpeg"></image>
+      </view>
+      <view>
+        <image class="pic" mode="widthFix" src="https://tosqy.boka.cn/guxiang/month_202105/16199746505806.jpeg"></image>
+      </view>
+    </block>
+  </view>
+  <view @tap="toList()" class="fix-bottom b_top_after" style="{{themeObject.colorStyle}}">我的预定</view>
+</template>
+<script>
+  import wepy from 'wepy'
+  import Config from '@/config'
+  import Util from '@/libs/util'
+  export default class extends wepy.page {
+    data = {
+      options: {},
+      globalData: {},
+      userInfo: {},
+      themeObject: {},
+      viewData: {},
+      storeInfo: {},
+      markerData: []
+    }
+    getData () {
+      wepy.request({
+        url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/bookdinner/bookInfo`,
+        data: {id: this.options.id}
+      }).then(res => {
+        const data = res.data
+        if (data.code === 0) {
+          this.viewData = data.data
+          this.storeInfo = this.viewData.storename
+          this.markerData = [{
+            id: 1,
+            longitude: this.storeInfo.longitude,
+            latitude: this.storeInfo.latitude,
+            title: this.storeInfo.title,
+            callout: {
+              content: this.storeInfo.title
+            }
+          }]
+          this.$apply()
+        }
+      })
+    }
+    handlePageData () {
+      this.globalData = this.$parent.globalData
+      Util.appInit(this.globalData, this)
+      this.userInfo = this.globalData.userInfo
+      this.getData()
+      this.$apply()
+    }
+    onLoad (options) {
+      this.options = options
+      if (this.$parent.globalData.flag.bokaAuth) {
+        this.handlePageData()
+      } else {
+        this.$parent.loadCallback = () => {
+          this.handlePageData()
+        }
+      }
+    }
+    methods = {
+      toList () {
+        wepy.redirectTo({url: '/package/pages/myOrdering'})
+      }
+    }
+  }
+</script>

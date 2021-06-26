@@ -197,6 +197,7 @@
           <button form-type="submit">我的购买订单</button>
         </form>
         <view class="listicon mt10">
+          <!--
           <form class="item" data-url="/packageD/pages/userOrders" bindsubmit="formSubmit" report-submit="true">
             <button class="item-inner btn listone" formType="submit">
               <view class="inner">
@@ -232,7 +233,16 @@
               </view>
             </button>
           </form>
-          <form class="item" data-url="/packageD/pages/userOrders?flag=4" bindsubmit="formSubmit" report-submit="true">
+        -->
+          <form class="item" data-url="/packageD/pages/userOrders?flag=0" bindsubmit="formSubmit" report-submit="true">
+            <button class="item-inner btn listone" formType="submit">
+              <view class="inner">
+                <text class="al al-wodedaifahuo" style="{{themeObject.colorStyle}}"></text>
+                <view>未完成</view>
+              </view>
+            </button>
+          </form>
+          <form class="item" data-url="/packageD/pages/userOrders?flag=1" bindsubmit="formSubmit" report-submit="true">
             <button class="item-inner btn listone" formType="submit">
               <view class="inner">
                 <text class="al al-buoumaotubiao48" style="position:relative;{{themeObject.colorStyle}}">
@@ -276,14 +286,14 @@
               </view>
             </button>
           </form>
-          <form class="item" data-url="/packageD/pages/userView" data-auth="1" bindsubmit="formSubmit" report-submit="true">
+          <!-- <form class="item" data-url="/packageD/pages/userView" data-auth="1" bindsubmit="formSubmit" report-submit="true">
             <button formType="submit" class="item-inner">
               <view class="w_100">
                 <view class="radius"><text class="al al-user-views color-views"></text></view>
                 <view>我的浏览</view>
               </view>
             </button>
-          </form>
+          </form> -->
           <form class="item" data-url="/packageD/pages/userOrders" data-auth="1" bindsubmit="formSubmit" report-submit="true">
             <button formType="submit" class="item-inner">
               <view class="w_100">
@@ -292,9 +302,7 @@
               </view>
             </button>
           </form>
-        </view>
-        <view class="listicon list three pb20">
-          <form class="item mt20" data-url="/packageD/pages/cardList" bindsubmit="formSubmit" report-submit="true" wx:if="{{AppId != 'wx46317f562509ab24'}}">
+          <form class="item" data-url="/packageD/pages/cardList" bindsubmit="formSubmit" report-submit="true" wx:if="{{AppId != 'wx46317f562509ab24'}}">
             <button formType="submit" class="item-inner">
               <view class="w_100">
                 <view class="radius"><text class="al al-coupon" style="color:#82529d;"></text></view>
@@ -302,6 +310,8 @@
               </view>
             </button>
           </form>
+        </view>
+        <view class="listicon list three pb20">
           <form class="item mt20" data-url="/packageD/pages/cardList?flag=1" bindsubmit="formSubmit" report-submit="true" wx:if="{{AppId != 'wx46317f562509ab24'}}">
             <button formType="submit" class="item-inner">
               <view class="w_100">
@@ -315,6 +325,14 @@
               <view class="w_100">
                 <view class="radius"><text class="al al-dizhi2 font40" style="color:#31a3e0;"></text></view>
                 <view>地址管理</view>
+              </view>
+            </button>
+          </form>
+          <form class="item mt20" data-url="/package/pages/myOrdering" bindsubmit="formSubmit" report-submit="true" wx:if="{{AppId != 'wx46317f562509ab24'}}">
+            <button formType="submit" class="item-inner">
+              <view class="w_100">
+                <view class="radius"><text class="al al-user-orders1" style="color:#659af2;"></text></view>
+                <view>我的预定</view>
               </view>
             </button>
           </form>

@@ -65,7 +65,7 @@
   import Util from '@/libs/util'
   import Reg from '@/libs/reg'
   const TimeCount = 60
-  export default class Vip extends wepy.page {
+  export default class extends wepy.page {
     data = {
       options: {},
       globalData: {},

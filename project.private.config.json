@@ -624,6 +624,36 @@
           "pathName": "pages/product",
           "query": "ordertype=4&id=447212903",
           "scene": null
+        },
+        {
+          "name": "订餐页",
+          "pathName": "package/pages/ordering",
+          "query": "",
+          "scene": null
+        },
+        {
+          "name": "我的预定",
+          "pathName": "package/pages/myOrdering",
+          "query": "",
+          "scene": null
+        },
+        {
+          "name": "预定详情页",
+          "pathName": "package/pages/guxiangBook",
+          "query": "id=7",
+          "scene": null
+        },
+        {
+          "name": "ordertype=5的商品",
+          "pathName": "pages/product",
+          "query": "id=441421512&storeid=1&ordertype=5",
+          "scene": null
+        },
+        {
+          "name": "ordertype=5的确认下单页",
+          "pathName": "pages/addOrder",
+          "query": "wid=0&shop_id=40&ordertype=5",
+          "scene": null
         }
       ]
     }

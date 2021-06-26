@@ -59,6 +59,7 @@
         <view class="w_100 h_100 flex_center">
           <view class="flex_cell h_100 flex_center">
             <button wx:if="{{options.ordertype == 4}}" class="bg-theme color-white flex_center btn" style="{{themeObject.bgStyle}}" @tap="optionToBuy">预购</button>
+            <button wx:elif="{{options.ordertype == 5}}" class="bg-theme color-white flex_center btn" style="{{themeObject.bgStyle}}" @tap="optionToBuy">抢购</button>
             <button wx:else class="bg-theme color-white flex_center btn" style="{{themeObject.bgStyle}}" @tap="optionToCart">选好了</button>
           </view>
         </view>

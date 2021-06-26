@@ -87,6 +87,7 @@
         <button class="bg-theme color-white btn-chat" style="{{themeObject.bgStyle}}" form-type="submit">联系客服</button>
       </form>
     </view> -->
+    <view class="pt10 pl10 pr10 flex_left bg-white">订单编号：{{orderData.orderno}}</view>
     <view class="bg-white b_bottom_after padding10" wx:if="{{orderData.ordertype == 1}}">
       <view wx:if="{{orderData.flag != 0 && orderData.flag != 1 && orderData.flag != 2}}" class="flex_left mb10">
         <view class="flex_left flex_cell">{{ orderData.delivercompanyname }} {{ orderData.delivercode }}</view>
@@ -746,6 +747,8 @@ export default class extends wepy.page {
         case 2:
           if (this.orderData.ordertype === 3) {
             wepy.navigateTo({url: `/pages/qypay?orderid=${this.orderData.id}`})
+          } else if (this.orderData.ordertype === 5) {
+            wepy.navigateTo({url: `/pages/pay?id=${this.orderData.id}&ordertype=5`})
           } else {
             wepy.navigateTo({url: `/packageB/pages/pay?id=${this.orderData.id}`})
           }

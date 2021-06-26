@@ -143,6 +143,10 @@
       options: {
         type: Object,
         default: {}
+      },
+      ordertype: {
+        type: Number,
+        default: 0
       }
     }
     data = {
@@ -193,7 +197,10 @@
           params.push(`shareuser=${this.options.shareuser}`)
         }
         wepy.setStorageSync('selectedProduct', data)
-        let navurl = `/${Config.Router.product}?id=${data.id}&from=home&select=product&ordertype=4`
+        let navurl = `/${Config.Router.product}?id=${data.id}&from=home&select=product`
+        if (this.ordertype) {
+          navurl = `${navurl}&ordertype=${this.ordertype}`
+        }
         if (params.length) {
           let pstr = params.join('&')
           navurl = `${navurl}&${pstr}`

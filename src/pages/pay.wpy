@@ -69,68 +69,70 @@
         <view class="title flex_center font30 bold" style="{{themeObject.colorStyle}}">¥{{orderPrice}}</view>
       </view>
     </view>
-    <view class="box-area mt10" wx:if="{{afterLoad && isMember}}">
-      <view class="box-inner">
-        <view class="title flex_left">
-          <view>会员卡余额</view>
-          <view class="flex_cell flex_right bold" style="{{themeObject.colorStyle}}">{{savedMoney}}</view>
+    <block wx:if="{{options.ordertype != 5}}">
+      <view class="box-area mt10" wx:if="{{afterLoad && isMember}}">
+        <view class="box-inner">
+          <view class="title flex_left">
+            <view>会员卡余额</view>
+            <view class="flex_cell flex_right bold" style="{{themeObject.colorStyle}}">{{savedMoney}}</view>
+          </view>
         </view>
       </view>
-    </view>
-    <block wx:if="{{moneyData && moneyData.length}}">
-      <view class="box-area mt10">
-        <view class="box-inner">
-          <view class="title b_bottom_after">储值套餐</view>
-          <view class="money-list">
-            <repeat for="{{moneyData}}" item="item" index="index">
-              <view @tap="clickMoney({{item}},{{index}})" :class="{'active': (clickData && clickData.id == item.id)}" class="m-item">
-                <view class="item-inner">
-                  <view>储值</view>
-                  <view class="txt1" style="{{themeObject.colorStyle}}">
-                    <text>￥</text><text class="font20 bold">{{item.addmoney}}</text>
-                  </view>
-                  <view>送</view>
-                  <view class="txt2" style="{{themeObject.colorStyle}}">
-                    <text>￥</text><text class="font20 bold">{{item.givemoney}}</text>
-                  </view>
-                  <view class="flex_cell flex_right">
-                    <view class="ico" style="{{(clickData && clickData.id == item.id) ? themeObject.borderStyle : ''}}">
-                      <view wx:if="{{clickData && clickData.id == item.id}}" class="dot" style="{{(clickData && clickData.id == item.id) ? themeObject.bgStyle : ''}}"></view>
+      <block wx:if="{{moneyData && moneyData.length}}">
+        <view class="box-area mt10">
+          <view class="box-inner">
+            <view class="title b_bottom_after">储值套餐</view>
+            <view class="money-list">
+              <repeat for="{{moneyData}}" item="item" index="index">
+                <view @tap="clickMoney({{item}},{{index}})" :class="{'active': (clickData && clickData.id == item.id)}" class="m-item">
+                  <view class="item-inner">
+                    <view>储值</view>
+                    <view class="txt1" style="{{themeObject.colorStyle}}">
+                      <text>￥</text><text class="font20 bold">{{item.addmoney}}</text>
+                    </view>
+                    <view>送</view>
+                    <view class="txt2" style="{{themeObject.colorStyle}}">
+                      <text>￥</text><text class="font20 bold">{{item.givemoney}}</text>
+                    </view>
+                    <view class="flex_cell flex_right">
+                      <view class="ico" style="{{(clickData && clickData.id == item.id) ? themeObject.borderStyle : ''}}">
+                        <view wx:if="{{clickData && clickData.id == item.id}}" class="dot" style="{{(clickData && clickData.id == item.id) ? themeObject.bgStyle : ''}}"></view>
+                      </view>
                     </view>
                   </view>
                 </view>
-              </view>
-            </repeat>
-          </view>
-        </view>
-      </view>
-      <view class="box-area mt10" wx:if="{{clickData && !userInfo.ismember}}">
-        <view class="box-inner">
-          <view class="title b_bottom_after">会员信息</view>
-          <view class="input-list">
-            <view class="item b_bottom_after">
-              <view class="title-cell">姓名</view>
-              <view class="input-cell">
-                <input class="input" type="text" placeholder="姓名" data-name="name" bindinput="keyupFormInput" />
-              </view>
-            </view>
-            <view class="item flex_left">
-              <view class="title-cell">手机</view>
-              <view class="input-cell">
-                <input class="input" type="number" placeholder="手机" data-name="mobile" bindinput="keyupFormInput" />
-              </view>
-            </view>
-            <view class="item flex_left">
-              <view class="title-cell">出生日期</view>
-              <view class="input-cell">
-                <picker style="width:100%;" mode="date" value="{{birthday}}" start="{{startDate}}" end="{{endDate}}" bindchange="bindDateChange">
-                  <view class="picker" style="width:100%;">{{(birthday && birthday != '') ? birthday : '请选择'}}</view>
-                </picker>
-              </view>
+              </repeat>
             </view>
           </view>
         </view>
-      </view>
+        <view class="box-area mt10" wx:if="{{clickData && !userInfo.ismember}}">
+          <view class="box-inner">
+            <view class="title b_bottom_after">会员信息</view>
+            <view class="input-list">
+              <view class="item b_bottom_after">
+                <view class="title-cell">姓名</view>
+                <view class="input-cell">
+                  <input class="input" type="text" placeholder="姓名" data-name="name" bindinput="keyupFormInput" />
+                </view>
+              </view>
+              <view class="item flex_left">
+                <view class="title-cell">手机</view>
+                <view class="input-cell">
+                  <input class="input" type="number" placeholder="手机" data-name="mobile" bindinput="keyupFormInput" />
+                </view>
+              </view>
+              <view class="item flex_left">
+                <view class="title-cell">出生日期</view>
+                <view class="input-cell">
+                  <picker style="width:100%;" mode="date" value="{{birthday}}" start="{{startDate}}" end="{{endDate}}" bindchange="bindDateChange">
+                    <view class="picker" style="width:100%;">{{(birthday && birthday != '') ? birthday : '请选择'}}</view>
+                  </picker>
+                </view>
+              </view>
+            </view>
+          </view>
+        </view>
+      </block>
     </block>
   </view>
   <view class="fix-bottom">

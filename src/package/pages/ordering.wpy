@@ -1,0 +1,316 @@
+<style lang="less">
+.ordering-page{
+  width:100%;height:100%;box-sizing: border-box;
+  .box-area{padding:0;}
+  .input-list{
+    .item:not(:last-child):after{
+      content:"";display:block !important;
+    	background-color:#eaeaea;height:1px;overflow:hidden;
+    	position: absolute;left: 0;right: 0;bottom:0px;
+    	-webkit-transform: scaleY(0.5) translateY(0.5px);
+    	transform: scaleY(0.5) translateY(0.5px);
+    	-webkit-transform-origin: 0% 0%;
+    	transform-origin: 0% 0%;
+    }
+    .item.auto{height:auto;padding:20rpx;}
+    .item{
+      padding:0 20rpx;box-sizing: border-box;
+      height:100rpx;display:flex;align-items:center;justify-content:flex-start;position:relative;
+      .title-cell{width:120rpx;height:100%;display: flex;align-items: left;justify-content:flex-start;align-items: center;text-align:left;}
+      .input-cell{
+        flex:1;height:100%;
+        display:flex;justify-content: flex-start; align-items: center;
+        position:relative;
+        .input{
+          width:100%;padding:0 10rpx;box-sizing: border-box;
+          color: #333333;justify-content:flex-start;align-items: center;
+        }
+        .input-placeholder{color:rgba(153,153,153,0.65)}
+      }
+    }
+  }
+  .btn-code.disabled{color: #999;}
+  .btn-list{
+    .btn{
+      width:80%;height:90rpx;border-radius:60rpx;font-size:32rpx;
+      display:flex;align-items:center;justify-content:center;
+    }
+  }
+  .title-picker1{
+    z-index:1;position:absolute;left:0;top:0;right:0;bottom:0;background-color:transparent;
+    .txt{position:absolute;left:0;top:0;right:0;bottom:0;padding-right:50rpx;}
+  }
+  .radio-group{
+    .radio:not(:last-child){padding-right:40rpx;}
+  }
+  .select-icon{margin-top:-10rpx;font-size:46rpx;}
+  .textarea{position:relative;width:100%;min-height:150px;box-sizing:border-box;border:#d9d9d9 1rpx solid;padding:10rpx;box-sizing: border-box;margin-top:10rpx;}
+  .textarea.empty{color:#999;}
+}
+</style>
+<template>
+  <view class="ordering-page bg-page">
+    <view class="box-area">
+      <view class="box-inner">
+        <view class="title b_bottom_after flex_center bold font18">订餐</view>
+        <view class="input-list">
+          <view class="item flex_left">
+            <view class="title-cell">姓名</view>
+            <view class="input-cell">
+              <input class="input" placeholder="姓名" data-name="title" bindinput="keyupFormInput" value="{{submitData.title}}" />
+            </view>
+          </view>
+          <view class="item flex_left">
+            <view class="title-cell">性别</view>
+            <view class="input-cell">
+              <radio-group class="radio-group flex_left" data-name="sex" bindchange="radioChange">
+                <label class="radio flex_left">
+                  <radio class="dotradio" value="1" checked="{{submitData.sex == 1}}" /><text>先生</text>
+                </label>
+                <label class="radio flex_left">
+                  <radio class="dotradio" value="2" checked="{{submitData.sex == 2}}" /><text>女士</text>
+                </label>
+              </radio-group>
+            </view>
+          </view>
+          <view class="item flex_left">
+            <view class="title-cell">手机</view>
+            <view class="input-cell">
+              <input class="input" type="number" placeholder="手机" data-name="mobile" bindinput="keyupFormInput" value="{{submitData.mobile}}" />
+            </view>
+          </view>
+          <view class="item flex_left">
+            <view class="title-cell">用餐人数</view>
+            <view class="input-cell">
+              <input class="input" type="number" placeholder="用餐人数" data-name="dinners" bindinput="keyupFormInput" />
+            </view>
+          </view>
+          <view class="item flex_left">
+            <view class="title-cell">餐别</view>
+            <view class="input-cell">
+              <radio-group class="radio-group flex_left" data-name="canbie" bindchange="radioChange">
+                <label class="radio flex_left">
+                  <radio class="dotradio" value="1" checked="{{submitData.canbie == 1}}" /><text>早餐</text>
+                </label>
+                <label class="radio flex_left">
+                  <radio class="dotradio" value="2" checked="{{submitData.canbie == 2}}" /><text>午餐</text>
+                </label>
+                <label class="radio flex_left">
+                  <radio class="dotradio" value="3" checked="{{submitData.canbie == 3}}" /><text>晚餐</text>
+                </label>
+              </radio-group>
+            </view>
+          </view>
+          <view class="item flex_left">
+            <view class="title-cell">桌别</view>
+            <view class="input-cell">
+              <radio-group class="radio-group flex_left" data-name="tabletype" bindchange="radioChange">
+                <label class="radio flex_left">
+                  <radio class="dotradio" value="1" checked="{{submitData.tabletype == 1}}" /><text>包间</text>
+                </label>
+                <label class="radio flex_left">
+                  <radio class="dotradio" value="2" checked="{{submitData.tabletype == 2}}" /><text>卡座</text>
+                </label>
+                <label class="radio flex_left">
+                  <radio class="dotradio" value="3" checked="{{submitData.tabletype == 3}}" /><text>普通</text>
+                </label>
+              </radio-group>
+            </view>
+          </view>
+          <view class="item flex_left">
+            <view class="title-cell">就餐时间</view>
+            <view class="input-cell" style="height:100%;">
+              <div class="flex_left" style="height:100%;position:relative;">
+                <picker class="title-picker" start="{{startDate}}" end="{{endDate}}" mode="date" data-type="date" bindchange="changeDate">
+                  <view class="txt flex_left">{{dinnerDate}}</view>
+                </picker>
+              </div>
+              <div class="flex_left pl10" style="height:100%;position:relative;">
+                <picker class="title-picker" mode="time" data-type="date" bindchange="changeTime">
+                  <view class="txt flex_left">{{dinnerTime}}</view>
+                </picker>
+              </div>
+            </view>
+          </view>
+          <view class="item flex_left auto">
+            <view class="title-cell">备注</view>
+            <view class="input-cell">
+              <textarea class="textarea" placeholder="备注" data-name="content" bindinput="keyupFormInput" maxlength="-1"></textarea>
+            </view>
+          </view>
+        </view>
+        <view class="flex_center pt20 pb20 b_top_after btn-list">
+        <view class="flex_cell flex_center">
+          <view class="btn" style="{{themeObject.bgStyle}}" bindtap="submitEvent">提交</view>
+        </view>
+        </view>
+      </view>
+    </view>
+  </view>
+</template>
+<script>
+  import wepy from 'wepy'
+  import Config from '@/config'
+  import Util from '@/libs/util'
+  import Reg from '@/libs/reg'
+  import Time from '@/libs/time'
+  export default class extends wepy.page {
+    data = {
+      options: {},
+      globalData: {},
+      userInfo: {},
+      themeObject: {},
+      submitData: {
+        title: '',
+        sex: '',
+        mobile: '',
+        canbie: 3,
+        tabletype: 1,
+        dinnertitme: '',
+        content: ''
+      },
+      dinnerDate: '请选择日期',
+      dinnerTime: '请选择时间',
+      startDate: '',
+      endDate: ''
+    }
+    handlePageData () {
+      this.globalData = this.$parent.globalData
+      Util.appInit(this.globalData, this)
+      this.userInfo = this.globalData.userInfo
+      this.submitData.title = this.userInfo.truename
+      this.submitData.sex = this.userInfo.sex
+      this.submitData.mobile = this.userInfo.mobile
+      this.$apply()
+    }
+    onLoad (options) {
+      this.options = options
+      let now = new Date().getTime()
+      this.startDate = new Time(now).dateFormat('yyyy-MM-dd')
+      this.endDate = new Time(now + 4 * 24 * 60 * 60 * 1000).dateFormat('yyyy-MM-dd')
+      console.log('startDate=', this.startDate)
+      console.log('endDate=', this.endDate)
+      if (this.$parent.globalData.flag.bokaAuth) {
+        this.handlePageData()
+      } else {
+        this.$parent.loadCallback = () => {
+          this.handlePageData()
+        }
+      }
+    }
+    methods = {
+      keyupFormInput (e) {
+        const dataset = e.currentTarget.dataset
+        this.submitData[dataset.name] = e.detail.value
+        this.$apply()
+      },
+      radioChange (e) {
+        const dataset = e.currentTarget.dataset
+        this.submitData[dataset.name] = e.detail.value
+        this.$apply()
+      },
+      changeDate (e) {
+        const curVal = e.detail.value
+        this.dinnerDate = curVal
+        this.$apply()
+      },
+      changeTime (e) {
+        const curVal = e.detail.value
+        console.log(e)
+        this.dinnerTime = curVal
+        this.$apply()
+      },
+      submitEvent () {
+        if (this.submitIng) return false
+        if (!this.submitData.title || this.submitData.title === '') {
+          wepy.showToast({
+            title: '请输入姓名',
+            icon: 'none'
+          })
+          return false
+        }
+        if (!this.submitData.mobile || this.submitData.mobile === '') {
+          wepy.showToast({
+            title: '请输入手机号码',
+            icon: 'none'
+          })
+          return false
+        }
+        if (!Reg.rPhone.test(this.submitData.mobile)) {
+          wepy.showToast({
+            title: '请输入正确的手机号',
+            icon: 'none'
+          })
+          return false
+        }
+        if (!this.submitData.dinners || this.submitData.dinners === '') {
+          wepy.showToast({
+            title: '请输入用餐人数',
+            icon: 'none'
+          })
+          return false
+        }
+        if (!this.dinnerDate || this.dinnerDate === '' || this.dinnerDate === '请选择日期') {
+          wepy.showToast({
+            title: '请选择用餐日期',
+            icon: 'none'
+          })
+          return false
+        }
+        if (!this.dinnerTime || this.dinnerTime === '' || this.dinnerTime === '请选择时间') {
+          wepy.showToast({
+            title: '请选择用餐时间',
+            icon: 'none'
+          })
+          return false
+        }
+        let now = new Date().getTime()
+        let dinnertime = `${this.dinnerDate} ${this.dinnerTime}`
+        dinnertime = new Date(dinnertime).getTime()
+        if (dinnertime - 30 * 60 * 1000 < now) {
+          wepy.showToast({
+            title: '请至少提前半个小时预约',
+            icon: 'none'
+          })
+          return false
+        }
+        if (dinnertime - now > 4 * 24 * 60 * 60 * 1000) {
+          wepy.showToast({
+            title: '最多可提前3天预约',
+            icon: 'none'
+          })
+          return false
+        }
+        this.submitData.dinnertime = `${this.dinnerDate} ${this.dinnerTime}`
+        this.submitIng = true
+        wepy.request({
+          url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/bookdinner/add`,
+          data: {...this.submitData, storeid: this.globalData.StoreId}
+        }).then(res => {
+          wepy.hideLoading()
+          this.submitIng = false
+          const data = res.data
+          let timeout = Util.delay(data.msg)
+          wepy.showToast({
+            title: data.msg,
+            icon: 'none',
+            duration: timeout
+          })
+          if (data.code === 0) {
+            // 预约到店提醒
+            Util.checkTmpMsg({
+              systeminfo: this.globalData.systemInfo,
+              tmplIds: [this.globalData.Templates.book_result],
+              callback: () => {
+                wepy.reLaunch({url: '/pages/qyshop'})
+              }
+            })
+          }
+          // setTimeout(() => {
+          //   wepy.reLaunch({url: '/pages/qyshop'})
+          // }, timeout)
+        })
+      }
+    }
+  }
+</script>

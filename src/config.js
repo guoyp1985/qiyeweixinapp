@@ -2,15 +2,18 @@ const ExtConfig = wx.getExtConfigSync ? wx.getExtConfigSync() : {}
 const Config = {
   DebugMode: false, // 输出调试，正式环境不需要配置
   version: ExtConfig.version ? ExtConfig.version : '1.0.0.1',
-  // AppName: ExtConfig.appName ? ExtConfig.appName : '博卡供销社',
-  // AppId: ExtConfig.appId ? ExtConfig.appId : 'wx9f7339af150e0b6f', // 博卡供销社 wx9f7339af150e0b6f
-  // BokaApi: ExtConfig.bokaApi ? ExtConfig.bokaApi : 'https://qy.boka.cn',
+  AppName: ExtConfig.appName ? ExtConfig.appName : '博卡供销社',
+  AppId: ExtConfig.appId ? ExtConfig.appId : 'wx9f7339af150e0b6f', // 博卡供销社 wx9f7339af150e0b6f
+  BokaApi: ExtConfig.bokaApi ? ExtConfig.bokaApi : 'https://qy.boka.cn',
+  AppMode: 'boka',
   // AppName: ExtConfig.appName ? ExtConfig.appName : '四海龙洲',
   // AppId: ExtConfig.appId ? ExtConfig.appId : 'wxd973aac92dae0707', // 四海龙洲 wxd973aac92dae0707
   // BokaApi: ExtConfig.bokaApi ? ExtConfig.bokaApi : 'https://longhui.boka.cn',
-  AppName: ExtConfig.appName ? ExtConfig.appName : '顾湘饭店',
-  AppId: ExtConfig.appId ? ExtConfig.appId : 'wx1426b52fd313ddbc', // 顾湘 wx1b22fe75584085ee
-  BokaApi: ExtConfig.bokaApi ? ExtConfig.bokaApi : 'https://guxiang.boka.cn',
+  // AppMode: 'longhui',
+  // AppName: ExtConfig.appName ? ExtConfig.appName : '顾湘饭店',
+  // AppId: ExtConfig.appId ? ExtConfig.appId : 'wx1426b52fd313ddbc', // 顾湘 wx1b22fe75584085ee
+  // BokaApi: ExtConfig.bokaApi ? ExtConfig.bokaApi : 'https://guxiang.boka.cn',
+  // AppMode: 'guxiang',
   RecommendClass: 53747124,
   WeixinName: ExtConfig.appName,
   AppLogo: ExtConfig.appLogo,
@@ -28,7 +31,7 @@ const Config = {
   // HomePage: '/pages/index',
   HomePage: '/pages/qyshop',
   V1: 'api',
-  V2: ExtConfig.appId ? 'api/' + ExtConfig.appId : 'api/wx1426b52fd313ddbc',
+  V2: ExtConfig.appId ? 'api/' + ExtConfig.appId : 'api/wx9f7339af150e0b6f',
   ApiVersion: ExtConfig.ApiVersion ? ExtConfig.ApiVersion : 'V1',
   ApiAccept: 'application/vnd.factorydev.v2+json',
   SDKAppID: 1400278262,
@@ -138,8 +141,11 @@ const Config = {
     }
   },
   ContactPluginID: 'cd23f2bb207cb7ee3a8765dd80b52db3', // 在企业微信管理后台配置的唯一插件ID  dd14b023deed2e3530096276caa9a52e
-  ShopClassId: 53747124, // 商城显示分类：辣椒酱
-  NoCloseClassId: [53747124, 54218868] // 不打烊分类: 辣椒酱 小龙虾
+  BookInfoPage: {
+    boka: '/package/pages/guxiangBook',
+    guxiang: '/package/pages/guxiangBook',
+    longhui: '/package/pages/longhuiBook'
+  }
 }
 
 Config.FilterUrls = [

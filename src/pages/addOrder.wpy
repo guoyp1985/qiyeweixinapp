@@ -194,7 +194,7 @@
         </view>
       </view>
     </view>
-    <view class="box-area" wx:if="{{selectedMd && curOrder}}">
+    <view class="box-area" wx:if="{{options.ordertype != 5 && selectedMd && curOrder}}">
       <view class="box-inner">
         <view class="padding10">
           <view class="font16 bold">{{selectedMd.title}}</view>
@@ -233,7 +233,7 @@
         </view>
       </view>
     </view>
-    <view class="box-area mt10" wx:if="{{commCardList.length && options.ordertype != 4}}">
+    <view class="box-area mt10" wx:if="{{commCardList.length && options.ordertype != 4 && options.ordertype != 5}}">
       <view class="box-inner">
         <view class="flex_left padding10" @tap="popupCommCardList">
           <view class="color-gray mr10 flex_left color-gray">优惠券</view>
@@ -319,7 +319,11 @@
         <text class="font16">合计</text>
         <text class="font20 bold color-theme" style="{{themeObject.colorStyle}}">￥{{payPrice}}</text>
       </view>
-      <view class="box-btn" style="{{themeObject.bgStyle}}" @tap="submitOrder">确认下单</view>
+      <block wx:if="{{ordertype == 5}}">
+        <view class="box-btn bg-theme color-white" style="{{themeObject.bgStyle}}" wx:if="{{allowSend}}" @tap="submitOrder">确认订单</view>
+        <view class="box-btn bg-gray color-white" wx:else>该地区无法派送</view>
+      </block>
+      <view wx:else class="box-btn" style="{{themeObject.bgStyle}}" @tap="submitOrder">确认下单</view>
     </view>
   </block>
   <popup :show.sync="popupShow" @close.user="cancel" height="60%">
@@ -481,10 +485,21 @@
       }).then(res => {
         const data = res.data
         let retdata = data.data ? data.data : data
+        let max = -1
+        let maxIndex = -1
         for (let i = 0; i < retdata.length; i++) {
-          retdata[i].deadline_str = new Time(retdata[i].deadline * 1000).dateFormat('yyyy-MM-dd hh:mm')
+          let curc = retdata[i]
+          retdata[i].deadline_str = new Time(curc.deadline * 1000).dateFormat('yyyy-MM-dd hh:mm')
+          if (this.orderTruePrice >= curc.ordermoney && this.orderTruePrice - this.totalQuantity * 0.01 > curc.money && curc.money > max) {
+            max = curc.money
+            maxIndex = i
+          }
+        }
+        if (max > -1 && maxIndex > -1) {
+          this.clickCommCard = retdata[maxIndex]
         }
         this.commCardList = retdata
+        this.computePrice()
         this.$apply()
       })
     }
@@ -528,19 +543,10 @@
         if (data.code === 0) {
           setTimeout(() => {
             if (data.id) {
-              wepy.redirectTo({url: `/pages/pay?id=${data.id}`})
+              wepy.redirectTo({url: `/pages/pay?id=${data.id}&ordertype=${this.options.ordertype}`})
             } else {
               wepy.redirectTo({url: `/packageB/pages/paySuccess`})
             }
-            // if (this.globalData.SystemParams.OrderType === '10' || this.globalData.SystemParams.OrderType === 10) {
-            //   wepy.redirectTo({url: `/packageB/pages/paySuccess?orderno=${data.orderno}&ordermoney=${this.payPrice}`})
-            // } else {
-            //   if (data.id) {
-            //     wepy.redirectTo({url: `/packageB/pages/pay?id=${data.id}&clickBuytype=${this.clickBuytype}`})
-            //   } else {
-            //     wepy.redirectTo({url: `/packageB/pages/paySuccess`})
-            //   }
-            // }
             this.submiting = false
             this.$apply()
           }, timeout)
@@ -661,15 +667,11 @@
           curstorage = this.curOrder.activityinfo.everybuy
         }
         this.maxQuantity = curstorage
-        if (order.options) {
-          if (this.isVip) {
-            order.listprice = order.options.memberprice
-          } else {
-            order.listprice = order.options.price
-          }
+        if (this.isVip) {
+          order.listprice = order.memberprice
         } else {
-          if (this.isVip) {
-            order.listprice = order.memberprice
+          if (order.options) {
+            order.listprice = order.options.price
           } else {
             order.listprice = order.special
           }
@@ -698,6 +700,8 @@
     computePrice () {
       let total = 0
       let trueTotal = 0
+      console.log('in computeprice *****')
+      console.log(this.product)
       if (this.product) {
         total += parseFloat(this.product.listprice.replace(/,/g, '')) * this.quantity
         trueTotal = parseFloat(this.product.listprice.replace(/,/g, '')) * this.quantity
@@ -775,7 +779,9 @@
       }
       this.disPostageArea = true
       this.$apply()
-      this.computePrice()
+      if (this.product && this.product.id) {
+        this.computePrice()
+      }
     }
     getAddressList () {
       const address = this.$parent.globalData.address

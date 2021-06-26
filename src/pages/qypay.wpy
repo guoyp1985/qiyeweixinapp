@@ -276,7 +276,7 @@
           </view>
         </view>
       </view>
-      <view class="box-area mt10">
+      <view class="box-area mt10" wx:if="{{orderData.flag == 1}}">
         <view class="box-inner">
           <view class="flex_left padding10">
             <view class="color-gray mr10 flex_left">用餐人数</view>
@@ -675,7 +675,6 @@ export default class AddOrder extends wepy.page {
       }
       this.cardPrice = total1
       this.computePrice()
-      this.getCanUseCard()
       if (this.isFirst) {
         this.getAddressList()
         this.isFirst = false
@@ -762,6 +761,7 @@ export default class AddOrder extends wepy.page {
       this.handleCredit()
       this.disList = true
       this.computePrice()
+      this.getCommList()
       if (this.isFirst && this.orderData.ordertype === 1) {
         this.getAddressList()
         this.isFirst = false
@@ -904,7 +904,6 @@ export default class AddOrder extends wepy.page {
     let saveMoneyMode = this.globalData.SystemParams.SaveMoneyMode
     this.saveMoneyMode = saveMoneyMode ? parseInt(saveMoneyMode) : false
     this.getData()
-    this.getCommList()
     wepy.getSystemInfo().then(res => {
       if (res.model.substring(0, res.model.indexOf('X')) + 'X' === 'iPhone X') {
         this.isIpx = true
@@ -962,10 +961,21 @@ export default class AddOrder extends wepy.page {
     }).then(res => {
       const data = res.data
       let retdata = data.data ? data.data : data
+      let max = -1
+      let maxIndex = -1
       for (let i = 0; i < retdata.length; i++) {
-        retdata[i].deadline_str = new Time(retdata[i].deadline * 1000).dateFormat('yyyy-MM-dd hh:mm')
+        let curc = retdata[i]
+        retdata[i].deadline_str = new Time(curc.deadline * 1000).dateFormat('yyyy-MM-dd hh:mm')
+        if (this.orderTruePrice >= curc.ordermoney && this.orderTruePrice - this.totalQuantity * 0.01 > curc.money && curc.money > max) {
+          max = curc.money
+          maxIndex = i
+        }
+      }
+      if (max > -1 && maxIndex > -1) {
+        this.clickCommCard = retdata[maxIndex]
       }
       this.commCardList = retdata
+      this.computePrice()
       this.$apply()
     })
   }
@@ -999,19 +1009,21 @@ export default class AddOrder extends wepy.page {
         return false
       }
     }
-    if (!this.dinners || this.dinners === '') {
-      wepy.showToast({
-        title: '请输入用餐人数',
-        icon: 'none'
-      })
-      return false
-    }
-    if (isNaN(this.dinners) || !/^[1-9]\d*$/.test(this.dinners)) {
-      wepy.showToast({
-        title: '请输入正确的用餐人数',
-        icon: 'none'
-      })
-      return false
+    if (this.orderData.flag === 1) {
+      if (!this.dinners || this.dinners === '') {
+        wepy.showToast({
+          title: '请输入用餐人数',
+          icon: 'none'
+        })
+        return false
+      }
+      if (isNaN(this.dinners) || !/^[1-9]\d*$/.test(this.dinners)) {
+        wepy.showToast({
+          title: '请输入正确的用餐人数',
+          icon: 'none'
+        })
+        return false
+      }
     }
     this.submiting = true
     this.isShowLoading = true

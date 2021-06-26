@@ -367,7 +367,7 @@
       </view>
       <block wx:if="{{tabIndex == 0}}">
         <block wx:if="{{products.length && products[0].length}}">
-          <view wx:if="{{factoryInfo.shopmodel == '2'}}" class="big-product-list">
+          <view class="big-product-list">
             <repeat for="{{products}}" item="productPage" index="pageindex">
               <producttmp21
                 :options.sync="options"
@@ -377,36 +377,9 @@
                 :themeObject.sync="themeObject"
                 :OnlyRetailerBuy.sync="OnlyRetailerBuy"
                 :afterSys.sync="afterSys"
-                :pageIndex.sync="pageindex">
+                :pageIndex.sync="pageindex"
+                :ordertype.sync="ordertype">
               </producttmp21>
-            </repeat>
-          </view>
-          <view wx:elif="{{factoryInfo.shopmodel == '3'}}" class="product-tmp3">
-            <repeat for="{{products}}" item="productPage" index="pageindex">
-              <producttmp31
-                :options.sync="options"
-                :productData.sync="productPage"
-                :userInfo.sync="userInfo"
-                :isAdmin.sync="isAdmin"
-                :themeObject.sync="themeObject"
-                :OnlyRetailerBuy.sync="OnlyRetailerBuy"
-                :afterSys.sync="afterSys"
-                :pageIndex.sync="pageindex">
-              </producttmp31>
-            </repeat>
-          </view>
-          <view wx:else :class="{'squarepic': products.length > 0}" class="productlist">
-            <repeat for="{{products}}" item="productPage" index="pageindex">
-              <producttmp11
-                :options.sync="options"
-                :productData.sync="productPage"
-                :userInfo.sync="userInfo"
-                :isAdmin.sync="isAdmin"
-                :themeObject.sync="themeObject"
-                :OnlyRetailerBuy.sync="OnlyRetailerBuy"
-                :afterSys.sync="afterSys"
-                :pageIndex.sync="pageindex">
-              </producttmp11>
             </repeat>
           </view>
           <view class="load-end-area loading" wx:if="{{isLoading}}"></view>
@@ -415,7 +388,7 @@
       </block>
       <block wx:if="{{tabIndex == 1}}">
         <block wx:if="{{tabData2.length && tabData2[0].length}}">
-          <view wx:if="{{factoryInfo.shopmodel == '2'}}" class="big-product-list">
+          <view class="big-product-list">
             <repeat for="{{tabData2}}" item="productPage" index="pageindex">
               <producttmp22
                 :options.sync="options"
@@ -426,38 +399,9 @@
                 :OnlyRetailerBuy.sync="OnlyRetailerBuy"
                 :afterSys.sync="afterSys"
                 tmpType="cron"
-                :pageIndex.sync="pageindex">
+                :pageIndex.sync="pageindex"
+                :ordertype.sync="ordertype">
               </producttmp22>
-            </repeat>
-          </view>
-          <view wx:elif="{{factoryInfo.shopmodel == '3'}}" class="product-tmp3">
-            <repeat for="{{tabData2}}" item="productPage" index="pageindex">
-              <producttmp32
-                :options.sync="options"
-                :productData.sync="productPage"
-                :userInfo.sync="userInfo"
-                :isAdmin.sync="isAdmin"
-                :themeObject.sync="themeObject"
-                :OnlyRetailerBuy.sync="OnlyRetailerBuy"
-                :afterSys.sync="afterSys"
-                tmpType="cron"
-                :pageIndex.sync="pageindex">
-              </producttmp32>
-            </repeat>
-          </view>
-          <view wx:else :class="{'squarepic': tabData2.length > 0}" class="productlist">
-            <repeat for="{{tabData2}}" item="productPage" index="pageindex">
-              <producttmp12
-                :options.sync="options"
-                :productData.sync="productPage"
-                :userInfo.sync="userInfo"
-                :isAdmin.sync="isAdmin"
-                :themeObject.sync="themeObject"
-                :OnlyRetailerBuy.sync="OnlyRetailerBuy"
-                :afterSys.sync="afterSys"
-                tmpType="cron"
-                :pageIndex.sync="pageindex">
-              </producttmp12>
             </repeat>
           </view>
           <view class="load-end-area loading" wx:if="{{isLoadTab}}"></view>
@@ -748,7 +692,8 @@ export default class Home extends wepy.page {
     openCart: false,
     buyIng: false,
     allowNav: false,
-    productClass: 0
+    productClass: 0,
+    ordertype: 5
   }
   dateFormat (value) {
     return new Time(value * 1000).dateFormat('hh:mm')
@@ -797,46 +742,6 @@ export default class Home extends wepy.page {
       this.isLoading = true
       this.getData()
     }
-  }
-  _onPageScroll (e) {
-    this.pageScrollTop = e.scrollTop
-    // let topnum = 1500
-    // if (this.factoryInfo.shopmodel === 3 || this.factoryInfo.shopmodel === '3') {
-    //   topnum = 1000
-    // }
-    // if (e.scrollTop > topnum) {
-    //   this.setData({
-    //     showTop: true
-    //   })
-    // } else {
-    //   this.setData({
-    //     showTop: false
-    //   })
-    // }
-    let query = wepy.createSelectorQuery()
-    query.select('.scroll-tab-area').boundingClientRect((rect) => {
-      if (rect) {
-        let top = rect.top
-        if (top <= 0) {
-          // this.setData({
-          //   showFixed: true,
-          //   inputFixed: false
-          // })
-          this.showFixed = true
-          this.inputFixed = false
-          this.showTop = true
-        } else {
-          // this.setData({
-          //   showFixed: false,
-          //   inputFixed: false
-          // })
-          this.showFixed = false
-          this.inputFixed = false
-          this.showTop = false
-        }
-        this.$apply()
-      }
-    }).exec()
   }
   topPageTop () {
     wepy.pageScrollTo({

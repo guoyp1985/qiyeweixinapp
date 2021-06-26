@@ -72,6 +72,7 @@
                     </block>
                     <text wx:else class="clamp1 producttitle" :class="{'w120' : item.producttitle.length >= 10 }">{{item.producttitle}}</text>
                   </view> -->
+                  <view class="font12 flex_left w_100" wx:if="{{item.limittime}}">{{limitObject[item.limittime]}}</view>
                   <view class="font12">到期时间 {{item.deadline_str}}</view>
                   <view class="ball ball-up"></view>
                   <view class="ball ball-down"></view>
@@ -164,7 +165,13 @@ export default class CardList extends wepy.page {
     isLoading1: false,
     isDone1: false,
     isLoading2: false,
-    isDone2: false
+    isDone2: false,
+    limitObject: {
+      0: '不限使用时间',
+      1: '限早餐使用',
+      2: '限午餐使用',
+      3: '限晚餐使用'
+    }
   }
   dateFormat (value) {
     return new Time(value * 1000).dateFormat('yyyy-MM-dd')

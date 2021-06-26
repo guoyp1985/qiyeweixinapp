@@ -95,6 +95,10 @@
       options: {
         type: Object,
         default: {}
+      },
+      ordertype: {
+        type: Number,
+        default: 0
       }
     }
     data = {
@@ -114,6 +118,9 @@
         }
         wepy.setStorageSync('selectedProduct', data)
         let navurl = `/${Config.Router.product}?id=${data.id}&type=fpimport&fid=${Config.Fid}&select=product`
+        if (this.ordertype) {
+          navurl = `${navurl}&ordertype=${this.ordertype}`
+        }
         if (this.options.storeid) navurl = `${navurl}&storeid=${this.options.storeid}`
         if (this.options.tableid) navurl = `${navurl}&tableid=${this.options.tableid}`
         if (params.length) {

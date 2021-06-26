@@ -427,27 +427,16 @@
          <text class="v_middle db-in bold">{{product.title}}</text>
        </view>
        <view wx:if="{{product.sellingpoint && product.sellingpoint != ''}}" class="color-theme" style="{{themeObject.colorStyle}}">{{product.sellingpoint}}</view>
-       <block wx:if="{{afterInfo}}">
-         <block wx:if="{{showTimer}}">
-           <view class="flex_left" wx:if="{{(product.limitbuy && product.limitbuy > 0)}}">
-             <view wx:if="{{product.limitbuy && product.limitbuy > 0}}" class="border-btn" style="{{themeObject.borderStyle}}{{themeObject.colorStyle}}">限购{{product.limitbuy}}件</view>
-           </view>
-         </block>
-         <block wx:else>
-           <view class="flex_left" style="{{themeObject.colorStyle}}">
-             <view class="flex_left flex_cell">
-               <text class="font18">￥</text>
-               <text class="font16" wx:if="{{product.minprice && product.maxprice && product.minprice != '' && product.maxprice != '' && product.minprice != product.maxprice}}">{{product.minprice}}-{{product.maxprice}}</text>
-               <text class="font16" wx:elif="{{product.minprice && product.minprice != ''}}">{{product.minprice}}</text>
-               <text class="font16" wx:else>{{product.price}}</text>
-               <text class="font16 ml5 .color-gray" style="text-decoration: line-through" wx:if="{{oripriceShow}}">￥{{product.oriprice}}</text>
-             </view>
-           </view>
-           <view class="flex_left" wx:if="{{(product.limitbuy && product.limitbuy > 0)}}">
-             <view wx:if="{{product.limitbuy && product.limitbuy > 0}}" class="color-orange">限购{{product.limitbuy}}件</view>
-           </view>
-         </block>
-       </block>
+       <view class="flex_left" style="{{themeObject.colorStyle}}">
+         <view class="flex_left flex_cell">
+           <text class="font16">￥</text>
+           <text class="font18">{{product.price}}</text>
+           <text class="font16 ml5 .color-gray" style="text-decoration: line-through" wx:if="{{oripriceShow}}">￥{{product.oriprice}}</text>
+         </view>
+       </view>
+       <view class="flex_left" wx:if="{{(product.limitbuy && product.limitbuy > 0)}}">
+         <view wx:if="{{product.limitbuy && product.limitbuy > 0}}" class="color-orange">限购{{product.limitbuy}}件</view>
+       </view>
        <view class="flex_left font12 mt5 color-gray2">
          <view>销量: {{ product.saled }} {{product.unit}}</view>
        </view>
@@ -554,6 +543,9 @@
              <block wx:else>
                <form wx:if="{{options.ordertype == 4}}" class="flex_cell flex_center color-white h_100 bg-orange flex_form" @tap="toBuy">
                  <button class="flex_center">预购</button>
+               </form>
+               <form wx:elif="{{options.ordertype == 5}}" class="flex_cell flex_center color-white h_100 bg-orange flex_form" @tap="toBuy">
+                 <button class="flex_center">抢购</button>
                </form>
                <form wx:else class="flex_cell flex_center color-white h_100 bg-orange flex_form" @tap="toCart">
                  <button class="flex_center">加入购物车</button>
@@ -1058,15 +1050,6 @@ export default class Product extends wepy.page {
     toBuy (e) {
       if (this.buyIng) return false
       this.clickCart = false
-      const dataset = e.currentTarget.dataset
-      const type = dataset.type
-      if (type && type !== '') {
-        if (type === 'groupbuy') {
-          this.clickBuytype = type
-        }
-      } else {
-        this.clickBuytype = null
-      }
       this.buyEvent()
     },
     clickTip () {
@@ -1185,7 +1168,7 @@ export default class Product extends wepy.page {
     if (this.product.options.length && this.selectedOption && this.selectedOption.id) {
       params.poid = this.selectedOption.id
     }
-    if (this.options.ordertype && parseInt(this.options.ordertype) === 4) {
+    if (this.options.ordertype) {
       params.ordertype = this.options.ordertype
     }
     let postData = {...params, wid: this.globalData.Wid, gxkuid: this.userInfo.gxkuid, module: this.module}
@@ -1198,8 +1181,8 @@ export default class Product extends wepy.page {
     const data = res.data
     wepy.hideLoading()
     if (data.code === 0) {
-      let url = `/pages/addOrder?wid=${this.globalData.Wid}&shop_id=${data.data}&ordertype=4`
-      if (this.options.ordertype) {
+      let url = `/pages/addOrder?wid=${this.globalData.Wid}&shop_id=${data.data}`
+      if (this.options.ordertype && parseInt(this.options.ordertype) >= 4) {
         url = `${url}&ordertype=${this.options.ordertype}`
       }
       wepy.navigateTo({url: url})
@@ -1211,25 +1194,6 @@ export default class Product extends wepy.page {
       this.buyIng = false
     }
     this.genOrder = false
-  }
-  getCowerUser () {
-    if (this.activityInfo && this.activityInfo.id && this.activityInfo.type === 'groupbuy') {
-      wepy.request({url: `${Config.BokaApi}/${Config[Config.ApiVersion]}/activity/crowdUser`, data: { id: this.activityInfo.id }})
-      .then(res => {
-        const data = res.data.data
-        for (let i = 0; i < data.length; i++) {
-          let d = data[i]
-          let lefttime = d.lefttime
-          d.lefthour = lefttime.hour
-          d.leftminute = lefttime.minute
-          d.leftsecond = lefttime.second
-          d.interval = null
-          this.cutDown(d, d.interval)
-        }
-        this.activity = data
-        this.$apply()
-      })
-    }
   }
 
   getData () {
@@ -1291,7 +1255,7 @@ export default class Product extends wepy.page {
     this.productId = this.product.id
     this.title = this.product.title
     let checkClose = true
-    if (this.options.ordertype && parseInt(this.options.ordertype) === 4) {
+    if (this.options.ordertype && parseInt(this.options.ordertype) >= 4) {
       checkClose = false
     } else {
       if (this.globalData.StoreSetting.shopclasses && this.globalData.StoreSetting.shopclasses.length) {
@@ -1356,8 +1320,12 @@ export default class Product extends wepy.page {
     this.showPopup = false
     this.$apply()
     const lastshareuid = this.options.share_uid
-    // let shareurl = `/${Config.Router.product}?id=${this.options.id}&type=${this.productType}&module=${this.module}&share_uid=${this.userInfo.uid}&share_wid=${this.globalData.Wid}&wid=${this.globalData.Wid}&comefrom=${Config.AppName}`
-    let shareurl = `/${Config.Router.product}?id=${this.options.id}&ordertype=4&share_uid=${this.userInfo.uid}&comefrom=${Config.AppName}`
+    let shareurl = `/${Config.Router.product}?id=${this.options.id}&share_uid=${this.userInfo.uid}&comefrom=${Config.AppName}`
+    if (this.options.ordertype && parseInt(this.options.ordertype) >= 4) {
+      shareurl = `${shareurl}&ordertype=${this.options.ordertype}`
+    } else {
+      shareurl = `${shareurl}&ordertype=4`
+    }
     if (this.options.storeid) shareurl = `${shareurl}&storeid=${this.options.storeid}`
     if (this.options.tableid) shareurl = `${shareurl}&tableid=${this.options.tableid}`
     if (this.userInfo.regwid && this.userInfo.bindstatus === 1) {
@@ -1744,7 +1712,12 @@ export default class Product extends wepy.page {
       }
       options.type = 'fpimport'
     }
-    let pagepath = `${Config.Router.product}?id=${options.id}&ordertype=4`
+    let pagepath = `${Config.Router.product}?id=${options.id}`
+    if (options.ordertype && parseInt(options.ordertype) >= 4) {
+      pagepath = `${pagepath}&ordertype=${options.ordertype}`
+    } else {
+      pagepath = `${pagepath}&ordertype=4`
+    }
     if (options.tableid) pagepath = `${pagepath}&tableid=${options.tableid}`
     if (options.storeid) pagepath = `${pagepath}&storeid=${options.storeid}`
     this.pagePath = pagepath

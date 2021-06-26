@@ -77,7 +77,7 @@
           </view>
         </view>
       </form>
-      <view class="flex_center btn-area" style="margin-bottom:40rpx;">
+      <view class="flex_center btn-area" style="margin-bottom:40rpx;" wx:if="{{viewData.canuse}}">
         <button wx:if="{{viewData.used}}" class="btn-item bg-gray">已核销</button>
         <button wx:else class="btn-item" @tap="toUse" style="{{themeObject.bgStyle}}">核销</button>
       </view>
